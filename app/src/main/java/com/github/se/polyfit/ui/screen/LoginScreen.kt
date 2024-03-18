@@ -34,11 +34,13 @@ import androidx.navigation.NavController
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.github.se.polyfit.R
+import com.github.se.polyfit.ui.navigation.Navigation
+import com.github.se.polyfit.ui.navigation.Route
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 
 @Composable
-fun LoginScreen(navController: NavController) {
+fun LoginScreen(navController: Navigation) {
 
     val authentication = Authentication(navController, context = LocalContext.current)
     val signInLauncher =
@@ -99,7 +101,7 @@ fun LoginScreen(navController: NavController) {
     }
 }
 
-class Authentication(private val navigationActions: NavController, private val context: Context) {
+class Authentication(private val navigationActions: Navigation, private val context: Context) {
     private lateinit var signInLauncher: ActivityResultLauncher<Intent>
 
     fun setSignInLauncher(launcher: ActivityResultLauncher<Intent>) {
@@ -121,9 +123,8 @@ class Authentication(private val navigationActions: NavController, private val c
         val response = result.idpResponse
         Log.i("LoginScreen", "response: $response")
         if (result.resultCode == RESULT_OK) {
-            // navigationActions.navigate(Route.Home)
             Log.i("LoginScreen", "User signed in")
-            navigationActions.navigate("home") { popUpTo("home") { inclusive = true } }
+            navigationActions.navigateToHome()
         } else {
             response?.let { Log.e("LoginScreen", "Error: ${it.error?.errorCode}") }
         }
