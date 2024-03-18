@@ -14,9 +14,6 @@ import com.github.se.polyfit.ui.screen.LoginScreen
 
 class MainActivity : ComponentActivity() {
 
-
-    // See: https://developer.android.com/training/basics/intents/result
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

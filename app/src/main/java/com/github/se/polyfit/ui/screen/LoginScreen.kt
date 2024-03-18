@@ -1,6 +1,5 @@
 package com.github.se.polyfit.ui.screen
 
-
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
@@ -30,24 +29,24 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.github.se.polyfit.R
 import com.github.se.polyfit.ui.navigation.Navigation
-import com.github.se.polyfit.ui.navigation.Route
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 
 @Composable
 fun LoginScreen(navController: Navigation) {
 
+    // Create an instance of the Authentication class
     val authentication = Authentication(navController, context = LocalContext.current)
     val signInLauncher =
         rememberLauncherForActivityResult(contract = FirebaseAuthUIActivityResultContract()) { res ->
             authentication.onSignInResult(res)
         }
 
+    // Set the signInLauncher in the Authentication class
     authentication.setSignInLauncher(signInLauncher)
 
     // This function starts the sign-in process
@@ -75,12 +74,8 @@ fun LoginScreen(navController: Navigation) {
 
             OutlinedButton(
                 onClick = {
-                    Log.d("Main Activity", "button clicked")
-
+                    Log.d("LoginScreen", "button clicked")
                     createSignInIntent()
-
-                    // navController.navigate(Route.Home) { popUpTo(Route.Home) { inclusive = true }
-                    // }
                 },
                 shape = RoundedCornerShape(20.dp),
                 colors =
@@ -126,7 +121,8 @@ class Authentication(private val navigationActions: Navigation, private val cont
             Log.i("LoginScreen", "User signed in")
             navigationActions.navigateToHome()
         } else {
-            response?.let { Log.e("LoginScreen", "Error: ${it.error?.errorCode}") }
+            response?.let { Log.e("LoginScreen", "Error in result firebase authentication: " +
+                    "${it.error?.errorCode}") }
         }
     }
 }
