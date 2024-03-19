@@ -1,8 +1,17 @@
+import kotlin.script.experimental.api.ScriptCompilationConfiguration.Default.properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("org.sonarqube") version "4.4.1.3373"
 }
-
+sonar {
+    properties {
+        property("sonar.projectKey", "swent-group10_polyfit")
+        property("sonar.organization", "swent-group10")
+        property("sonar.host.url", "https://sonarcloud.io")
+    }
+}
 android {
     namespace = "com.github.se.polyfit"
     compileSdk = 34

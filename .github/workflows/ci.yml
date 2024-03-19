@@ -1,0 +1,222 @@
+name: CI - Test Runner
+
+# Run the workflow when commits are pushed on main or when a PR is modified
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+jobs:
+  ci:
+    name: CI
+    # Execute the CI on the course's runners
+    runs-on: ubuntu-latest
+
+    steps:
+      # First step : Checkout the repository on the runner
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of Sonar analysis (if we use Sonar Later)
+
+
+      # Kernel-based Virtual Machine (KVM) is an open source virtualization technology built into Linux. Enabling it allows the Android emulator to run faster.
+      - name: Enable KVM group perms
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+
+     # To Load a fake google map api key for the test
+
+      - name: Loading Local.properties (dummy)
+        run: |
+            echo MAPS_API_KEY=\"0\" > ./local.properties
+      - name: Grant execute permission for gradlew
+        run: |
+            chmod +x ./gradlew
+
+      # Caching is a very useful part of a CI, as a workflow is executed in a clean environment every time,
+      # this means that one would need to re-download and re-process gradle files for every run. Which is very time consuming.
+      #
+      # To avoid that, we cache the the gradle folder to reuse it later.
+      - name: Gradle cache
+        uses: gradle/actions/setup-gradle@v3
+
+      # Cache the Emulator, if the cache does not hit, create the emulator
+      - name: AVD cache
+        uses: actions/cache@v4
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-34
+
+      - name: create AVD and generate snapshot for caching
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: false
+          script: echo "Generated AVD snapshot for caching."
+
+      - name: Grant execute permission for gradlew
+        run: |
+          chmod +x ./gradlew
+
+      # Check formatting
+      - name: KTFmt Check
+        run: |
+          ./gradlew ktfmtCheck
+
+      # This step runs gradle commands to build the application
+      - name: Assemble
+        id: build
+        run: |
+          # To run the CI with debug information, add --info
+          ./gradlew assemble lint --parallel --build-cache
+
+      # Run Unit tests
+      - name: Run tests
+        id: unit-tests
+        run: |
+          # To run the CI with debug information, add --info
+          ./gradlew check --parallel --build-cache
+
+      # Run connected tests on the emulator
+      - name: run tests
+        id: instrumentation-tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: ./gradlew connectedCheck --parallel --build-cache
+
+      # This step generates the coverage report
+      - name: Generate coverage
+        id: coverage
+        run: |
+          ./gradlew jacocoTestReport
+      
+      - name: Create empty result file
+        run: echo -n "" > grading-result.csv
+      
+
+      # Upload the various reports to sonar
+      - name: Upload report to SonarCloud
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew sonar --parallel --build-cache
+
+
+      # Assemble test 
+      - name: Assemble tests 
+        if: always()
+        id: compile-tests
+        run: |
+          ./gradlew compileDebugAndroidTestKotlin --parallel --build-cache
+
+
+      # This step retrieve all useful data from the tests
+      - name: Retrieve results
+        run: |
+          # Tasks results
+          echo "build-task,${{ steps.build.outcome }}" >> grading-result.csv
+          echo "unit-tests-task,${{ steps.unit-tests.outcome }}" >> grading-result.csv
+          echo "compile-tests,${{ steps.compile-tests.outcome }}" >> grading-result.csv
+          echo "instrumentation-tests-task,${{ steps.instrumentation-tests.outcome }}" >> grading-result.csv
+          echo "coverage-task,${{ steps.coverage.outcome }}" >> grading-result.csv
+          
+          # Tests results
+          result_file="app/build/outputs/androidTest-results/connected/*/TEST-*.xml"
+          
+          test_names=("goBackButtonTriggersBackNavigation" "locationTextInput" "saveToDoDoesNotWorkWithEmptyTitle" "titleAndButtonAreCorrectlyDisplayed" "googleSignInReturnsValidActivityResult")
+          test_classes=("com.github.se.bootcamp.todo.CreateToDoTest" "com.github.se.bootcamp.todo.CreateToDoTest" "com.github.se.bootcamp.todo.CreateToDoTest" "com.github.se.bootcamp.authentication.LoginTest" "com.github.se.bootcamp.authentication.LoginTest")
+          
+          points=0
+          
+          # Loop over the indices of the arrays
+          for ((i=0; i<${#test_names[@]}; i++)); do
+          	name="${test_names[$i]}"
+          	classname="${test_classes[$i]}"
+          	
+          	# Check if the test exists
+          	if [ -f $result_file ] && xmllint --xpath "boolean(//testcase[@name='$name' and @classname='$classname'])" $result_file | grep -q 'true'; then
+          	  count=$(xmllint --xpath "count(//testcase[@name='$name' and @classname='$classname'])" $result_file)
+          
+          	  if [ "$count" -eq 0 ]; then
+          		echo "$name,missing" >> grading-result.csv
+          	  elif [ "$count" -eq 1 ]; then
+          		# xmllint command to check if the test succeeded
+          		test_result=$(xmllint --xpath "count(//testcase[@name='$name' and @classname='$classname']/*) = 0" $result_file)
+          		
+          		echo "$name,$test_result" >> grading-result.csv
+          
+          		if [ "true" == "$test_result" ]; then
+          		  points=$((points+16))
+          		  echo "::notice:: Test $name ✅"
+          		else
+          		  echo "::notice:: Test $name ❌"
+          		fi
+          	  else
+          		echo "$name,multi-match" >> grading-result.csv
+          	  fi
+          	else
+          	  echo "$name,missing" >> grading-result.csv
+          	  echo "::notice:: Test $name not found ❌"
+          	fi
+          done
+          			
+          # Coverage results
+          # Path to your Jacoco XML report
+          JACOCO_XML_PATH="app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
+          
+          if [ -f $JACOCO_XML_PATH ]; then
+          	# Using xmllint to parse the XML, extract the line coverage attributes (missed and covered), then sum them up
+          	TOTAL_MISSED_INSTRUCTIONS=$(xmllint --xpath 'sum(//report/counter[@type="INSTRUCTION"]/@missed)' $JACOCO_XML_PATH)
+          	TOTAL_COVERED_INSTRUCTIONS=$(xmllint --xpath 'sum(//report/counter[@type="INSTRUCTION"]/@covered)' $JACOCO_XML_PATH)
+          	
+          	# Calculate the total lines and coverage percentage
+          	TOTAL_INSTRUCTIONS=$((TOTAL_MISSED_INSTRUCTIONS + TOTAL_COVERED_INSTRUCTIONS))
+          	COVERAGE_PERCENTAGE=$(awk "BEGIN {printf \"%.2f\", ($TOTAL_COVERED_INSTRUCTIONS/$TOTAL_INSTRUCTIONS)*100}")
+          	echo "coverage,$COVERAGE_PERCENTAGE" >> grading-result.csv
+          	
+          	if [ 1 -eq "$(echo "$COVERAGE_PERCENTAGE >= 80.0" | bc )" ]; then
+          		points=$((points+20))
+          		echo "::notice:: Coverage : $COVERAGE_PERCENTAGE% > 80% ✅"
+          	else
+          		echo "::notice:: Coverage : $COVERAGE_PERCENTAGE% < 80% ❌"
+          	fi
+          else
+          	echo "coverage,0" >> grading-result.csv
+          	echo "::notice:: Coverage report not found ❌"
+          fi
+          
+          echo "::notice:: Total points : $points / 100
+          if [ $points -eq 100 ]; then
+            echo "::notice:: Congratulations! You've obtained full points! 🎉🎉🎉"
+          fi
+          "
