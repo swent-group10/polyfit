@@ -96,7 +96,7 @@ fun LoginScreen(navController: Navigation) {
     }
 }
 
-class Authentication(private val navigationActions: Navigation, private val context: Context) {
+class Authentication(private val navigation: Navigation, private val context: Context) {
     private lateinit var signInLauncher: ActivityResultLauncher<Intent>
 
     fun setSignInLauncher(launcher: ActivityResultLauncher<Intent>) {
@@ -119,7 +119,7 @@ class Authentication(private val navigationActions: Navigation, private val cont
         Log.i("LoginScreen", "response: $response")
         if (result.resultCode == RESULT_OK) {
             Log.i("LoginScreen", "User signed in")
-            navigationActions.navigateToHome()
+            navigation.navigateToHome()
         } else {
             response?.let { Log.e("LoginScreen", "Error in result firebase authentication: " +
                     "${it.error?.errorCode}") }
