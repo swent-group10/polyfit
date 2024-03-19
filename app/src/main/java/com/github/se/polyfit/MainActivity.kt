@@ -11,21 +11,24 @@ import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.navigation.Route
 import com.github.se.polyfit.ui.screen.HomeScreen
 import com.github.se.polyfit.ui.screen.LoginScreen
+import com.github.se.polyfit.ui.theme.PolyfitTheme
 
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val navController = rememberNavController()
-            val navigation = Navigation(navController)
-            NavHost(navController = navController, startDestination = Route.Register) {
-                composable(Route.Register) {
-                    LoginScreen(navigation)
-                }
+            PolyfitTheme {
+                val navController = rememberNavController()
+                val navigation = Navigation(navController)
+                NavHost(navController = navController, startDestination = Route.Register) {
+                    composable(Route.Register) {
+                        LoginScreen(navigation)
+                    }
 
-                composable(Route.Home) {
-                    HomeScreen()
+                    composable(Route.Home) {
+                        HomeScreen()
+                    }
                 }
             }
         }
