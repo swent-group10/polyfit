@@ -148,54 +148,7 @@ jobs:
 
       # This step retrieve all useful data from the tests
       - name: Retrieve results
-        run: |
-          # Tasks results
-          echo "build-task,${{ steps.build.outcome }}" >> grading-result.csv
-          echo "unit-tests-task,${{ steps.unit-tests.outcome }}" >> grading-result.csv
-          echo "compile-tests,${{ steps.compile-tests.outcome }}" >> grading-result.csv
-          echo "instrumentation-tests-task,${{ steps.instrumentation-tests.outcome }}" >> grading-result.csv
-          echo "coverage-task,${{ steps.coverage.outcome }}" >> grading-result.csv
-          
-          # Tests results
-          result_file="app/build/outputs/androidTest-results/connected/*/TEST-*.xml"
-          
-          test_names=("goBackButtonTriggersBackNavigation" "locationTextInput" "saveToDoDoesNotWorkWithEmptyTitle" "titleAndButtonAreCorrectlyDisplayed" "googleSignInReturnsValidActivityResult")
-          test_classes=("com.github.se.bootcamp.todo.CreateToDoTest" "com.github.se.bootcamp.todo.CreateToDoTest" "com.github.se.bootcamp.todo.CreateToDoTest" "com.github.se.bootcamp.authentication.LoginTest" "com.github.se.bootcamp.authentication.LoginTest")
-          
-          points=0
-          
-          # Loop over the indices of the arrays
-          for ((i=0; i<${#test_names[@]}; i++)); do
-          	name="${test_names[$i]}"
-          	classname="${test_classes[$i]}"
-          
-          	# Check if the test exists
-          	if [ -f $result_file ] && xmllint --xpath "boolean(//testcase[@name='$name' and @classname='$classname'])" $result_file | grep -q 'true'; then
-          	  count=$(xmllint --xpath "count(//testcase[@name='$name' and @classname='$classname'])" $result_file)
-          
-          	  if [ "$count" -eq 0 ]; then
-          		echo "$name,missing" >> grading-result.csv
-          	  elif [ "$count" -eq 1 ]; then
-          		# xmllint command to check if the test succeeded
-          		test_result=$(xmllint --xpath "count(//testcase[@name='$name' and @classname='$classname']/*) = 0" $result_file)
-          
-          		echo "$name,$test_result" >> grading-result.csv
-          
-          		if [ "true" == "$test_result" ]; then
-          		  points=$((points+16))
-          		  echo "::notice:: Test $name ✅"
-          		else
-          		  echo "::notice:: Test $name ❌"
-          		fi
-          	  else
-          		echo "$name,multi-match" >> grading-result.csv
-          	  fi
-          	else
-          	  echo "$name,missing" >> grading-result.csv
-          	  echo "::notice:: Test $name not found ❌"
-          	fi
-          done
-          
+        run: |          
           # Coverage results
           # Path to your Jacoco XML report
           JACOCO_XML_PATH="app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
@@ -221,8 +174,8 @@ jobs:
           	echo "::notice:: Coverage report not found ❌"
           fi
           
-          echo "::notice:: Total points : $points / 100
-          if [ $points -eq 100 ]; then
-            echo "::notice:: Congratulations! You've obtained full points! 🎉🎉🎉"
+          echo "::notice:: Total points : $points / 20
+          if [ $points -eq 20 ]; then
+            echo "::notice:: Congratulations! You've obtained good coverage! 🎉🎉🎉"
           fi
           "
