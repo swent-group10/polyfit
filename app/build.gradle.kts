@@ -5,6 +5,8 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
     id("org.sonarqube") version "4.4.1.3373"
+    id("com.google.dagger.hilt.android")
+    kotlin("kapt")
 }
 sonar {
     properties {
@@ -129,4 +131,14 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.7.10")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.7.10")
+
+    // Hilts
+    implementation("com.google.dagger:hilt-android:2.44")
+    kapt("com.google.dagger:hilt-android-compiler:2.44")
+
+}
+
+// Allow references to generated code
+kapt {
+    correctErrorTypes = true
 }

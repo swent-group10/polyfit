@@ -33,11 +33,12 @@ import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.github.se.polyfit.R
 import com.github.se.polyfit.ui.navigation.Navigation
+import com.github.se.polyfit.ui.navigation.NavigationInterface
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 
 @Composable
-fun LoginScreen(navController: Navigation) {
+fun LoginScreen(navController: NavigationInterface) {
 
     // Create an instance of the Authentication class
     val authenticationCloud = AuthenticationCloud(context = LocalContext.current){if (it) navController.navigateToHome()}
