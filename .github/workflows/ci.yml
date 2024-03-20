@@ -148,7 +148,8 @@ jobs:
 
       # This step retrieve all useful data from the tests
       - name: Retrieve results
-        run: |          
+        run: |
+          sudo apt-get install -y libxml2-utils 
           # Coverage results
           # Path to your Jacoco XML report
           JACOCO_XML_PATH="app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
