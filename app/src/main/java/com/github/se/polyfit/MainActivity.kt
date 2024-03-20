@@ -1,8 +1,11 @@
 package com.github.se.polyfit
 
+import android.app.Application
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -14,23 +17,27 @@ import com.github.se.polyfit.ui.navigation.Route
 import com.github.se.polyfit.ui.screen.HomeScreen
 import com.github.se.polyfit.ui.screen.LoginScreen
 import com.github.se.polyfit.ui.theme.PolyfitTheme
+import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.HiltAndroidApp
+import dagger.hilt.components.SingletonComponent
 import javax.inject.Inject
 import javax.inject.Singleton
 
-//@AndroidEntryPoint
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    //@Inject lateinit var navigation: NavigationInterface
+    @Inject lateinit var navigation: Navigation
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             PolyfitTheme {
-                val navController = rememberNavController()
-                val navigation = Navigation(navController)
-                NavHost(navController = navController, startDestination = Route.Register) {
+                //val navController = rememberNavController()
+                //val navigation = Navigation(navController)
+                NavHost(navController = navigation.getController()!!, startDestination = Route.Register) {
                     composable(Route.Register) {
                         LoginScreen(navigation)
                     }
@@ -44,12 +51,20 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-/*
+
+@HiltAndroidApp
+class ExampleApplication : Application() {}
+
+@Module
+@InstallIn(SingletonComponent::class)
 object AppModule {
+
     @Singleton
     @Provides
-    fun provideAuthenticationService(): NavigationInterface {
+    fun provideNavigation(app : Application): Navigation {
         // Real implementation provided
-        return MockNavigation()
+        val navController = NavHostController(context = app)
+        return Navigation(navController)
     }
-}*/
+}
+

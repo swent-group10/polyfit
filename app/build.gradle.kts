@@ -70,6 +70,8 @@ android {
     }
 }
 
+
+
 dependencies {
 
     implementation("androidx.core:core-ktx:1.12.0")
@@ -120,7 +122,6 @@ dependencies {
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.08.00"))
     debugImplementation("androidx.compose.ui:ui-tooling:1.4.0")
     debugImplementation("androidx.compose.ui:ui-test-manifest:1.4.0")
-    // kotlin
 
     // For the tests
     androidTestImplementation("com.kaspersky.android-components:kaspresso:1.4.3")
@@ -133,12 +134,24 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.7.10")
 
     // Hilts
-    implementation("com.google.dagger:hilt-android:2.44")
-    kapt("com.google.dagger:hilt-android-compiler:2.44")
+    implementation("com.google.dagger:hilt-android:2.51")
+    annotationProcessor("com.google.dagger:hilt-compiler:2.51")
+    kapt("com.google.dagger:hilt-android-compiler:2.51")
 
+    androidTestImplementation ("com.google.dagger:hilt-android-testing:2.51")
+    kaptAndroidTest ("com.google.dagger:hilt-compiler:2.51")
+
+    // For local unit tests
+    testImplementation ("com.google.dagger:hilt-android-testing:2.51")
+    kaptTest ("com.google.dagger:hilt-compiler:2.51")
 }
 
 // Allow references to generated code
 kapt {
     correctErrorTypes = true
 }
+
+hilt {
+    enableAggregatingTask = true
+}
+
