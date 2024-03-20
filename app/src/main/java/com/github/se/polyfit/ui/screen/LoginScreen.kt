@@ -39,90 +39,90 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 @Composable
 fun LoginScreen(navController: Navigation) {
 
-    // Create an instance of the Authentication class
-    val authentication = Authentication(navController, context = LocalContext.current)
-    val signInLauncher =
-        rememberLauncherForActivityResult(contract = FirebaseAuthUIActivityResultContract()) { res ->
-            authentication.onSignInResult(res)
-        }
+  // Create an instance of the Authentication class
+  val authentication = Authentication(navController, context = LocalContext.current)
+  val signInLauncher =
+      rememberLauncherForActivityResult(contract = FirebaseAuthUIActivityResultContract()) { res ->
+        authentication.onSignInResult(res)
+      }
 
-    // Set the signInLauncher in the Authentication class
-    authentication.setSignInLauncher(signInLauncher)
+  // Set the signInLauncher in the Authentication class
+  authentication.setSignInLauncher(signInLauncher)
 
-    // This function starts the sign-in process
-    fun createSignInIntent() {
-        authentication.signIn()
-    }
+  // This function starts the sign-in process
+  fun createSignInIntent() {
+    authentication.signIn()
+  }
 
-    Surface(
-        modifier = Modifier.fillMaxSize().testTag("LoginScreen"),
-        color = MaterialTheme.colorScheme.background) {
+  Surface(
+      modifier = Modifier.fillMaxSize().testTag("LoginScreen"),
+      color = MaterialTheme.colorScheme.background) {
         Column(
             modifier = Modifier.padding(24.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally) {
+              Spacer(Modifier.weight(0.15f))
 
-            Spacer(Modifier.weight(0.15f))
+              Text(
+                  text = "Welcome",
+                  fontSize = 30.sp,
+                  modifier = Modifier.testTag("LoginTitle"),
+              )
 
-            Text(
-                text = "Welcome",
-                fontSize = 30.sp,
-                modifier = Modifier.testTag("LoginTitle"),
-            )
+              Spacer(Modifier.weight(0.5f))
 
-            Spacer(Modifier.weight(0.5f))
-
-            OutlinedButton(
-                onClick = {
+              OutlinedButton(
+                  onClick = {
                     Log.d("LoginScreen", "button clicked")
                     createSignInIntent()
-                },
-                shape = RoundedCornerShape(20.dp),
-                colors =
-                ButtonDefaults.buttonColors(
-                    contentColor = Color.Black, containerColor = Color.White),
-                modifier = Modifier.testTag("LoginButton")) {
-                val imageModifierGoogle = Modifier.size(24.dp)
+                  },
+                  shape = RoundedCornerShape(20.dp),
+                  colors =
+                      ButtonDefaults.buttonColors(
+                          contentColor = Color.Black, containerColor = Color.White),
+                  modifier = Modifier.testTag("LoginButton")) {
+                    val imageModifierGoogle = Modifier.size(24.dp)
 
-                Image(
-                    painter = painterResource(id = R.drawable.google_logo),
-                    contentDescription = "Google_logo",
-                    contentScale = ContentScale.Fit,
-                    modifier = imageModifierGoogle)
-                Text(text = "Sign in with Google", modifier = Modifier.padding(start = 16.dp))
+                    Image(
+                        painter = painterResource(id = R.drawable.google_logo),
+                        contentDescription = "Google_logo",
+                        contentScale = ContentScale.Fit,
+                        modifier = imageModifierGoogle)
+                    Text(text = "Sign in with Google", modifier = Modifier.padding(start = 16.dp))
+                  }
+              Spacer(Modifier.weight(0.3f))
             }
-            Spacer(Modifier.weight(0.3f))
-        }
-    }
+      }
 }
 
 class Authentication(private val navigation: Navigation, private val context: Context) {
-    private lateinit var signInLauncher: ActivityResultLauncher<Intent>
+  private lateinit var signInLauncher: ActivityResultLauncher<Intent>
 
-    fun setSignInLauncher(launcher: ActivityResultLauncher<Intent>) {
-        signInLauncher = launcher
+  fun setSignInLauncher(launcher: ActivityResultLauncher<Intent>) {
+    signInLauncher = launcher
+  }
+
+  fun signIn() {
+    val gso =
+        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build()
+
+    val mGoogleSignInClient = GoogleSignIn.getClient(context, gso)
+
+    val signInIntent = mGoogleSignInClient.signInIntent
+    signInLauncher.launch(signInIntent)
+  }
+
+  fun onSignInResult(result: FirebaseAuthUIAuthenticationResult) {
+    Log.i("LoginScreen", "onSignInResult")
+    val response = result.idpResponse
+    Log.i("LoginScreen", "response: $response")
+    if (result.resultCode == RESULT_OK) {
+      Log.i("LoginScreen", "User signed in")
+      navigation.navigateToHome()
+    } else {
+      response?.let {
+        Log.e("LoginScreen", "Error in result firebase authentication: " + "${it.error?.errorCode}")
+      }
     }
-
-    fun signIn() {
-        val gso =
-            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build()
-
-        val mGoogleSignInClient = GoogleSignIn.getClient(context, gso)
-
-        val signInIntent = mGoogleSignInClient.signInIntent
-        signInLauncher.launch(signInIntent)
-    }
-
-    fun onSignInResult(result: FirebaseAuthUIAuthenticationResult) {
-        Log.i("LoginScreen", "onSignInResult")
-        val response = result.idpResponse
-        Log.i("LoginScreen", "response: $response")
-        if (result.resultCode == RESULT_OK) {
-            Log.i("LoginScreen", "User signed in")
-            navigation.navigateToHome()
-        } else {
-            response?.let { Log.e("LoginScreen", "Error in result firebase authentication: " +
-                    "${it.error?.errorCode}") }
-        }
-    }
+  }
 }
