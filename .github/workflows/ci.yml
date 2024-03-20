@@ -175,8 +175,7 @@ jobs:
           	echo "::notice:: Coverage report not found ❌"
           fi
           
-          echo "::notice:: Total points : $points / 20
+          echo "::notice:: Total points : $points / 20"
           if [ $points -eq 20 ]; then
             echo "::notice:: Congratulations! You've obtained good coverage! 🎉🎉🎉"
           fi
-          "
