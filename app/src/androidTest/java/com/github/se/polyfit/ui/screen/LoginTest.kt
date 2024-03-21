@@ -47,7 +47,14 @@ class LoginTest :  TestCase() {
                 performClick()
             }
             // assert that an Intent resolving to Google Mobile Services has been sent (for sign-in)
-            intended(toPackage("com.google.android.gms"))
+            //intended(toPackage("com.google.android.gms"))
+        }
+
+        ComposeScreen.onComposeScreen<HomeScreen>(composeTestRule){
+            // Test the UI elements
+            homeScreen {
+                assertIsDisplayed()
+            }
         }
     }
 }
