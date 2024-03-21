@@ -31,6 +31,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
+
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.se.polyfit.LoginViewModel
 import com.github.se.polyfit.R
 import com.github.se.polyfit.ui.navigation.NavigationInterface
@@ -47,7 +49,8 @@ import javax.inject.Inject
 fun LoginScreen(goTo : () -> Unit) {
 
     // Create an instance of the Authentication class
-    val viewModel: LoginViewModel = LoginViewModel(AuthenticationCloud(LocalContext.current){if (it) goTo()})
+
+    val viewModel: LoginViewModel = hiltViewModel()
     //val authentication = AuthenticationCloud(context = LocalContext.current){if (it) navController.navigateToHome()}
     val signInLauncher =
         rememberLauncherForActivityResult(contract = FirebaseAuthUIActivityResultContract()) { res ->

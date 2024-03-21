@@ -30,18 +30,13 @@ object AuthModule {
 
     @Provides
     fun provideAuthentication(
-        goTo : () -> Unit
     ): Authentication {
         // Adjust the constructor as needed to fit your implementation
-        return MockAuthentication { isSuccess ->
-            if (isSuccess) {
-                goTo()
-            }
-        }
+        return MockAuthentication()
     }
 }
 
-class MockAuthentication @Inject constructor(private val callback: (Boolean) -> Unit) : Authentication {
+class MockAuthentication @Inject constructor() : Authentication {
     private lateinit var signInLauncher: ActivityResultLauncher<Intent>
 
     override fun setSignInLauncher(launcher: ActivityResultLauncher<Intent>) {
@@ -49,11 +44,11 @@ class MockAuthentication @Inject constructor(private val callback: (Boolean) -> 
     }
 
     override fun signIn() {
-        callback(true)
+        Log.i("LoginScreen", "signIn")
     }
 
     override fun onSignInResult(result: FirebaseAuthUIAuthenticationResult) {
-        callback(true)
+        Log.i("LoginScreen", "onSignInResult")
     }
 }
 

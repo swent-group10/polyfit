@@ -1,6 +1,7 @@
 package com.github.se.polyfit
 
 import android.content.Intent
+import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.lifecycle.ViewModel
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
@@ -14,8 +15,8 @@ import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
-//@HiltViewModel
-class LoginViewModel (
+@HiltViewModel
+class LoginViewModel @Inject constructor(
     private val authentication: Authentication
 ) : ViewModel() {
 
@@ -36,12 +37,8 @@ class LoginViewModel (
 @InstallIn(ViewModelComponent::class)
 object AuthModule {
 
-    /*@Provides
-    fun provideAuthentication(goTo : () -> Unit ): Authentication {
-        return MockAuthentication { isSuccess ->
-            if (isSuccess) {
-                goTo()
-            }
-        }
-    }*/
+    @Provides
+    fun provideAuthentication(): Authentication {
+        return MockAuthentication()
+    }
 }
