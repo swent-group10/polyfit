@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.github.se.polyfit.ui.screen.Authentication
 import com.github.se.polyfit.ui.screen.AuthenticationCloud
+import com.github.se.polyfit.ui.screen.MockAuthentication
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -45,7 +46,7 @@ object AuthModule {
     }*/
     @Provides
     fun provideAuthentication(@ApplicationContext context: Context): Authentication {
-        return AuthenticationCloud(context)
+        return MockAuthentication(context)
     }
 }
 

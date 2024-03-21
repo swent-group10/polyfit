@@ -19,7 +19,9 @@ interface Authentication {
 }
 
 
-class MockAuthentication @Inject constructor() : Authentication {
+class MockAuthentication @Inject constructor(
+    private val context: Context
+) : Authentication {
     private lateinit var signInLauncher: ActivityResultLauncher<Intent>
 
     override fun setSignInLauncher(launcher: ActivityResultLauncher<Intent>) {
@@ -28,7 +30,15 @@ class MockAuthentication @Inject constructor() : Authentication {
 
     override fun signIn(){
         Log.i("LoginScreen", "signIn")
-        //TODO create a call to onSignResult
+        //TODO Not create a real call to the google sign in
+        // Just a local call
+        val gso =
+            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build()
+
+        val mGoogleSignInClient = GoogleSignIn.getClient(context, gso)
+
+        val signInIntent = mGoogleSignInClient.signInIntent
+        signInLauncher.launch(signInIntent)
     }
 
     override fun onSignInResult(result: FirebaseAuthUIAuthenticationResult, callback : (Boolean) -> Unit) {

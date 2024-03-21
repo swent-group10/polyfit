@@ -22,18 +22,3 @@ class AuthenticationTest{
     }
 }
 
-class MockAuthentification(private val callback: (Boolean) -> Unit) : Authentication {
-    private lateinit var signInLauncher: ActivityResultLauncher<Intent>
-
-    override fun setSignInLauncher(launcher: ActivityResultLauncher<Intent>) {
-
-    }
-
-    override fun signIn() {
-
-    }
-
-    override fun onSignInResult(result: FirebaseAuthUIAuthenticationResult) {
-        callback(true)
-    }
-}

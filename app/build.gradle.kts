@@ -127,7 +127,6 @@ dependencies {
     androidTestImplementation("com.kaspersky.android-components:kaspresso:1.4.3")
     androidTestImplementation("com.kaspersky.android-components:kaspresso-allure-support:1.4.3")
     androidTestImplementation("com.kaspersky.android-components:kaspresso-compose-support:1.4.1")
-    testImplementation("org.mockito:mockito-core:3.11.2")
     testImplementation("org.mockito:mockito-inline:2.13.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.7.10")
@@ -147,6 +146,7 @@ dependencies {
     // For local unit tests
     testImplementation ("com.google.dagger:hilt-android-testing:2.51")
     kaptTest ("com.google.dagger:hilt-compiler:2.51")
+
 }
 
 // Allow references to generated code
