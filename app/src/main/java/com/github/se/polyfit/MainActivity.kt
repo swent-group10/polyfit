@@ -60,19 +60,6 @@ class MainActivity : ComponentActivity() {
 class ExampleApplication : Application() {}
 
 
-@Module
-@InstallIn(SingletonComponent::class)
-object AppModule {
-
-    /*@Singleton
-    @Provides
-    fun provideNavigation(app : Application): NavigationInterface {
-        // Real implementation provided
-        val navController = NavHostController(context = app)
-        return Navigation(navController)
-        //return MockNavigation(app)
-    }*/
-}
 
 
 

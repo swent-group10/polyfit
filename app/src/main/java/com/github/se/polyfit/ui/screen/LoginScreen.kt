@@ -54,7 +54,7 @@ fun LoginScreen(goTo : () -> Unit) {
     //val authentication = AuthenticationCloud(context = LocalContext.current){if (it) navController.navigateToHome()}
     val signInLauncher =
         rememberLauncherForActivityResult(contract = FirebaseAuthUIActivityResultContract()) { res ->
-            viewModel.onSignInResult(res)
+            viewModel.onSignInResult(res){if(it) goTo()}
         }
 
     // Set the signInLauncher in the Authentication class

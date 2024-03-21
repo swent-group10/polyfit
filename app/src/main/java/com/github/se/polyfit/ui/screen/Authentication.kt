@@ -6,18 +6,13 @@ import android.content.Intent
 import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
-import com.github.se.polyfit.ui.navigation.NavigationInterface
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
 import javax.inject.Inject
 
 interface Authentication {
     fun signIn()
-    fun onSignInResult(result: FirebaseAuthUIAuthenticationResult)
+    fun onSignInResult(result: FirebaseAuthUIAuthenticationResult, callback : (Boolean) -> Unit)
 
     fun setSignInLauncher(launcher: ActivityResultLauncher<Intent>)
 
@@ -31,18 +26,19 @@ class MockAuthentication @Inject constructor() : Authentication {
         signInLauncher = launcher
     }
 
-    override fun signIn() {
+    override fun signIn(){
         Log.i("LoginScreen", "signIn")
+        //TODO create a call to onSignResult
     }
 
-    override fun onSignInResult(result: FirebaseAuthUIAuthenticationResult) {
+    override fun onSignInResult(result: FirebaseAuthUIAuthenticationResult, callback : (Boolean) -> Unit) {
         Log.i("LoginScreen", "onSignInResult")
+        callback(true)
     }
 }
 
 class AuthenticationCloud @Inject constructor(
-    private val context: Context,
-    private val callback: (Boolean) -> Unit
+    private val context: Context
 ) : Authentication {
     private lateinit var signInLauncher: ActivityResultLauncher<Intent>
 
@@ -60,7 +56,7 @@ class AuthenticationCloud @Inject constructor(
         signInLauncher.launch(signInIntent)
     }
 
-    override fun onSignInResult(result: FirebaseAuthUIAuthenticationResult) {
+    override fun onSignInResult(result: FirebaseAuthUIAuthenticationResult, callback : (Boolean) -> Unit) {
         Log.i("LoginScreen", "onSignInResult")
         val response = result.idpResponse
         Log.i("LoginScreen", "response: $response")
