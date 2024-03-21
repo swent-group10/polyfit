@@ -38,7 +38,7 @@ class LoginTest :  TestCase() {
         }
     }
 
-    /*@Test
+    @Test
     fun googleSignInReturnsValidActivityResult() {
         ComposeScreen.onComposeScreen<LoginScreen>(composeTestRule) {
             //composeTestRule.setContent { LoginScreen(nav) }
@@ -49,5 +49,5 @@ class LoginTest :  TestCase() {
             // assert that an Intent resolving to Google Mobile Services has been sent (for sign-in)
             intended(toPackage("com.google.android.gms"))
         }
-    }*/
+    }
 }

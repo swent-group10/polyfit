@@ -15,14 +15,18 @@ import com.github.se.polyfit.ui.navigation.MockNavigation
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.navigation.NavigationInterface
 import com.github.se.polyfit.ui.navigation.Route
+import com.github.se.polyfit.ui.screen.Authentication
 import com.github.se.polyfit.ui.screen.HomeScreen
 import com.github.se.polyfit.ui.screen.LoginScreen
+import com.github.se.polyfit.ui.screen.MockAuthentication
 import com.github.se.polyfit.ui.theme.PolyfitTheme
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
+import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -39,7 +43,7 @@ class MainActivity : ComponentActivity() {
                 val navigation = Navigation(navController)
                 NavHost(navController = navigation.getController(), startDestination = Route.Register) {
                     composable(Route.Register) {
-                        LoginScreen(navigation)
+                        LoginScreen(navigation::navigateToHome)
                     }
 
                     composable(Route.Home) {
@@ -69,4 +73,6 @@ object AppModule {
         //return MockNavigation(app)
     }*/
 }
+
+
 

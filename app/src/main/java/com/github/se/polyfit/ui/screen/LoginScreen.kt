@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
+import com.github.se.polyfit.LoginViewModel
 import com.github.se.polyfit.R
 import com.github.se.polyfit.ui.navigation.NavigationInterface
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -43,21 +44,22 @@ import javax.inject.Inject
 
 
 @Composable
-fun LoginScreen(navController: NavigationInterface) {
+fun LoginScreen(goTo : () -> Unit) {
 
     // Create an instance of the Authentication class
-    val authentication = AuthenticationCloud(context = LocalContext.current){if (it) navController.navigateToHome()}
+    val viewModel: LoginViewModel = LoginViewModel(AuthenticationCloud(LocalContext.current){if (it) goTo()})
+    //val authentication = AuthenticationCloud(context = LocalContext.current){if (it) navController.navigateToHome()}
     val signInLauncher =
         rememberLauncherForActivityResult(contract = FirebaseAuthUIActivityResultContract()) { res ->
-            authentication.onSignInResult(res)
+            viewModel.onSignInResult(res)
         }
 
     // Set the signInLauncher in the Authentication class
-    authentication.setSignInLauncher(signInLauncher)
+    viewModel.setSignInLauncher(signInLauncher)
 
     // This function starts the sign-in process
     fun createSignInIntent() {
-        authentication.signIn()
+        viewModel.signIn()
     }
 
     Surface(

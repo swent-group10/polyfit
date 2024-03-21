@@ -30,12 +30,12 @@ object AuthModule {
 
     @Provides
     fun provideAuthentication(
-        navController: NavigationInterface
+        goTo : () -> Unit
     ): Authentication {
         // Adjust the constructor as needed to fit your implementation
         return MockAuthentication { isSuccess ->
             if (isSuccess) {
-                navController.navigateToHome()
+                goTo()
             }
         }
     }
