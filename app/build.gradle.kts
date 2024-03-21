@@ -6,6 +6,7 @@ plugins {
     id("com.google.gms.google-services")
     id("org.sonarqube") version "4.4.1.3373"
     id("com.google.dagger.hilt.android")
+    id("dagger.hilt.android.plugin")
     kotlin("kapt")
 }
 sonar {
@@ -105,7 +106,6 @@ dependencies {
     implementation("com.google.firebase:firebase-auth-ktx:22.3.0")
 
 
-    implementation("androidx.navigation:navigation-compose:2.5.3")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
     implementation("org.json:json:20210307")
@@ -150,8 +150,3 @@ dependencies {
 kapt {
     correctErrorTypes = true
 }
-
-hilt {
-    enableAggregatingTask = true
-}
-

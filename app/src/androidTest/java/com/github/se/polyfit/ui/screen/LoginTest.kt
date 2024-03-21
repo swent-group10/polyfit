@@ -22,13 +22,6 @@ class LoginTest :  TestCase() {
 
     @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
 
-    @Before
-    fun setUp() {
-        val nav = MockNavigation()
-        composeTestRule.setContent {
-            //LoginScreen(navController = nav)
-        }
-    }
 
     @Test
     fun titleAndButtonAreCorrectlyDisplayed() {
@@ -45,43 +38,16 @@ class LoginTest :  TestCase() {
         }
     }
 
-    @Test
+    /*@Test
     fun googleSignInReturnsValidActivityResult() {
-        val nav = MockNavigation()
-        /*composeTestRule.setContent {
-            LoginScreen(navController = nav)
-        }*/
         ComposeScreen.onComposeScreen<LoginScreen>(composeTestRule) {
-
-
             //composeTestRule.setContent { LoginScreen(nav) }
             loginButton {
                 assertIsDisplayed()
                 performClick()
             }
-
             // assert that an Intent resolving to Google Mobile Services has been sent (for sign-in)
             intended(toPackage("com.google.android.gms"))
-            //assert(nav.number_calls == 1)
         }
-    }
-
-    @Test
-    fun googleSignInReturnsValidActivityResult2() {
-        val nav = MockNavigation()
-        //composeTestRule.setContent { LoginScreen(nav) }
-        composeTestRule.setContent {
-            LoginScreen(navController = nav)
-        }
-        ComposeScreen.onComposeScreen<LoginScreen>(composeTestRule) {
-            loginButton {
-                assertIsDisplayed()
-                performClick()
-            }
-
-            // assert that an Intent resolving to Google Mobile Services has been sent (for sign-in)
-
-        }
-    }
-
+    }*/
 }

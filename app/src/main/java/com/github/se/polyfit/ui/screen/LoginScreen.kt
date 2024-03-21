@@ -32,27 +32,32 @@ import androidx.compose.ui.unit.sp
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.github.se.polyfit.R
-import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.navigation.NavigationInterface
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
+import javax.inject.Inject
+
 
 @Composable
 fun LoginScreen(navController: NavigationInterface) {
 
     // Create an instance of the Authentication class
-    val authenticationCloud = AuthenticationCloud(context = LocalContext.current){if (it) navController.navigateToHome()}
+    val authentication = AuthenticationCloud(context = LocalContext.current){if (it) navController.navigateToHome()}
     val signInLauncher =
         rememberLauncherForActivityResult(contract = FirebaseAuthUIActivityResultContract()) { res ->
-            authenticationCloud.onSignInResult(res)
+            authentication.onSignInResult(res)
         }
 
     // Set the signInLauncher in the Authentication class
-    authenticationCloud.setSignInLauncher(signInLauncher)
+    authentication.setSignInLauncher(signInLauncher)
 
     // This function starts the sign-in process
     fun createSignInIntent() {
-        authenticationCloud.signIn()
+        authentication.signIn()
     }
 
     Surface(
@@ -93,50 +98,6 @@ fun LoginScreen(navController: NavigationInterface) {
                 Text(text = "Sign in with Google", modifier = Modifier.padding(start = 16.dp))
             }
             Spacer(Modifier.weight(0.3f))
-        }
-    }
-}
-
-
-interface Authentication {
-    fun signIn()
-    fun onSignInResult(result: FirebaseAuthUIAuthenticationResult)
-
-    fun setSignInLauncher(launcher: ActivityResultLauncher<Intent>)
-
-}
-class AuthenticationCloud(
-    private val context: Context,
-    private val callback: (Boolean) -> Unit
-) : Authentication {
-    private lateinit var signInLauncher: ActivityResultLauncher<Intent>
-
-    override fun setSignInLauncher(launcher: ActivityResultLauncher<Intent>) {
-        signInLauncher = launcher
-    }
-
-    override fun signIn() {
-        val gso =
-            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build()
-
-        val mGoogleSignInClient = GoogleSignIn.getClient(context, gso)
-
-        val signInIntent = mGoogleSignInClient.signInIntent
-        signInLauncher.launch(signInIntent)
-    }
-
-    override fun onSignInResult(result: FirebaseAuthUIAuthenticationResult) {
-        Log.i("LoginScreen", "onSignInResult")
-        val response = result.idpResponse
-        Log.i("LoginScreen", "response: $response")
-        if (result.resultCode == RESULT_OK) {
-            Log.i("LoginScreen", "User signed in")
-            callback(true)
-        } else {
-            Log.e("LoginScreen", "Error in result: ${result.resultCode}")
-            response?.let { Log.e("LoginScreen", "Error in result firebase authentication: " +
-                    "${it.error?.errorCode}") }
-            callback(false)
         }
     }
 }

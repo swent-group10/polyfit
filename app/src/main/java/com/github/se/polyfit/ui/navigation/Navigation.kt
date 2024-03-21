@@ -1,6 +1,8 @@
 package com.github.se.polyfit.ui.navigation
 
+import android.content.Context
 import android.util.Log
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import javax.inject.Inject
 
@@ -9,7 +11,8 @@ interface NavigationInterface {
     fun getController(): NavHostController?
 }
 
-class Navigation @Inject constructor(private val navHostController: NavHostController) : NavigationInterface {
+class Navigation (private val navHostController: NavHostController) : NavigationInterface {
+    var navigationCall = 0
     override fun navigateToHome() {
         navigateTo(Route.Home)
     }
@@ -20,11 +23,12 @@ class Navigation @Inject constructor(private val navHostController: NavHostContr
 
     private fun navigateTo(route: String) {
         Log.i("Navigation", "Navigating to $route")
+        navigationCall++
         navHostController.navigate(route)
     }
 }
 
-class MockNavigation  @Inject constructor() : NavigationInterface {
+class MockNavigation (val context: Context) : NavigationInterface {
     var number_calls = 0
 
     fun get_number_calls(): Int {
@@ -35,7 +39,7 @@ class MockNavigation  @Inject constructor() : NavigationInterface {
         Log.i("Navigation", "Mock Navigating to home")
     }
 
-    override fun getController(): NavHostController? {
-        return null
+    override fun getController(): NavHostController {
+        return NavHostController(context)
     }
 }
