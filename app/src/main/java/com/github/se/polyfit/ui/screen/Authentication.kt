@@ -24,18 +24,6 @@ interface Authentication {
 }
 
 
-@Module
-@InstallIn(ActivityComponent::class)
-object AuthModule {
-
-    @Provides
-    fun provideAuthentication(
-    ): Authentication {
-        // Adjust the constructor as needed to fit your implementation
-        return MockAuthentication()
-    }
-}
-
 class MockAuthentication @Inject constructor() : Authentication {
     private lateinit var signInLauncher: ActivityResultLauncher<Intent>
 
