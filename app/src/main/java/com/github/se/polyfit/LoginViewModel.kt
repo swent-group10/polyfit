@@ -38,18 +38,8 @@ class LoginViewModel @Inject constructor(
 @Module
 @InstallIn(ViewModelComponent::class)
 object AuthModule {
-
-    // To call the mock authentication
-    /*@Provides
-    fun provideAuthentication(): Authentication {
-        return MockAuthentication()
-    }*/
     @Provides
     fun provideAuthentication(@ApplicationContext context: Context): Authentication {
-        return MockAuthentication(context)
+        return AuthenticationCloud(context)
     }
-}
-
-private fun random_function_bool_to_unit (b :Boolean){
-    Log.i("LoginViewModel", "onSignInResult $b")
 }
