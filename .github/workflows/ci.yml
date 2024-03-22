@@ -120,6 +120,12 @@ jobs:
           disable-animations: true
           script: ./gradlew connectedCheck --parallel --build-cache
 
+      # Run the UI test in androidTest folder
+      - name: Run UI tests
+        id: ui-tests
+        run: |
+          ./gradlew connectedAndroidTest --parallel --build-cache
+
       # This step generates the coverage report
       - name: Generate coverage
         id: coverage
