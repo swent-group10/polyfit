@@ -17,26 +17,20 @@ import dagger.hilt.android.HiltAndroidApp
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
 
-        setContent {
-            PolyfitTheme {
-                val navController = rememberNavController()
-                val navigation = Navigation(navController)
-                NavHost(
-                    navController = navigation.getController(),
-                    startDestination = Route.Register
-                ) {
-                    composable(Route.Register) {
-                        LoginScreen(navigation::navigateToHome)
-                    }
-                    composable(Route.Home) { HomeScreen() }
-                }
-            }
+    setContent {
+      PolyfitTheme {
+        val navController = rememberNavController()
+        val navigation = Navigation(navController)
+        NavHost(navController = navigation.getController(), startDestination = Route.Register) {
+          composable(Route.Register) { LoginScreen(navigation::navigateToHome) }
+          composable(Route.Home) { HomeScreen() }
         }
+      }
     }
+  }
 }
 
-@HiltAndroidApp
-class ExampleApplication : Application() {}
+@HiltAndroidApp class ExampleApplication : Application() {}

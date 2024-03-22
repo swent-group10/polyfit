@@ -11,45 +11,41 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class LoginTest :  TestCase() {
+class LoginTest : TestCase() {
 
+  @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
 
-    @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
+  @Test
+  fun titleAndButtonAreCorrectlyDisplayed() {
+    ComposeScreen.onComposeScreen<LoginScreen>(composeTestRule) {
+      // Test the UI elements
+      loginTitle {
+        assertIsDisplayed()
+        assertTextEquals("Welcome")
+      }
+      loginButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+      }
+    }
+  }
 
-
-    @Test
-    fun titleAndButtonAreCorrectlyDisplayed() {
-        ComposeScreen.onComposeScreen<LoginScreen>(composeTestRule) {
-            // Test the UI elements
-            loginTitle {
-                assertIsDisplayed()
-                assertTextEquals("Welcome")
-            }
-            loginButton {
-                assertIsDisplayed()
-                assertHasClickAction()
-            }
-        }
+  @Ignore("This test is not working, It need a mock authentication service to work.")
+  @Test
+  fun googleSignInReturnsValidActivityResult() {
+    ComposeScreen.onComposeScreen<LoginScreen>(composeTestRule) {
+      // composeTestRule.setContent { LoginScreen(nav) }
+      loginButton {
+        assertIsDisplayed()
+        performClick()
+      }
+      // assert that an Intent resolving to Google Mobile Services has been sent (for sign-in)
+      // intended(toPackage("com.google.android.gms"))
     }
 
-    @Ignore("This test is not working, It need a mock authentication service to work.")
-    @Test
-    fun googleSignInReturnsValidActivityResult() {
-        ComposeScreen.onComposeScreen<LoginScreen>(composeTestRule) {
-            //composeTestRule.setContent { LoginScreen(nav) }
-            loginButton {
-                assertIsDisplayed()
-                performClick()
-            }
-            // assert that an Intent resolving to Google Mobile Services has been sent (for sign-in)
-            //intended(toPackage("com.google.android.gms"))
-        }
-
-        ComposeScreen.onComposeScreen<HomeScreen>(composeTestRule){
-            // Test the UI elements
-            homeScreen {
-                assertIsDisplayed()
-            }
-        }
+    ComposeScreen.onComposeScreen<HomeScreen>(composeTestRule) {
+      // Test the UI elements
+      homeScreen { assertIsDisplayed() }
     }
+  }
 }

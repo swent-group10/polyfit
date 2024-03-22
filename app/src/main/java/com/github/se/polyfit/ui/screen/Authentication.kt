@@ -11,73 +11,75 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import javax.inject.Inject
 
 interface Authentication {
-    fun signIn()
-    fun onSignInResult(result: FirebaseAuthUIAuthenticationResult, callback : (Boolean) -> Unit)
+  fun signIn()
 
-    fun setSignInLauncher(launcher: ActivityResultLauncher<Intent>)
+  fun onSignInResult(result: FirebaseAuthUIAuthenticationResult, callback: (Boolean) -> Unit)
 
+  fun setSignInLauncher(launcher: ActivityResultLauncher<Intent>)
 }
 
+class MockAuthentication @Inject constructor(private val context: Context) : Authentication {
+  private lateinit var signInLauncher: ActivityResultLauncher<Intent>
 
-class MockAuthentication @Inject constructor(
-    private val context: Context
-) : Authentication {
-    private lateinit var signInLauncher: ActivityResultLauncher<Intent>
+  override fun setSignInLauncher(launcher: ActivityResultLauncher<Intent>) {
+    signInLauncher = launcher
+  }
 
-    override fun setSignInLauncher(launcher: ActivityResultLauncher<Intent>) {
-        signInLauncher = launcher
-    }
+  override fun signIn() {
+    Log.i("LoginScreen", "signIn")
+    // TODO Not create a real call to the google sign in
+    // Just a local call
+    val gso =
+        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build()
 
-    override fun signIn(){
-        Log.i("LoginScreen", "signIn")
-        //TODO Not create a real call to the google sign in
-        // Just a local call
-        val gso =
-            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build()
+    val mGoogleSignInClient = GoogleSignIn.getClient(context, gso)
 
-        val mGoogleSignInClient = GoogleSignIn.getClient(context, gso)
+    val signInIntent = mGoogleSignInClient.signInIntent
+    signInLauncher.launch(signInIntent)
+  }
 
-        val signInIntent = mGoogleSignInClient.signInIntent
-        signInLauncher.launch(signInIntent)
-    }
-
-    override fun onSignInResult(result: FirebaseAuthUIAuthenticationResult, callback : (Boolean) -> Unit) {
-        Log.i("LoginScreen", "onSignInResult")
-        callback(true)
-    }
+  override fun onSignInResult(
+      result: FirebaseAuthUIAuthenticationResult,
+      callback: (Boolean) -> Unit
+  ) {
+    Log.i("LoginScreen", "onSignInResult")
+    callback(true)
+  }
 }
 
-class AuthenticationCloud @Inject constructor(
-    private val context: Context
-) : Authentication {
-    private lateinit var signInLauncher: ActivityResultLauncher<Intent>
+class AuthenticationCloud @Inject constructor(private val context: Context) : Authentication {
+  private lateinit var signInLauncher: ActivityResultLauncher<Intent>
 
-    override fun setSignInLauncher(launcher: ActivityResultLauncher<Intent>) {
-        signInLauncher = launcher
+  override fun setSignInLauncher(launcher: ActivityResultLauncher<Intent>) {
+    signInLauncher = launcher
+  }
+
+  override fun signIn() {
+    val gso =
+        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build()
+
+    val mGoogleSignInClient = GoogleSignIn.getClient(context, gso)
+
+    val signInIntent = mGoogleSignInClient.signInIntent
+    signInLauncher.launch(signInIntent)
+  }
+
+  override fun onSignInResult(
+      result: FirebaseAuthUIAuthenticationResult,
+      callback: (Boolean) -> Unit
+  ) {
+    Log.i("LoginScreen", "onSignInResult")
+    val response = result.idpResponse
+    Log.i("LoginScreen", "response: $response")
+    if (result.resultCode == Activity.RESULT_OK) {
+      Log.i("LoginScreen", "User signed in")
+      callback(true)
+    } else {
+      Log.e("LoginScreen", "Error in result: ${result.resultCode}")
+      response?.let {
+        Log.e("LoginScreen", "Error in result firebase authentication: " + "${it.error?.errorCode}")
+      }
+      callback(false)
     }
-
-    override fun signIn() {
-        val gso =
-            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build()
-
-        val mGoogleSignInClient = GoogleSignIn.getClient(context, gso)
-
-        val signInIntent = mGoogleSignInClient.signInIntent
-        signInLauncher.launch(signInIntent)
-    }
-
-    override fun onSignInResult(result: FirebaseAuthUIAuthenticationResult, callback : (Boolean) -> Unit) {
-        Log.i("LoginScreen", "onSignInResult")
-        val response = result.idpResponse
-        Log.i("LoginScreen", "response: $response")
-        if (result.resultCode == Activity.RESULT_OK) {
-            Log.i("LoginScreen", "User signed in")
-            callback(true)
-        } else {
-            Log.e("LoginScreen", "Error in result: ${result.resultCode}")
-            response?.let { Log.e("LoginScreen", "Error in result firebase authentication: " +
-                    "${it.error?.errorCode}") }
-            callback(false)
-        }
-    }
+  }
 }

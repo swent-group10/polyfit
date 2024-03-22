@@ -6,6 +6,5 @@ import androidx.compose.ui.platform.testTag
 
 @Composable
 fun HomeScreen() {
-    Text("Home Screen",
-        modifier = androidx.compose.ui.Modifier.testTag("HomeScreen") )
+  Text("Home Screen", modifier = androidx.compose.ui.Modifier.testTag("HomeScreen"))
 }

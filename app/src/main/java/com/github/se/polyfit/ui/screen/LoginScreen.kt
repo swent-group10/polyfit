@@ -29,25 +29,25 @@ import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.github.se.polyfit.LoginViewModel
 import com.github.se.polyfit.R
 
-
 @Composable
-fun LoginScreen(goTo : () -> Unit) {
-    // Create an instance of the Authentication class
+fun LoginScreen(goTo: () -> Unit) {
+  // Create an instance of the Authentication class
 
-    val viewModel: LoginViewModel = hiltViewModel()
-    //val authentication = AuthenticationCloud(context = LocalContext.current){if (it) navController.navigateToHome()}
-    val signInLauncher =
-        rememberLauncherForActivityResult(contract = FirebaseAuthUIActivityResultContract()) { res ->
-            viewModel.onSignInResult(res){if(it) goTo()}
-        }
+  val viewModel: LoginViewModel = hiltViewModel()
+  // val authentication = AuthenticationCloud(context = LocalContext.current){if (it)
+  // navController.navigateToHome()}
+  val signInLauncher =
+      rememberLauncherForActivityResult(contract = FirebaseAuthUIActivityResultContract()) { res ->
+        viewModel.onSignInResult(res) { if (it) goTo() }
+      }
 
-    // Set the signInLauncher in the Authentication class
-    viewModel.setSignInLauncher(signInLauncher)
+  // Set the signInLauncher in the Authentication class
+  viewModel.setSignInLauncher(signInLauncher)
 
-    // This function starts the sign-in process
-    fun createSignInIntent() {
-        viewModel.signIn()
-    }
+  // This function starts the sign-in process
+  fun createSignInIntent() {
+    viewModel.signIn()
+  }
 
   Surface(
       modifier = Modifier.fillMaxSize().testTag("LoginScreen"),
