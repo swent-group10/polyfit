@@ -8,6 +8,7 @@ plugins {
     id("com.google.dagger.hilt.android")
     id("dagger.hilt.android.plugin")
     kotlin("kapt")
+    id("com.ncorti.ktfmt.gradle") version "0.16.0"
 }
 sonar {
     properties {
@@ -40,6 +41,11 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
+        }
+        debug {
+            enableUnitTestCoverage = true
+            enableAndroidTestCoverage = true
         }
     }
     compileOptions {
@@ -58,8 +64,7 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
-            merges += "META-INF/LICENSE.md"
-            merges += "META-INF/LICENSE-notice.md"
+            excludes += "/META-INF/*.md"
         }
     }
     testOptions {
@@ -70,8 +75,6 @@ android {
         }
     }
 }
-
-
 
 dependencies {
 
@@ -152,4 +155,33 @@ dependencies {
 // Allow references to generated code
 kapt {
     correctErrorTypes = true
+}
+
+tasks.register("jacocoTestReport", JacocoReport::class) {
+    mustRunAfter("testDebugUnitTest", "connectedDebugAndroidTest")
+
+    reports {
+        xml.required = true
+        html.required = true
+    }
+
+    val fileFilter = listOf(
+        "**/R.class",
+        "**/R$*.class",
+        "**/BuildConfig.*",
+        "**/Manifest*.*",
+        "**/*Test*.*",
+        "android/**/*.*",
+    )
+    val debugTree = fileTree("${project.buildDir}/tmp/kotlin-classes/debug") {
+        exclude(fileFilter)
+    }
+    val mainSrc = "${project.projectDir}/src/main/java"
+
+    sourceDirectories.setFrom(files(mainSrc))
+    classDirectories.setFrom(files(debugTree))
+    executionData.setFrom(fileTree(project.buildDir) {
+        include("outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec")
+        include("outputs/code_coverage/debugAndroidTest/connected/*/coverage.ec")
+    })
 }

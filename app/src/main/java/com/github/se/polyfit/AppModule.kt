@@ -1,7 +1,5 @@
 package com.github.se.polyfit
 
-import com.github.se.polyfit.ui.navigation.MockNavigation
-import com.github.se.polyfit.ui.navigation.NavigationInterface
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
