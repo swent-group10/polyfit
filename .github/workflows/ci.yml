@@ -15,19 +15,15 @@ on:
 jobs:
   ci:
     name: CI
-    # Execute the CI on the course's runners
     runs-on: ubuntu-latest
 
     steps:
-      # First step : Checkout the repository on the runner
       - name: Checkout
         uses: actions/checkout@v4
         with:
           submodules: recursive
-          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of Sonar analysis (if we use Sonar Later)
+          fetch-depth: 0
 
-
-      # Kernel-based Virtual Machine (KVM) is an open source virtualization technology built into Linux. Enabling it allows the Android emulator to run faster.
       - name: Enable KVM group perms
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
@@ -40,156 +36,74 @@ jobs:
           distribution: "temurin"
           java-version: "17"
 
-      # To Load a fake google map api key for the test
-
-      - name: Loading Local.properties (dummy)
+      - name: Loading Local.properties (dummy) & Grant execute permission for gradlew
         run: |
           echo MAPS_API_KEY=\"0\" > ./local.properties
-      - name: Grant execute permission for gradlew
-        run: |
           chmod +x ./gradlew
 
-      # Caching is a very useful part of a CI, as a workflow is executed in a clean environment every time,
-      # this means that one would need to re-download and re-process gradle files for every run. Which is very time consuming.
-      #
-      # To avoid that, we cache the the gradle folder to reuse it later.
       - name: Gradle cache
         uses: gradle/actions/setup-gradle@v3
 
-      # Cache the Emulator, if the cache does not hit, create the emulator
       - name: AVD cache
         uses: actions/cache@v4
-        id: avd-cache
         with:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
           key: avd-34
 
-      - name: create AVD and generate snapshot for caching
+      - name: Create AVD and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 34
           target: google_apis
           arch: x86_64
-          force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          disable-animations: false
           script: echo "Generated AVD snapshot for caching."
 
-      - name: Grant execute permission for gradlew
-        run: |
-          chmod +x ./gradlew
-
-      # Check formatting
       - name: KTFmt Check
-        run: |
-          ./gradlew ktfmtCheck
+        run: ./gradlew ktfmtCheck
 
-      # Creating and Importing google-services.json
       - name: Create Google Services JSON File
-        env:
-          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
-        run: echo $GOOGLE_SERVICES_JSON | base64 -di > ./app/google-services.json
+        run: echo ${{ secrets.GOOGLE_SERVICES_JSON }} | base64 -di > ./app/google-services.json
 
-      # This step runs gradle commands to build the application
       - name: Assemble
-        id: build
-        run: |
-          # To run the CI with debug information, add --info
-          ./gradlew assemble lint --parallel --build-cache
+        run: ./gradlew assemble lint --parallel --build-cache
 
-      # Run Unit tests
       - name: Run tests
-        id: unit-tests
-        run: |
-          # To run the CI with debug information, add --info
-          ./gradlew check --parallel --build-cache
-          
+        run: ./gradlew check --parallel --build-cache
 
-      - name: Assemble tests
-        id: compile-tests
-        run: |
-          ./gradlew compileDebugAndroidTestKotlin --parallel --build-cache
-      
-      
-
-      # Run connected tests on the emulator
-      - name: run tests
-        id: instrumentation-tests
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 34
-          target: google_apis
-          arch: x86_64
-          force-avd-creation: false
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          disable-animations: true
-          script: ./gradlew connectedCheck --parallel --build-cache
-
-      # Run the UI test in androidTest folder
       - name: Run UI tests
-        id: ui-tests
-        run: |
-          ./gradlew connectedAndroidTest --parallel --build-cache
+        run: ./gradlew connectedAndroidTest --parallel --build-cache
 
-      # This step generates the coverage report
       - name: Generate coverage
-        id: coverage
-        run: |
-          ./gradlew jacocoTestReport
+        run: ./gradlew jacocoTestReport
 
-      - name: Create empty result file
-        run: echo -n "" > grading-result.csv
-
-
-      # Upload the various reports to sonar
       - name: Upload report to SonarCloud
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: ./gradlew sonar --parallel --build-cache
 
-
-      # Assemble test
       - name: Assemble tests
-        if: always()
-        id: compile-tests
-        run: |
-          ./gradlew compileDebugAndroidTestKotlin --parallel --build-cache
+        run: ./gradlew compileDebugAndroidTestKotlin --parallel --build-cache
 
-
-      # This step retrieve all useful data from the tests
       - name: Retrieve results
         run: |
-          sudo apt-get install -y libxml2-utils 
-          # Coverage results
-          # Path to your Jacoco XML report
+          sudo apt-get install -y libxml2-utils
           JACOCO_XML_PATH="app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
-          
           if [ -f $JACOCO_XML_PATH ]; then
-          	# Using xmllint to parse the XML, extract the line coverage attributes (missed and covered), then sum them up
-          	TOTAL_MISSED_INSTRUCTIONS=$(xmllint --xpath 'sum(//report/counter[@type="INSTRUCTION"]/@missed)' $JACOCO_XML_PATH)
-          	TOTAL_COVERED_INSTRUCTIONS=$(xmllint --xpath 'sum(//report/counter[@type="INSTRUCTION"]/@covered)' $JACOCO_XML_PATH)
-          
-          	# Calculate the total lines and coverage percentage
-          	TOTAL_INSTRUCTIONS=$((TOTAL_MISSED_INSTRUCTIONS + TOTAL_COVERED_INSTRUCTIONS))
-          	COVERAGE_PERCENTAGE=$(awk "BEGIN {printf \"%.2f\", ($TOTAL_COVERED_INSTRUCTIONS/$TOTAL_INSTRUCTIONS)*100}")
-          	echo "coverage,$COVERAGE_PERCENTAGE" >> grading-result.csv
-          
-          	if [ 1 -eq "$(echo "$COVERAGE_PERCENTAGE >= 80.0" | bc )" ]; then
-          		points=$((points+20))
-          		echo "::notice:: Coverage : $COVERAGE_PERCENTAGE% > 80% ✅"
-          	else
-          		echo "::notice:: Coverage : $COVERAGE_PERCENTAGE% < 80% ❌"
-          	fi
+            TOTAL_MISSED_INSTRUCTIONS=$(xmllint --xpath 'sum(//report/counter[@type="INSTRUCTION"]/@missed)' $JACOCO_XML_PATH)
+            TOTAL_COVERED_INSTRUCTIONS=$(xmllint --xpath 'sum(//report/counter[@type="INSTRUCTION"]/@covered)' $JACOCO_XML_PATH)
+            TOTAL_INSTRUCTIONS=$((TOTAL_MISSED_INSTRUCTIONS + TOTAL_COVERED_INSTRUCTIONS))
+            COVERAGE_PERCENTAGE=$(awk "BEGIN {printf \"%.2f\", ($TOTAL_COVERED_INSTRUCTIONS/$TOTAL_INSTRUCTIONS)*100}")
+            echo "coverage,$COVERAGE_PERCENTAGE" >> grading-result.csv
+            if [ 1 -eq "$(echo "$COVERAGE_PERCENTAGE >= 80.0" | bc )" ]; then
+              echo "::notice:: Coverage : $COVERAGE_PERCENTAGE% > 80% ✅"
+            else
+              echo "::error:: Coverage : $COVERAGE_PERCENTAGE% < 80% ❌"
+              exit 1
+            fi
           else
-          	echo "coverage,0" >> grading-result.csv
-          	echo "::notice:: Coverage report not found ❌"
-          fi
-          
-          echo "::notice:: Total points : $points / 20"
-          if [ $points -eq 20 ]; then
-            echo "::notice:: Congratulations! You've obtained good coverage! 🎉🎉🎉"
+            echo "coverage,0" >> grading-result.csv
+            echo "::error:: Coverage report not found ❌"
+            exit 1
           fi
