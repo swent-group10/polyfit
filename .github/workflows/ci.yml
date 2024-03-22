@@ -106,6 +106,14 @@ jobs:
         run: |
           # To run the CI with debug information, add --info
           ./gradlew check --parallel --build-cache
+          
+
+      - name: Assemble tests
+        id: compile-tests
+        run: |
+          ./gradlew compileDebugAndroidTestKotlin --parallel --build-cache
+      
+      
 
       # Run connected tests on the emulator
       - name: run tests
