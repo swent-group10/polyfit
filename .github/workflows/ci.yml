@@ -167,8 +167,7 @@ jobs:
           points=0
           
           # Loop over the indices of the arrays
-          for ((i=0; i<${#test_name      # Run the UI test in androidTest folder
-          s[@]}; i++)); do
+          for ((i=0; i<${#test_names[@]}; i++)); do
               name="${test_names[$i]}"
               classname="${test_classes[$i]}"
           
