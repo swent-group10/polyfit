@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
-import com.github.se.polyfit.LoginViewModel
+import com.github.se.polyfit.ui.ViewModel.LoginViewModel
 import com.github.se.polyfit.R
 
 @Composable
@@ -38,7 +38,7 @@ fun LoginScreen(goTo: () -> Unit) {
   // navController.navigateToHome()}
   val signInLauncher =
       rememberLauncherForActivityResult(contract = FirebaseAuthUIActivityResultContract()) { res ->
-        viewModel.onSignInResult(res) { if (it) goTo() }
+        viewModel.onSignInResult(res) { if (it) goTo() else Log.d("LoginScreen", "Sign in failed")}
       }
 
   // Set the signInLauncher in the Authentication class

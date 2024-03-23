@@ -4,7 +4,9 @@ import android.util.Log
 import androidx.navigation.NavHostController
 
 class Navigation(private val navHostController: NavHostController) {
-
+  fun goBack() {
+    navHostController.popBackStack()
+  }
   fun getController(): NavHostController {
     return navHostController
   }

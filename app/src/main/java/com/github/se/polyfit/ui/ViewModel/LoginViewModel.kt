@@ -1,18 +1,11 @@
-package com.github.se.polyfit
+package com.github.se.polyfit.ui.ViewModel
 
-import android.content.Context
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.lifecycle.ViewModel
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
-import com.github.se.polyfit.ui.screen.Authentication
-import com.github.se.polyfit.ui.screen.AuthenticationCloud
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
+import com.github.se.polyfit.ui.Utils.Authentication
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -31,11 +24,3 @@ class LoginViewModel @Inject constructor(private val authentication: Authenticat
   }
 }
 
-@Module
-@InstallIn(ViewModelComponent::class)
-object AuthModule {
-  @Provides
-  fun provideAuthentication(@ApplicationContext context: Context): Authentication {
-    return AuthenticationCloud(context)
-  }
-}

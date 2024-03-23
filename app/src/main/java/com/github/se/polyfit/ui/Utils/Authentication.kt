@@ -1,4 +1,4 @@
-package com.github.se.polyfit.ui.screen
+package com.github.se.polyfit.ui.Utils
 
 import android.app.Activity
 import android.content.Context
