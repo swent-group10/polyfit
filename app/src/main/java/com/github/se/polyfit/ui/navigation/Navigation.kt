@@ -7,6 +7,7 @@ class Navigation(private val navHostController: NavHostController) {
   fun goBack() {
     navHostController.popBackStack()
   }
+
   fun getController(): NavHostController {
     return navHostController
   }

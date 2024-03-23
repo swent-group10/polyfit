@@ -23,4 +23,3 @@ class LoginViewModel @Inject constructor(private val authentication: Authenticat
     authentication.onSignInResult(result, callback)
   }
 }
-
