@@ -147,6 +147,11 @@ jobs:
       - name: Create empty result file
         run: echo -n "" > grading-result.csv
 
+      - name: Install xmllint
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libxml2-utils
+
       # This step retrieve all useful data from the tests
       - name: Retrieve results
         run: |
