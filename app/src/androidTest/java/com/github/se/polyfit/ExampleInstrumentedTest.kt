@@ -54,6 +54,7 @@ class ExampleInstrumentedTest {
       homeScreen { assertIsDisplayed() }
     }
   }
+
   @Test
   fun useAppContext() {
     // Context of the app under test.
