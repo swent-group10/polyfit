@@ -1,11 +1,13 @@
 package com.github.se.polyfit.model.meal
 
 import android.util.Log
+import com.github.se.polyfit.model.meal.Meal.Companion.deserializeMeal
+import com.github.se.polyfit.model.meal.Meal.Companion.serializeMeal
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestore
 
-class MealsFirebaseConnection {
-    private var db: FirebaseFirestore = FirebaseFirestore.getInstance()
+class MealsFirebaseConnection(private val db: FirebaseFirestore = FirebaseFirestore.getInstance()) {
+
     private val userCollection by lazy { db.collection("users") }
 
 
@@ -16,7 +18,7 @@ class MealsFirebaseConnection {
                 Log.e("FirebaseConnection", "Error adding document", e)
             }
             .addOnSuccessListener { documentReference ->
-                Log.d(
+                Log.e(
                     "FirebaseConnection",
                     "DocumentSnapshot added with ID: ${documentReference.id}"
                 )
@@ -25,60 +27,31 @@ class MealsFirebaseConnection {
             }
     }
 
-
-    // the uid serves as the document id
-    fun getMeal(uid: String): Task<Meal> {
-        // Implement this function
-    }
-
-    suspend fun getAllMeals(): List<Meal> {
-        // Implement this function
+    fun getAllMeals(uid: String): Task<List<Meal>> {
+        val task = userCollection.document(uid).collection("meals").get()
+        val result = task.continueWith { task ->
+            if (task.isSuccessful) {
+                val meals = task.result?.documents?.map { deserializeMeal(it.data!!) }
+                meals ?: emptyList<Meal>()
+            } else {
+                emptyList<Meal>()
+            }
+        }
+        return result
     }
 
     fun updateMeal(
-        // Add parameters here
+        uid: String,
+        meal: Meal
     ): Task<Void> {
         // Implement this function
+        return userCollection.document(uid).collection("meals").document(meal.uid)
+            .set(serializeMeal(meal))
     }
 
-    private fun serializeMeal(data: Meal): Map<String, Any> {
-        val map = mutableMapOf<String, Any>()
-
-        // Convert each property manually
-        map["uid"] = data.uid
-        map["occasion"] = data.occasion
-        map["name"] = data.name
-        map["calories"] = data.calories
-        map["protein"] = data.protein
-        map["carbohydrates"] = data.carbohydrates
-        map["fat"] = data.fat
-
-        return map
-    }
-
-    private fun deserializeMeal(data: Map<String, Any>): Meal {
-        // Convert each property manually
-        val uid = data["uid"] as String
-        val occasion = data["occasion"] as MealOccasion
-        val name = data["name"] as String
-        val calories = data["calories"] as Double
-        val protein = data["protein"] as Double
-        val carbohydrates = data["carbohydrates"] as Double
-        val fat = data["fat"] as Double
-
-        return Meal(
-            uid,
-            occasion,
-            name,
-            calories,
-            protein,
-            carbohydrates,
-            fat
-        )
-    }
 
     fun removeMeal(uid: String): Task<Void> {
-        return collection.document(uid).delete().addOnFailureListener { e ->
+        return userCollection.document(uid).delete().addOnFailureListener { e ->
             Log.e("FirebaseConnection", "Error deleting document", e)
         }
     }

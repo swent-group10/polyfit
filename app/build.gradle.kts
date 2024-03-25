@@ -91,6 +91,13 @@ android {
         androidTestImplementation("androidx.compose.ui:ui-test-junit4")
         debugImplementation("androidx.compose.ui:ui-tooling")
         debugImplementation("androidx.compose.ui:ui-test-manifest")
+        testImplementation ("org.mockito:mockito-core:3.12.4")
+
+
+
+        // required if you want to use Mockito for unit tests
+        // required if you want to use Mockito for Android tests
+        androidTestImplementation("org.mockito:mockito-android:2.24.5")
 
         // Firebase
         implementation(platform("com.google.firebase:firebase-bom:32.7.2"))
