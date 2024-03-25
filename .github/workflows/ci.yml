@@ -26,6 +26,11 @@ jobs:
           submodules: recursive
           fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of Sonar analysis (if we use Sonar Later)
 
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
 
       # Kernel-based Virtual Machine (KVM) is an open source virtualization technology built into Linux. Enabling it allows the Android emulator to run faster.
       - name: Enable KVM group perms
@@ -34,11 +39,7 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
-      - name: Setup JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: "temurin"
-          java-version: "17"
+      
 
       # To Load a fake google map api key for the test
 
@@ -101,14 +102,22 @@ jobs:
           ./gradlew assemble lint --parallel --build-cache
 
       # Run Unit tests
-      - name: Run tests
+      - name: Unit tests
         id: unit-tests
         run: |
           # To run the CI with debug information, add --info
           ./gradlew check --parallel --build-cache
+          
+
+      # Compile tests
+      - name: Compile the tests
+        id: compile-tests
+        run: |
+          ./gradlew compileDebugAndroidTestKotlin --parallel --build-cache
+                
 
       # Run connected tests on the emulator
-      - name: run tests
+      - name: Connected tests
         id: instrumentation-tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -120,15 +129,12 @@ jobs:
           disable-animations: true
           script: ./gradlew connectedCheck --parallel --build-cache
 
+
       # This step generates the coverage report
       - name: Generate coverage
         id: coverage
         run: |
           ./gradlew jacocoTestReport
-
-      - name: Create empty result file
-        run: echo -n "" > grading-result.csv
-
 
       # Upload the various reports to sonar
       - name: Upload report to SonarCloud
@@ -138,44 +144,41 @@ jobs:
         run: ./gradlew sonar --parallel --build-cache
 
 
-      # Assemble test
-      - name: Assemble tests
-        if: always()
-        id: compile-tests
-        run: |
-          ./gradlew compileDebugAndroidTestKotlin --parallel --build-cache
+      - name: Create empty result file
+        run: echo -n "" > grading-result.csv
 
+      - name: Install xmllint
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libxml2-utils
 
       # This step retrieve all useful data from the tests
-      - name: Retrieve results
+      - name: Coverage results
         run: |
-          sudo apt-get install -y libxml2-utils 
+  
           # Coverage results
           # Path to your Jacoco XML report
           JACOCO_XML_PATH="app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
-          
+  
           if [ -f $JACOCO_XML_PATH ]; then
-          	# Using xmllint to parse the XML, extract the line coverage attributes (missed and covered), then sum them up
-          	TOTAL_MISSED_INSTRUCTIONS=$(xmllint --xpath 'sum(//report/counter[@type="INSTRUCTION"]/@missed)' $JACOCO_XML_PATH)
-          	TOTAL_COVERED_INSTRUCTIONS=$(xmllint --xpath 'sum(//report/counter[@type="INSTRUCTION"]/@covered)' $JACOCO_XML_PATH)
-          
-          	# Calculate the total lines and coverage percentage
-          	TOTAL_INSTRUCTIONS=$((TOTAL_MISSED_INSTRUCTIONS + TOTAL_COVERED_INSTRUCTIONS))
-          	COVERAGE_PERCENTAGE=$(awk "BEGIN {printf \"%.2f\", ($TOTAL_COVERED_INSTRUCTIONS/$TOTAL_INSTRUCTIONS)*100}")
-          	echo "coverage,$COVERAGE_PERCENTAGE" >> grading-result.csv
-          
-          	if [ 1 -eq "$(echo "$COVERAGE_PERCENTAGE >= 80.0" | bc )" ]; then
-          		points=$((points+20))
-          		echo "::notice:: Coverage : $COVERAGE_PERCENTAGE% > 80% ✅"
-          	else
-          		echo "::notice:: Coverage : $COVERAGE_PERCENTAGE% < 80% ❌"
-          	fi
+              # Using xmllint to parse the XML, extract the line coverage attributes (missed and covered), then sum them up
+              TOTAL_MISSED_INSTRUCTIONS=$(xmllint --xpath 'sum(//report/counter[@type="INSTRUCTION"]/@missed)' $JACOCO_XML_PATH)
+              TOTAL_COVERED_INSTRUCTIONS=$(xmllint --xpath 'sum(//report/counter[@type="INSTRUCTION"]/@covered)' $JACOCO_XML_PATH)
+  
+              # Calculate the total lines and coverage percentage
+              TOTAL_INSTRUCTIONS=$((TOTAL_MISSED_INSTRUCTIONS + TOTAL_COVERED_INSTRUCTIONS))
+              COVERAGE_PERCENTAGE=$(awk "BEGIN {printf \"%.2f\", ($TOTAL_COVERED_INSTRUCTIONS/$TOTAL_INSTRUCTIONS)*100}")
+              echo "coverage,$COVERAGE_PERCENTAGE" >> grading-result.csv
+  
+              if [ 1 -eq "$(echo "$COVERAGE_PERCENTAGE >= 80.0" | bc )" ]; then
+                  points=$((points+20))
+                  echo "::notice:: Coverage : $COVERAGE_PERCENTAGE% > 80% ✅"
+              else
+                  echo "::notice:: Coverage : $COVERAGE_PERCENTAGE% < 80% ❌"
+                  exit 1
+              fi
           else
-          	echo "coverage,0" >> grading-result.csv
-          	echo "::notice:: Coverage report not found ❌"
-          fi
-          
-          echo "::notice:: Total points : $points / 20"
-          if [ $points -eq 20 ]; then
-            echo "::notice:: Congratulations! You've obtained good coverage! 🎉🎉🎉"
+              echo "coverage,0" >> grading-result.csv
+              echo "::notice:: Coverage report not found ❌"
+              exit 1
           fi
