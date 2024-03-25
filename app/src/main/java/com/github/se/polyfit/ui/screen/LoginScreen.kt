@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.github.se.polyfit.R
-import com.github.se.polyfit.ui.ViewModel.LoginViewModel
+import com.github.se.polyfit.ui.viewModel.LoginViewModel
 
 @Composable
 fun LoginScreen(goTo: () -> Unit) {

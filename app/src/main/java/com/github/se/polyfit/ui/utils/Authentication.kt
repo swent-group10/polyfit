@@ -1,4 +1,4 @@
-package com.github.se.polyfit.ui.Utils
+package com.github.se.polyfit.ui.utils
 
 import android.app.Activity
 import android.content.Context
@@ -16,35 +16,6 @@ interface Authentication {
   fun onSignInResult(result: FirebaseAuthUIAuthenticationResult, callback: (Boolean) -> Unit)
 
   fun setSignInLauncher(launcher: ActivityResultLauncher<Intent>)
-}
-
-class MockAuthentication @Inject constructor(private val context: Context) : Authentication {
-  private lateinit var signInLauncher: ActivityResultLauncher<Intent>
-
-  override fun setSignInLauncher(launcher: ActivityResultLauncher<Intent>) {
-    signInLauncher = launcher
-  }
-
-  override fun signIn() {
-    Log.i("LoginScreen", "signIn")
-    // TODO Not create a real call to the google sign in
-    // Just a local call
-    val gso =
-        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build()
-
-    val mGoogleSignInClient = GoogleSignIn.getClient(context, gso)
-
-    val signInIntent = mGoogleSignInClient.signInIntent
-    signInLauncher.launch(signInIntent)
-  }
-
-  override fun onSignInResult(
-      result: FirebaseAuthUIAuthenticationResult,
-      callback: (Boolean) -> Unit
-  ) {
-    Log.i("LoginScreen", "onSignInResult")
-    callback(true)
-  }
 }
 
 class AuthenticationCloud @Inject constructor(private val context: Context) : Authentication {

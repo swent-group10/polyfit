@@ -150,6 +150,8 @@ dependencies {
     testImplementation ("com.google.dagger:hilt-android-testing:2.51")
     kaptTest ("com.google.dagger:hilt-compiler:2.51")
 
+    // Mockito
+    androidTestImplementation("org.mockito:mockito-core:5.11.0")
 }
 
 // Allow references to generated code

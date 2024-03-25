@@ -1,8 +1,8 @@
-package com.github.se.polyfit.ui.HiltModule
+package com.github.se.polyfit.ui.hiltModule
 
 import android.content.Context
-import com.github.se.polyfit.ui.Utils.Authentication
-import com.github.se.polyfit.ui.Utils.AuthenticationCloud
+import com.github.se.polyfit.ui.utils.Authentication
+import com.github.se.polyfit.ui.utils.AuthenticationCloud
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

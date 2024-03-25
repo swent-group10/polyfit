@@ -1,10 +1,10 @@
-package com.github.se.polyfit.ui.ViewModel
+package com.github.se.polyfit.ui.viewModel
 
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.lifecycle.ViewModel
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
-import com.github.se.polyfit.ui.Utils.Authentication
+import com.github.se.polyfit.ui.utils.Authentication
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
