@@ -25,11 +25,11 @@ class MainActivity : ComponentActivity() {
       PolyfitTheme {
         val navController = rememberNavController()
         val navigation = Navigation(navController)
-        NavHost(navController = navController, startDestination = Route.Ingredients) {
+        NavHost(navController = navController, startDestination = Route.Register) {
           composable(Route.Register) { LoginScreen(navigation) }
 
-          composable(Route.Home) { HomeScreen() }
-          composable(Route.Ingredients) { IngredientScreen() }
+          composable(Route.Home) { HomeScreen(navigation) }
+          composable(Route.Ingredients) { IngredientScreen(navigation) }
         }
       }
     }

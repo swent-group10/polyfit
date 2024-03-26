@@ -30,7 +30,8 @@ fun GradientButton(
     active: Boolean,
     text: String? = null,
     icon: @Composable (() -> Unit)? = null,
-    round: Boolean = false
+    round: Boolean = false,
+    modifier: Modifier = Modifier
 ) {
   val styles =
       mapOf(
@@ -59,7 +60,7 @@ fun GradientButton(
                 Modifier
               })
 
-  Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(4.dp)) {
+  Box(contentAlignment = Alignment.Center, modifier = modifier.padding(4.dp)) {
     Canvas(modifier = Modifier.matchParentSize()) {
       drawRoundRect(
           brush = styles["gradient"] as Brush,
