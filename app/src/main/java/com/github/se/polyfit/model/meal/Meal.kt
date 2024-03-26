@@ -72,7 +72,6 @@ data class Meal(
             map["protein"] = data.protein
             map["carbohydrates"] = data.carbohydrates
             map["fat"] = data.fat
-            map["ingredients"] = data.ingredients.map { Ingredient.serializeIngredient(it) }
 
             return map
         }
@@ -86,9 +85,7 @@ data class Meal(
             val protein = data["protein"] as Double
             val carbohydrates = data["carbohydrates"] as Double
             val fat = data["fat"] as Double
-            val ingredients = (data["ingredients"] as List<Map<String, Any>>).map {
-                Ingredient.deserializeIngredient(it)
-            }
+
 
             return Meal(
                 uid,
@@ -98,7 +95,7 @@ data class Meal(
                 protein,
                 carbohydrates,
                 fat,
-                ingredients
+                emptyList()
             )
         }
     }

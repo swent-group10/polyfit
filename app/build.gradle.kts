@@ -1,5 +1,3 @@
-import kotlin.script.experimental.api.ScriptCompilationConfiguration.Default.properties
-
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -73,7 +71,7 @@ android {
     }
 
     dependencies {
-
+        // AndroidX
         implementation("androidx.core:core-ktx:1.12.0")
         implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
         implementation("androidx.activity:activity-compose:1.8.2")
@@ -83,45 +81,41 @@ android {
         implementation("androidx.compose.ui:ui-tooling-preview")
         implementation("androidx.compose.material3:material3")
         implementation("androidx.navigation:navigation-compose:2.7.7")
-        implementation("com.google.firebase:firebase-auth:22.3.1")
-        testImplementation("junit:junit:4.13.2")
-        androidTestImplementation("androidx.test.ext:junit:1.1.5")
-        androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-        androidTestImplementation(platform("androidx.compose:compose-bom:2023.08.00"))
-        androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-        debugImplementation("androidx.compose.ui:ui-tooling")
-        debugImplementation("androidx.compose.ui:ui-test-manifest")
-        testImplementation ("org.mockito:mockito-core:3.12.4")
-
-
-
-        // required if you want to use Mockito for unit tests
-        // required if you want to use Mockito for Android tests
-        androidTestImplementation("org.mockito:mockito-android:2.24.5")
-
-        // Firebase
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0")
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
+        implementation("org.json:json:20210307")
+        // Google & Firebase
         implementation(platform("com.google.firebase:firebase-bom:32.7.2"))
-        implementation("com.google.firebase:firebase-analytics")
+        implementation("com.google.firebase:firebase-auth:22.3.1")
         implementation("com.google.firebase:firebase-database-ktx:20.3.0")
         implementation("com.google.firebase:firebase-firestore:24.10.0")
         implementation("com.google.android.play:core-ktx:1.7.0")
         implementation("com.firebaseui:firebase-ui-auth:7.2.0")
         implementation("com.google.firebase:firebase-analytics")
         implementation("com.google.firebase:firebase-database")
-        implementation("com.google.android.play:core-ktx:1.7.0")
         implementation("com.google.firebase:firebase-auth-ktx:22.3.0")
-
-
-        implementation("androidx.navigation:navigation-compose:2.5.3")
-        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0")
-        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
-        implementation("org.json:json:20210307")
+        // Testing libraries
+        testImplementation("junit:junit:4.13.2")
+        testImplementation("org.mockito:mockito-core:3.12.4")
+        testImplementation("org.mockito:mockito-android:3.12.4")
+        testImplementation("io.mockk:mockk:1.13.7")
+        testImplementation("io.mockk:mockk-android:1.13.7")
+        testImplementation("io.mockk:mockk-agent:1.13.7")
+        // Android Testing libraries
+        androidTestImplementation("androidx.test.ext:junit:1.1.5")
+        androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+        androidTestImplementation(platform("androidx.compose:compose-bom:2023.08.00"))
+        androidTestImplementation("androidx.compose.ui:ui-test-junit4")
         androidTestImplementation("androidx.test.espresso:espresso-intents:3.5.1")
-
+        androidTestImplementation("org.mockito:mockito-android:2.24.5")
         androidTestImplementation("io.mockk:mockk:1.13.7")
         androidTestImplementation("io.mockk:mockk-android:1.13.7")
         androidTestImplementation("io.mockk:mockk-agent:1.13.7")
+        // Debug implementations
+        debugImplementation("androidx.compose.ui:ui-tooling")
+        debugImplementation("androidx.compose.ui:ui-test-manifest")
     }
+
 
     tasks.register("jacocoTestReport", JacocoReport::class) {
         mustRunAfter("testDebugUnitTest", "connectedDebugAndroidTest")
@@ -151,4 +145,7 @@ android {
             include("outputs/code_coverage/debugAndroidTest/connected/*/coverage.ec")
         })
     }
+}
+dependencies {
+    implementation("androidx.test.ext:junit-ktx:1.1.5")
 }

@@ -28,31 +28,20 @@ class MealsFirebaseConnection(private val db: FirebaseFirestore = FirebaseFirest
     }
 
     fun getAllMeals(uid: String): Task<List<Meal>> {
-        val task = userCollection.document(uid).collection("meals").get()
-        val result = task.continueWith { task ->
-            if (task.isSuccessful) {
-                val meals = task.result?.documents?.map { deserializeMeal(it.data!!) }
-                meals ?: emptyList<Meal>()
-            } else {
-                emptyList<Meal>()
-            }
+        return userCollection.document(uid).collection("meals").get().continueWith { task ->
+            task.result?.documents?.mapNotNull { deserializeMeal(it.data!!) } ?: emptyList()
         }
-        return result
+
     }
 
     fun updateMeal(
         uid: String,
         meal: Meal
     ): Task<Void> {
-        // Implement this function
-        return userCollection.document(uid).collection("meals").document(meal.uid)
-            .set(serializeMeal(meal))
+        val mealMap = serializeMeal(meal)
+        return userCollection.document(uid).collection("meals").document(meal.uid).set(mealMap)
+
     }
 
 
-    fun removeMeal(uid: String): Task<Void> {
-        return userCollection.document(uid).delete().addOnFailureListener { e ->
-            Log.e("FirebaseConnection", "Error deleting document", e)
-        }
-    }
 }
