@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
@@ -23,8 +25,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -32,7 +37,9 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.rememberNavController
 import com.github.se.polyfit.ui.components.GradientButton
+import com.github.se.polyfit.ui.navigation.Navigation
 
 data class Ingredient(
     val name: String,
@@ -41,30 +48,59 @@ data class Ingredient(
     val probability: Float = 1.0f,
 ) {}
 
+// TODO: Replace with data from a ViewModel
+val testInitialIngredients =
+    listOf<Ingredient>(
+        Ingredient("Olive Oil", 5, "ml"),
+        Ingredient("Beef Tenderloin", 50, "g"),
+        Ingredient("White Asparagus", 10, "g"),
+        Ingredient("Corn", 4, "g"),
+        Ingredient("Foie Gras", 100, "g"))
+
+val testInitialPotentialIngredients =
+    listOf<Ingredient>(
+        Ingredient("Carrots", 100, "g"),
+        Ingredient("Peas", 100, "g"),
+        Ingredient("Worcestershire Sauce", 15, "ml"),
+        Ingredient("Salt", 5, "g"),
+        Ingredient("Pepper", 5, "g"),
+        Ingredient("Garlic", 1, "clove"),
+    )
+
 @Composable
-fun IngredientScreen() {
-  val ingredients =
-      listOf<Ingredient>(
-          Ingredient("Olive Oil", 5, "ml"),
-          Ingredient("Beef Tenderloin", 50, "g"),
-          Ingredient("White Asparagus", 10, "g"),
-          Ingredient("Corn", 4, "g"),
-          Ingredient("Foie Gras", 100, "g"),
-      )
+fun IngredientScreen(
+    navigation: Navigation,
+    initialIngredients: List<Ingredient> = testInitialIngredients,
+    initialPotentialIngredients: List<Ingredient> = testInitialPotentialIngredients,
+    // TODO:  ingredientsViewModel: IngredientsViewModel = IngredientsViewModel(),
+) {
 
-  val potentialIngredients =
-      listOf<Ingredient>(
-          Ingredient("Carrots", 100, "g"),
-          Ingredient("Peas", 100, "g"),
-          Ingredient("Worcestershire Sauce", 15, "ml"),
-          Ingredient("Salt", 5, "g"),
-          Ingredient("Pepper", 5, "g"),
-          Ingredient("Garlic", 1, "clove"),
-      )
-
-  Scaffold(topBar = { TopBar() }, bottomBar = { BottomBar() }) {
-    IngredientList(it, ingredients, potentialIngredients)
+  val ingredients = remember { mutableStateListOf(*initialIngredients.toTypedArray()) }
+  val potentialIngredients = remember {
+    mutableStateListOf(*initialPotentialIngredients.toTypedArray())
   }
+
+  Scaffold(
+      topBar = { TopBar(navigation) },
+      bottomBar = { BottomBar() },
+      modifier = Modifier.testTag("IngredientScreen")) {
+        if (ingredients.isEmpty() && potentialIngredients.isEmpty()) {
+          Text(
+              "No ingredients added yet",
+              modifier = Modifier.fillMaxSize().padding(it).padding(16.dp),
+              color = MaterialTheme.colorScheme.secondary,
+              fontSize = MaterialTheme.typography.headlineSmall.fontSize)
+        } else {
+          IngredientList(
+              it,
+              ingredients,
+              potentialIngredients,
+              onAddIngredient = { index ->
+                val item = potentialIngredients.removeAt(index)
+                ingredients.add(item)
+              })
+        }
+      }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -72,28 +108,35 @@ fun IngredientScreen() {
 fun IngredientList(
     it: PaddingValues,
     ingredients: List<Ingredient>,
-    potentialIngredients: List<Ingredient>
+    potentialIngredients: List<Ingredient>,
+    onAddIngredient: (Int) -> Unit,
 ) {
   val initialSuggestions = 3
   val potentialIndex = remember {
+    // equivalent to min(3, potentialIngredients.size)
     mutableIntStateOf(initialSuggestions.coerceAtMost(potentialIngredients.size))
   }
   Column(
-      modifier = Modifier.fillMaxSize().padding(it).testTag("IngredientScreen"),
+      modifier =
+          Modifier.fillMaxSize()
+              .padding(it)
+              .verticalScroll(rememberScrollState())
+              .testTag("IngredientScreen"),
       verticalArrangement = Arrangement.Top,
       horizontalAlignment = Alignment.CenterHorizontally) {
         FlowRow(
-            modifier = Modifier.padding(8.dp),
             horizontalArrangement = Arrangement.Start,
             verticalArrangement = Arrangement.Top,
             maxItemsInEachRow = Int.MAX_VALUE) {
               ingredients.forEach { ingredient ->
                 GradientButton(
                     text = "${ingredient.name} ${ingredient.quantity}${ingredient.unit}",
-                    onClick = {}, // Expand to see more information
-                    active = true)
+                    onClick = {}, // TODO: Expand to see more information
+                    active = true,
+                    modifier = Modifier.testTag("IngredientButton"))
               }
-              potentialIngredients.subList(0, potentialIndex.value).forEach { ingredient ->
+              potentialIngredients.take(potentialIndex.intValue).forEachIndexed { index, ingredient
+                ->
                 GradientButton(
                     icon = {
                       Icon(
@@ -102,10 +145,11 @@ fun IngredientList(
                           tint = MaterialTheme.colorScheme.secondary)
                     },
                     text = ingredient.name,
-                    onClick = { /*TODO*/}, // Add to ingredient list
-                    active = false)
+                    onClick = { onAddIngredient(index) },
+                    active = false,
+                    modifier = Modifier.testTag("PotentialIngredientButton"))
               }
-              if (potentialIngredients.size > potentialIndex.value) {
+              if (potentialIngredients.size > potentialIndex.intValue) {
                 GradientButton(
                     icon = {
                       Icon(
@@ -114,26 +158,30 @@ fun IngredientList(
                           modifier = Modifier.graphicsLayer(rotationZ = 90f),
                           tint = MaterialTheme.colorScheme.secondary)
                     },
-                    onClick = { potentialIndex.value = potentialIngredients.size },
-                    active = false)
+                    onClick = { potentialIndex.intValue = potentialIngredients.size },
+                    active = false,
+                    modifier = Modifier.testTag("MoreIngredientsButton"))
               }
             }
       }
 }
 
 @Composable
-fun TopBar() {
+fun TopBar(navigation: Navigation) {
   Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(8.dp)) {
-    IconButton(onClick = { /*TODO*/}) { // Go back to previous screen
-      Icon(
-          imageVector = Icons.Default.ArrowBack,
-          contentDescription = "Back",
-          modifier = Modifier.testTag("BackButton"),
-          tint = MaterialTheme.colorScheme.primary)
-    }
+    IconButton(
+        onClick = { navigation.goBack() },
+        content = {
+          Icon(
+              imageVector = Icons.Default.ArrowBack,
+              contentDescription = "Back",
+              modifier = Modifier.testTag("BackButton"),
+              tint = MaterialTheme.colorScheme.primary)
+        },
+        modifier = Modifier.testTag("BackButton"))
     Text(
         "Ingredients",
-        modifier = Modifier.align(Alignment.CenterVertically),
+        modifier = Modifier.align(Alignment.CenterVertically).testTag("IngredientTitle"),
         color = MaterialTheme.colorScheme.secondary,
         fontSize = MaterialTheme.typography.headlineMedium.fontSize)
   }
@@ -150,7 +198,7 @@ fun BottomBar() {
         modifier = Modifier.fillMaxWidth().padding(16.dp, 0.dp),
         contentAlignment = Alignment.CenterEnd) {
           GradientButton(
-              onClick = { /*TODO*/}, // Add new ingredient
+              onClick = {}, // TODO: Add new ingredient
               active = true,
               round = true,
               icon = {
@@ -158,12 +206,13 @@ fun BottomBar() {
                     imageVector = Icons.Default.Add,
                     contentDescription = "Add Ingredient",
                     tint = MaterialTheme.colorScheme.primary)
-              })
+              },
+              modifier = Modifier.testTag("AddIngredientButton"))
         }
     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
       Button(
-          onClick = { /*TODO*/}, // Finish adding ingredients
-          modifier = Modifier.width(200.dp),
+          onClick = {}, // TODO: Finish adding ingredients
+          modifier = Modifier.width(200.dp).testTag("DoneButton"),
       ) {
         Text(text = "Done", fontSize = 24.sp)
       }
@@ -174,5 +223,5 @@ fun BottomBar() {
 @Preview
 @Composable
 fun IngredientScreenPreview() {
-  IngredientScreen()
+  IngredientScreen(Navigation(rememberNavController()))
 }
