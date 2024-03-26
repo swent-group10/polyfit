@@ -2,8 +2,7 @@
 ### Figma/material3 to Code
 
 In the [material3 doc](https://m3.material.io/components) you can find every usable component along with its "generic" appearance and functionality.  
-<br>For exemple: Navigation Bar
-<br> Look:
+<br>For example for the Navigation Bar
 
 <p align="center">
   <img src="https://github.com/swent-group10/polyfit/assets/56965385/0b48556f-92d3-482c-bb65-a397f368112a" alt="Navigation Bar look" width="300"       heights="200">
@@ -20,5 +19,20 @@ In the [material3 doc](https://m3.material.io/components) you can find every usa
 
 <br>To implement the componant in Kotlin code, refer to this [doc](https://developer.android.com/reference/kotlin/androidx/compose/material3/package-summary) or you can directly access it through M3 doc 
 
+### Color theme
+It is important to correctly apply the appropriate color to the component, not only for the uniformity of the project but also because themes are dynamic and can change. Depending on how you configure your operating system's light/dark theme, the app will automatically switch between light and dark themes. [Color roles](https://m3.material.io/styles/color/roles)
+
+<br> Like for the [inverse](https://m3.material.io/styles/color/roles#7fc6b47e-db22-4e98-8359-7649a099e4a1), the text displayed will always be readable.
+
+<br> In other words, if you don't know what color to apply, follow this guide as a first step.
+
 ### Samples of project
 <a href="https://github.com/android/compose-samples" target="_blank">Here</a>, you can find many different project made by android team, and can be helpful to solve many implementation problem.
+
+<br>Like [Jetlagged](https://github.com/android/compose-samples/tree/main/JetLagged), that seems to implement some graphics
+
+
+<p align="center">
+<img src="https://github.com/swent-group10/polyfit/assets/56965385/de1b802f-42e7-442f-b978-b7f8aeeb98d1" alt="Navigation Bar look" width="600" heights="1200">
+  </p>
+
