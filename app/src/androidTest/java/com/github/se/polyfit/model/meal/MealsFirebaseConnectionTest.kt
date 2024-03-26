@@ -1,8 +1,5 @@
-package com.github.se.polyfit.model
+package com.github.se.polyfit.model.meal
 
-import com.github.se.polyfit.model.meal.Meal
-import com.github.se.polyfit.model.meal.MealOccasion
-import com.github.se.polyfit.model.meal.MealsFirebaseConnection
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore

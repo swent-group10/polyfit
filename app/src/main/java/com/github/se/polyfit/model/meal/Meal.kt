@@ -1,15 +1,65 @@
 package com.github.se.polyfit.model.meal
 
+import com.github.se.polyfit.model.ingredient.Ingredient
+
 // modeled after the log meal api
 data class Meal(
     val uid: String,
-    val occasion: MealOccasion,
-    val name: String,
-    val calories: Double,
-    val protein: Double,
-    val carbohydrates: Double,
-    val fat: Double
+    private var occasion: MealOccasion,
+    private var name: String,
+    private var calories: Double,
+    private var protein: Double,
+    private var carbohydrates: Double,
+    private var fat: Double,
+    private var ingredients: List<Ingredient> = emptyList()
 ) {
+    init {
+        ingredients.forEach { it.parentMeal = this }
+        updateMeal()
+    }
+
+    fun getCalories(): Double {
+        return calories
+    }
+
+    fun getProtein(): Double {
+        return protein
+    }
+
+    fun getCarbohydrates(): Double {
+        return carbohydrates
+    }
+
+    fun getFat(): Double {
+        return fat
+    }
+
+    fun getOccasion(): MealOccasion {
+        return occasion
+    }
+
+    fun getName(): String {
+        return name
+    }
+
+    fun addIngredient(ingredient: Ingredient) {
+        ingredients = ingredients + ingredient
+        ingredient.parentMeal = this
+        updateMeal()
+    }
+
+    fun updateMeal() {
+        calories = ingredients.sumOf { it.calories }
+        protein = ingredients.sumOf { it.protein }
+        carbohydrates = ingredients.sumOf { it.carbohydrates }
+        fat = ingredients.sumOf { it.fat }
+
+    }
+
+    fun getAllIngredients(): List<Ingredient> {
+        return ingredients
+    }
+
     companion object {
         fun serializeMeal(data: Meal): Map<String, Any> {
             val map = mutableMapOf<String, Any>()
@@ -22,6 +72,7 @@ data class Meal(
             map["protein"] = data.protein
             map["carbohydrates"] = data.carbohydrates
             map["fat"] = data.fat
+            map["ingredients"] = data.ingredients.map { Ingredient.serializeIngredient(it) }
 
             return map
         }
@@ -35,6 +86,9 @@ data class Meal(
             val protein = data["protein"] as Double
             val carbohydrates = data["carbohydrates"] as Double
             val fat = data["fat"] as Double
+            val ingredients = (data["ingredients"] as List<Map<String, Any>>).map {
+                Ingredient.deserializeIngredient(it)
+            }
 
             return Meal(
                 uid,
@@ -43,7 +97,8 @@ data class Meal(
                 calories,
                 protein,
                 carbohydrates,
-                fat
+                fat,
+                ingredients
             )
         }
     }
