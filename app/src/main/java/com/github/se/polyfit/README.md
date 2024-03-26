@@ -28,8 +28,11 @@ It is important to correctly apply the appropriate color to the component, not o
 
 ### Samples of project
 <a href="https://github.com/android/compose-samples" target="_blank">Here</a>, you can find many different project made by android team, and can be helpful to solve many implementation problem.
+#### Hilt
+In this [sample](https://github.com/android/compose-samples/tree/main/Crane), android seems to have implement Hilt.
+#### Graph
+Like [Jetlagged](https://github.com/android/compose-samples/tree/main/JetLagged), that seems to implement some graphics
 
-<br>Like [Jetlagged](https://github.com/android/compose-samples/tree/main/JetLagged), that seems to implement some graphics
 
 
 <p align="center">
