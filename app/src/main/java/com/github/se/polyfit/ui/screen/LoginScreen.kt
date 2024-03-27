@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
@@ -72,7 +73,7 @@ fun LoginScreen(navController: Navigation) {
             horizontalAlignment = Alignment.CenterHorizontally) {
             Spacer(Modifier.weight(0.2f))
 
-            Titre(Modifier.testTag("LoginTitle"))
+            Titre(Modifier.testTag("LoginTitle"), 50.sp)
 
             Spacer(Modifier.weight(0.6f))
 

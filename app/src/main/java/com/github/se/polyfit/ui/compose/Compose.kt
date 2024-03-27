@@ -11,29 +11,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.BaselineShift
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.github.se.polyfit.R
 import com.github.se.polyfit.ui.theme.BlueButton
 import com.github.se.polyfit.ui.theme.PinkTitle
 
 
-val kaiseiFont = FontFamily(
-    Font(R.font.kaiseitokumin_bold, FontWeight.Bold),
-    Font(R.font.kaiseitokumin_regular, FontWeight.Normal),
-    Font(R.font.kaiseitokumin_extrabold, FontWeight.ExtraBold),
-    Font(R.font.kaiseitokumin_medium, FontWeight.Medium)
-)
-
 val gradiant_blue_pink = Brush.horizontalGradient(listOf(BlueButton, PinkTitle))
 @Composable
-fun Titre(modifier: Modifier) {
+fun Titre(modifier: Modifier, fontSize: TextUnit) {
   val shape = RoundedCornerShape(35)
 
   Box(modifier = Modifier
@@ -47,7 +35,7 @@ fun Titre(modifier: Modifier) {
 
     Text(
       text = "PolyFit",
-      fontSize = 50.sp,
+      fontSize = fontSize,
       modifier = modifier,
       fontFamily = kaiseiFont,
       fontWeight = FontWeight.Bold,
