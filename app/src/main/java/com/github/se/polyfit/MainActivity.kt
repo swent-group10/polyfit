@@ -27,7 +27,7 @@ class MainActivity : ComponentActivity() {
         val navigation = Navigation(navController)
         NavHost(navController = navController, startDestination = Route.Register) {
           composable(Route.Register) { LoginScreen(navigation::navigateToHome) }
-          composable(Route.Home) { HomeScreen() }
+          composable(Route.Home) { HomeScreen(navigation) }
           composable(Route.Ingredients) { IngredientScreen(navigation) }
         }
       }

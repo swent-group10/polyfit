@@ -28,10 +28,10 @@ import androidx.compose.ui.unit.dp
 fun GradientButton(
     onClick: () -> Unit,
     active: Boolean,
+    modifier: Modifier = Modifier,
     text: String? = null,
     icon: @Composable (() -> Unit)? = null,
     round: Boolean = false,
-    modifier: Modifier = Modifier
 ) {
   val styles =
       mapOf(

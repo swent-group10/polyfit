@@ -1,5 +1,6 @@
 package com.github.se.polyfit.ui.screen
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,11 +26,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -117,11 +116,7 @@ fun IngredientList(
     mutableIntStateOf(initialSuggestions.coerceAtMost(potentialIngredients.size))
   }
   Column(
-      modifier =
-          Modifier.fillMaxSize()
-              .padding(it)
-              .verticalScroll(rememberScrollState())
-              .testTag("IngredientScreen"),
+      modifier = Modifier.fillMaxSize().padding(it).verticalScroll(rememberScrollState()),
       verticalArrangement = Arrangement.Top,
       horizontalAlignment = Alignment.CenterHorizontally) {
         FlowRow(
@@ -133,7 +128,7 @@ fun IngredientList(
                     text = "${ingredient.name} ${ingredient.quantity}${ingredient.unit}",
                     onClick = {}, // TODO: Expand to see more information
                     active = true,
-                    modifier = Modifier.testTag("IngredientButton"))
+                    modifier = Modifier.testTag("Ingredient"))
               }
               potentialIngredients.take(potentialIndex.intValue).forEachIndexed { index, ingredient
                 ->
@@ -168,23 +163,25 @@ fun IngredientList(
 
 @Composable
 fun TopBar(navigation: Navigation) {
-  Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(8.dp)) {
-    IconButton(
-        onClick = { navigation.goBack() },
-        content = {
-          Icon(
-              imageVector = Icons.Default.ArrowBack,
-              contentDescription = "Back",
-              modifier = Modifier.testTag("BackButton"),
-              tint = MaterialTheme.colorScheme.primary)
-        },
-        modifier = Modifier.testTag("BackButton"))
-    Text(
-        "Ingredients",
-        modifier = Modifier.align(Alignment.CenterVertically).testTag("IngredientTitle"),
-        color = MaterialTheme.colorScheme.secondary,
-        fontSize = MaterialTheme.typography.headlineMedium.fontSize)
-  }
+  Row(
+      verticalAlignment = Alignment.CenterVertically,
+      modifier = Modifier.padding(8.dp).testTag("TopBar")) {
+        IconButton(
+            onClick = { navigation.goBack() },
+            content = {
+              Icon(
+                  imageVector = Icons.Default.ArrowBack,
+                  contentDescription = "Back",
+                  modifier = Modifier.testTag("BackButton"),
+                  tint = MaterialTheme.colorScheme.primary)
+            },
+            modifier = Modifier.testTag("BackButton"))
+        Text(
+            "Ingredients",
+            modifier = Modifier.align(Alignment.CenterVertically).testTag("IngredientTitle"),
+            color = MaterialTheme.colorScheme.secondary,
+            fontSize = MaterialTheme.typography.headlineMedium.fontSize)
+      }
 }
 
 @Composable
@@ -192,13 +189,14 @@ fun BottomBar() {
   Column(
       modifier =
           Modifier.background(MaterialTheme.colorScheme.background)
-              .padding(0.dp, 16.dp, 0.dp, 32.dp),
+              .padding(0.dp, 16.dp, 0.dp, 32.dp)
+              .testTag("BottomBar"),
   ) {
     Box(
-        modifier = Modifier.fillMaxWidth().padding(16.dp, 0.dp),
+        modifier = Modifier.fillMaxWidth().padding(16.dp, 0.dp).testTag("AddIngredientBox"),
         contentAlignment = Alignment.CenterEnd) {
           GradientButton(
-              onClick = {}, // TODO: Add new ingredient
+              onClick = { Log.v("Add Ingredient", "Clicked") }, // TODO: Add new ingredient
               active = true,
               round = true,
               icon = {
@@ -209,14 +207,16 @@ fun BottomBar() {
               },
               modifier = Modifier.testTag("AddIngredientButton"))
         }
-    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-      Button(
-          onClick = {}, // TODO: Finish adding ingredients
-          modifier = Modifier.width(200.dp).testTag("DoneButton"),
-      ) {
-        Text(text = "Done", fontSize = 24.sp)
-      }
-    }
+    Box(
+        modifier = Modifier.fillMaxWidth().testTag("DoneBox"),
+        contentAlignment = Alignment.Center) {
+          Button(
+              onClick = {}, // TODO: Finish adding ingredients
+              modifier = Modifier.width(200.dp).testTag("DoneButton"),
+          ) {
+            Text(text = "Done", fontSize = 24.sp)
+          }
+        }
   }
 }
 
