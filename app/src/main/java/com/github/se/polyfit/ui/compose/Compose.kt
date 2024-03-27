@@ -14,31 +14,27 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.github.se.polyfit.ui.theme.BlueButton
 import com.github.se.polyfit.ui.theme.PinkTitle
 
-
 val gradiant_blue_pink = Brush.horizontalGradient(listOf(BlueButton, PinkTitle))
+
 @Composable
 fun Titre(modifier: Modifier, fontSize: TextUnit) {
   val shape = RoundedCornerShape(35)
 
-  Box(modifier = Modifier
-    .clip(shape)
-    .background(color = MaterialTheme.colorScheme.background)
-    .border(width = 2.dp,
-      brush = gradiant_blue_pink,
-      shape = shape)
-    .padding(horizontal = 16.dp, vertical = 8.dp)
-  ){
-
-    Text(
-      text = "PolyFit",
-      fontSize = fontSize,
-      modifier = modifier,
-      fontFamily = kaiseiFont,
-      fontWeight = FontWeight.Bold,
-    )
-  }
+  Box(
+      modifier =
+          Modifier.clip(shape)
+              .background(color = MaterialTheme.colorScheme.background)
+              .border(width = 2.dp, brush = gradiant_blue_pink, shape = shape)
+              .padding(horizontal = 16.dp, vertical = 8.dp)) {
+        Text(
+            text = "PolyFit",
+            fontSize = fontSize,
+            modifier = modifier,
+            fontFamily = kaiseiFont,
+            fontWeight = FontWeight.Bold,
+        )
+      }
 }
