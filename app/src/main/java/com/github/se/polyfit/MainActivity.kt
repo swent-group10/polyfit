@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.navigation.Route
 import com.github.se.polyfit.ui.screen.HomeScreen
+import com.github.se.polyfit.ui.screen.IngredientScreen
 import com.github.se.polyfit.ui.screen.LoginScreen
 import com.github.se.polyfit.ui.theme.PolyfitTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,7 +27,8 @@ class MainActivity : ComponentActivity() {
         val navigation = Navigation(navController)
         NavHost(navController = navController, startDestination = Route.Register) {
           composable(Route.Register) { LoginScreen(navigation::navigateToHome) }
-          composable(Route.Home) { HomeScreen() }
+          composable(Route.Home) { HomeScreen(navigation) }
+          composable(Route.Ingredients) { IngredientScreen(navigation) }
         }
       }
     }
