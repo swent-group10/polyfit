@@ -15,7 +15,7 @@ sonar {
         property("sonar.host.url", "https://sonarcloud.io")
         property(
             "sonar.coverage.jacoco.xmlReportPaths",
-            "app/build/reports/jacoco/jacocoTestReport/html/index.html"
+            "app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
         )
     }
 }
