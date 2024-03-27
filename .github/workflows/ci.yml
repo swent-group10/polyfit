@@ -91,14 +91,25 @@ jobs:
       - name: Run Instrumentation Tests
         run: ./gradlew connectedCheck --parallel --build-cache
 
-      - name: Generate Coverage Report
+      # This step generates the coverage report with JaCoCo
+      - name: Generate JaCoCo coverage report
         run: ./gradlew jacocoTestReport
+        # Ensure this task successfully generates the coverage report at the expected location
 
-      - name: Upload Report to SonarCloud
+      # Upload the coverage and analysis report to SonarCloud
+      - name: Upload report to SonarCloud
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew sonarqube -Dsonar.coverage.jacoco.xmlReportPaths=app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml --parallel --build-cache
+        run: |
+          ./gradlew sonarqube \
+            -Dsonar.projectKey=YourProjectKey \
+            -Dsonar.organization=YourOrganizationOnSonarCloud \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+            -Dsonar.coverage.jacoco.xmlReportPaths=app/build/reports/jacoco/testDebugUnitTestCoverage/jacocoTestReport.xml
+        # Adjust the sonar.projectKey and sonar.organization to your project's values
+        # The xmlReportPaths needs to point to where your JaCoCo coverage report is generated
 
       - name: Install xmllint
         run: sudo apt-get install -y libxml2-utils
