@@ -5,6 +5,9 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
     id("org.sonarqube") version "4.4.1.3373"
+    id("com.google.dagger.hilt.android")
+    id("dagger.hilt.android.plugin")
+    kotlin("kapt")
     id("com.ncorti.ktfmt.gradle") version "0.16.0"
 }
 sonar {
@@ -65,12 +68,14 @@ android {
             excludes += "**/libmockkjvmtiagent.so"
         }
     }
-
-    android {
-        // rest of your android configuration...
-
-
+    testOptions {
+        packagingOptions {
+            jniLibs {
+                useLegacyPackaging = true
+            }
+        }
     }
+
 
     dependencies {
 
@@ -105,7 +110,6 @@ android {
         implementation("com.google.firebase:firebase-auth-ktx:22.3.0")
 
 
-        implementation("androidx.navigation:navigation-compose:2.5.3")
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0")
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
         implementation("org.json:json:20210307")
@@ -114,6 +118,50 @@ android {
         androidTestImplementation("io.mockk:mockk:1.13.7")
         androidTestImplementation("io.mockk:mockk-android:1.13.7")
         androidTestImplementation("io.mockk:mockk-agent:1.13.7")
+
+        testImplementation("junit:junit:4.13.2")
+        androidTestImplementation("androidx.test.ext:junit:1.1.5")
+        androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+        androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.4.0")
+        androidTestImplementation(platform("androidx.compose:compose-bom:2023.08.00"))
+        debugImplementation("androidx.compose.ui:ui-tooling:1.4.0")
+        debugImplementation("androidx.compose.ui:ui-test-manifest:1.4.0")
+
+        // For the tests
+        androidTestImplementation("com.kaspersky.android-components:kaspresso:1.4.3")
+        androidTestImplementation("com.kaspersky.android-components:kaspresso-allure-support:1.4.3")
+        androidTestImplementation("com.kaspersky.android-components:kaspresso-compose-support:1.4.1")
+        testImplementation("org.mockito:mockito-inline:2.13.0")
+        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
+        testImplementation("org.jetbrains.kotlin:kotlin-test:1.7.10")
+        testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.7.10")
+
+        // Hilts
+        implementation("com.google.dagger:hilt-android:2.51")
+        annotationProcessor("com.google.dagger:hilt-compiler:2.51")
+        kapt("com.google.dagger:hilt-android-compiler:2.51")
+        kapt("com.google.dagger:hilt-compiler:2.51")
+        implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
+
+        androidTestImplementation("com.google.dagger:hilt-android-testing:2.51")
+        kaptAndroidTest("com.google.dagger:hilt-compiler:2.51")
+
+        // For local unit tests
+        testImplementation("com.google.dagger:hilt-android-testing:2.51")
+        kaptTest("com.google.dagger:hilt-compiler:2.51")
+
+        // Mockito
+        androidTestImplementation("org.mockito:mockito-core:5.11.0")
+
+        androidTestImplementation("io.mockk:mockk:1.13.7")
+        androidTestImplementation("io.mockk:mockk-android:1.13.7")
+        androidTestImplementation("io.mockk:mockk-agent:1.13.7")
+    }
+
+// Allow references to generated code
+    kapt {
+        correctErrorTypes = true
     }
 
     tasks.register("jacocoTestReport", JacocoReport::class) {
