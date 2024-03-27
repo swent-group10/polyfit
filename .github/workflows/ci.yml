@@ -5,7 +5,6 @@ on:
   push:
     branches:
       - main
-
   pull_request:
     types:
       - opened
@@ -15,16 +14,14 @@ on:
 jobs:
   ci:
     name: CI
-    # Execute the CI on the course's runners
     runs-on: ubuntu-latest
 
     steps:
-      # First step : Checkout the repository on the runner
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           submodules: recursive
-          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of Sonar analysis (if we use Sonar Later)
+          fetch-depth: 0
 
       - name: Setup JDK
         uses: actions/setup-java@v4
@@ -32,124 +29,80 @@ jobs:
           distribution: "temurin"
           java-version: "17"
 
-      # Kernel-based Virtual Machine (KVM) is an open source virtualization technology built into Linux. Enabling it allows the Android emulator to run faster.
-      - name: Enable KVM group perms
+      - name: Enable KVM for Faster Emulation
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
-      
-      
 
-      # To Load a fake google map api key for the test
+      - name: Prepare Local Properties
+        run: echo MAPS_API_KEY=\"0\" > ./local.properties
 
-      - name: Loading Local.properties (dummy)
-        run: |
-          echo MAPS_API_KEY=\"0\" > ./local.properties
-      - name: Grant execute permission for gradlew
-        run: |
-          chmod +x ./gradlew
+      - name: Setup Gradle Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
-      # Caching is a very useful part of a CI, as a workflow is executed in a clean environment every time,
-      # this means that one would need to re-download and re-process gradle files for every run. Which is very time consuming.
-      #
-      # To avoid that, we cache the the gradle folder to reuse it later.
-      - name: Gradle cache
-        uses: gradle/actions/setup-gradle@v3
-
-      # Cache the Emulator, if the cache does not hit, create the emulator
-      - name: AVD cache
+      - name: Cache Android Emulator
         uses: actions/cache@v4
         id: avd-cache
         with:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-34
+          key: avd-${{ runner.os }}-${{ hashFiles('**/*.gradle*') }}
 
-      - name: create AVD and generate snapshot for caching
+      - name: Setup Android Emulator
         if: steps.avd-cache.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 34
           target: google_apis
           arch: x86_64
-          force-avd-creation: false
+          force-avd-creation: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          disable-animations: false
-          script: echo "Generated AVD snapshot for caching."
+          disable-animations: true
 
-      - name: Grant execute permission for gradlew
-        run: |
-          chmod +x ./gradlew
+      - name: Grant Execution Permission for Gradlew
+        run: chmod +x ./gradlew
 
-      # Check formatting
-      - name: KTFmt Check
-        run: |
-          ./gradlew ktfmtCheck
+      - name: Run KTFmt Check
+        run: ./gradlew ktfmtCheck
 
-      # Creating and Importing google-services.json
-      - name: Create Google Services JSON File
+      - name: Create Google Services JSON
         env:
           GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
-        run: echo $GOOGLE_SERVICES_JSON | base64 -di > ./app/google-services.json
+        run: echo $GOOGLE_SERVICES_JSON | base64 -d > ./app/google-services.json
 
-      # This step runs gradle commands to build the application
-      - name: Assemble
-        id: build
-        run: |
-          # To run the CI with debug information, add --info
-          ./gradlew assemble lint --parallel --build-cache
+      - name: Build and Lint
+        run: ./gradlew assemble lint --parallel --build-cache
 
-      # Run Unit tests
-      - name: Unit tests
-        id: unit-tests
-        run: |
-          # To run the CI with debug information, add --info
-          ./gradlew check --parallel --build-cache
-      
+      - name: Run Unit Tests
+        run: ./gradlew test --parallel --build-cache
 
-      # Compile tests
-      - name: Compile the tests
-        id: compile-tests
-        run: |
-          ./gradlew compileDebugAndroidTestKotlin --parallel --build-cache
-      
+      - name: Compile Android Test Kotlin
+        run: ./gradlew compileDebugAndroidTestKotlin --parallel --build-cache
 
-      # Run connected tests on the emulator
-      - name: Connected tests
-        id: instrumentation-tests
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 34
-          target: google_apis
-          arch: x86_64
-          force-avd-creation: false
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          disable-animations: true
-          script: ./gradlew connectedCheck --parallel --build-cache
+      - name: Run Instrumentation Tests
+        run: ./gradlew connectedCheck --parallel --build-cache
 
+      - name: Generate Coverage Report
+        run: ./gradlew jacocoTestReport
 
-      # This step generates the coverage report
-      - name: Generate coverage
-        id: coverage
-        run: |
-          ./gradlew jacocoTestReport
-
-      # Upload the various reports to sonar
-      - name: Upload report to SonarCloud
+      - name: Upload Report to SonarCloud
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew sonar -Dsonar.coverage.jacoco.xmlReportPaths=app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml --parallel --build-cache
-
-      - name: Create empty result file
-        run: echo -n "" > grading-result.csv
+        run: ./gradlew sonarqube -Dsonar.coverage.jacoco.xmlReportPaths=app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml --parallel --build-cache
 
       - name: Install xmllint
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libxml2-utils
+        run: sudo apt-get install -y libxml2-utils
+
 
       # This step retrieve all useful data from the tests
       - name: Coverage results
