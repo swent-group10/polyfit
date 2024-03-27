@@ -16,7 +16,7 @@ sonar {
         property("sonar.host.url", "https://sonarcloud.io")
         property(
             "sonar.coverage.jacoco.xmlReportPaths",
-            "app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
+            "build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
         )
     }
 }
@@ -195,4 +195,7 @@ tasks.register("jacocoTestReport", JacocoReport::class) {
         include("outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec")
         include("outputs/code_coverage/debugAndroidTest/connected/*/coverage.ec")
     })
+}
+tasks.named("sonar") {
+    dependsOn("jacocoTestReport")
 }
