@@ -14,9 +14,10 @@ sonar {
         property("sonar.projectKey", "swent-group10_polyfit")
         property("sonar.organization", "swent-group10")
         property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.java.coveragePlugin", "jacoco")
         property(
-            "sonar.jacoco.reportPaths",
-            "app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
+            "sonar.coverage.jacoco.xmlReportPaths",
+            "build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
         )
     }
 }
