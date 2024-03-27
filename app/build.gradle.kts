@@ -15,8 +15,8 @@ sonar {
         property("sonar.organization", "swent-group10")
         property("sonar.host.url", "https://sonarcloud.io")
         property(
-            "sonar.coverage.jacoco.xmlReportPaths",
-            "build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
+            "sonar.jacoco.reportPaths",
+            "app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
         )
     }
 }
