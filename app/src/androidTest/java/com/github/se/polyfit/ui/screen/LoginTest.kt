@@ -3,6 +3,8 @@ package com.github.se.polyfit.ui.screen
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.performClick
+import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.MainActivity
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
@@ -41,6 +43,7 @@ class LoginTest : TestCase() {
         performClick()
       }
       // TODO check we are on another page
+      Intents.intended(IntentMatchers.toPackage("com.google.android.gms"))
     }
   }
 }
