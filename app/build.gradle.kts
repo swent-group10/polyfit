@@ -196,6 +196,3 @@ tasks.register("jacocoTestReport", JacocoReport::class) {
         include("outputs/code_coverage/debugAndroidTest/connected/*/coverage.ec")
     })
 }
-tasks.named("sonar") {
-    dependsOn("jacocoTestReport")
-}
