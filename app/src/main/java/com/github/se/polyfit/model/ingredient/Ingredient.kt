@@ -6,6 +6,7 @@ import kotlin.properties.Delegates
 /**
  * Represents an ingredient in a meal.
  * Automatically updates the parent meal when any property changes.
+ * @property name is unique for each meal
  */
 class Ingredient(
     val name: String, // name is now a val
