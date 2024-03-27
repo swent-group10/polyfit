@@ -9,10 +9,6 @@ class Navigation(private val navHostController: NavHostController) {
     navHostController.navigate(route)
   }
 
-  fun getController(): NavHostController {
-    return navHostController
-  }
-
   fun goBack() {
     navHostController.popBackStack()
   }

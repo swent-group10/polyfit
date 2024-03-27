@@ -34,8 +34,7 @@ fun LoginScreen(goTo: () -> Unit) {
   // Create an instance of the Authentication class
 
   val viewModel: LoginViewModel = hiltViewModel()
-  // val authentication = AuthenticationCloud(context = LocalContext.current){if (it)
-  // navController.navigateToHome()}
+
   val signInLauncher =
       rememberLauncherForActivityResult(contract = FirebaseAuthUIActivityResultContract()) { res ->
         viewModel.onSignInResult(res) { if (it) goTo() else Log.d("LoginScreen", "Sign in failed") }
