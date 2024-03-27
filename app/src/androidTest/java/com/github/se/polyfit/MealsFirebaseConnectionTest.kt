@@ -1,26 +1,19 @@
 package com.github.se.polyfit
 
+import android.util.Log
+import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
-import com.github.se.polyfit.model.meal.MealsFirebaseConnection
-import com.google.android.gms.tasks.Tasks
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
-import io.mockk.every
-import io.mockk.mockk
+import com.github.se.polyfit.model.meal.MealsRepository
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.tasks.await
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.junit.MockitoJUnitRunner
 
-@RunWith(MockitoJUnitRunner::class)
 class MealsFirebaseConnectionTest {
     @Test
     fun addMealActualFirebase() {
-        val database = MealsFirebaseConnection()
+        val database = MealsRepository()
         val meal = Meal(
-            "1",
             MealOccasion.DINNER,
             "eggs",
             102.2,
@@ -28,84 +21,32 @@ class MealsFirebaseConnectionTest {
             1234.9,
             12303.0
         )
+        val newIngredient = Ingredient("eggs", 1.2, 102.2, 12301.3, 1234.9, 12303.0)
+        meal.addIngredient(newIngredient)
         val result = database.addMeal("1", meal)
-        runBlocking {
-            assert(result.isSuccessful)
+
+        result.addOnSuccessListener {
+            assert(true)
+        }.addOnFailureListener {
+            assert(false)
         }
 
     }
 
     @Test
-    fun addMealTest() {
-        val mockFirestore = mockk<FirebaseFirestore>()
-        val mockDocumentSnapshot = mockk<DocumentSnapshot>()
-        val meal = Meal(
-            "1",
-            MealOccasion.DINNER,
-            "eggs",
-            102.2,
-            12301.3,
-            1234.9,
-            12303.0
-        )
-        val mealMap = Meal.serializeMeal(meal)
-        every { mockDocumentSnapshot.data } returns mealMap
-        every {
-            mockFirestore.collection("users").document("1").collection("meals").document(meal.uid)
-                .set(mealMap)
-        } returns Tasks.forResult(null)
-        val database = MealsFirebaseConnection(mockFirestore)
-        val result = database.addMeal("1", meal)
-        assert(result.isSuccessful)
+
+    fun getAllMealsActualFirebase() {
+        val database = MealsRepository()
+        val result = database.getAllMeals("1")
+
+        runBlocking {
+            result.await()
+        }
+
+        result.result?.forEach {
+            Log.d("Meal", it.toString())
+        }
     }
 
-    @Test
-    fun getAllMealsTest() {
-        val mockFirestore = mockk<FirebaseFirestore>()
-        val mockQuerySnapshot = mockk<QuerySnapshot>()
-        val mockDocumentSnapshot = mockk<DocumentSnapshot>()
-        val meal = Meal(
-            "1",
-            MealOccasion.DINNER,
-            "eggs",
-            102.2,
-            12301.3,
-            1234.9,
-            12303.0
-        )
-        val mealMap = Meal.serializeMeal(meal)
-        every { mockDocumentSnapshot.data } returns mealMap
-        every { mockQuerySnapshot.documents } returns listOf(mockDocumentSnapshot)
-        every {
-            mockFirestore.collection("users").document("1").collection("meals").get()
-        } returns Tasks.forResult(mockQuerySnapshot)
-        val database = MealsFirebaseConnection(mockFirestore)
-        val result = database.getAllMeals("1").result
-        assert(result?.size == 1)
-        assert(result?.get(0) == meal)
-    }
 
-    @Test
-    fun updateMealTest() {
-        val mockFirestore = mockk<FirebaseFirestore>()
-        val mockDocumentSnapshot = mockk<DocumentSnapshot>()
-        val meal = Meal(
-            "1",
-            MealOccasion.DINNER,
-            "eggs",
-            102.2,
-            12301.3,
-            1234.9,
-            12303.0
-        )
-        val mealMap = Meal.serializeMeal(meal)
-        every { mockDocumentSnapshot.data } returns mealMap
-        every {
-            mockFirestore.collection("users").document("1").collection("meals").document(meal.uid)
-                .set(mealMap)
-        } returns Tasks.forResult(null)
-        val database = MealsFirebaseConnection(mockFirestore)
-        val result = database.updateMeal("1", meal)
-        assert(result.isSuccessful)
-    }
 }

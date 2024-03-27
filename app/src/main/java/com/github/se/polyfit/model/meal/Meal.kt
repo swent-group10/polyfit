@@ -4,46 +4,28 @@ import com.github.se.polyfit.model.ingredient.Ingredient
 
 // modeled after the log meal api
 data class Meal(
-    val uid: String,
-    private var occasion: MealOccasion,
-    private var name: String,
-    private var calories: Double,
-    private var protein: Double,
-    private var carbohydrates: Double,
-    private var fat: Double,
-    private var ingredients: List<Ingredient> = emptyList()
+    val occasion: MealOccasion,
+    val name: String,
+    var calories: Double,
+    var protein: Double,
+    var carbohydrates: Double,
+    var fat: Double,
+    val ingredients: MutableList<Ingredient> = mutableListOf()
 ) {
-    init {
-        ingredients.forEach { it.parentMeal = this }
-        updateMeal()
+    private var uid: String = ""
+
+    // Unique Id chosen by the function MealFirebaseConnection.addMeal
+    fun updateUid(newUid: String) {
+        if (uid != "") throw Exception("uid already set")
+        uid = newUid
     }
 
-    fun getCalories(): Double {
-        return calories
-    }
-
-    fun getProtein(): Double {
-        return protein
-    }
-
-    fun getCarbohydrates(): Double {
-        return carbohydrates
-    }
-
-    fun getFat(): Double {
-        return fat
-    }
-
-    fun getOccasion(): MealOccasion {
-        return occasion
-    }
-
-    fun getName(): String {
-        return name
+    fun getUid(): String {
+        return uid
     }
 
     fun addIngredient(ingredient: Ingredient) {
-        ingredients = ingredients + ingredient
+        ingredients.add(ingredient)
         ingredient.parentMeal = this
         updateMeal()
     }
@@ -56,12 +38,17 @@ data class Meal(
 
     }
 
-    fun getAllIngredients(): List<Ingredient> {
-        return ingredients
-    }
-
     companion object {
-        fun serializeMeal(data: Meal): Map<String, Any> {
+
+        /**
+         * Serializes a Meal object to a pair of maps that can be stored in Firestore.
+         * They need to be meals and ingredients need to be deserialized separately. In order
+         * to facilitate storing them on the firestore database.
+         * @param data The Meal object to serialize.
+         * @return A pair of maps. The first map contains the Meal properties,
+         * and the second a list of map that contains the Ingredient properties.
+         */
+        fun serializeMeal(data: Meal): Pair<Map<String, Any>, List<Map<String, Any>>> {
             val map = mutableMapOf<String, Any>()
 
             // Convert each property manually
@@ -73,10 +60,15 @@ data class Meal(
             map["carbohydrates"] = data.carbohydrates
             map["fat"] = data.fat
 
-            return map
+            val ingredientsSerialList = mutableListOf<Map<String, Any>>()
+            data.ingredients.forEach { ingredient ->
+                ingredientsSerialList.add(Ingredient.serializeIngredient(ingredient))
+            }
+
+            return Pair(map, ingredientsSerialList)
         }
 
-        fun deserializeMeal(data: Map<String, Any>): Meal {
+        fun deserializeMeal(data: Map<String, Any>, ingredientsMap: List<Map<String, Any>>): Meal {
             // Convert each property manually
             val uid = data["uid"] as String
             val occasion = MealOccasion.valueOf(data["occasion"] as String)
@@ -86,17 +78,20 @@ data class Meal(
             val carbohydrates = data["carbohydrates"] as Double
             val fat = data["fat"] as Double
 
+            val ingredients =
+                ingredientsMap.map { Ingredient.deserializeIngredient(it) }.toMutableList()
 
             return Meal(
-                uid,
                 occasion,
                 name,
                 calories,
                 protein,
                 carbohydrates,
-                fat,
-                emptyList()
-            )
+                fat
+            ).apply { updateUid(uid) }
+                .apply {
+                    ingredients.forEach { addIngredient(it) }
+                }
         }
     }
 }
