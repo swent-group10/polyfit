@@ -38,9 +38,9 @@ import androidx.navigation.NavHostController
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.github.se.polyfit.R
-import com.github.se.polyfit.ui.compose.Titre
+import com.github.se.polyfit.ui.compose.Title
 import com.github.se.polyfit.ui.navigation.Navigation
-import com.github.se.polyfit.ui.theme.BlueButton
+import com.github.se.polyfit.ui.theme.primaryPurple
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 
@@ -70,11 +70,11 @@ fun LoginScreen(navController: Navigation) {
             horizontalAlignment = Alignment.CenterHorizontally) {
               Spacer(Modifier.weight(0.2f))
 
-              Titre(Modifier.testTag("LoginTitle"), 50.sp)
+              Title(Modifier.testTag("LoginTitle"), 50.sp)
 
               Spacer(Modifier.weight(0.6f))
 
-              ButtonSign {
+              SignInButton {
                 Log.d("LoginScreen", "button clicked")
                 createSignInIntent()
               }
@@ -100,14 +100,14 @@ val termText = buildAnnotatedString {
 }
 
 @Composable
-fun ButtonSign(onClick: () -> Unit) {
+fun SignInButton(onClick: () -> Unit) {
 
   Button(
       onClick = { onClick() },
       shape = RoundedCornerShape(20.dp),
       colors =
           ButtonDefaults.buttonColors(
-              contentColor = MaterialTheme.colorScheme.onPrimary, containerColor = BlueButton),
+              contentColor = MaterialTheme.colorScheme.onPrimary, containerColor = primaryPurple),
       modifier = Modifier.testTag("LoginButton")) {
         val imageModifierGoogle = Modifier.size(24.dp).absoluteOffset(x = (-13).dp, y = 0.dp)
 

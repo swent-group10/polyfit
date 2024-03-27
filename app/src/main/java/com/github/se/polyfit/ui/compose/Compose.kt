@@ -14,13 +14,13 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import com.github.se.polyfit.ui.theme.BlueButton
-import com.github.se.polyfit.ui.theme.PinkTitle
+import com.github.se.polyfit.ui.theme.primaryPurple
+import com.github.se.polyfit.ui.theme.PrimaryPink
 
-val gradiant_blue_pink = Brush.horizontalGradient(listOf(BlueButton, PinkTitle))
+val gradiant_blue_pink = Brush.horizontalGradient(listOf(primaryPurple, PrimaryPink))
 
 @Composable
-fun Titre(modifier: Modifier, fontSize: TextUnit) {
+fun Title(modifier: Modifier, fontSize: TextUnit) {
   val shape = RoundedCornerShape(35)
 
   Box(
