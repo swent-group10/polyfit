@@ -14,8 +14,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import com.github.se.polyfit.ui.theme.primaryPurple
 import com.github.se.polyfit.ui.theme.PrimaryPink
+import com.github.se.polyfit.ui.theme.primaryPurple
 
 val gradiant_blue_pink = Brush.horizontalGradient(listOf(primaryPurple, PrimaryPink))
 

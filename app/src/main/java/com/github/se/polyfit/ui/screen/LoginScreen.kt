@@ -26,18 +26,13 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.github.se.polyfit.R
 import com.github.se.polyfit.ui.compose.Title
-import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.theme.primaryPurple
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.github.se.polyfit.ui.viewModel.LoginViewModel
 
 @Composable
@@ -79,9 +74,7 @@ fun LoginScreen(goTo: () -> Unit) {
               Spacer(Modifier.weight(0.03f))
 
               Text(
-                  termText,
-                  textAlign = TextAlign.Center,
-                  modifier = Modifier.testTag("TermsOfService"))
+                  termText, textAlign = TextAlign.Center, modifier = Modifier.testTag("LoginTerms"))
 
               Spacer(Modifier.weight(0.2f))
             }
