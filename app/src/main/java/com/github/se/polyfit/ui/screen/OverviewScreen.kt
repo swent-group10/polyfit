@@ -1,6 +1,22 @@
 package com.github.se.polyfit.ui.screen
 
+import android.Manifest
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
+import android.graphics.ImageDecoder.createSource
+import android.net.Uri
+import android.provider.MediaStore
+import android.util.Log
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -16,168 +32,228 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
+import androidx.core.content.ContextCompat
+import com.github.se.polyfit.R
 
 @Composable
 @Preview
 fun OverviewScreen() {
+  // Context is used to launch the intent from the current Composable
+  // Context is used to launch the intent from the current Composable
+  val context = LocalContext.current
+  val iconExample = BitmapFactory.decodeResource(context.resources, R.drawable.picture_example)
+
+  var imageUri by remember { mutableStateOf<Uri?>(null) }
+  var imageBitmap by remember { mutableStateOf<Bitmap?>(iconExample) }
+  Text("Home Screen", modifier = Modifier.testTag("HomeScreen"))
+
+  // Launcher for starting the camera activity
+  val startCamera =
+      rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result
+        ->
+        val bitmap = result.data?.extras?.get("data") as? Bitmap
+        imageBitmap = bitmap
+      }
+
+  // Launcher for requesting the camera permission
+  val requestPermissionLauncher =
+      rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
+          isGranted: Boolean ->
+        if (isGranted) {
+          // Permission is granted, you can start the camera
+          val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+          try {
+            startCamera.launch(takePictureIntent)
+          } catch (e: Exception) {
+            Log.e("HomeScreen", "Error launching camera intent: $e")
+            // Handle the exception if the camera intent cannot be launched
+          }
+        } else {
+          Log.e("HomeScreen", "Permission denied")
+          // Permission is denied. Handle the denial appropriately.
+        }
+      }
+
+  // Create a launcher to open gallery
+  val pickImageLauncher =
+      rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri?
+        ->
+        uri?.let {
+          imageUri = uri // Update the UI with the selected image URI
+
+          try {
+            val bitmap = ImageDecoder.decodeBitmap(createSource(context.contentResolver, uri))
+            imageBitmap = bitmap
+          } catch (e: Exception) {
+            Log.e(
+                "OverviewScreen",
+                "Error decoding image: $e," + " are you sure the image is a bitmap?")
+          }
+        }
+      }
   Scaffold(
       modifier = Modifier,
-      topBar ={
-          Box(modifier= Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter){
-
-             Title(modifier = Modifier, 35.sp)
-          }
+      topBar = {
+        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
+          Title(modifier = Modifier, 35.sp)
+        }
       },
       content = { paddingValues ->
-        Box(modifier = Modifier
-            .padding(paddingValues)
-            .fillMaxWidth()) {
+        Box(modifier = Modifier.padding(paddingValues).fillMaxWidth()) {
           LazyColumn(contentPadding = PaddingValues(horizontal = 30.dp, vertical = 20.dp)) {
-              item{
-                  Text(
-                      text = "Welcome Back, User432!",
-                      fontSize = 20.sp,
-                      fontWeight = FontWeight.Bold,
-                      color = MaterialTheme.colorScheme.primary
-
-                  )
-              }
+            item {
+              Text(
+                  text = "Welcome Back, User432!",
+                  fontSize = 20.sp,
+                  fontWeight = FontWeight.Bold,
+                  color = MaterialTheme.colorScheme.primary)
+            }
             item {
               OutlinedCard(
-                  modifier =
-                  Modifier
-                      .align(Alignment.Center)
-                      .size(width = 350.dp, height = 210.dp),
+                  modifier = Modifier.align(Alignment.Center).size(width = 350.dp, height = 210.dp),
                   border =
                       BorderStroke(
-                          2.dp, brush = Brush.linearGradient(listOf(MaterialTheme.colorScheme.inversePrimary, MaterialTheme.colorScheme.primary))),
+                          2.dp,
+                          brush =
+                              Brush.linearGradient(
+                                  listOf(
+                                      MaterialTheme.colorScheme.inversePrimary,
+                                      MaterialTheme.colorScheme.primary))),
                   colors = CardDefaults.cardColors(Color.Transparent)) {
-                    calorieCardContent()
+                    CalorieCardContent()
                   }
             }
             item {
               OutlinedCard(
                   modifier =
-                  Modifier
-                      .align(Alignment.Center)
-                      .padding(top = 10.dp)
-                      .size(width = 350.dp, height = 100.dp),
+                      Modifier.align(Alignment.Center)
+                          .padding(top = 10.dp)
+                          .size(width = 350.dp, height = 500.dp),
                   border =
                       BorderStroke(
-                          2.dp, brush = Brush.linearGradient(listOf(MaterialTheme.colorScheme.inversePrimary, MaterialTheme.colorScheme.primary))),
+                          2.dp,
+                          brush =
+                              Brush.linearGradient(
+                                  listOf(
+                                      MaterialTheme.colorScheme.inversePrimary,
+                                      MaterialTheme.colorScheme.primary))),
                   colors = CardDefaults.cardColors(Color.Transparent)) {
 
                     //
-                  
-                  Button(onClick = { /*TODO*/ }) {
+
+                    Button(onClick = { pickImageLauncher.launch("image/*") }) {
                       Text(text = "import image")
-                  }
-                  Button(onClick = { /*TODO*/ }) {
+                    }
+                    Button(onClick = callCamera(context, startCamera, requestPermissionLauncher)) {
                       Text(text = "take picture")
+                    }
+
+                    imageBitmap?.let {
+                      Image(bitmap = it.asImageBitmap(), contentDescription = "Captured image")
+                    }
                   }
-              }
             }
           }
         }
       })
 }
 
-
 @Composable
-fun Title(modifier: Modifier, fontSize : TextUnit){
-    val shape = RoundedCornerShape(35)
+fun Title(modifier: Modifier, fontSize: TextUnit) {
+  val shape = RoundedCornerShape(35)
 
-    Box(
-        modifier = Modifier
-            .clip(shape)
-            .background(color = MaterialTheme.colorScheme.background)
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-    ){
+  Box(
+      modifier =
+          Modifier.clip(shape)
+              .background(color = MaterialTheme.colorScheme.background)
+              .padding(horizontal = 16.dp, vertical = 8.dp)) {
         Text(
             text = "Polyfit",
             fontSize = fontSize,
             modifier = modifier,
-            fontWeight = FontWeight.Bold
-        )
-    }
+            fontWeight = FontWeight.Bold)
+      }
 }
 
 @Composable
-fun calorieCardContent(){
-    Box(modifier = Modifier.fillMaxSize()){
-        Text(
-            text = "Calories Goal",
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .padding(start = 10.dp, top = 10.dp),
-            fontSize = 22.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.DarkGray
-        )
-        Text(
-            text = "756/",
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .padding(start = 10.dp, top = 50.dp),
-            fontSize = 40.sp,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary
-        )
-        Text(
-            text = "2200",
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .padding(start = 90.dp, top = 68.dp),
-            fontSize = 25.sp,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary
-        )
-        Text(
-            text = "Breakfast",
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(end = 90.dp, top = 50.dp),
-            color = Color.Magenta,
-            fontWeight = FontWeight.Bold
-        )
-        Text(
-            text = "Lunch",
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(end = 112.dp, top = 70.dp),
-            color = Color.Magenta,
-            fontWeight = FontWeight.Bold
-        )
-        Text(
-            text = "Dinner",
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(end = 109.dp, top = 90.dp),
-            color = Color.Magenta,
-            fontWeight = FontWeight.Bold
-        )
-        Text(
-            text = "Track your meals",
-            modifier = Modifier
-                .align(Alignment.CenterStart)
-                .padding(top = 30.dp, start = 10.dp),
-            fontSize = 16.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.secondary
-        )
+fun CalorieCardContent() {
+  Box(modifier = Modifier.fillMaxSize()) {
+    Text(
+        text = "Calories Goal",
+        modifier = Modifier.align(Alignment.TopStart).padding(start = 10.dp, top = 10.dp),
+        fontSize = 22.sp,
+        fontWeight = FontWeight.Bold,
+        color = Color.DarkGray)
+    Text(
+        text = "756/",
+        modifier = Modifier.align(Alignment.TopStart).padding(start = 10.dp, top = 50.dp),
+        fontSize = 40.sp,
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.primary)
+    Text(
+        text = "2200",
+        modifier = Modifier.align(Alignment.TopStart).padding(start = 90.dp, top = 68.dp),
+        fontSize = 25.sp,
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.primary)
+    Text(
+        text = "Breakfast",
+        modifier = Modifier.align(Alignment.TopEnd).padding(end = 90.dp, top = 50.dp),
+        color = Color.Magenta,
+        fontWeight = FontWeight.Bold)
+    Text(
+        text = "Lunch",
+        modifier = Modifier.align(Alignment.TopEnd).padding(end = 112.dp, top = 70.dp),
+        color = Color.Magenta,
+        fontWeight = FontWeight.Bold)
+    Text(
+        text = "Dinner",
+        modifier = Modifier.align(Alignment.TopEnd).padding(end = 109.dp, top = 90.dp),
+        color = Color.Magenta,
+        fontWeight = FontWeight.Bold)
+    Text(
+        text = "Track your meals",
+        modifier = Modifier.align(Alignment.CenterStart).padding(top = 30.dp, start = 10.dp),
+        fontSize = 16.sp,
+        fontWeight = FontWeight.SemiBold,
+        color = MaterialTheme.colorScheme.secondary)
+  }
+}
 
+private fun callCamera(
+    context: Context,
+    startCamera: ManagedActivityResultLauncher<Intent, ActivityResult>,
+    requestPermissionLauncher: ManagedActivityResultLauncher<String, Boolean>
+): () -> Unit = {
+  // Check if the permission has already been granted
+  when (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)) {
+    PackageManager.PERMISSION_GRANTED -> {
+      // You can use the camera
+      val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+      try {
+        startCamera.launch(takePictureIntent)
+      } catch (e: Exception) {
+        // Handle the exception if the camera intent cannot be launched
+        Log.e("HomeScreen", "Error launching camera intent: $e")
+      }
     }
+    else -> {
+      // Request the permission
+      requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+    }
+  }
 }
