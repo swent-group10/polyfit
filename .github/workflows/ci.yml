@@ -140,7 +140,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run:
+          GITHUB_BASE_REF: ${{ github.base_ref }}
+          GITHUB_HEAD_REF: ${{ github.head_ref }}
+        run: |
           ./gradlew sonar -Dsonar.pullrequest.base=$GITHUB_BASE_REF -Dsonar.pullrequest.branch=$GITHUB_HEAD_REF --parallel --build-cache
         # Adjust the sonar.projectKey and sonar.organization to your project's values
         # The xmlReportPaths needs to point to where your JaCoCo coverage report is generated
