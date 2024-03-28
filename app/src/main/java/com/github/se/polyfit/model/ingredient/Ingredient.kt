@@ -13,25 +13,24 @@ data class Ingredient(
     val nutritionalInformation: NutritionalInformation,
 ) {
 
-    companion object {
-        fun serializeIngredient(ingredient: Ingredient): Map<String, Any> {
-            val map = mutableMapOf<String, Any>()
-            map["name"] = ingredient.name
-            map["nutritionalInformation"] =
-                NutritionalInformation.serialize(ingredient.nutritionalInformation)
-            return map
-        }
-
-        fun deserializeIngredient(data: Map<String, Any>): Ingredient? {
-            val name = data["name"] as String
-            val nutritionalInformationData: Map<String, Map<String, Any>>? =
-                data["nutritionalInformation"] as? Map<String, Map<String, Any>>
-            if (nutritionalInformationData != null) {
-                val nutritionalInformation =
-                    NutritionalInformation.deserialize(nutritionalInformationData)
-                return Ingredient(name, nutritionalInformation)
-            }
-            return null
-        }
+  companion object {
+    fun serializeIngredient(ingredient: Ingredient): Map<String, Any> {
+      val map = mutableMapOf<String, Any>()
+      map["name"] = ingredient.name
+      map["nutritionalInformation"] =
+          NutritionalInformation.serialize(ingredient.nutritionalInformation)
+      return map
     }
+
+    fun deserializeIngredient(data: Map<String, Any>): Ingredient? {
+      val name = data["name"] as String
+      val nutritionalInformationData: Map<String, Map<String, Any>>? =
+          data["nutritionalInformation"] as? Map<String, Map<String, Any>>
+      if (nutritionalInformationData != null) {
+        val nutritionalInformation = NutritionalInformation.deserialize(nutritionalInformationData)
+        return Ingredient(name, nutritionalInformation)
+      }
+      return null
+    }
+  }
 }
