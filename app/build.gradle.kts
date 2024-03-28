@@ -20,7 +20,8 @@ sonar {
             "build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
         )
         //add other useful properties
-        
+
+
         property("sonar.qualitygate.wait", "true")
 
 
