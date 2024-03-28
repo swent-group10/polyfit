@@ -139,10 +139,10 @@ jobs:
       - name: Upload report to SonarCloud
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN:
-        #            ${{ secrets.SONAR_TOKEN }}GITHUB_BASE_REF: ${{ github.base_ref }}
-        #          GITHUB_HEAD_REF: ${{ github.head_ref }}
-        #          GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_BASE_REF: ${{ github.base_ref }}
+          GITHUB_HEAD_REF: ${{ github.head_ref }}
+          GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           ./gradlew sonar -Dsonar.pullrequest.base=$GITHUB_BASE_REF -Dsonar.pullrequest.branch=$GITHUB_HEAD_REF -Dsonar.pullrequest.key=$GITHUB_PR_NUMBER --parallel --build-cache
         # Adjust the sonar.projectKey and sonar.organization to your project's values
