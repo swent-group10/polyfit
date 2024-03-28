@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -41,7 +42,9 @@ fun OverviewScreen() {
           }
       },
       content = { paddingValues ->
-        Box(modifier = Modifier.padding(paddingValues).fillMaxWidth()) {
+        Box(modifier = Modifier
+            .padding(paddingValues)
+            .fillMaxWidth()) {
           LazyColumn(contentPadding = PaddingValues(horizontal = 30.dp, vertical = 20.dp)) {
               item{
                   Text(
@@ -55,8 +58,9 @@ fun OverviewScreen() {
             item {
               OutlinedCard(
                   modifier =
-                      Modifier.align(Alignment.Center)
-                          .size(width = 350.dp, height = 210.dp),
+                  Modifier
+                      .align(Alignment.Center)
+                      .size(width = 350.dp, height = 210.dp),
                   border =
                       BorderStroke(
                           2.dp, brush = Brush.linearGradient(listOf(MaterialTheme.colorScheme.inversePrimary, MaterialTheme.colorScheme.primary))),
@@ -67,16 +71,24 @@ fun OverviewScreen() {
             item {
               OutlinedCard(
                   modifier =
-                      Modifier.align(Alignment.Center)
-                          .padding(top = 10.dp)
-                          .size(width = 350.dp, height = 100.dp),
+                  Modifier
+                      .align(Alignment.Center)
+                      .padding(top = 10.dp)
+                      .size(width = 350.dp, height = 100.dp),
                   border =
                       BorderStroke(
                           2.dp, brush = Brush.linearGradient(listOf(MaterialTheme.colorScheme.inversePrimary, MaterialTheme.colorScheme.primary))),
                   colors = CardDefaults.cardColors(Color.Transparent)) {
 
                     //
+                  
+                  Button(onClick = { /*TODO*/ }) {
+                      Text(text = "import image")
                   }
+                  Button(onClick = { /*TODO*/ }) {
+                      Text(text = "take picture")
+                  }
+              }
             }
           }
         }
@@ -89,7 +101,8 @@ fun Title(modifier: Modifier, fontSize : TextUnit){
     val shape = RoundedCornerShape(35)
 
     Box(
-        modifier = Modifier.clip(shape)
+        modifier = Modifier
+            .clip(shape)
             .background(color = MaterialTheme.colorScheme.background)
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ){
@@ -107,46 +120,60 @@ fun calorieCardContent(){
     Box(modifier = Modifier.fillMaxSize()){
         Text(
             text = "Calories Goal",
-            modifier = Modifier.align(Alignment.TopStart).padding(start = 10.dp, top = 10.dp),
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(start = 10.dp, top = 10.dp),
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
             color = Color.DarkGray
         )
         Text(
             text = "756/",
-            modifier = Modifier.align(Alignment.TopStart).padding(start = 10.dp, top = 50.dp),
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(start = 10.dp, top = 50.dp),
             fontSize = 40.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary
         )
         Text(
             text = "2200",
-            modifier = Modifier.align(Alignment.TopStart).padding(start = 90.dp, top = 68.dp),
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(start = 90.dp, top = 68.dp),
             fontSize = 25.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary
         )
         Text(
             text = "Breakfast",
-            modifier = Modifier.align(Alignment.TopEnd).padding(end = 90.dp, top = 50.dp),
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(end = 90.dp, top = 50.dp),
             color = Color.Magenta,
             fontWeight = FontWeight.Bold
         )
         Text(
             text = "Lunch",
-            modifier = Modifier.align(Alignment.TopEnd).padding(end = 112.dp, top = 70.dp),
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(end = 112.dp, top = 70.dp),
             color = Color.Magenta,
             fontWeight = FontWeight.Bold
         )
         Text(
             text = "Dinner",
-            modifier = Modifier.align(Alignment.TopEnd).padding(end = 109.dp, top = 90.dp),
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(end = 109.dp, top = 90.dp),
             color = Color.Magenta,
             fontWeight = FontWeight.Bold
         )
         Text(
             text = "Track your meals",
-            modifier = Modifier.align(Alignment.CenterStart).padding(top = 30.dp, start = 10.dp),
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .padding(top = 30.dp, start = 10.dp),
             fontSize = 16.sp,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.secondary
