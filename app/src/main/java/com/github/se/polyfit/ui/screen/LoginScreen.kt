@@ -1,11 +1,7 @@
 package com.github.se.polyfit.ui.screen
 
-import android.app.Activity.RESULT_OK
-import android.content.Context
-import android.content.Intent
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.ActivityResultLauncher
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,7 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
@@ -35,31 +30,33 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
-import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.github.se.polyfit.R
 import com.github.se.polyfit.ui.compose.Title
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.theme.primaryPurple
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.github.se.polyfit.ui.viewModel.LoginViewModel
 
 @Composable
-fun LoginScreen(navController: Navigation) {
-
+fun LoginScreen(goTo: () -> Unit) {
   // Create an instance of the Authentication class
-  val authentication = Authentication(navController, context = LocalContext.current)
+
+  val viewModel: LoginViewModel = hiltViewModel()
+
   val signInLauncher =
       rememberLauncherForActivityResult(contract = FirebaseAuthUIActivityResultContract()) { res ->
-        authentication.onSignInResult(res)
+        viewModel.onSignInResult(res) { if (it) goTo() else Log.d("LoginScreen", "Sign in failed") }
       }
 
   // Set the signInLauncher in the Authentication class
-  authentication.setSignInLauncher(signInLauncher)
+  viewModel.setSignInLauncher(signInLauncher)
 
   // This function starts the sign-in process
   fun createSignInIntent() {
-    authentication.signIn()
+    viewModel.signIn()
   }
 
   Surface(
@@ -118,43 +115,4 @@ fun SignInButton(onClick: () -> Unit) {
             modifier = imageModifierGoogle)
         Text(text = "Sign in with Google")
       }
-}
-
-class Authentication(private val navigation: Navigation, private val context: Context) {
-  private lateinit var signInLauncher: ActivityResultLauncher<Intent>
-
-  fun setSignInLauncher(launcher: ActivityResultLauncher<Intent>) {
-    signInLauncher = launcher
-  }
-
-  fun signIn() {
-    val gso =
-        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build()
-
-    val mGoogleSignInClient = GoogleSignIn.getClient(context, gso)
-
-    val signInIntent = mGoogleSignInClient.signInIntent
-    signInLauncher.launch(signInIntent)
-  }
-
-  fun onSignInResult(result: FirebaseAuthUIAuthenticationResult) {
-    Log.i("LoginScreen", "onSignInResult")
-    val response = result.idpResponse
-    Log.i("LoginScreen", "response: $response")
-    if (result.resultCode == RESULT_OK) {
-      Log.i("LoginScreen", "User signed in")
-      navigation.navigateToHome()
-    } else {
-      response?.let {
-        Log.e("LoginScreen", "Error in result firebase authentication: " + "${it.error?.errorCode}")
-      }
-    }
-  }
-}
-
-@Preview
-@Composable
-fun LoginScreenPreview() {
-  val nav = Navigation(NavHostController(LocalContext.current))
-  LoginScreen(nav)
 }
