@@ -149,4 +149,5 @@ android {
 }
 dependencies {
     implementation("androidx.test.ext:junit-ktx:1.1.5")
+    implementation(kotlin("reflect"))
 }
