@@ -20,7 +20,11 @@ sonar {
             "build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
         )
         //add other useful properties
-        
+        property(
+            "sonar.sources",
+            "src/main/java"
+        ) // Only analyze files in the 'src/main/java' directory
+
         property("sonar.qualitygate.wait", "true")
 
 
