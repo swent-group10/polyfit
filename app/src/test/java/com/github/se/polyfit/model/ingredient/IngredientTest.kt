@@ -5,77 +5,78 @@ import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import org.junit.Test
 
 class IngredientTest {
-  private val ingredient = Ingredient("eggs", NutritionalInformation())
+    private val ingredient = Ingredient("eggs", NutritionalInformation())
 
-  @Test
-  fun serializeIngredient() {
+    @Test
+    fun serializeIngredient() {
 
-    val map = Ingredient.serializeIngredient(ingredient)
-    val expectedMap =
-        mapOf(
-            "name" to "eggs",
-            "nutritionalInformation" to
-                NutritionalInformation.serialize(ingredient.nutritionalInformation))
+        val map = Ingredient.serializeIngredient(ingredient)
+        val expectedMap =
+            mapOf(
+                "name" to "eggs",
+                "nutritionalInformation" to
+                        NutritionalInformation.serialize(ingredient.nutritionalInformation)
+            )
 
-    assert(map == expectedMap)
-  }
-
-  @Test
-  fun deserializeIngredient() {
-    Ingredient.serializeIngredient(ingredient).also { serializedIngredient ->
-      val deserializedIngredient = Ingredient.deserializeIngredient(serializedIngredient)
-      assert(ingredient == deserializedIngredient)
+        assert(map == expectedMap)
     }
-  }
-  // add more tests
 
-  @Test
-  fun testIngredientName() {
-    assert(ingredient.name == "eggs")
-  }
+    @Test
+    fun deserializeIngredient() {
+        Ingredient.serializeIngredient(ingredient).also { serializedIngredient ->
+            val deserializedIngredient = Ingredient.deserializeIngredient(serializedIngredient)
+            assert(ingredient == deserializedIngredient)
+        }
+    }
+    // add more tests
 
-  @Test
-  fun testNutritionalInformation() {
-    val nutritionalInformation = ingredient.nutritionalInformation
-    // Replace with actual values
-    assert(nutritionalInformation.protein.amount == 0.0)
-    assert(nutritionalInformation.protein.unit == MeasurementUnit.G)
-    // Add more assertions for other nutrients
-  }
+    @Test
+    fun testIngredientName() {
+        assert(ingredient.name == "eggs")
+    }
 
-  @Test
-  fun testSerializationDeserialization() {
-    val serializedIngredient = Ingredient.serializeIngredient(ingredient)
-    val deserializedIngredient = Ingredient.deserializeIngredient(serializedIngredient)
-    assert(ingredient == deserializedIngredient)
-    assert(ingredient.name == deserializedIngredient?.name)
-    assert(ingredient.nutritionalInformation == deserializedIngredient?.nutritionalInformation)
-  }
+    @Test
+    fun testNutritionalInformation() {
+        val nutritionalInformation = ingredient.nutritionalInformation
+        // Replace with actual values
+        assert(nutritionalInformation.protein.amount == 0.0)
+        assert(nutritionalInformation.protein.unit == MeasurementUnit.G)
+        // Add more assertions for other nutrients
+    }
 
-  @Test
-  fun testSerializationDeserializationWithNullValues() {
-    // Create an Ingredient object with null values
-    val ingredientWithNullValues = Ingredient("eggs", NutritionalInformation())
+    @Test
+    fun testSerializationDeserialization() {
+        val serializedIngredient = Ingredient.serializeIngredient(ingredient)
+        val deserializedIngredient = Ingredient.deserializeIngredient(serializedIngredient)
+        assert(ingredient == deserializedIngredient)
+        assert(ingredient.name == deserializedIngredient?.name)
+        assert(ingredient.nutritionalInformation == deserializedIngredient?.nutritionalInformation)
+    }
 
-    // Serialize the Ingredient object
-    val serializedIngredient = Ingredient.serializeIngredient(ingredientWithNullValues)
+    @Test
+    fun testSerializationDeserializationWithDefaultValues() {
+        // Create an Ingredient object with null values
+        val ingredientWithDefaultValues = Ingredient("eggs", NutritionalInformation())
 
-    // Deserialize the serialized Ingredient object
-    val deserializedIngredient = Ingredient.deserializeIngredient(serializedIngredient)
+        // Serialize the Ingredient object
+        val serializedIngredient = Ingredient.serializeIngredient(ingredientWithDefaultValues)
 
-    // Check if the deserialized Ingredient object is null
-    assert(deserializedIngredient == null)
-  }
+        // Deserialize the serialized Ingredient object
+        val deserializedIngredient = Ingredient.deserializeIngredient(serializedIngredient)
 
-  @Test
-  fun testDeserializationWithEmptyValues() {
-    // Create a map with null values
-    val map = mapOf("name" to "eggs", "nutritionalInformation" to "")
+        // Check if the deserialized Ingredient object is null
+        assert(deserializedIngredient == ingredientWithDefaultValues)
+    }
 
-    // Deserialize the map
-    val deserializedIngredient = Ingredient.deserializeIngredient(map)
+    @Test
+    fun testDeserializationWithEmptyValues() {
+        // Create a map with null values
+        val map = mapOf("name" to "eggs", "nutritionalInformation" to "")
 
-    // Check if the deserialized Ingredient object is null
-    assert(deserializedIngredient == null)
-  }
+        // Deserialize the map
+        val deserializedIngredient = Ingredient.deserializeIngredient(map)
+
+        // Check if the deserialized Ingredient object is null
+        assert(deserializedIngredient == null)
+    }
 }
