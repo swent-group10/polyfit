@@ -30,7 +30,7 @@ import com.github.se.polyfit.R
 import com.github.se.polyfit.ui.viewModel.LoginViewModel
 
 @Composable
-fun LoginScreen(goTo: () -> Unit) {
+fun SignScreen(goTo: () -> Unit) {
   // Create an instance of the Authentication class
 
   val viewModel: LoginViewModel = hiltViewModel()
