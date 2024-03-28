@@ -40,7 +40,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
@@ -53,13 +52,12 @@ import com.github.se.polyfit.R
 @Preview
 fun OverviewScreen() {
   // Context is used to launch the intent from the current Composable
-  // Context is used to launch the intent from the current Composable
   val context = LocalContext.current
-  val iconExample = BitmapFactory.decodeResource(context.resources, R.drawable.picture_example)
 
+  // State to hold the URI, the image and the bitmap
   var imageUri by remember { mutableStateOf<Uri?>(null) }
+  val iconExample = BitmapFactory.decodeResource(context.resources, R.drawable.picture_example)
   var imageBitmap by remember { mutableStateOf<Bitmap?>(iconExample) }
-  Text("Home Screen", modifier = Modifier.testTag("HomeScreen"))
 
   // Launcher for starting the camera activity
   val startCamera =
