@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -39,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
 import com.github.se.polyfit.ui.components.GradientButton
 import com.github.se.polyfit.ui.navigation.Navigation
+import com.github.se.polyfit.ui.theme.PrimaryPurple
 
 // TODO: Replace with real data class
 data class Ingredient(
@@ -158,7 +160,7 @@ fun TopBar(navigation: Navigation) {
                   imageVector = Icons.Default.ArrowBack,
                   contentDescription = "Back",
                   modifier = Modifier.testTag("BackButton"),
-                  tint = MaterialTheme.colorScheme.primary)
+                  tint = PrimaryPurple)
             },
             modifier = Modifier.testTag("BackButton"))
         Text(
@@ -198,9 +200,9 @@ fun BottomBar() {
           Button(
               onClick = {}, // TODO: Finish adding ingredients
               modifier = Modifier.width(200.dp).testTag("DoneButton"),
-          ) {
-            Text(text = "Done", fontSize = 24.sp)
-          }
+              colors = ButtonDefaults.buttonColors(containerColor = PrimaryPurple)) {
+                Text(text = "Done", fontSize = 24.sp)
+              }
         }
   }
 }

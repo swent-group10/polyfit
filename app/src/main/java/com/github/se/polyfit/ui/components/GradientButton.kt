@@ -25,6 +25,16 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 
+/**
+ * A button with a gradient border.
+ *
+ * @param onClick The callback to be invoked when this button is clicked.
+ * @param active Whether the button is active or not. Inactive button is gray.
+ * @param modifier The modifier to be applied to the button.
+ * @param text The text to be displayed in the button.
+ * @param icon The icon to be displayed in the button.
+ * @param round Whether the button should be round or not (used when button is icon only).
+ */
 @Composable
 fun GradientButton(
     onClick: () -> Unit,
