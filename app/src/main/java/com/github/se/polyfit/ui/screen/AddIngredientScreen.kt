@@ -17,12 +17,9 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
+import com.github.se.polyfit.ui.components.GradientBox
 import com.github.se.polyfit.ui.theme.*
 
 // Check if the input is not just a single "0", and if it has leading zeros
@@ -59,151 +56,137 @@ fun AddIngredientPopUpWindow(){
 
     if (showDialog) {
         Dialog(onDismissRequest = { showDialog = false }) {
-            Box(
-                modifier = Modifier
-                    .graphicsLayer {
-                        shape = RoundedCornerShape(20.dp)
-                        clip = true
-                    }
-                    .background(
-                        brush = Brush.linearGradient(
-                            colors = listOf(PrimaryPurple, PrimaryPink),
-                            start = Offset.Zero,
-                            end = Offset.Infinite
-                        )
-                    )
-                    .padding(2.5.dp)
+
+            GradientBox(
+                innerModifier = Modifier
+                    .fillMaxWidth(),
+                iconOnClick = {showDialog = false},
+                icon = Icons.Filled.Close,
+                iconColor = PrimaryPink,
+                iconDescriptor = "close",
             ) {
-                Box(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(
-                            color = Color.White,
-                            shape = RoundedCornerShape(20.dp)
+                        .padding(
+                            top = 20.dp,
+                            bottom = 20.dp
                         )
-                        .padding(20.dp)
                 ) {
-                    Column(
-                        modifier = Modifier.fillMaxWidth()
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Bar for searching ingredients
+                    SearchBar(
+                        modifier = Modifier
+                            .padding(
+                                start = 20.dp,
+                                end = 20.dp
+                            ),
+                        query = searchText,
+                        onQueryChange = {it -> searchText = it},
+                        onSearch = {},
+                        active = showIngredientSearch,
+                        onActiveChange = {showIngredientSearch = true},
+                        placeholder = {
+                            Row {
+                                Icon(
+                                    Icons.Filled.Search,
+                                    contentDescription = "search",
+                                    tint = SecondaryGrey
+                                )
+                                Text(
+                                    text = " Find an Ingredient...",
+                                    color = SecondaryGrey,
+                                    style = TextStyle(fontSize = 17.sp)
+                                )
+                            }
+                        }
                     ) {
 
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        // Bar for searching ingredients
-                        SearchBar(
-                            query = searchText,
-                            onQueryChange = {it -> searchText = it},
-                            onSearch = {},
-                            active = showIngredientSearch,
-                            onActiveChange = {showIngredientSearch = true},
-                            placeholder = {
-                                Row {
-                                    Icon(
-                                        Icons.Filled.Search,
-                                        contentDescription = "search",
-                                        tint = SecondaryGrey
-                                    )
-                                    Text(
-                                        text = " Find an Ingredient...",
-                                        color = SecondaryGrey,
-                                        style = TextStyle(fontSize = 17.sp)
-                                    )
-                                }
-                            }
-                        ) {
-
-                            LazyColumn{
-                                items(filteredIngredients) { ingredient ->
-                                    Text(
-                                        text = ingredient,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .clickable {
-                                                searchText = ingredient
-                                                showIngredientSearch = false
-                                                // TODO: Apply according nutrition facts to text fields below
-                                            }
-                                            .padding(8.dp)
-                                    )
-                                    Divider()
-                                }
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        // Nutrition Facts
-                        (0..4).forEach { index ->
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
+                        LazyColumn{
+                            items(filteredIngredients) { ingredient ->
                                 Text(
-                                    text = nutritionLabels[index],
-                                    color = SecondaryGrey,
-                                    style = TextStyle(fontSize = 18.sp),
-                                    modifier = Modifier.weight(1.5f)
-                                )
-
-                                TextField(
-                                    value = nutritionSize[index],
-                                    onValueChange = { newValue ->
-                                        nutritionSize[index] = removeLeadingZeros(newValue)
-                                    },
+                                    text = ingredient,
                                     modifier = Modifier
-                                        .weight(0.5f),
-                                    singleLine = true,
-                                    colors = TextFieldDefaults.colors(
-                                        focusedIndicatorColor = PrimaryPurple,
-                                        unfocusedIndicatorColor = SecondaryGrey,
-                                        focusedContainerColor = Color.Transparent,
-                                        unfocusedContainerColor = Color.Transparent
-                                    )
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            searchText = ingredient
+                                            showIngredientSearch = false
+                                            // TODO: Apply according nutrition facts to text fields below
+                                        }
+                                        .padding(8.dp)
                                 )
-
-                                Text(
-                                    text = nutritionUnit[index],
-                                    style = TextStyle(fontSize = 18.sp),
-                                    color = SecondaryGrey,
-                                    modifier = Modifier
-                                        .weight(0.4f)
-                                        .padding(start = 8.dp)
-                                )
+                                Divider()
                             }
-                            Spacer(modifier = Modifier.height(10.dp))
                         }
-
-                        // Add Button at the bottom
-                        Button(
-                            onClick = {
-                                showDialog = false
-                                // TODO: Add ingredient to ingredient list
-                            },
-                            modifier = Modifier
-                                .padding(top = 16.dp)
-                                .align(Alignment.CenterHorizontally)
-                                .fillMaxWidth(0.5f),
-                            shape = RoundedCornerShape(50.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = PrimaryPurple
-                            )
-                        ) {
-                            Text("Add", color = Color.White)
-                        }
-
                     }
-                }
 
-                // Close pop up button
-                IconButton(
-                    onClick = { showDialog = false },
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                ) {
-                    Icon(
-                        Icons.Filled.Close,
-                        "close",
-                        tint = PrimaryPink)
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Nutrition Facts
+                    (0..4).forEach { index ->
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                    start = 20.dp,
+                                    end = 0.dp
+                                )
+                        ) {
+                            Text(
+                                text = nutritionLabels[index],
+                                color = SecondaryGrey,
+                                style = TextStyle(fontSize = 18.sp),
+                                modifier = Modifier.weight(1.5f)
+                            )
+
+                            TextField(
+                                value = nutritionSize[index],
+                                onValueChange = { newValue ->
+                                    nutritionSize[index] = removeLeadingZeros(newValue)
+                                },
+                                modifier = Modifier
+                                    .weight(0.5f),
+                                singleLine = true,
+                                colors = TextFieldDefaults.colors(
+                                    focusedIndicatorColor = PrimaryPurple,
+                                    unfocusedIndicatorColor = SecondaryGrey,
+                                    focusedContainerColor = Color.Transparent,
+                                    unfocusedContainerColor = Color.Transparent
+                                )
+                            )
+
+                            Text(
+                                text = nutritionUnit[index],
+                                style = TextStyle(fontSize = 18.sp),
+                                color = SecondaryGrey,
+                                modifier = Modifier
+                                    .weight(0.4f)
+                                    .padding(start = 8.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(10.dp))
+                    }
+
+                    // Add Button at the bottom
+                    Button(
+                        onClick = {
+                            showDialog = false
+                            // TODO: Add ingredient to ingredient list
+                        },
+                        modifier = Modifier
+                            .padding(top = 16.dp)
+                            .align(Alignment.CenterHorizontally)
+                            .fillMaxWidth(0.5f),
+                        shape = RoundedCornerShape(50.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = PrimaryPurple
+                        )
+                    ) {
+                        Text("Add", color = Color.White)
+                    }
                 }
             }
         }
