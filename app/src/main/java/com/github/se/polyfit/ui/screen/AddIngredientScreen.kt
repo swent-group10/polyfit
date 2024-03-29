@@ -23,7 +23,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
+import com.github.se.polyfit.ui.theme.*
 
 // Check if the input is not just a single "0", and if it has leading zeros
 fun removeLeadingZeros(input: String): String {
@@ -67,8 +67,7 @@ fun AddIngredientPopUpWindow(){
                     }
                     .background(
                         brush = Brush.linearGradient(
-                            // TODO: Replace with predefined theme colors
-                            colors = listOf(Color(0xFF7158E2), Color(0xFFCD84F1)),
+                            colors = listOf(PrimaryPurple, PrimaryPink),
                             start = Offset.Zero,
                             end = Offset.Infinite
                         )
@@ -102,13 +101,11 @@ fun AddIngredientPopUpWindow(){
                                     Icon(
                                         Icons.Filled.Search,
                                         contentDescription = "search",
-                                        // TODO: Replace with predefined theme colors
-                                        tint = Color(0xFFA4A4A4)
+                                        tint = SecondaryGrey
                                     )
                                     Text(
                                         text = " Find an Ingredient...",
-                                        // TODO: Replace with predefined theme colors
-                                        color = Color(0xFFA4A4A4),
+                                        color = SecondaryGrey,
                                         style = TextStyle(fontSize = 17.sp)
                                     )
                                 }
@@ -143,8 +140,7 @@ fun AddIngredientPopUpWindow(){
                             ) {
                                 Text(
                                     text = nutritionLabels[index],
-                                    // TODO: Replace with predefined theme colors
-                                    color = Color(0xFF5E5E5E),
+                                    color = SecondaryGrey,
                                     style = TextStyle(fontSize = 18.sp),
                                     modifier = Modifier.weight(1.5f)
                                 )
@@ -158,9 +154,8 @@ fun AddIngredientPopUpWindow(){
                                         .weight(0.5f),
                                     singleLine = true,
                                     colors = TextFieldDefaults.colors(
-                                        // TODO: Replace with predefined theme colors
-                                        focusedIndicatorColor = Color(0xFF7158E2),
-                                        unfocusedIndicatorColor = Color(0xFFA2A2A2),
+                                        focusedIndicatorColor = PrimaryPurple,
+                                        unfocusedIndicatorColor = SecondaryGrey,
                                         focusedContainerColor = Color.Transparent,
                                         unfocusedContainerColor = Color.Transparent
                                     )
@@ -169,7 +164,7 @@ fun AddIngredientPopUpWindow(){
                                 Text(
                                     text = nutritionUnit[index],
                                     style = TextStyle(fontSize = 18.sp),
-                                    color = Color(0xFF5E5E5E),
+                                    color = SecondaryGrey,
                                     modifier = Modifier
                                         .weight(0.4f)
                                         .padding(start = 8.dp)
@@ -190,8 +185,7 @@ fun AddIngredientPopUpWindow(){
                                 .fillMaxWidth(0.5f),
                             shape = RoundedCornerShape(50.dp),
                             colors = ButtonDefaults.buttonColors(
-                                // TODO: Replace with predefined theme colors
-                                containerColor = Color(0xFF7158E2)
+                                containerColor = PrimaryPurple
                             )
                         ) {
                             Text("Add", color = Color.White)
@@ -209,8 +203,7 @@ fun AddIngredientPopUpWindow(){
                     Icon(
                         Icons.Filled.Close,
                         "close",
-                        // TODO: Replace with predefined theme colors
-                        tint = Color(0xFFCD84F1))
+                        tint = PrimaryPink)
                 }
             }
         }
