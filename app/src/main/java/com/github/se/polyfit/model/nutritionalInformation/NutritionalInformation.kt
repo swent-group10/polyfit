@@ -1,5 +1,7 @@
 package com.github.se.polyfit.model.nutritionalInformation
 
+import android.util.Log
+
 data class NutritionalInformation(
     val totalWeight: Nutrient = Nutrient(),
     val calories: Nutrient = Nutrient(),
@@ -47,15 +49,21 @@ data class NutritionalInformation(
                 return map
             }
 
-            fun deserialize(data: Map<String, Any>): Nutrient {
-                val amount = data["amount"] as? Double ?: 0.0
-                val unit =
-                    try {
-                        MeasurementUnit.fromString(data["unit"] as? String ?: "")
-                    } catch (e: IllegalArgumentException) {
-                        MeasurementUnit.G
-                    }
-                return Nutrient(amount, unit)
+            fun deserialize(data: Map<String, Any>): Nutrient? {
+                val amount = data["amount"] as? Double
+                val unit = data["unit"] as? String
+                val measurementUnit = if (unit != null) MeasurementUnit.fromString(unit) else null
+
+                if (amount != null && unit != null) {
+                    return Nutrient(amount, measurementUnit!!)
+                } else {
+                    Log.e(
+                        "Nutrient",
+                        "Failed to deserialize Nutrient object"
+                    )
+                    return null
+                }
+
             }
         }
     }

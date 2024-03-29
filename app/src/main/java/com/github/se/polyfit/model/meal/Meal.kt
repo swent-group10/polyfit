@@ -1,5 +1,6 @@
 package com.github.se.polyfit.model.meal
 
+import android.util.Log
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 
@@ -7,82 +8,74 @@ import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 data class Meal(
     val occasion: MealOccasion,
     val name: String,
+    //represent the ideal temperature at which should be eaten at,
+    // usefull for later features
+    var mealTemp: Double = 20.0,
     val nutritionalInformation: NutritionalInformation,
     private val ingredients: MutableList<Ingredient> = mutableListOf()
 ) {
-  private var uid: String = ""
-
-  // Unique Id chosen by the function MealFirebaseConnection.addMeal
-  fun updateUid(newUid: String) {
-    if (uid != "") throw Exception("uid already set")
-    uid = newUid
-  }
-
-  fun getUid(): String {
-    return uid
-  }
-
-  fun addIngredient(ingredient: Ingredient) {
-    ingredients.add(ingredient)
-    updateMeal()
-  }
-
-  fun updateMeal() {
-    //        calories = ingredients.sumOf { it.calories }
-    //        protein = ingredients.sumOf { it.protein }
-    //        carbohydrates = ingredients.sumOf { it.carbohydrates }
-    //        fat = ingredients.sumOf { it.fat }
-  }
-
-  companion object {
+    private var uid: String = ""
 
     /**
-     * Serializes a Meal object to a pair of maps that can be stored in Firestore. They need to be
-     * meals and ingredients need to be deserialized separately. In order to facilitate storing them
-     * on the firestore database.
+     * Updates the uid of the meal. The uid is  of the associated user.
+     * It can only be set once for consistency.
      *
-     * @param data The Meal object to serialize.
-     * @return A pair of maps. The first map contains the Meal properties, and the second a list of
-     *   map that contains the Ingredient properties.
+     * @param newUid The new uid to set.
      */
-    //        fun serializeMeal(data: Meal): Pair<Map<String, Any>> {
-    //            val map = mutableMapOf<String, Any>()
-    //
-    //            // Convert each property manually
-    //            map["uid"] = data.uid
-    //            map["occasion"] = data.occasion.name
-    //            map["name"] = data.name
-    //            map["calories"] = data.calories
-    //            map["protein"] = data.protein
-    //            map["carbohydrates"] = data.carbohydrates
-    //            map["fat"] = data.fat
-    //
-    //            val ingredientsSerialList = mutableListOf<Map<String, Any>>()
-    //            data.ingredients.forEach { ingredient ->
-    //                ingredientsSerialList.add(Ingredient.serializeIngredient(ingredient))
-    //            }
-    //
-    //            return Pair(map, ingredientsSerialList)
-    //        }
-    //
-    //        fun deserializeMeal(data: Map<String, Any>, ingredientsMap: List<Map<String, Any>>):
-    // Meal {
-    //            // Convert each property manually
-    //            val uid = data["uid"] as String
-    //            val occasion = MealOccasion.valueOf(data["occasion"] as String)
-    //            val name = data["name"] as String
-    //            val calories = data["calories"] as Double
-    //            val protein = data["protein"] as Double
-    //            val carbohydrates = data["carbohydrates"] as Double
-    //            val fat = data["fat"] as Double
-    //
-    //            val ingredients =
-    //                ingredientsMap.map { Ingredient.deserializeIngredient(it) }.toMutableList()
-    //
-    //            return Meal(occasion, name, calories, protein, carbohydrates, fat)
-    //                .apply { updateUid(uid) }
-    //                .apply { ingredients.forEach { addIngredient(it) } }
-    //        }
-    //    }
-  }
+    fun updateUid(newUid: String) {
+        if (uid != "") {
+            Log.e(
+                "Meal",
+                "Attempted to update the uid of a Meal object that already has a uid. Ignoring."
+
+            )
+        } else {
+            uid = newUid
+        }
+    }
+
+    fun getUid(): String {
+        return uid
+    }
+
+    fun addIngredient(ingredient: Ingredient) {
+        ingredients.add(ingredient)
+        updateMeal()
+    }
+
+    fun updateMeal() {
+
+    }
+
+    companion object {
+
+        fun serialize(data: Meal): Map<String, Any> {
+            return mutableMapOf<String, Any>().apply {
+                this["uid"] = data.uid
+                this["occasion"] = data.occasion.name
+                this["name"] = data.name
+                this["mealTemp"] = data.mealTemp
+                this["nutritionalInformation"] =
+                    NutritionalInformation.serialize(data.nutritionalInformation)
+            }
+        }
+
+        fun deserialize(data: Map<String, Any>): Meal? {
+            val uid = data["uid"] as? String
+            val occasion = data["occasion"]?.let { MealOccasion.valueOf(it as String) }
+            val mealTemp = data["mealTemp"] as? Double
+            val name = data["name"] as? String
+            val nutritionalInformationData =
+                data["nutritionalInformation"] as? Map<String, Map<String, Any>>
+
+            return if (uid != null && occasion != null && mealTemp != null && name != null && nutritionalInformationData != null) {
+                val nutritionalInformation =
+                    NutritionalInformation.deserialize(nutritionalInformationData)
+                Meal(occasion, name, mealTemp, nutritionalInformation).apply { updateUid(uid) }
+            } else {
+                Log.e("Meal", "Failed to deserialize Meal object")
+                null
+            }
+        }
+    }
 }
