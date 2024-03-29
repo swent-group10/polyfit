@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -18,6 +20,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -26,9 +29,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -36,9 +42,12 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.compose.rememberNavController
+import com.github.se.polyfit.ui.components.GradientBox
 import com.github.se.polyfit.ui.components.GradientButton
 import com.github.se.polyfit.ui.navigation.Navigation
+import com.github.se.polyfit.ui.theme.PrimaryPink
 
 // TODO: Replace with real data class
 data class Ingredient(
@@ -60,8 +69,10 @@ fun IngredientScreen(
   val potentialIngredients = remember {
     mutableStateListOf(*initialPotentialIngredients.toTypedArray())
   }
+    val showAddIngredDialog = remember { mutableStateOf(false) }
 
-  Scaffold(topBar = { TopBar(navigation) }, bottomBar = { BottomBar() }) {
+
+  Scaffold(topBar = { TopBar(navigation) }, bottomBar = { BottomBar(onClickAddIngred = {showAddIngredDialog.value = true}) }) {
     IngredientList(
         it,
         ingredients,
@@ -71,6 +82,10 @@ fun IngredientScreen(
           ingredients.add(item)
         })
   }
+
+    if (showAddIngredDialog.value) {
+        AddIngredientDialog(onClickCloseDialog = {showAddIngredDialog.value = false})
+    }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -86,6 +101,7 @@ fun IngredientList(
     // equivalent to min(3, potentialIngredients.size)
     mutableIntStateOf(initialSuggestions.coerceAtMost(potentialIngredients.size))
   }
+
   Column(
       modifier =
           Modifier.fillMaxSize()
@@ -169,7 +185,7 @@ fun TopBar(navigation: Navigation) {
 }
 
 @Composable
-fun BottomBar() {
+fun BottomBar(onClickAddIngred: () -> Unit,) {
   Column(
       modifier =
           Modifier.background(MaterialTheme.colorScheme.background)
@@ -180,7 +196,10 @@ fun BottomBar() {
         modifier = Modifier.fillMaxWidth().padding(16.dp, 0.dp).testTag("AddIngredientBox"),
         contentAlignment = Alignment.CenterEnd) {
           GradientButton(
-              onClick = { Log.v("Add Ingredient", "Clicked") }, // TODO: Add new ingredient
+              onClick = {
+                  Log.v("Add Ingredient", "Clicked")
+                  onClickAddIngred()
+              },
               active = true,
               round = true,
               icon = {
