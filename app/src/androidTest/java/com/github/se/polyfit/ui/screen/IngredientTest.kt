@@ -4,11 +4,14 @@ import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
-import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.kakaocup.compose.node.element.ComposeScreen
+import io.mockk.confirmVerified
+import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.junit4.MockKRule
+import io.mockk.verify
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -17,14 +20,15 @@ import org.junit.runner.RunWith
 class IngredientTest : TestCase() {
   @get:Rule val composeTestRule = createComposeRule()
 
+  @get:Rule val mockkRule = MockKRule(this)
+
+  @RelaxedMockK lateinit var mockNav: Navigation
+
   private fun launchIngredientScreenWithTestData(
       testIngredients: List<Ingredient>,
       testPotentials: List<Ingredient>
   ) {
-    composeTestRule.setContent {
-      val navController = rememberNavController()
-      IngredientScreen(Navigation(navController), testIngredients, testPotentials)
-    }
+    composeTestRule.setContent { IngredientScreen(mockNav, testIngredients, testPotentials) }
   }
 
   private val manyIngredients =
@@ -61,7 +65,11 @@ class IngredientTest : TestCase() {
       backButton {
         assertIsDisplayed()
         assertHasClickAction()
+        performClick()
       }
+
+      verify { mockNav.goBack() }
+      confirmVerified(mockNav)
     }
   }
 
