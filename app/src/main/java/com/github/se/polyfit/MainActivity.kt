@@ -28,7 +28,9 @@ class MainActivity : ComponentActivity() {
         NavHost(navController = navController, startDestination = Route.Register) {
           composable(Route.Register) { LoginScreen(navigation::navigateToHome) }
           composable(Route.Home) { HomeScreen(navigation) }
-          composable(Route.Ingredients) { IngredientScreen(navigation) }
+
+          // TODO: Replace with actual data once the API is ready
+          composable(Route.Ingredients) { IngredientScreen(navigation, listOf(), listOf()) }
         }
       }
     }

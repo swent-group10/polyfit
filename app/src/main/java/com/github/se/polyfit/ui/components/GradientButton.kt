@@ -19,6 +19,7 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
@@ -73,7 +74,7 @@ fun GradientButton(
         shape = styles["rounding"] as RoundedCornerShape,
         colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
         contentPadding = PaddingValues(12.dp),
-        modifier = styles["buttonModifier"] as Modifier) {
+        modifier = (styles["buttonModifier"] as Modifier).testTag("GradientButton")) {
           Row(
               verticalAlignment = Alignment.CenterVertically,
               horizontalArrangement = Arrangement.Center) {
@@ -83,7 +84,8 @@ fun GradientButton(
                       text = text,
                       color = styles["textColor"] as Color,
                       fontSize = TextUnit(16f, TextUnitType.Sp),
-                      fontWeight = FontWeight.Normal)
+                      fontWeight = FontWeight.Normal,
+                      modifier = Modifier.testTag("ButtonText"))
                 }
               }
         }

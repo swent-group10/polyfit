@@ -25,11 +25,19 @@ class LoginTest : TestCase() {
       // Test the UI elements
       loginTitle {
         assertIsDisplayed()
-        assertTextEquals("Welcome")
+        assertTextEquals("PolyFit")
       }
       loginButton {
         assertIsDisplayed()
         assertHasClickAction()
+      }
+
+      loginTerm {
+        assertIsDisplayed()
+        assertTextContains(
+            "By clicking continue, you agree to our", substring = true, ignoreCase = false)
+        assertTextContains("Terms of Service", substring = true, ignoreCase = false)
+        assertTextContains("Privacy Policy", substring = true, ignoreCase = false)
       }
     }
   }

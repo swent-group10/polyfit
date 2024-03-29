@@ -30,9 +30,14 @@ class IngredientsList(semanticsProvider: SemanticsNodeInteractionsProvider) :
         viewBuilderAction = { hasTestTag("IngredientsList") }) {
 
   // Ingredients
-  val ingredientScreen: KNode = child { hasTestTag("IngredientScreen") }
+  val noIngredients: KNode = child { hasTestTag("NoIngredients") }
 
   // get all the elements with test tag ingredient
-  val ingredient: List<KNode> = child { hasTestTag("Ingredient") }
+  private val ingredient: KNode = child { hasTestTag("Ingredient") }
+  val ingredientButton: KNode = ingredient.child { hasTestTag("GradientButton") }
+
+  private val potentialIngredient: KNode = child { hasTestTag("PotentialIngredient") }
+  val potentialIngredientButton: KNode = potentialIngredient.child { hasTestTag("GradientButton") }
+
   val morePotentialIngredients: KNode = child { hasTestTag("MoreIngredientsButton") }
 }
