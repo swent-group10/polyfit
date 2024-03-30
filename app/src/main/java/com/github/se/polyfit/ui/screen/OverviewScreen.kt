@@ -47,62 +47,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import com.github.se.polyfit.R
+import com.github.se.polyfit.ui.compose.kaiseiFont
 
 @Composable
 @Preview
 fun OverviewScreen() {
   // Context is used to launch the intent from the current Composable
-  val context = LocalContext.current
 
-  // State to hold the URI, the image and the bitmap
-  var imageUri by remember { mutableStateOf<Uri?>(null) }
-  val iconExample = BitmapFactory.decodeResource(context.resources, R.drawable.picture_example)
-  var imageBitmap by remember { mutableStateOf<Bitmap?>(iconExample) }
-
-  // Launcher for starting the camera activity
-  val startCamera =
-      rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result
-        ->
-        val bitmap = result.data?.extras?.get("data") as? Bitmap
-        imageBitmap = bitmap
-      }
-
-  // Launcher for requesting the camera permission
-  val requestPermissionLauncher =
-      rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
-          isGranted: Boolean ->
-        if (isGranted) {
-          // Permission is granted, you can start the camera
-          val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-          try {
-            startCamera.launch(takePictureIntent)
-          } catch (e: Exception) {
-            Log.e("HomeScreen", "Error launching camera intent: $e")
-            // Handle the exception if the camera intent cannot be launched
-          }
-        } else {
-          Log.e("HomeScreen", "Permission denied")
-          // Permission is denied. Handle the denial appropriately.
-        }
-      }
-
-  // Create a launcher to open gallery
-  val pickImageLauncher =
-      rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri?
-        ->
-        uri?.let {
-          imageUri = uri // Update the UI with the selected image URI
-
-          try {
-            val bitmap = ImageDecoder.decodeBitmap(createSource(context.contentResolver, uri))
-            imageBitmap = bitmap
-          } catch (e: Exception) {
-            Log.e(
-                "OverviewScreen",
-                "Error decoding image: $e," + " are you sure the image is a bitmap?")
-          }
-        }
-      }
   Scaffold(
       modifier = Modifier,
       topBar = {
@@ -111,62 +62,7 @@ fun OverviewScreen() {
         }
       },
       content = { paddingValues ->
-        Box(modifier = Modifier.padding(paddingValues).fillMaxWidth()) {
-          LazyColumn(contentPadding = PaddingValues(horizontal = 30.dp, vertical = 20.dp)) {
-            item {
-              Text(
-                  text = "Welcome Back, User432!",
-                  fontSize = 20.sp,
-                  fontWeight = FontWeight.Bold,
-                  color = MaterialTheme.colorScheme.primary)
-            }
-            item {
-              OutlinedCard(
-                  modifier = Modifier.align(Alignment.Center).size(width = 350.dp, height = 210.dp),
-                  border =
-                      BorderStroke(
-                          2.dp,
-                          brush =
-                              Brush.linearGradient(
-                                  listOf(
-                                      MaterialTheme.colorScheme.inversePrimary,
-                                      MaterialTheme.colorScheme.primary))),
-                  colors = CardDefaults.cardColors(Color.Transparent)) {
-                    CalorieCardContent()
-                  }
-            }
-            item {
-              OutlinedCard(
-                  modifier =
-                      Modifier.align(Alignment.Center)
-                          .padding(top = 10.dp)
-                          .size(width = 350.dp, height = 500.dp),
-                  border =
-                      BorderStroke(
-                          2.dp,
-                          brush =
-                              Brush.linearGradient(
-                                  listOf(
-                                      MaterialTheme.colorScheme.inversePrimary,
-                                      MaterialTheme.colorScheme.primary))),
-                  colors = CardDefaults.cardColors(Color.Transparent)) {
-
-                    //
-
-                    Button(onClick = { pickImageLauncher.launch("image/*") }) {
-                      Text(text = "import image")
-                    }
-                    Button(onClick = callCamera(context, startCamera, requestPermissionLauncher)) {
-                      Text(text = "take picture")
-                    }
-
-                    imageBitmap?.let {
-                      Image(bitmap = it.asImageBitmap(), contentDescription = "Captured image")
-                    }
-                  }
-            }
-          }
-        }
+        OverviewContent(paddingValues)
       })
 }
 
@@ -183,7 +79,8 @@ fun Title(modifier: Modifier, fontSize: TextUnit) {
             text = "Polyfit",
             fontSize = fontSize,
             modifier = modifier,
-            fontWeight = FontWeight.Bold)
+            fontWeight = FontWeight.Bold,
+            fontFamily = kaiseiFont)
       }
 }
 
@@ -254,4 +151,134 @@ private fun callCamera(
       requestPermissionLauncher.launch(Manifest.permission.CAMERA)
     }
   }
+}
+
+@Composable
+fun OverviewContent(paddingValues : PaddingValues){
+    val context = LocalContext.current
+
+    // State to hold the URI, the image and the bitmap
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+    val iconExample = BitmapFactory.decodeResource(context.resources, R.drawable.picture_example)
+    var imageBitmap by remember { mutableStateOf<Bitmap?>(iconExample) }
+
+    // Launcher for starting the camera activity
+    val startCamera =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result
+            ->
+            val bitmap = result.data?.extras?.get("data") as? Bitmap
+            imageBitmap = bitmap
+        }
+
+    // Launcher for requesting the camera permission
+    val requestPermissionLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
+                isGranted: Boolean ->
+            if (isGranted) {
+                // Permission is granted, you can start the camera
+                val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                try {
+                    startCamera.launch(takePictureIntent)
+                } catch (e: Exception) {
+                    Log.e("HomeScreen", "Error launching camera intent: $e")
+                    // Handle the exception if the camera intent cannot be launched
+                }
+            } else {
+                Log.e("HomeScreen", "Permission denied")
+                // Permission is denied. Handle the denial appropriately.
+            }
+        }
+
+    // Create a launcher to open gallery
+    val pickImageLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri?
+            ->
+            uri?.let {
+                imageUri = uri // Update the UI with the selected image URI
+
+                try {
+                    val bitmap = ImageDecoder.decodeBitmap(createSource(context.contentResolver, uri))
+                    imageBitmap = bitmap
+                } catch (e: Exception) {
+                    Log.e(
+                        "OverviewScreen",
+                        "Error decoding image: $e," + " are you sure the image is a bitmap?")
+                }
+            }
+        }
+    Box(modifier = Modifier.padding(paddingValues).fillMaxWidth()) {
+        LazyColumn(contentPadding = PaddingValues(horizontal = 30.dp, vertical = 20.dp)) {
+            item {
+                Text(
+                    text = "Welcome Back, User432!",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary)
+            }
+            item {
+                OutlinedCard(
+                    modifier = Modifier.align(Alignment.Center).size(width = 350.dp, height = 210.dp),
+                    border =
+                    BorderStroke(
+                        2.dp,
+                        brush =
+                        Brush.linearGradient(
+                            listOf(
+                                MaterialTheme.colorScheme.inversePrimary,
+                                MaterialTheme.colorScheme.primary))),
+                    colors = CardDefaults.cardColors(Color.Transparent)) {
+                    CalorieCardContent()
+                }
+            }
+            item {
+                OutlinedCard(
+                    modifier =
+                    Modifier.align(Alignment.Center)
+                        .padding(top = 10.dp)
+                        .size(width = 350.dp, height = 500.dp),
+                    border =
+                    BorderStroke(
+                        2.dp,
+                        brush =
+                        Brush.linearGradient(
+                            listOf(
+                                MaterialTheme.colorScheme.inversePrimary,
+                                MaterialTheme.colorScheme.primary))),
+                    colors = CardDefaults.cardColors(Color.Transparent)) {
+
+                    //
+
+                    Button(onClick = { pickImageLauncher.launch("image/*") }) {
+                        Text(text = "import image")
+                    }
+                    Button(onClick = callCamera(context, startCamera, requestPermissionLauncher)) {
+                        Text(text = "take picture")
+                    }
+
+                    imageBitmap?.let {
+                        Image(bitmap = it.asImageBitmap(), contentDescription = "Captured image")
+                    }
+                }
+            }
+            item {
+                OutlinedCard(
+                    modifier =
+                    Modifier.align(Alignment.Center)
+                        .padding(top=10.dp)
+                        .size(width = 350.dp, height = 200.dp),
+                    border =
+                    BorderStroke(
+                        2.dp,
+                        brush =
+                        Brush.linearGradient(
+                            listOf(
+                                MaterialTheme.colorScheme.inversePrimary,
+                                MaterialTheme.colorScheme.primary))),
+                    colors = CardDefaults.cardColors(Color.Transparent)
+                ) {
+
+                }
+            }
+        }
+    }
 }
