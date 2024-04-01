@@ -35,10 +35,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.rememberNavController
 import com.github.se.polyfit.ui.components.GradientButton
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.theme.PrimaryPurple
@@ -135,7 +133,9 @@ fun IngredientList(
                 ingredients.forEach { ingredient ->
                   GradientButton(
                       text = "${ingredient.name} ${ingredient.quantity}${ingredient.unit}",
-                      onClick = {}, // TODO: Expand to see more information
+                      onClick = {
+                        Log.v("Expand Ingredients", "Clicked")
+                      }, // TODO: Expand to see more information
                       active = true,
                       modifier = Modifier.testTag("Ingredient"))
                 }
@@ -199,7 +199,7 @@ fun BottomBar() {
         modifier = Modifier.fillMaxWidth().testTag("DoneBox"),
         contentAlignment = Alignment.Center) {
           Button(
-              onClick = {}, // TODO: Finish adding ingredients
+              onClick = { Log.v("Finished", "Clicked") }, // TODO: Finish adding ingredients
               modifier = Modifier.width(200.dp).testTag("DoneButton"),
               colors = ButtonDefaults.buttonColors(containerColor = PrimaryPurple)) {
                 Text(text = "Done", fontSize = 24.sp)
@@ -208,8 +208,9 @@ fun BottomBar() {
   }
 }
 
-@Preview
-@Composable
-fun IngredientScreenPreview() {
-  IngredientScreen(Navigation(rememberNavController()), listOf(), listOf())
-}
+// Comment out increases coverage...
+// @Preview
+// @Composable
+// fun IngredientScreenPreview() {
+//  IngredientScreen(Navigation(rememberNavController()), listOf(), listOf())
+// }

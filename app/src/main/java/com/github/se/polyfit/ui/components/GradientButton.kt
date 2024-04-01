@@ -29,7 +29,8 @@ import com.github.se.polyfit.ui.theme.GradientButtonPink
 import com.github.se.polyfit.ui.theme.GradientButtonPurple
 
 /**
- * A button with a gradient border.
+ * A button with a gradient border. NOTE: For testing, see SelectIngredientsScreen.kt to see how to
+ * properly select the click actions.
  *
  * @param onClick The callback to be invoked when this button is clicked.
  * @param active Whether the button is active or not. Inactive button is gray.

@@ -4,11 +4,6 @@ import android.util.Log
 import androidx.navigation.NavHostController
 
 class Navigation(private val navHostController: NavHostController) {
-  private fun navigateTo(route: String) {
-    Log.i("Navigation", "Navigating to $route")
-    navHostController.navigate(route)
-  }
-
   fun goBack() {
     navHostController.popBackStack()
   }
@@ -17,7 +12,8 @@ class Navigation(private val navHostController: NavHostController) {
     navigateTo(Route.Home)
   }
 
-  fun navigateToIngredients() {
-    navigateTo(Route.Ingredients)
+  private fun navigateTo(route: String) {
+    Log.i("Navigation", "Navigating to $route")
+    navHostController.navigate(route)
   }
 }
