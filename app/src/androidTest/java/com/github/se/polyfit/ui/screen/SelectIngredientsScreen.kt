@@ -20,6 +20,8 @@ class IngredientsBottomBar(semanticsProvider: SemanticsNodeInteractionsProvider)
   // Bottom Bar
   private val addIngredientBox: KNode = child { hasTestTag("AddIngredientBox") }
   val addIngredientButton: KNode = addIngredientBox.child { hasTestTag("AddIngredientButton") }
+  val addIngredientGradientButton: KNode =
+      addIngredientButton.child { hasTestTag("GradientButton") }
   private val doneBox: KNode = child { hasTestTag("DoneBox") }
   val doneButton: KNode = doneBox.child { hasTestTag("DoneButton") }
 }
@@ -31,6 +33,7 @@ class IngredientsList(semanticsProvider: SemanticsNodeInteractionsProvider) :
 
   // Ingredients
   val noIngredients: KNode = child { hasTestTag("NoIngredients") }
+  val noIngredientsButton: KNode = noIngredients.child { hasTestTag("GradientButton") }
 
   // get all the elements with test tag ingredient
   private val ingredient: KNode = child { hasTestTag("Ingredient") }
@@ -39,5 +42,7 @@ class IngredientsList(semanticsProvider: SemanticsNodeInteractionsProvider) :
   private val potentialIngredient: KNode = child { hasTestTag("PotentialIngredient") }
   val potentialIngredientButton: KNode = potentialIngredient.child { hasTestTag("GradientButton") }
 
-  val morePotentialIngredients: KNode = child { hasTestTag("MoreIngredientsButton") }
+  private val morePotentialIngredients: KNode = child { hasTestTag("MoreIngredientsButton") }
+  val morePotentialIngredientsButton: KNode =
+      morePotentialIngredients.child { hasTestTag("GradientButton") }
 }
