@@ -1,5 +1,6 @@
 package com.github.se.polyfit.model.ingredient
 
+import android.util.Log
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 
 /**
@@ -7,6 +8,8 @@ import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
  * changes.
  *
  * @property name is unique for each meal
+ * @property id is the unique id given in API response
+ * @property nutritionalInformation
  */
 data class Ingredient(
     val name: String, // name is now a val
@@ -24,18 +27,20 @@ data class Ingredient(
       return map
     }
 
-    fun deserializeIngredient(data: Map<String, Any>): Ingredient {
+    fun deserializeIngredient(data: Map<String, Any>): Ingredient? {
 
-      try {
+      return try {
         val name = data["name"] as String
         val id = data["id"] as Int
+        val nutValue = data["nutritionalInformation"] as Map<String, Map<String, Any>>
 
-        val nutritionalInformation =
-            NutritionalInformation.deserialize(
-                data["nutritionalInformation"] as Map<String, Map<String, Any>>)
-        return Ingredient(name, id, nutritionalInformation)
-      } catch (e: IllegalArgumentException) {
-        throw IllegalArgumentException("Invalid ingredient")
+        val nutritionalInformation = NutritionalInformation.deserialize(nutValue)
+
+        Ingredient(name, id, nutritionalInformation!!)
+      } catch (e: Exception) {
+        Log.e("Ingredient", "Failed to deserialize Ingredient object")
+
+        null
       }
     }
   }

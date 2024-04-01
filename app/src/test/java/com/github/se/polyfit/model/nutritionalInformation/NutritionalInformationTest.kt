@@ -1,6 +1,10 @@
 package com.github.se.polyfit.model.nutritionalInformation
 
+import android.util.Log
+import io.mockk.every
+import io.mockk.mockkStatic
 import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Test
 
 class NutritionalInformationTest {
@@ -36,6 +40,13 @@ class NutritionalInformationTest {
           vitaminK = Nutrient(0.0, MeasurementUnit.UG),
           selenium = Nutrient(0.0, MeasurementUnit.UG),
           vitaminE = Nutrient(0.0, MeasurementUnit.IU))
+
+  @Before
+  fun setup() {
+    mockkStatic(Log::class)
+    every { Log.e(any(), any()) } returns 0
+    every { Log.e(any(), any(), any()) } returns 0
+  }
 
   @Test
   fun testSerialize() {
@@ -82,5 +93,44 @@ class NutritionalInformationTest {
     val serializedData = NutritionalInformation.serialize(nutritionalInformation)
     val deserializedData = NutritionalInformation.deserialize(serializedData)
     assertEquals(nutritionalInformation, deserializedData)
+  }
+
+  @Test
+  fun testDeserializeWithWrongValues() {
+    val wrongData =
+        mapOf(
+                "totalWeight" to mapOf("amount" to 100.0, "unit" to "asdfasdfasdf"),
+                "calories" to mapOf("amount" to 200.0, "unit" to "CAL"),
+                "fat" to mapOf("amount" to 10.0, "unit" to "G"),
+                "saturatedFat" to mapOf("amount" to 3.0, "unit" to "G"),
+                "carbohydrates" to mapOf("amount" to 20.0, "unit" to "G"),
+                "netCarbohydrates" to mapOf("amount" to 15.0, "unit" to "G"),
+                "sugar" to mapOf("amount" to 5.0, "unit" to "G"),
+                "cholesterol" to mapOf("amount" to 0.0, "unit" to "MG"),
+                "sodium" to mapOf("amount" to 0.0, "unit" to "MG"),
+                "protein" to mapOf("amount" to 15.0, "unit" to "G"),
+                "vitaminC" to mapOf("amount" to 0.0, "unit" to "MG"),
+                "manganese" to mapOf("amount" to 0.0, "unit" to "UG"),
+                "fiber" to mapOf("amount" to 2.0, "unit" to "G"),
+                "vitaminB6" to mapOf("amount" to 0.0, "unit" to "MG"),
+                "copper" to mapOf("amount" to 0.0, "unit" to "UG"),
+                "vitaminB1" to mapOf("amount" to 0.0, "unit" to "MG"),
+                "folate" to mapOf("amount" to 0.0, "unit" to "UG"),
+                "potassium" to mapOf("amount" to 0.0, "unit" to "MG"),
+                "magnesium" to mapOf("amount" to 0.0, "unit" to "MG"),
+                "vitaminB3" to mapOf("amount" to 0.0, "unit" to "MG"),
+                "vitaminB5" to mapOf("amount" to 0.0, "unit" to "MG"),
+                "vitaminB2" to mapOf("amount" to 0.0, "unit" to "MG"),
+                "iron" to mapOf("amount" to 0.0, "unit" to "MG"),
+                "calcium" to mapOf("amount" to 0.0, "unit" to "MG"),
+                "vitaminA" to mapOf("amount" to 0.0, "unit" to "IU"),
+                "zinc" to mapOf("amount" to 0.0, "unit" to "MG"),
+                "phosphorus" to mapOf("amount" to 0.0, "unit" to "MG"),
+                "vitaminK" to mapOf("amount" to 0.0, "unit" to "UG"),
+                "selenium" to mapOf("amount" to 0.0, "unit" to "UG"),
+                "vitaminE" to mapOf("amount" to 0.0, "unit" to "IU"))
+            .toSortedMap()
+
+    assertEquals(null, NutritionalInformation.deserialize(wrongData))
   }
 }

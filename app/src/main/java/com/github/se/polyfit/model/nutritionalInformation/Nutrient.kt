@@ -3,6 +3,9 @@ package com.github.se.polyfit.model.nutritionalInformation
 import android.util.Log
 
 data class Nutrient(var amount: Double = 0.0, var unit: MeasurementUnit = MeasurementUnit.G) {
+
+  // setters
+
   override fun toString(): String {
     return "$amount ${unit.name}"
   }

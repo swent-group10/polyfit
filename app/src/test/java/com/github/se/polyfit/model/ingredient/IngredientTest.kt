@@ -1,11 +1,22 @@
 package com.github.se.polyfit.model.ingredient
 
+import android.util.Log
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
+import io.mockk.every
+import io.mockk.mockkStatic
+import org.junit.Before
 import org.junit.Test
 
 class IngredientTest {
   private val ingredient = Ingredient("eggs", 1, NutritionalInformation())
+
+  @Before
+  fun setup() {
+    mockkStatic(Log::class)
+    every { Log.e(any(), any()) } returns 0
+    every { Log.e(any(), any(), any()) } returns 0
+  }
 
   @Test
   fun serializeIngredient() {
@@ -14,6 +25,7 @@ class IngredientTest {
     val expectedMap =
         mapOf(
             "name" to "eggs",
+            "id" to 1,
             "nutritionalInformation" to
                 NutritionalInformation.serialize(ingredient.nutritionalInformation))
 
@@ -46,7 +58,7 @@ class IngredientTest {
   @Test
   fun testSerializationDeserialization() {
     val serializedIngredient = Ingredient.serializeIngredient(ingredient)
-    val deserializedIngredient = Ingredient.deserializeIngredient(serializedIngredient)
+    val deserializedIngredient = Ingredient.deserializeIngredient(serializedIngredient)!!
     assert(ingredient == deserializedIngredient)
     assert(ingredient.name == deserializedIngredient.name)
     assert(ingredient.nutritionalInformation == deserializedIngredient.nutritionalInformation)

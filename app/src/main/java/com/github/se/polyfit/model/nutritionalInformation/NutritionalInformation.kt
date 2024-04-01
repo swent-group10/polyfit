@@ -1,5 +1,7 @@
 package com.github.se.polyfit.model.nutritionalInformation
 
+import android.util.Log
+
 data class NutritionalInformation(
     val totalWeight: Nutrient = Nutrient(),
     val calories: Nutrient = Nutrient(),
@@ -33,6 +35,10 @@ data class NutritionalInformation(
     val vitaminE: Nutrient = Nutrient(),
 ) {
 
+  fun serialize(): Map<String, Map<String, Any>> {
+    return serialize(this)
+  }
+
   companion object {
     fun serialize(nutritionalInformation: NutritionalInformation): Map<String, Map<String, Any>> {
       return NutritionalInformation::class
@@ -43,12 +49,24 @@ data class NutritionalInformation(
           }
     }
 
-    fun deserialize(data: Map<String, Map<String, Any>>): NutritionalInformation {
+    fun deserialize(data: Map<String, Map<String, Any>>): NutritionalInformation? {
       val constructor = NutritionalInformation::class.constructors.first()
       val parameters =
           constructor.parameters.associateWith { parameter ->
-            data[parameter.name]?.let { nutrientData -> Nutrient.deserialize(nutrientData) }
-                ?: Nutrient(0.0, MeasurementUnit.G) // Default value if nutrient is not found
+            data[parameter.name]?.let { nutrientData ->
+              try {
+                Nutrient.deserialize(nutrientData) as Nutrient
+              } catch (e: Exception) {
+                Log.e("NutritionalInformation", "Failed to deserialize Nutrient", e)
+                return null
+              }
+            }
+                ?: run {
+                  Log.e(
+                      "NutritionalInformation",
+                      "Failed to deserialize Nutrient: ${parameter.name} not found in data")
+                  return null
+                }
           }
       return constructor.callBy(parameters)
     }
