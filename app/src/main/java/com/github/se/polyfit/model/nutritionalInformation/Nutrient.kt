@@ -17,6 +17,10 @@ data class Nutrient(var amount: Double = 0.0, var unit: MeasurementUnit = Measur
     return this.amount == other.amount && this.unit == other.unit
   }
 
+  override fun hashCode(): Int {
+    return super.hashCode()
+  }
+
   companion object {
     fun serialize(nutrient: Nutrient): Map<String, Any> {
       val map = mutableMapOf<String, Any>()
