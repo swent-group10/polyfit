@@ -7,6 +7,11 @@ plugins {
     id("dagger.hilt.android.plugin")
     kotlin("kapt")
     id("com.ncorti.ktfmt.gradle") version "0.16.0"
+    id("jacoco")
+
+}
+jacoco {
+    toolVersion = "0.8.11"
 }
 sonar {
 
@@ -175,6 +180,7 @@ android {
 
 }
 tasks.register("jacocoTestReport", JacocoReport::class) {
+
     mustRunAfter("testDebugUnitTest", "connectedDebugAndroidTest")
 
     reports {

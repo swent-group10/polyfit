@@ -4,48 +4,51 @@ import android.util.Log
 import io.mockk.every
 import io.mockk.mockkStatic
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Test
 
 class NutritionalInformationTest {
-  private val nutritionalInformation =
-      NutritionalInformation(
-          totalWeight = Nutrient(100.0, MeasurementUnit.G),
-          calories = Nutrient(200.0, MeasurementUnit.CAL),
-          fat = Nutrient(10.0, MeasurementUnit.G),
-          saturatedFat = Nutrient(3.0, MeasurementUnit.G),
-          carbohydrates = Nutrient(20.0, MeasurementUnit.G),
-          netCarbohydrates = Nutrient(15.0, MeasurementUnit.G),
-          sugar = Nutrient(5.0, MeasurementUnit.G),
-          cholesterol = Nutrient(0.0, MeasurementUnit.MG),
-          sodium = Nutrient(0.0, MeasurementUnit.MG),
-          protein = Nutrient(15.0, MeasurementUnit.G),
-          vitaminC = Nutrient(0.0, MeasurementUnit.MG),
-          manganese = Nutrient(0.0, MeasurementUnit.UG),
-          fiber = Nutrient(2.0, MeasurementUnit.G),
-          vitaminB6 = Nutrient(0.0, MeasurementUnit.MG),
-          copper = Nutrient(0.0, MeasurementUnit.UG),
-          vitaminB1 = Nutrient(0.0, MeasurementUnit.MG),
-          folate = Nutrient(0.0, MeasurementUnit.UG),
-          potassium = Nutrient(0.0, MeasurementUnit.MG),
-          magnesium = Nutrient(0.0, MeasurementUnit.MG),
-          vitaminB3 = Nutrient(0.0, MeasurementUnit.MG),
-          vitaminB5 = Nutrient(0.0, MeasurementUnit.MG),
-          vitaminB2 = Nutrient(0.0, MeasurementUnit.MG),
-          iron = Nutrient(0.0, MeasurementUnit.MG),
-          calcium = Nutrient(0.0, MeasurementUnit.MG),
-          vitaminA = Nutrient(0.0, MeasurementUnit.IU),
-          zinc = Nutrient(0.0, MeasurementUnit.MG),
-          phosphorus = Nutrient(0.0, MeasurementUnit.MG),
-          vitaminK = Nutrient(0.0, MeasurementUnit.UG),
-          selenium = Nutrient(0.0, MeasurementUnit.UG),
-          vitaminE = Nutrient(0.0, MeasurementUnit.IU))
+  private lateinit var nutritionalInformation: NutritionalInformation
 
   @Before
   fun setup() {
     mockkStatic(Log::class)
     every { Log.e(any(), any()) } returns 0
     every { Log.e(any(), any(), any()) } returns 0
+
+    nutritionalInformation =
+        NutritionalInformation(
+            totalWeight = Nutrient(100.0, MeasurementUnit.G),
+            calories = Nutrient(200.0, MeasurementUnit.CAL),
+            fat = Nutrient(10.0, MeasurementUnit.G),
+            saturatedFat = Nutrient(3.0, MeasurementUnit.G),
+            carbohydrates = Nutrient(20.0, MeasurementUnit.G),
+            netCarbohydrates = Nutrient(15.0, MeasurementUnit.G),
+            sugar = Nutrient(5.0, MeasurementUnit.G),
+            cholesterol = Nutrient(0.0, MeasurementUnit.MG),
+            sodium = Nutrient(0.0, MeasurementUnit.MG),
+            protein = Nutrient(15.0, MeasurementUnit.G),
+            vitaminC = Nutrient(0.0, MeasurementUnit.MG),
+            manganese = Nutrient(0.0, MeasurementUnit.UG),
+            fiber = Nutrient(2.0, MeasurementUnit.G),
+            vitaminB6 = Nutrient(0.0, MeasurementUnit.MG),
+            copper = Nutrient(0.0, MeasurementUnit.UG),
+            vitaminB1 = Nutrient(0.0, MeasurementUnit.MG),
+            folate = Nutrient(0.0, MeasurementUnit.UG),
+            potassium = Nutrient(0.0, MeasurementUnit.MG),
+            magnesium = Nutrient(0.0, MeasurementUnit.MG),
+            vitaminB3 = Nutrient(0.0, MeasurementUnit.MG),
+            vitaminB5 = Nutrient(0.0, MeasurementUnit.MG),
+            vitaminB2 = Nutrient(0.0, MeasurementUnit.MG),
+            iron = Nutrient(0.0, MeasurementUnit.MG),
+            calcium = Nutrient(0.0, MeasurementUnit.MG),
+            vitaminA = Nutrient(0.0, MeasurementUnit.IU),
+            zinc = Nutrient(0.0, MeasurementUnit.MG),
+            phosphorus = Nutrient(0.0, MeasurementUnit.MG),
+            vitaminK = Nutrient(0.0, MeasurementUnit.UG),
+            selenium = Nutrient(0.0, MeasurementUnit.UG),
+            vitaminE = Nutrient(0.0, MeasurementUnit.IU))
   }
 
   @Test
@@ -132,5 +135,91 @@ class NutritionalInformationTest {
             .toSortedMap()
 
     assertEquals(null, NutritionalInformation.deserialize(wrongData))
+  }
+
+  @Test
+  fun `plus operator should add nutritional information correctly`() {
+    val nutritionalInformation1 =
+        NutritionalInformation(
+            totalWeight = Nutrient(100.0, MeasurementUnit.G),
+            calories = Nutrient(200.0, MeasurementUnit.CAL),
+            fat = Nutrient(10.0, MeasurementUnit.G))
+
+    val nutritionalInformation2 =
+        NutritionalInformation(
+            totalWeight = Nutrient(50.0, MeasurementUnit.G),
+            calories = Nutrient(100.0, MeasurementUnit.CAL),
+            fat = Nutrient(5.0, MeasurementUnit.G))
+
+    val result = nutritionalInformation1 + nutritionalInformation2
+
+    assertEquals(Nutrient(150.0, MeasurementUnit.G), result.totalWeight)
+    assertEquals(Nutrient(300.0, MeasurementUnit.CAL), result.calories)
+    assertEquals(Nutrient(15.0, MeasurementUnit.G), result.fat)
+  }
+
+  @Test
+  fun `update function should correctly update nutritional information`() {
+    val nutritionalInformation1 =
+        NutritionalInformation(
+            totalWeight = Nutrient(100.0, MeasurementUnit.G),
+            calories = Nutrient(200.0, MeasurementUnit.CAL),
+            fat = Nutrient(10.0, MeasurementUnit.G))
+
+    val nutritionalInformation2 =
+        NutritionalInformation(
+            totalWeight = Nutrient(50.0, MeasurementUnit.G),
+            calories = Nutrient(100.0, MeasurementUnit.CAL),
+            fat = Nutrient(5.0, MeasurementUnit.G))
+
+    nutritionalInformation1.update(nutritionalInformation2)
+
+    assertEquals(Nutrient(50.0, MeasurementUnit.G), nutritionalInformation1.totalWeight)
+    assertEquals(Nutrient(100.0, MeasurementUnit.CAL), nutritionalInformation1.calories)
+    assertEquals(Nutrient(5.0, MeasurementUnit.G), nutritionalInformation1.fat)
+  }
+
+  @Test
+  fun `equals function should correctly compare nutritional information`() {
+    val nutritionalInformation1 =
+        NutritionalInformation(
+            totalWeight = Nutrient(100.0, MeasurementUnit.G),
+            calories = Nutrient(200.0, MeasurementUnit.CAL),
+            fat = Nutrient(10.0, MeasurementUnit.G))
+
+    val nutritionalInformation2 =
+        NutritionalInformation(
+            totalWeight = Nutrient(100.0, MeasurementUnit.G),
+            calories = Nutrient(200.0, MeasurementUnit.CAL),
+            fat = Nutrient(10.0, MeasurementUnit.G))
+
+    // Check if two identical instances are equal
+    assertEquals(nutritionalInformation1, nutritionalInformation2)
+
+    // Modify one instance
+    nutritionalInformation2.totalWeight = Nutrient(50.0, MeasurementUnit.G)
+
+    // Check if two different instances are not equal
+    assertNotEquals(nutritionalInformation1, nutritionalInformation2)
+  }
+
+  @Test
+  fun `update function should not modify the original nutritional information`() {
+    val originalNutritionalInformation =
+        NutritionalInformation(
+            totalWeight = Nutrient(100.0, MeasurementUnit.G),
+            calories = Nutrient(200.0, MeasurementUnit.CAL),
+            fat = Nutrient(10.0, MeasurementUnit.G))
+
+    val newValues =
+        NutritionalInformation(
+            totalWeight = Nutrient(50.0, MeasurementUnit.G),
+            calories = Nutrient(100.0, MeasurementUnit.CAL),
+            fat = Nutrient(5.0, MeasurementUnit.G))
+
+    val updatedNutritionalInformation = originalNutritionalInformation.deepCopy()
+    updatedNutritionalInformation.update(newValues)
+
+    assertNotEquals(originalNutritionalInformation, updatedNutritionalInformation)
   }
 }

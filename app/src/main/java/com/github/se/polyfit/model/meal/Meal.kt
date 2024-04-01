@@ -13,7 +13,7 @@ data class Meal(
     // usefull for later features
     var mealTemp: Double = 20.0,
     val nutritionalInformation: NutritionalInformation,
-    private val ingredients: MutableList<Ingredient> = mutableListOf()
+    val ingredients: MutableList<Ingredient> = mutableListOf()
 ) {
 
   fun addIngredient(ingredient: Ingredient) {
@@ -21,7 +21,15 @@ data class Meal(
     updateMeal()
   }
 
-  fun updateMeal() {}
+  fun updateMeal() {
+
+    var newnutritionalInformation = NutritionalInformation()
+
+    for (ingredient in ingredients) {
+      newnutritionalInformation += ingredient.nutritionalInformation
+    }
+    nutritionalInformation.update(newnutritionalInformation)
+  }
 
   companion object {
 

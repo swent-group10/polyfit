@@ -1,42 +1,111 @@
 package com.github.se.polyfit.model.nutritionalInformation
 
 import android.util.Log
+import kotlin.reflect.KMutableProperty1
 
 data class NutritionalInformation(
-    val totalWeight: Nutrient = Nutrient(),
-    val calories: Nutrient = Nutrient(),
-    val fat: Nutrient = Nutrient(),
-    val saturatedFat: Nutrient = Nutrient(),
-    val carbohydrates: Nutrient = Nutrient(),
-    val netCarbohydrates: Nutrient = Nutrient(),
-    val sugar: Nutrient = Nutrient(),
-    val cholesterol: Nutrient = Nutrient(),
-    val sodium: Nutrient = Nutrient(),
-    val protein: Nutrient = Nutrient(),
-    val vitaminC: Nutrient = Nutrient(),
-    val manganese: Nutrient = Nutrient(),
-    val fiber: Nutrient = Nutrient(),
-    val vitaminB6: Nutrient = Nutrient(),
-    val copper: Nutrient = Nutrient(),
-    val vitaminB1: Nutrient = Nutrient(),
-    val folate: Nutrient = Nutrient(),
-    val potassium: Nutrient = Nutrient(),
-    val magnesium: Nutrient = Nutrient(),
-    val vitaminB3: Nutrient = Nutrient(),
-    val vitaminB5: Nutrient = Nutrient(),
-    val vitaminB2: Nutrient = Nutrient(),
-    val iron: Nutrient = Nutrient(),
-    val calcium: Nutrient = Nutrient(),
-    val vitaminA: Nutrient = Nutrient(),
-    val zinc: Nutrient = Nutrient(),
-    val phosphorus: Nutrient = Nutrient(),
-    val vitaminK: Nutrient = Nutrient(),
-    val selenium: Nutrient = Nutrient(),
-    val vitaminE: Nutrient = Nutrient(),
+    var totalWeight: Nutrient = Nutrient(),
+    var calories: Nutrient = Nutrient(),
+    var fat: Nutrient = Nutrient(),
+    var saturatedFat: Nutrient = Nutrient(),
+    var carbohydrates: Nutrient = Nutrient(),
+    var netCarbohydrates: Nutrient = Nutrient(),
+    var sugar: Nutrient = Nutrient(),
+    var cholesterol: Nutrient = Nutrient(),
+    var sodium: Nutrient = Nutrient(),
+    var protein: Nutrient = Nutrient(),
+    var vitaminC: Nutrient = Nutrient(),
+    var manganese: Nutrient = Nutrient(),
+    var fiber: Nutrient = Nutrient(),
+    var vitaminB6: Nutrient = Nutrient(),
+    var copper: Nutrient = Nutrient(),
+    var vitaminB1: Nutrient = Nutrient(),
+    var folate: Nutrient = Nutrient(),
+    var potassium: Nutrient = Nutrient(),
+    var magnesium: Nutrient = Nutrient(),
+    var vitaminB3: Nutrient = Nutrient(),
+    var vitaminB5: Nutrient = Nutrient(),
+    var vitaminB2: Nutrient = Nutrient(),
+    var iron: Nutrient = Nutrient(),
+    var calcium: Nutrient = Nutrient(),
+    var vitaminA: Nutrient = Nutrient(),
+    var zinc: Nutrient = Nutrient(),
+    var phosphorus: Nutrient = Nutrient(),
+    var vitaminK: Nutrient = Nutrient(),
+    var selenium: Nutrient = Nutrient(),
+    var vitaminE: Nutrient = Nutrient(),
 ) {
+  fun deepCopy(): NutritionalInformation {
+    val copy = NutritionalInformation()
+    NutritionalInformation::class
+        .members
+        .filterIsInstance<KMutableProperty1<NutritionalInformation, Nutrient>>()
+        .forEach { property ->
+          val thisValue = property.get(this)
+          val copyValue = Nutrient(thisValue.amount, thisValue.unit)
+          property.set(copy, copyValue)
+        }
+
+    // dont know if this this the correct way to handle this
+    if (this === copy) {
+      Log.e("NutritionalInformation", "Deep copy failed")
+      throw Exception("Deep copy failed")
+    }
+    return copy
+  }
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (other !is NutritionalInformation) return false
+
+    NutritionalInformation::class
+        .members
+        .filterIsInstance<KMutableProperty1<NutritionalInformation, Nutrient>>()
+        .forEach { property ->
+          val thisValue = property.get(this)
+          val otherValue = property.get(other)
+          if (thisValue != otherValue) return false
+        }
+
+    return true
+  }
+
+  override fun hashCode(): Int {
+    return super.hashCode()
+  }
+
+  // Function that updates the current nutritional information
+  fun update(newValues: NutritionalInformation) {
+    NutritionalInformation::class
+        .members
+        .filterIsInstance<KMutableProperty1<NutritionalInformation, Nutrient>>()
+        .forEach { property ->
+          val thisValue = property.get(this)
+          val newValue = property.get(newValues)
+          thisValue.amount = newValue.amount
+          thisValue.unit = newValue.unit
+        }
+  }
 
   fun serialize(): Map<String, Map<String, Any>> {
     return serialize(this)
+  }
+
+  operator fun plus(other: NutritionalInformation): NutritionalInformation {
+    val result = NutritionalInformation()
+
+    NutritionalInformation::class
+        .members
+        .filterIsInstance<KMutableProperty1<NutritionalInformation, Nutrient>>()
+        .forEach { property ->
+          val thisValue = property.get(this)
+          val otherValue = property.get(other)
+          val resultValue = Nutrient(thisValue.amount + otherValue.amount, thisValue.unit)
+
+          property.set(result, resultValue)
+        }
+
+    return result
   }
 
   companion object {

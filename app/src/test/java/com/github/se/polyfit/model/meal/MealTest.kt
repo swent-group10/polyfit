@@ -2,6 +2,8 @@ package com.github.se.polyfit.model.meal
 
 import android.util.Log
 import com.github.se.polyfit.model.ingredient.Ingredient
+import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
+import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import io.mockk.every
 import io.mockk.mockkStatic
@@ -22,9 +24,15 @@ class MealTest {
   @Test
   fun `Meal addIngredient should update meal`() {
     val meal = Meal(MealOccasion.DINNER, "eggs", 1, 102.2, NutritionalInformation())
-    val ingredient = Ingredient("milk", 1, NutritionalInformation())
+    val newNutritionalInformation =
+        NutritionalInformation().apply { calcium = Nutrient(1.0, MeasurementUnit.G) }
+    val ingredient = Ingredient("milk", 1, newNutritionalInformation)
     meal.addIngredient(ingredient)
     // Assert that the meal has been updated after adding an ingredient
+    assertEquals(1, meal.ingredients.size)
+
+    // Assert that the meal's nutritional information has been updated
+    assertEquals(1.0, meal.nutritionalInformation.calcium.amount)
   }
 
   @Test

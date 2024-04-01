@@ -10,6 +10,13 @@ data class Nutrient(var amount: Double = 0.0, var unit: MeasurementUnit = Measur
     return "$amount ${unit.name}"
   }
 
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (other !is Nutrient) return false
+
+    return this.amount == other.amount && this.unit == other.unit
+  }
+
   companion object {
     fun serialize(nutrient: Nutrient): Map<String, Any> {
       val map = mutableMapOf<String, Any>()
