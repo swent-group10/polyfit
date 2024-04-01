@@ -11,3 +11,7 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 val PrimaryPurple = Color(0xFF7158E2)
 val PrimaryPink = Color(0xFFCD84F1)
+
+val GradientButtonPink = Color(0xFF4A00E0)
+val GradientButtonPurple = Color(0xFF8E2DE2)
+val GradientButtonGrey = Color(0xFFE0E0E0)

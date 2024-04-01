@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -21,11 +20,13 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -50,6 +51,7 @@ data class Ingredient(
     val probability: Float = 1.0f,
 ) {}
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IngredientScreen(
     navigation: Navigation,
@@ -63,16 +65,40 @@ fun IngredientScreen(
     mutableStateListOf(*initialPotentialIngredients.toTypedArray())
   }
 
-  Scaffold(topBar = { TopBar(navigation) }, bottomBar = { BottomBar() }) {
-    IngredientList(
-        it,
-        ingredients,
-        potentialIngredients,
-        onAddIngredient = { index ->
-          val item = potentialIngredients.removeAt(index)
-          ingredients.add(item)
-        })
-  }
+  Scaffold(
+      topBar = {
+        TopAppBar(
+            title = {
+              Text(
+                  "Ingredients",
+                  modifier = Modifier.testTag("IngredientTitle"),
+                  color = MaterialTheme.colorScheme.secondary,
+                  fontSize = MaterialTheme.typography.headlineMedium.fontSize)
+            },
+            navigationIcon = {
+              IconButton(
+                  onClick = { navigation.goBack() },
+                  content = {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back",
+                        modifier = Modifier.testTag("BackButton"),
+                        tint = PrimaryPurple)
+                  },
+                  modifier = Modifier.testTag("BackButton"))
+            },
+            modifier = Modifier.testTag("TopBar"))
+      },
+      bottomBar = { BottomBar() }) {
+        IngredientList(
+            it,
+            ingredients,
+            potentialIngredients,
+            onAddIngredient = { index ->
+              val item = potentialIngredients.removeAt(index)
+              ingredients.add(item)
+            })
+      }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -105,9 +131,7 @@ fun IngredientList(
               fontSize = MaterialTheme.typography.headlineSmall.fontSize)
         } else {
           FlowRow(
-              horizontalArrangement = Arrangement.Start,
-              verticalArrangement = Arrangement.Top,
-              maxItemsInEachRow = Int.MAX_VALUE) {
+              horizontalArrangement = Arrangement.Start, verticalArrangement = Arrangement.Top) {
                 ingredients.forEach { ingredient ->
                   GradientButton(
                       text = "${ingredient.name} ${ingredient.quantity}${ingredient.unit}",
@@ -145,29 +169,6 @@ fun IngredientList(
                 }
               }
         }
-      }
-}
-
-@Composable
-fun TopBar(navigation: Navigation) {
-  Row(
-      verticalAlignment = Alignment.CenterVertically,
-      modifier = Modifier.padding(8.dp).testTag("TopBar")) {
-        IconButton(
-            onClick = { navigation.goBack() },
-            content = {
-              Icon(
-                  imageVector = Icons.Default.ArrowBack,
-                  contentDescription = "Back",
-                  modifier = Modifier.testTag("BackButton"),
-                  tint = PrimaryPurple)
-            },
-            modifier = Modifier.testTag("BackButton"))
-        Text(
-            "Ingredients",
-            modifier = Modifier.align(Alignment.CenterVertically).testTag("IngredientTitle"),
-            color = MaterialTheme.colorScheme.secondary,
-            fontSize = MaterialTheme.typography.headlineMedium.fontSize)
       }
 }
 
