@@ -1,73 +1,77 @@
 package com.github.se.polyfit.model.meal
 
+import android.util.Log
 import com.github.se.polyfit.model.ingredient.Ingredient
-import junit.framework.TestCase.assertEquals
+import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
+import com.github.se.polyfit.model.nutritionalInformation.Nutrient
+import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
+import io.mockk.every
+import io.mockk.mockkStatic
+import junit.framework.TestCase.assertNotNull
+import junit.framework.TestCase.assertNull
+import kotlin.test.Test
+import kotlin.test.assertEquals
 import org.junit.Before
-import org.junit.Test
 
 class MealTest {
-  companion object {
-    private const val UID = "1"
-    private const val NAME = "eggs"
-    private const val CALORIES = 102.2
-    private const val PROTEIN = 12301.3
-    private const val CARBOHYDRATES = 1234.9
-    private const val FAT = 12303.0
-  }
-
-  private lateinit var meal: Meal
-  private lateinit var expectedMap: Pair<Map<String, Any>, List<Map<String, Any>>>
-
   @Before
-  fun setUp() {
-    val ingredientEgg = Ingredient(NAME, 1.2, CALORIES, PROTEIN, CARBOHYDRATES, FAT)
-    meal = Meal(MealOccasion.DINNER, NAME, CALORIES, PROTEIN, CARBOHYDRATES, FAT)
-    meal.updateUid(UID)
-    meal.addIngredient(ingredientEgg)
-
-    expectedMap =
-        Pair(
-            mapOf(
-                "uid" to UID,
-                "occasion" to MealOccasion.DINNER.name,
-                "name" to NAME,
-                "calories" to CALORIES,
-                "protein" to PROTEIN,
-                "carbohydrates" to CARBOHYDRATES,
-                "fat" to FAT,
-            ),
-            listOf(Ingredient.serializeIngredient(ingredientEgg)))
+  fun setup() {
+    mockkStatic(Log::class)
+    every { Log.e(any(), any()) } returns 0
+    every { Log.e(any(), any(), any()) } returns 0
   }
 
   @Test
-  fun testMealSerialization() {
-    val map = Meal.serializeMeal(meal)
-    assertEquals(expectedMap, map)
+  fun `Meal addIngredient should update meal`() {
+    val meal = Meal(MealOccasion.DINNER, "eggs", 1, 102.2, NutritionalInformation())
+    val newNutritionalInformation =
+        NutritionalInformation().apply { calcium = Nutrient(1.0, MeasurementUnit.G) }
+    val ingredient = Ingredient("milk", 1, newNutritionalInformation)
+    meal.addIngredient(ingredient)
+    // Assert that the meal has been updated after adding an ingredient
+    assertEquals(1, meal.ingredients.size)
+
+    // Assert that the meal's nutritional information has been updated
+    assertEquals(1.0, meal.nutritionalInformation.calcium.amount)
   }
 
   @Test
-  fun testMealDeserialization() {
-    val mealDeserialized = Meal.deserializeMeal(expectedMap.first, expectedMap.second)
-    assertEquals(meal, mealDeserialized)
+  fun `Meal serialize should serialize meal correctly`() {
+    val meal = Meal(MealOccasion.DINNER, "eggs", 1, 102.2, NutritionalInformation())
+    val serializedMeal = Meal.serialize(meal)
+    assertEquals(1, serializedMeal["mealID"])
+    assertEquals(MealOccasion.DINNER.name, serializedMeal["occasion"])
+    assertEquals("eggs", serializedMeal["name"])
+    assertEquals(102.2, serializedMeal["mealTemp"])
   }
 
   @Test
-  fun testMealUpdateAfterAddingIngredient() {
-    val ingredient = Ingredient(NAME, 1.2, CALORIES, PROTEIN, CARBOHYDRATES, FAT)
-    val meal =
-        Meal(
-            MealOccasion.DINNER,
-            NAME,
-            CALORIES,
-            PROTEIN,
-            CARBOHYDRATES,
-            FAT,
-            mutableListOf(ingredient))
-    val ingredient2 = Ingredient(NAME, 1.2, CALORIES, PROTEIN, CARBOHYDRATES, FAT)
-    meal.addIngredient(ingredient2)
-    assertEquals(204.4, meal.calories)
-    assertEquals(24602.6, meal.protein)
-    assertEquals(2469.8, meal.carbohydrates)
-    assertEquals(24606.0, meal.fat)
+  fun `Meal deserialize should return null if data is incorrect`() {
+    val data =
+        mapOf(
+            "mealID" to 1,
+            "occasion" to "DINNER",
+            "name" to "eggs",
+            "mealTemp" to "wrongValue",
+            "nutritionalInformation" to mapOf<String, Any>())
+    val meal = Meal.deserialize(data)
+    assertNull(meal)
+  }
+
+  @Test
+  fun `Meal deserialize should return meal if data is correct`() {
+    val data =
+        mapOf(
+            "mealID" to 1,
+            "occasion" to "DINNER",
+            "name" to "eggs",
+            "mealTemp" to 102.2,
+            "nutritionalInformation" to NutritionalInformation().serialize())
+    val meal = Meal.deserialize(data)
+    assertNotNull(meal)
+    assertEquals(1, meal?.mealID)
+    assertEquals(MealOccasion.DINNER, meal?.occasion)
+    assertEquals("eggs", meal?.name)
+    assertEquals(102.2, meal?.mealTemp)
   }
 }

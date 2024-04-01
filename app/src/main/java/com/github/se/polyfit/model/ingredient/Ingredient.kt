@@ -1,74 +1,47 @@
 package com.github.se.polyfit.model.ingredient
 
-import com.github.se.polyfit.model.meal.Meal
-import kotlin.properties.Delegates
+import android.util.Log
+import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 
 /**
  * Represents an ingredient in a meal. Automatically updates the parent meal when any property
  * changes.
  *
  * @property name is unique for each meal
+ * @property id is the unique id given in API response
+ * @property nutritionalInformation
  */
-class Ingredient(
+data class Ingredient(
     val name: String, // name is now a val
-    servingSize: Double,
-    calories: Double,
-    protein: Double,
-    carbohydrates: Double,
-    fat: Double
+    val id: Int,
+    val nutritionalInformation: NutritionalInformation,
 ) {
-  var servingSize: Double by
-      Delegates.observable(servingSize) { _, _, _ -> parentMeal?.updateMeal() }
-  var calories: Double by Delegates.observable(calories) { _, _, _ -> parentMeal?.updateMeal() }
-  var protein: Double by Delegates.observable(protein) { _, _, _ -> parentMeal?.updateMeal() }
-  var carbohydrates: Double by
-      Delegates.observable(carbohydrates) { _, _, _ -> parentMeal?.updateMeal() }
-  var fat: Double by Delegates.observable(fat) { _, _, _ -> parentMeal?.updateMeal() }
-
-  var parentMeal: Meal? = null
-
-  override fun equals(other: Any?): Boolean {
-    if (this === other) return true
-    if (javaClass != other?.javaClass) return false
-
-    other as Ingredient
-
-    if (name != other.name) return false
-    if (servingSize != other.servingSize) return false
-    if (calories != other.calories) return false
-    if (protein != other.protein) return false
-    if (carbohydrates != other.carbohydrates) return false
-    if (fat != other.fat) return false
-
-    return true
-  }
 
   companion object {
-    /** Converts an Ingredient to a Map. */
-    fun serializeIngredient(data: Ingredient): Map<String, Any> {
+    fun serializeIngredient(ingredient: Ingredient): Map<String, Any> {
       val map = mutableMapOf<String, Any>()
-
-      map["name"] = data.name
-      map["servingSize"] = data.servingSize
-      map["calories"] = data.calories
-      map["protein"] = data.protein
-      map["carbohydrates"] = data.carbohydrates
-      map["fat"] = data.fat
-
+      map["name"] = ingredient.name
+      map["id"] = ingredient.id
+      map["nutritionalInformation"] =
+          NutritionalInformation.serialize(ingredient.nutritionalInformation)
       return map
     }
 
-    /** Converts a Map to an Ingredient. Throws an exception if a required field is missing. */
-    fun deserializeIngredient(data: Map<String, Any>): Ingredient {
-      val name = requireNotNull(data["name"]) { "Missing 'name'" } as String
-      val servingSize = requireNotNull(data["servingSize"]) { "Missing 'servingSize'" } as Double
-      val calories = requireNotNull(data["calories"]) { "Missing 'calories'" } as Double
-      val protein = requireNotNull(data["protein"]) { "Missing 'protein'" } as Double
-      val carbohydrates =
-          requireNotNull(data["carbohydrates"]) { "Missing 'carbohydrates'" } as Double
-      val fat = requireNotNull(data["fat"]) { "Missing 'fat'" } as Double
+    fun deserializeIngredient(data: Map<String, Any>): Ingredient? {
 
-      return Ingredient(name, servingSize, calories, protein, carbohydrates, fat)
+      return try {
+        val name = data["name"] as String
+        val id = data["id"] as Int
+        val nutValue = data["nutritionalInformation"] as Map<String, Map<String, Any>>
+
+        val nutritionalInformation = NutritionalInformation.deserialize(nutValue)
+
+        Ingredient(name, id, nutritionalInformation!!)
+      } catch (e: Exception) {
+        Log.e("Ingredient", "Failed to deserialize Ingredient object")
+
+        null
+      }
     }
   }
 }
