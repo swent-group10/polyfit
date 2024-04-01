@@ -32,7 +32,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.github.se.polyfit.R
 import com.github.se.polyfit.ui.compose.Title
-import com.github.se.polyfit.ui.theme.primaryPurple
+import com.github.se.polyfit.ui.theme.PrimaryPurple
 import com.github.se.polyfit.ui.viewModel.LoginViewModel
 
 @Composable
@@ -97,7 +97,7 @@ fun SignInButton(onClick: () -> Unit) {
       shape = RoundedCornerShape(20.dp),
       colors =
           ButtonDefaults.buttonColors(
-              contentColor = MaterialTheme.colorScheme.onPrimary, containerColor = primaryPurple),
+              contentColor = MaterialTheme.colorScheme.onPrimary, containerColor = PrimaryPurple),
       modifier = Modifier.testTag("LoginButton")) {
         val imageModifierGoogle = Modifier.size(24.dp).absoluteOffset(x = (-13).dp, y = 0.dp)
 
