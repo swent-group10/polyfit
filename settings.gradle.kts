@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "polyfit"
+rootProject.name = "Polyfit"
 include(":app") 
