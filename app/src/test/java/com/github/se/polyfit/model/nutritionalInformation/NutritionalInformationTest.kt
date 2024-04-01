@@ -4,63 +4,44 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class NutritionalInformationTest {
-    private val nutritionalInformation =
-        NutritionalInformation(
-            totalWeight = NutritionalInformation.Nutrient(100.0, MeasurementUnit.G),
-            calories = NutritionalInformation.Nutrient(200.0, MeasurementUnit.CAL),
-            fat = NutritionalInformation.Nutrient(10.0, MeasurementUnit.G),
-            saturatedFat = NutritionalInformation.Nutrient(3.0, MeasurementUnit.G),
-            carbohydrates = NutritionalInformation.Nutrient(20.0, MeasurementUnit.G),
-            netCarbohydrates = NutritionalInformation.Nutrient(15.0, MeasurementUnit.G),
-            sugar = NutritionalInformation.Nutrient(5.0, MeasurementUnit.G),
-            cholesterol = NutritionalInformation.Nutrient(0.0, MeasurementUnit.MG),
-            sodium = NutritionalInformation.Nutrient(0.0, MeasurementUnit.MG),
-            protein = NutritionalInformation.Nutrient(15.0, MeasurementUnit.G),
-            vitaminC = NutritionalInformation.Nutrient(0.0, MeasurementUnit.MG),
-            manganese = NutritionalInformation.Nutrient(0.0, MeasurementUnit.UG),
-            fiber = NutritionalInformation.Nutrient(2.0, MeasurementUnit.G),
-            vitaminB6 = NutritionalInformation.Nutrient(0.0, MeasurementUnit.MG),
-            copper = NutritionalInformation.Nutrient(0.0, MeasurementUnit.UG),
-            vitaminB1 = NutritionalInformation.Nutrient(0.0, MeasurementUnit.MG),
-            folate = NutritionalInformation.Nutrient(0.0, MeasurementUnit.UG),
-            potassium = NutritionalInformation.Nutrient(0.0, MeasurementUnit.MG),
-            magnesium = NutritionalInformation.Nutrient(0.0, MeasurementUnit.MG),
-            vitaminB3 = NutritionalInformation.Nutrient(0.0, MeasurementUnit.MG),
-            vitaminB5 = NutritionalInformation.Nutrient(0.0, MeasurementUnit.MG),
-            vitaminB2 = NutritionalInformation.Nutrient(0.0, MeasurementUnit.MG),
-            iron = NutritionalInformation.Nutrient(0.0, MeasurementUnit.MG),
-            calcium = NutritionalInformation.Nutrient(0.0, MeasurementUnit.MG),
-            vitaminA = NutritionalInformation.Nutrient(0.0, MeasurementUnit.IU),
-            zinc = NutritionalInformation.Nutrient(0.0, MeasurementUnit.MG),
-            phosphorus = NutritionalInformation.Nutrient(0.0, MeasurementUnit.MG),
-            vitaminK = NutritionalInformation.Nutrient(0.0, MeasurementUnit.UG),
-            selenium = NutritionalInformation.Nutrient(0.0, MeasurementUnit.UG),
-            vitaminE = NutritionalInformation.Nutrient(0.0, MeasurementUnit.IU)
-        )
+  private val nutritionalInformation =
+      NutritionalInformation(
+          totalWeight = Nutrient(100.0, MeasurementUnit.G),
+          calories = Nutrient(200.0, MeasurementUnit.CAL),
+          fat = Nutrient(10.0, MeasurementUnit.G),
+          saturatedFat = Nutrient(3.0, MeasurementUnit.G),
+          carbohydrates = Nutrient(20.0, MeasurementUnit.G),
+          netCarbohydrates = Nutrient(15.0, MeasurementUnit.G),
+          sugar = Nutrient(5.0, MeasurementUnit.G),
+          cholesterol = Nutrient(0.0, MeasurementUnit.MG),
+          sodium = Nutrient(0.0, MeasurementUnit.MG),
+          protein = Nutrient(15.0, MeasurementUnit.G),
+          vitaminC = Nutrient(0.0, MeasurementUnit.MG),
+          manganese = Nutrient(0.0, MeasurementUnit.UG),
+          fiber = Nutrient(2.0, MeasurementUnit.G),
+          vitaminB6 = Nutrient(0.0, MeasurementUnit.MG),
+          copper = Nutrient(0.0, MeasurementUnit.UG),
+          vitaminB1 = Nutrient(0.0, MeasurementUnit.MG),
+          folate = Nutrient(0.0, MeasurementUnit.UG),
+          potassium = Nutrient(0.0, MeasurementUnit.MG),
+          magnesium = Nutrient(0.0, MeasurementUnit.MG),
+          vitaminB3 = Nutrient(0.0, MeasurementUnit.MG),
+          vitaminB5 = Nutrient(0.0, MeasurementUnit.MG),
+          vitaminB2 = Nutrient(0.0, MeasurementUnit.MG),
+          iron = Nutrient(0.0, MeasurementUnit.MG),
+          calcium = Nutrient(0.0, MeasurementUnit.MG),
+          vitaminA = Nutrient(0.0, MeasurementUnit.IU),
+          zinc = Nutrient(0.0, MeasurementUnit.MG),
+          phosphorus = Nutrient(0.0, MeasurementUnit.MG),
+          vitaminK = Nutrient(0.0, MeasurementUnit.UG),
+          selenium = Nutrient(0.0, MeasurementUnit.UG),
+          vitaminE = Nutrient(0.0, MeasurementUnit.IU))
 
-    @Test
-    fun testNutrientSerializationAndDeserialization() {
-        val nutrient = NutritionalInformation.Nutrient(100.0, MeasurementUnit.G)
-        val serializedData = NutritionalInformation.Nutrient.serialize(nutrient)
-        val expectedData = mapOf("amount" to 100.0, "unit" to MeasurementUnit.G.name)
-        assertEquals(expectedData, serializedData)
-
-        val deserializedData = NutritionalInformation.Nutrient.deserialize(serializedData)
-        assertEquals(nutrient, deserializedData)
-    }
-
-    @Test
-    fun testDeserializeIfInvalideMap() {
-        val data = mapOf("amount" to 100.0, "unit" to "INVALID")
-        val nutrient = NutritionalInformation.Nutrient.deserialize(data)
-        assertEquals(nutrient.unit, MeasurementUnit.NONE)
-    }
-
-    @Test
-    fun testSerialize() {
-        val serializedData = NutritionalInformation.serialize(nutritionalInformation).toSortedMap()
-        val expectedData =
-            mapOf(
+  @Test
+  fun testSerialize() {
+    val serializedData = NutritionalInformation.serialize(nutritionalInformation).toSortedMap()
+    val expectedData =
+        mapOf(
                 "totalWeight" to mapOf("amount" to 100.0, "unit" to "G"),
                 "calories" to mapOf("amount" to 200.0, "unit" to "CAL"),
                 "fat" to mapOf("amount" to 10.0, "unit" to "G"),
@@ -90,16 +71,16 @@ class NutritionalInformationTest {
                 "phosphorus" to mapOf("amount" to 0.0, "unit" to "MG"),
                 "vitaminK" to mapOf("amount" to 0.0, "unit" to "UG"),
                 "selenium" to mapOf("amount" to 0.0, "unit" to "UG"),
-                "vitaminE" to mapOf("amount" to 0.0, "unit" to "IU")
-            ).toSortedMap()
+                "vitaminE" to mapOf("amount" to 0.0, "unit" to "IU"))
+            .toSortedMap()
 
-        assertEquals(expectedData, serializedData)
-    }
+    assertEquals(expectedData, serializedData)
+  }
 
-    @Test
-    fun testDeserialize() {
-        val serializedData = NutritionalInformation.serialize(nutritionalInformation)
-        val deserializedData = NutritionalInformation.deserialize(serializedData)
-        assertEquals(nutritionalInformation, deserializedData)
-    }
+  @Test
+  fun testDeserialize() {
+    val serializedData = NutritionalInformation.serialize(nutritionalInformation)
+    val deserializedData = NutritionalInformation.deserialize(serializedData)
+    assertEquals(nutritionalInformation, deserializedData)
+  }
 }
