@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navigation
@@ -33,7 +32,11 @@ import com.github.se.polyfit.ui.navigation.BottomNavItem
 import com.github.se.polyfit.ui.navigation.Route
 
 @Composable
-fun GenericScreens(navController: NavHostController, content : @Composable (PaddingValues) -> Unit, topBar : @Composable ()->Unit) {
+fun GenericScreens(
+    navController: NavHostController,
+    content: @Composable (PaddingValues) -> Unit,
+    topBar: @Composable () -> Unit = {}
+) {
   Scaffold(
       topBar = topBar,
       bottomBar = {
@@ -52,25 +55,32 @@ fun GenericScreens(navController: NavHostController, content : @Composable (Padd
       content = content)
 }
 
-
 fun NavGraphBuilder.globalNavigation(navController: NavHostController) {
-    navigation(startDestination = Route.Overview, route = Route.Home){
-        composable(Route.Overview){
-            GenericScreens(
-                navController = navController,
-                content = {
-                    paddingValues -> OverviewContent(paddingValues)
-                },
-                topBar = {
-                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
-                        Title(modifier = Modifier, 35.sp)
-                    }
-                }
-            )
-        }
-        composable(Route.Map){}
-        composable(Route.Settings){}
+  navigation(startDestination = Route.Overview, route = Route.Home) {
+    composable(Route.Overview) {
+
+      GenericScreens(
+          navController = navController,
+          content = { paddingValues -> OverviewContent(paddingValues) },
+          topBar = {
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
+              Title(modifier = Modifier, 35.sp)
+            }
+          })
     }
+    composable(Route.Map) {
+        GenericScreens(
+            navController = navController,
+            content = {Text("Map Screen")}
+        )
+    }
+    composable(Route.Settings) {
+        GenericScreens(
+            navController = navController,
+            content = {Text("Settings Screen")}
+        )
+    }
+  }
 }
 
 @Composable
@@ -105,7 +115,10 @@ fun BottomNavigationBar(
                 }
               },
               onClick = { onItemClick(item) },
-              colors = NavigationBarItemDefaults.colors(selectedIconColor = selectedContentColor, unselectedIconColor = unselectedContentColor))
+              colors =
+                  NavigationBarItemDefaults.colors(
+                      selectedIconColor = selectedContentColor,
+                      unselectedIconColor = unselectedContentColor))
         }
       }
 }
