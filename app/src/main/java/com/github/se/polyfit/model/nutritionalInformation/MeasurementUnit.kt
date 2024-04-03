@@ -1,5 +1,6 @@
 package com.github.se.polyfit.model.nutritionalInformation
 
+import android.util.Log
 import java.util.Locale
 
 enum class MeasurementUnit {
@@ -34,6 +35,14 @@ enum class MeasurementUnit {
      * @return the converted value with a rounded precision of two decimal places
      */
     fun unitConversion(from: MeasurementUnit, to: MeasurementUnit, value: Double): Double {
+      if (from == UNIT || to == UNIT || from == NONE || to == NONE) {
+        throw IllegalArgumentException("Unsupported conversion from $from to $to")
+        Log.e("MeasurementUnit", "Unsupported conversion from $from to $to")
+      } else if (value < 0) {
+        throw IllegalArgumentException("Value cannot be negative")
+        Log.e("MeasurementUnit", "Value cannot be negative")
+      }
+
       val result =
           when (from) {
             G ->

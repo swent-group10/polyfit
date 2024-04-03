@@ -52,4 +52,11 @@ class MeasurementUnitTest {
   fun `illegal arguments throw exception`() {
     assertFailsWith<IllegalArgumentException> { MeasurementUnit.fromString("INVALID") }
   }
+
+  @Test
+  fun `test UNIT conversion`() {
+    assertFailsWith<IllegalArgumentException> {
+      MeasurementUnit.unitConversion(MeasurementUnit.UNIT, MeasurementUnit.UNIT, 1.0)
+    }
+  }
 }

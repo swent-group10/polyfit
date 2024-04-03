@@ -26,7 +26,7 @@ class NutritionalInformation {
       newHash += 31 * nutrient.hashCode()
     }
 
-    return newHash * super.hashCode()
+    return newHash
   }
 
   /**

@@ -2,11 +2,7 @@ package com.github.se.polyfit.model.nutritionalInformation
 
 import android.util.Log
 
-data class Nutrient(
-    val nutrientType: String = "",
-    val amount: Double = 0.0,
-    val unit: MeasurementUnit = MeasurementUnit.G
-) {
+data class Nutrient(val nutrientType: String, val amount: Double, val unit: MeasurementUnit) {
 
   // setters
 
@@ -29,9 +25,9 @@ data class Nutrient(
 
   override fun hashCode(): Int {
     var result = 31 * amount.hashCode()
-    result = +31 * unit.hashCode()
-    result = +31 * nutrientType.hashCode()
-    return result * super.hashCode()
+    result += 31 * unit.hashCode()
+    result += 31 * nutrientType.hashCode()
+    return result
   }
 
   companion object {
@@ -67,7 +63,7 @@ data class Nutrient(
    * @return the sum of the two Nutrient objects
    */
   operator fun plus(other: Nutrient): Nutrient? {
-    return if (this.nutrientType != this.nutrientType) {
+    return if (this.nutrientType != other.nutrientType) {
       return null
     } else if (this.unit == other.unit) {
       Nutrient(this.nutrientType, this.amount + other.amount, this.unit)

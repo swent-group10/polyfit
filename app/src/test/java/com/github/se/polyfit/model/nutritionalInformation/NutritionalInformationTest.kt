@@ -252,4 +252,23 @@ class NutritionalInformationTest {
 
     assertNotEquals(originalNutritionalInformation, updatedNutritionalInformation)
   }
+
+  @Test
+  fun `test that the hash functions correctly`() {
+    val nutritionalInformation1 =
+        NutritionalInformation(
+            mutableListOf(
+                Nutrient("totalWeight", 100.0, MeasurementUnit.G),
+                Nutrient("calories", 200.0, MeasurementUnit.CAL),
+                Nutrient("fat", 10.0, MeasurementUnit.G)))
+
+    val nutritionalInformation2 =
+        NutritionalInformation(
+            mutableListOf(
+                Nutrient("totalWeight", 100.0, MeasurementUnit.G),
+                Nutrient("calories", 200.0, MeasurementUnit.CAL),
+                Nutrient("fat", 10.0, MeasurementUnit.G)))
+
+    assertEquals(nutritionalInformation1.hashCode(), nutritionalInformation2.hashCode())
+  }
 }
