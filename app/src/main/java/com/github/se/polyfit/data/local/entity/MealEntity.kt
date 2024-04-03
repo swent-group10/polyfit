@@ -1,13 +1,13 @@
-//package com.github.se.polyfit.data.local.entity
+// package com.github.se.polyfit.data.local.entity
 //
-//import androidx.room.Entity
-//import androidx.room.PrimaryKey
+// import androidx.room.Entity
+// import androidx.room.PrimaryKey
 //
-//@Entity(tableName = "meal")
-//data class MealEntity(
+// @Entity(tableName = "meal")
+// data class MealEntity(
 //    @PrimaryKey(autoGenerate = true)
 //    val mealID: Int,
 //    val occasion: String,
 //    val name: String,
 //    val mealTemp: Double
-//)
+// )

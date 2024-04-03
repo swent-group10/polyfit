@@ -1,13 +1,13 @@
-//package com.github.se.polyfit.model.meal
+// package com.github.se.polyfit.model.meal
 //
-//import android.util.Log
-//import com.github.se.polyfit.model.meal.Meal.Companion.serializeMeal
-//import com.google.android.gms.tasks.Task
-//import com.google.android.gms.tasks.TaskCompletionSource
-//import com.google.android.gms.tasks.Tasks
-//import com.google.firebase.firestore.FirebaseFirestore
+// import android.util.Log
+// import com.github.se.polyfit.model.meal.Meal.Companion.serializeMeal
+// import com.google.android.gms.tasks.Task
+// import com.google.android.gms.tasks.TaskCompletionSource
+// import com.google.android.gms.tasks.Tasks
+// import com.google.firebase.firestore.FirebaseFirestore
 //
-//class MealsRepository(private val db: FirebaseFirestore = FirebaseFirestore.getInstance()) {
+// class MealsRepository(private val db: FirebaseFirestore = FirebaseFirestore.getInstance()) {
 //
 //  private val userCollection by lazy { db.collection("users") }
 //
@@ -26,7 +26,8 @@
 //    serializedData.second.forEach { ingredient ->
 //      addMealTask
 //          .continueWithTask { newMealDoc.collection("ingredients").add(ingredient) }
-//          .addOnFailureListener({ e -> Log.e("FirebaseConnection", "Error adding ingredient", e) })
+//          .addOnFailureListener({ e -> Log.e("FirebaseConnection", "Error adding ingredient", e)
+// })
 //    }
 //
 //    return addMealTask.continueWith { null }
@@ -44,7 +45,8 @@
 //
 //          documents.forEach { document ->
 //            val mealTask =
-//                document.reference.collection("ingredients").get().continueWithTask { ingredientTask
+//                document.reference.collection("ingredients").get().continueWithTask {
+// ingredientTask
 //                  ->
 //                  val ingredients =
 //                      ingredientTask.result
@@ -84,4 +86,4 @@
 //    val mealMap = serializeMeal(meal)
 //    return userCollection.document(uid).collection("meals").document(meal.getUid()).set(mealMap)
 //  }
-//}
+// }

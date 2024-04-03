@@ -1,15 +1,15 @@
-//package com.github.se.polyfit.data.repository
+// package com.github.se.polyfit.data.repository
 //
-//import com.github.se.polyfit.data.local.dao.MealDao
-//import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
-//import com.github.se.polyfit.model.meal.Meal
-//import kotlinx.coroutines.Dispatchers
-//import kotlinx.coroutines.withContext
+// import com.github.se.polyfit.data.local.dao.MealDao
+// import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
+// import com.github.se.polyfit.model.meal.Meal
+// import kotlinx.coroutines.Dispatchers
+// import kotlinx.coroutines.withContext
 //
-//class MealRepository(
+// class MealRepository(
 //    private val mealDao: MealDao,
 //    private val mealFirebaseRepository: MealFirebaseRepository
-//) {
+// ) {
 //
 //    suspend fun storeMeal(meal: Meal) {
 //        withContext(Dispatchers.IO) {
@@ -34,4 +34,4 @@
 //            }
 //        }
 //    }
-//}
+// }
