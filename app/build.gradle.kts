@@ -207,4 +207,6 @@ tasks.register("jacocoTestReport", JacocoReport::class) {
 }
 dependencies {
     implementation(kotlin("reflect"))
+    implementation("androidx.room:room-common:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
 }
