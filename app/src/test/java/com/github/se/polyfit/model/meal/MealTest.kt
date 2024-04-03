@@ -55,7 +55,7 @@ class MealTest {
             "name" to "eggs",
             "mealTemp" to "wrongValue",
             "nutritionalInformation" to listOf<Map<String, Any>>())
-    // Make sure that an exwception is thrown
+    // Make sure that an exception is thrown
     assertFailsWith<Exception> { Meal.deserialize(data) }
   }
 
@@ -74,5 +74,20 @@ class MealTest {
     assertEquals(MealOccasion.DINNER, meal?.occasion)
     assertEquals("eggs", meal?.name)
     assertEquals(102.2, meal?.mealTemp)
+  }
+
+  @Test
+  fun `testing deserialize with Firebase type`() {
+    val data: Map<String, Any> =
+        mapOf(
+            "mealID" to 1,
+            "occasion" to "DINNER",
+            "name" to "eggs",
+            "mealTemp" to 102.2,
+            "nutritionalInformation" to listOf<Map<String, Any>>())
+
+    val meal = Meal.deserialize(data)
+    val deserialized = Meal.deserialize(data)
+    assertEquals(meal, deserialized)
   }
 }

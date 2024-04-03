@@ -1,5 +1,7 @@
 package com.github.se.polyfit.model.nutritionalInformation
 
+import android.util.Log
+
 class NutritionalInformation {
   val nutrients: MutableList<Nutrient> = mutableListOf()
 
@@ -79,7 +81,12 @@ class NutritionalInformation {
 
           nutritionalInformation.update(Nutrient.deserialize(it))
         } catch (e: Exception) {
-          throw Exception("Failed to deserialize NutritionalInformation object " + e.message)
+          Log.e(
+              "NutritionalInformation",
+              "Failed to deserialize NutritionalInformation object: ${e.message}",
+              e)
+          throw IllegalArgumentException(
+              "Failed to deserialize NutritionalInformation object " + e.message)
         }
       }
       return nutritionalInformation

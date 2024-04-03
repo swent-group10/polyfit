@@ -11,14 +11,13 @@ data class Meal(
     val mealID: Int,
     // represent the ideal temperature at which should be eaten at,
     // usefull for later features
-    var mealTemp: Double = 20.0,
+    val mealTemp: Double = 20.0,
     val nutritionalInformation: NutritionalInformation,
     val ingredients: MutableList<Ingredient> = mutableListOf()
 ) {
   init {
-    if (mealID < 0) {
-      throw IllegalArgumentException("mealID must be greater than 0")
-    }
+    require(mealID >= 0)
+
     updateMeal()
   }
 
@@ -63,8 +62,8 @@ data class Meal(
 
         newMeal
       } catch (e: Exception) {
-        Log.e("Meal", "Failed to deserialize Meal object")
-        throw Exception("Failed to deserialize Meal object")
+        Log.e("Meal", "Failed to deserialize Meal object: ${e.message}", e)
+        throw IllegalArgumentException("Failed to deserialize Meal object", e)
       }
     }
   }
