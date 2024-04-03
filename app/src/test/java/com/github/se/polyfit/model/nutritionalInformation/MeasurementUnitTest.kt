@@ -2,6 +2,7 @@ package com.github.se.polyfit.model.nutritionalInformation
 
 import junit.framework.TestCase.assertEquals
 import kotlin.test.Test
+import kotlin.test.assertFailsWith
 
 class MeasurementUnitTest {
 
@@ -45,5 +46,17 @@ class MeasurementUnitTest {
   fun `unitConversion returns same value for unsupported conversions`() {
     val result = MeasurementUnit.unitConversion(MeasurementUnit.IU, MeasurementUnit.CAL, 1.0)
     assertEquals(1.0, result)
+  }
+
+  @Test
+  fun `illegal arguments throw exception`() {
+    assertFailsWith<IllegalArgumentException> { MeasurementUnit.fromString("INVALID") }
+  }
+
+  @Test
+  fun `test UNIT conversion`() {
+    assertFailsWith<IllegalArgumentException> {
+      MeasurementUnit.unitConversion(MeasurementUnit.UNIT, MeasurementUnit.UNIT, 1.0)
+    }
   }
 }
