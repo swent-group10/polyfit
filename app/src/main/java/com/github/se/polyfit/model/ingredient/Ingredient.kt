@@ -17,31 +17,29 @@ data class Ingredient(
     val nutritionalInformation: NutritionalInformation,
 ) {
 
-    companion object {
-        fun serializeIngredient(ingredient: Ingredient): Map<String, Any> {
-            val map = mutableMapOf<String, Any>()
-            map["name"] = ingredient.name
-            map["id"] = ingredient.id
-            map["nutritionalInformation"] =
-                NutritionalInformation.serialize(ingredient.nutritionalInformation)
-            return map
-        }
-
-        fun deserializeIngredient(data: Map<String, Any>): Ingredient? {
-
-            return try {
-                val name = data["name"] as String
-                val id = data["id"] as Int
-                val nutValue = data["nutritionalInformation"] as List<Map<String, Any>>
-
-                val nutritionalInformation = NutritionalInformation.deserialize(nutValue)
-
-                Ingredient(name, id, nutritionalInformation)
-            } catch (e: Exception) {
-                Log.e("Ingredient", "Failed to deserialize Ingredient object")
-
-                throw Exception("Failed to deserialize Ingredient object")
-            }
-        }
+  companion object {
+    fun serializeIngredient(ingredient: Ingredient): Map<String, Any> {
+      val map = mutableMapOf<String, Any>()
+      map["name"] = ingredient.name
+      map["id"] = ingredient.id
+      map["nutritionalInformation"] =
+          NutritionalInformation.serialize(ingredient.nutritionalInformation)
+      return map
     }
+
+    fun deserializeIngredient(data: Map<String, Any>): Ingredient {
+      return try {
+        val name = data["name"] as String
+        val id = data["id"] as Int
+        val nutValue = data["nutritionalInformation"] as List<Map<String, Any>>
+
+        val nutritionalInformation = NutritionalInformation.deserialize(nutValue)
+
+        Ingredient(name, id, nutritionalInformation)
+      } catch (e: Exception) {
+        Log.e("Ingredient", "Failed to deserialize Ingredient object: ${e.message}", e)
+        throw IllegalArgumentException("Failed to deserialize Ingredient object", e)
+      }
+    }
+  }
 }
