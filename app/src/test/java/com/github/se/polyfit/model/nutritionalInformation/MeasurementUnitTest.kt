@@ -1,9 +1,20 @@
 package com.github.se.polyfit.model.nutritionalInformation
 
+import android.util.Log
+import io.mockk.every
+import io.mockk.mockkStatic
 import junit.framework.TestCase.assertEquals
 import kotlin.test.Test
+import kotlin.test.assertFailsWith
+import org.junit.Before
 
 class MeasurementUnitTest {
+  @Before
+  fun setup() {
+    mockkStatic(Log::class)
+    every { Log.e(any(), any()) } returns 0
+    every { Log.e(any(), any(), any()) } returns 0
+  }
 
   @Test
   fun `unitConversion converts grams to milligrams`() {
@@ -45,5 +56,17 @@ class MeasurementUnitTest {
   fun `unitConversion returns same value for unsupported conversions`() {
     val result = MeasurementUnit.unitConversion(MeasurementUnit.IU, MeasurementUnit.CAL, 1.0)
     assertEquals(1.0, result)
+  }
+
+  @Test
+  fun `illegal arguments throw exception`() {
+    assertFailsWith<IllegalArgumentException> { MeasurementUnit.fromString("INVALID") }
+  }
+
+  @Test
+  fun `test UNIT conversion`() {
+    assertFailsWith<IllegalArgumentException> {
+      MeasurementUnit.unitConversion(MeasurementUnit.UNIT, MeasurementUnit.UNIT, 1.0)
+    }
   }
 }

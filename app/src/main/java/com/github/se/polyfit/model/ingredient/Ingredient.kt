@@ -27,20 +27,18 @@ data class Ingredient(
       return map
     }
 
-    fun deserializeIngredient(data: Map<String, Any>): Ingredient? {
-
+    fun deserializeIngredient(data: Map<String, Any>): Ingredient {
       return try {
         val name = data["name"] as String
         val id = data["id"] as Int
-        val nutValue = data["nutritionalInformation"] as Map<String, Map<String, Any>>
+        val nutValue = data["nutritionalInformation"] as List<Map<String, Any>>
 
         val nutritionalInformation = NutritionalInformation.deserialize(nutValue)
 
-        Ingredient(name, id, nutritionalInformation!!)
+        Ingredient(name, id, nutritionalInformation)
       } catch (e: Exception) {
-        Log.e("Ingredient", "Failed to deserialize Ingredient object")
-
-        null
+        Log.e("Ingredient", "Failed to deserialize Ingredient object: ${e.message}", e)
+        throw IllegalArgumentException("Failed to deserialize Ingredient object", e)
       }
     }
   }

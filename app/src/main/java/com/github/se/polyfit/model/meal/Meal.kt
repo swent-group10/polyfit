@@ -11,24 +11,29 @@ data class Meal(
     val mealID: Int,
     // represent the ideal temperature at which should be eaten at,
     // usefull for later features
-    var mealTemp: Double = 20.0,
+    val mealTemp: Double = 20.0,
     val nutritionalInformation: NutritionalInformation,
     val ingredients: MutableList<Ingredient> = mutableListOf()
 ) {
+  init {
+    require(mealID >= 0)
+
+    updateMeal()
+  }
 
   fun addIngredient(ingredient: Ingredient) {
     ingredients.add(ingredient)
     updateMeal()
   }
 
-  fun updateMeal() {
+  private fun updateMeal() {
 
-    var newnutritionalInformation = NutritionalInformation()
+    var newNutritionalInformation = NutritionalInformation(mutableListOf())
 
     for (ingredient in ingredients) {
-      newnutritionalInformation += ingredient.nutritionalInformation
+      newNutritionalInformation += ingredient.nutritionalInformation
     }
-    nutritionalInformation.update(newnutritionalInformation)
+    nutritionalInformation.update(newNutritionalInformation)
   }
 
   companion object {
@@ -52,14 +57,13 @@ data class Meal(
         val name = data["name"] as String
         val nutritionalInformationData =
             NutritionalInformation.deserialize(
-                data["nutritionalInformation"] as Map<String, Map<String, Any>>)
-                as NutritionalInformation
+                data["nutritionalInformation"] as List<Map<String, Any>>)
         val newMeal = Meal(occasion, name, mealID, mealTemp, nutritionalInformationData)
 
         newMeal
       } catch (e: Exception) {
-        Log.e("Meal", "Failed to deserialize Meal object")
-        null
+        Log.e("Meal", "Failed to deserialize Meal object: ${e.message}", e)
+        throw IllegalArgumentException("Failed to deserialize Meal object", e)
       }
     }
   }

@@ -1,15 +1,17 @@
 package com.github.se.polyfit.model.ingredient
 
 import android.util.Log
-import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import io.mockk.every
 import io.mockk.mockkStatic
+import kotlin.test.assertFailsWith
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
 class IngredientTest {
-  private val ingredient = Ingredient("eggs", 1, NutritionalInformation())
+  private val ingredient = Ingredient("eggs", 1, NutritionalInformation(mutableListOf()))
 
   @Before
   fun setup() {
@@ -47,18 +49,9 @@ class IngredientTest {
   }
 
   @Test
-  fun testNutritionalInformation() {
-    val nutritionalInformation = ingredient.nutritionalInformation
-    // Replace with actual values
-    assert(nutritionalInformation.protein.amount == 0.0)
-    assert(nutritionalInformation.protein.unit == MeasurementUnit.G)
-    // Add more assertions for other nutrients
-  }
-
-  @Test
   fun testSerializationDeserialization() {
     val serializedIngredient = Ingredient.serializeIngredient(ingredient)
-    val deserializedIngredient = Ingredient.deserializeIngredient(serializedIngredient)!!
+    val deserializedIngredient = Ingredient.deserializeIngredient(serializedIngredient)
     assert(ingredient == deserializedIngredient)
     assert(ingredient.name == deserializedIngredient.name)
     assert(ingredient.nutritionalInformation == deserializedIngredient.nutritionalInformation)
@@ -67,7 +60,7 @@ class IngredientTest {
   @Test
   fun testSerializationDeserializationWithDefaultValues() {
     // Create an Ingredient object with null values
-    val ingredientWithDefaultValues = Ingredient("eggs", 1, NutritionalInformation())
+    val ingredientWithDefaultValues = Ingredient("eggs", 1, NutritionalInformation(mutableListOf()))
 
     // Serialize the Ingredient object
     val serializedIngredient = Ingredient.serializeIngredient(ingredientWithDefaultValues)
@@ -85,9 +78,44 @@ class IngredientTest {
     val map = mapOf("name" to "eggs", "nutritionalInformation" to "")
 
     // Deserialize the map
-    val deserializedIngredient = Ingredient.deserializeIngredient(map)
+    assertFailsWith<Exception> { Ingredient.deserializeIngredient(map) }
+  }
 
-    // Check if the deserialized Ingredient object is null
-    assert(deserializedIngredient == null)
+  @Test
+  fun deserializeIngredient_withValidData_returnsIngredient() {
+    val data =
+        mapOf("name" to "eggs", "id" to 1, "nutritionalInformation" to listOf<Map<String, Any>>())
+
+    val result = Ingredient.deserializeIngredient(data)
+
+    assertEquals("eggs", result.name)
+    assertEquals(1, result.id)
+    assertTrue(result.nutritionalInformation.nutrients.isEmpty())
+  }
+
+  @Test
+  fun deserializeIngredient_withInvalidName_throwsException() {
+    val data =
+        mapOf("name" to 123, "id" to 1, "nutritionalInformation" to listOf<Map<String, Any>>())
+
+    assertFailsWith<IllegalArgumentException> { Ingredient.deserializeIngredient(data) }
+  }
+
+  @Test
+  fun deserializeIngredient_withInvalidId_throwsException() {
+    val data =
+        mapOf(
+            "name" to "eggs",
+            "id" to "invalid",
+            "nutritionalInformation" to listOf<Map<String, Any>>())
+
+    assertFailsWith<IllegalArgumentException> { Ingredient.deserializeIngredient(data) }
+  }
+
+  @Test
+  fun deserializeIngredient_withInvalidNutritionalInformation_throwsException() {
+    val data = mapOf("name" to "eggs", "id" to 1, "nutritionalInformation" to "invalid")
+
+    assertFailsWith<IllegalArgumentException> { Ingredient.deserializeIngredient(data) }
   }
 }

@@ -7,10 +7,10 @@ import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import io.mockk.every
 import io.mockk.mockkStatic
-import junit.framework.TestCase.assertNotNull
-import junit.framework.TestCase.assertNull
 import kotlin.test.Test
-import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Before
 
 class MealTest {
@@ -23,21 +23,22 @@ class MealTest {
 
   @Test
   fun `Meal addIngredient should update meal`() {
-    val meal = Meal(MealOccasion.DINNER, "eggs", 1, 102.2, NutritionalInformation())
+    val meal = Meal(MealOccasion.DINNER, "eggs", 1, 102.2, NutritionalInformation(mutableListOf()))
     val newNutritionalInformation =
-        NutritionalInformation().apply { calcium = Nutrient(1.0, MeasurementUnit.G) }
+        NutritionalInformation(mutableListOf(Nutrient("calcium", 1.0, MeasurementUnit.G)))
+
     val ingredient = Ingredient("milk", 1, newNutritionalInformation)
     meal.addIngredient(ingredient)
     // Assert that the meal has been updated after adding an ingredient
     assertEquals(1, meal.ingredients.size)
 
     // Assert that the meal's nutritional information has been updated
-    assertEquals(1.0, meal.nutritionalInformation.calcium.amount)
+    assertEquals(1.0, meal.nutritionalInformation.nutrients[0].amount, 0.001)
   }
 
   @Test
   fun `Meal serialize should serialize meal correctly`() {
-    val meal = Meal(MealOccasion.DINNER, "eggs", 1, 102.2, NutritionalInformation())
+    val meal = Meal(MealOccasion.DINNER, "eggs", 1, 102.2, NutritionalInformation(mutableListOf()))
     val serializedMeal = Meal.serialize(meal)
     assertEquals(1, serializedMeal["mealID"])
     assertEquals(MealOccasion.DINNER.name, serializedMeal["occasion"])
@@ -53,9 +54,9 @@ class MealTest {
             "occasion" to "DINNER",
             "name" to "eggs",
             "mealTemp" to "wrongValue",
-            "nutritionalInformation" to mapOf<String, Any>())
-    val meal = Meal.deserialize(data)
-    assertNull(meal)
+            "nutritionalInformation" to listOf<Map<String, Any>>())
+    // Make sure that an exception is thrown
+    assertFailsWith<Exception> { Meal.deserialize(data) }
   }
 
   @Test
@@ -66,12 +67,27 @@ class MealTest {
             "occasion" to "DINNER",
             "name" to "eggs",
             "mealTemp" to 102.2,
-            "nutritionalInformation" to NutritionalInformation().serialize())
+            "nutritionalInformation" to NutritionalInformation(mutableListOf()).serialize())
     val meal = Meal.deserialize(data)
     assertNotNull(meal)
     assertEquals(1, meal?.mealID)
     assertEquals(MealOccasion.DINNER, meal?.occasion)
     assertEquals("eggs", meal?.name)
     assertEquals(102.2, meal?.mealTemp)
+  }
+
+  @Test
+  fun `testing deserialize with Firebase type`() {
+    val data: Map<String, Any> =
+        mapOf(
+            "mealID" to 1,
+            "occasion" to "DINNER",
+            "name" to "eggs",
+            "mealTemp" to 102.2,
+            "nutritionalInformation" to listOf<Map<String, Any>>())
+
+    val meal = Meal.deserialize(data)
+    val deserialized = Meal.deserialize(data)
+    assertEquals(meal, deserialized)
   }
 }
