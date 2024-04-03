@@ -58,7 +58,6 @@ fun GenericScreens(
 fun NavGraphBuilder.globalNavigation(navController: NavHostController) {
   navigation(startDestination = Route.Overview, route = Route.Home) {
     composable(Route.Overview) {
-
       GenericScreens(
           navController = navController,
           content = { paddingValues -> OverviewContent(paddingValues) },
@@ -69,16 +68,10 @@ fun NavGraphBuilder.globalNavigation(navController: NavHostController) {
           })
     }
     composable(Route.Map) {
-        GenericScreens(
-            navController = navController,
-            content = {Text("Map Screen")}
-        )
+      GenericScreens(navController = navController, content = { Text("Map Screen") })
     }
     composable(Route.Settings) {
-        GenericScreens(
-            navController = navController,
-            content = {Text("Settings Screen")}
-        )
+      GenericScreens(navController = navController, content = { Text("Settings Screen") })
     }
   }
 }

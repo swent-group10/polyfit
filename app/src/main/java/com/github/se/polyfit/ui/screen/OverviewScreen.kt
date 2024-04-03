@@ -60,15 +60,15 @@ import com.github.se.polyfit.ui.compose.kaiseiFont
 fun OverviewScreen() {
   // Context is used to launch the intent from the current Composable
 
-
   Scaffold(
       modifier = Modifier,
       topBar = {
         Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
           Title(modifier = Modifier, 35.sp)
         }
+      }) { paddingValues ->
+        OverviewContent(paddingValues)
       }
-  ) { paddingValues -> OverviewContent(paddingValues) }
 }
 
 @Composable
@@ -90,7 +90,7 @@ fun Title(modifier: Modifier, fontSize: TextUnit) {
 }
 
 @Composable
-fun CalorieCardContent(onPhoto : () -> Unit) {
+fun CalorieCardContent(onPhoto: () -> Unit) {
 
   Box(modifier = Modifier.fillMaxSize()) {
     Text(
@@ -135,7 +135,7 @@ fun CalorieCardContent(onPhoto : () -> Unit) {
         color = MaterialTheme.colorScheme.secondary)
 
     Button(
-        onClick =  onPhoto,
+        onClick = onPhoto,
         border = BorderStroke(2.dp, MaterialTheme.colorScheme.primaryContainer),
         elevation = ButtonDefaults.buttonElevation(4.dp),
         colors =
@@ -214,72 +214,68 @@ private fun callCamera(
 @Composable
 fun OverviewContent(paddingValues: PaddingValues) {
 
-    val context = LocalContext.current
+  val context = LocalContext.current
 
-    // State to hold the URI, the image and the bitmap
-    var imageUri by remember { mutableStateOf<Uri?>(null) }
-    val iconExample = BitmapFactory.decodeResource(context.resources, R.drawable.picture_example)
-    var imageBitmap by remember { mutableStateOf<Bitmap?>(iconExample) }
+  // State to hold the URI, the image and the bitmap
+  var imageUri by remember { mutableStateOf<Uri?>(null) }
+  val iconExample = BitmapFactory.decodeResource(context.resources, R.drawable.picture_example)
+  var imageBitmap by remember { mutableStateOf<Bitmap?>(iconExample) }
 
-    // Launcher for starting the camera activity
-    val startCamera =
-        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result
-            ->
-            val bitmap = result.data?.extras?.get("data") as? Bitmap
+  // Launcher for starting the camera activity
+  val startCamera =
+      rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result
+        ->
+        val bitmap = result.data?.extras?.get("data") as? Bitmap
+        imageBitmap = bitmap
+      }
+
+  // Launcher for requesting the camera permission
+  val requestPermissionLauncher =
+      rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
+          isGranted: Boolean ->
+        if (isGranted) {
+          // Permission is granted, you can start the camera
+          val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+          try {
+            startCamera.launch(takePictureIntent)
+          } catch (e: Exception) {
+            Log.e("HomeScreen", "Error launching camera intent: $e")
+            // Handle the exception if the camera intent cannot be launched
+          }
+        } else {
+          Log.e("HomeScreen", "Permission denied")
+          // Permission is denied. Handle the denial appropriately.
+        }
+      }
+
+  // Create a launcher to open gallery
+  val pickImageLauncher =
+      rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri?
+        ->
+        uri?.let {
+          imageUri = uri // Update the UI with the selected image URI
+
+          try {
+            val bitmap = ImageDecoder.decodeBitmap(createSource(context.contentResolver, uri))
             imageBitmap = bitmap
+          } catch (e: Exception) {
+            Log.e(
+                "OverviewScreen",
+                "Error decoding image: $e," + " are you sure the image is a bitmap?")
+          }
         }
+      }
 
-    // Launcher for requesting the camera permission
-    val requestPermissionLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
-                isGranted: Boolean ->
-            if (isGranted) {
-                // Permission is granted, you can start the camera
-                val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                try {
-                    startCamera.launch(takePictureIntent)
-                } catch (e: Exception) {
-                    Log.e("HomeScreen", "Error launching camera intent: $e")
-                    // Handle the exception if the camera intent cannot be launched
-                }
-            } else {
-                Log.e("HomeScreen", "Permission denied")
-                // Permission is denied. Handle the denial appropriately.
-            }
-        }
+  var showPictureDialog by remember { mutableStateOf(false) }
 
+  if (showPictureDialog) {
+    PictureDialog(
+        onDismiss = { showPictureDialog = false },
+        onTakePic = callCamera(context, startCamera, requestPermissionLauncher),
+        onImportPic = { pickImageLauncher.launch("image/*") })
+  }
 
-
-    // Create a launcher to open gallery
-    val pickImageLauncher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri?
-            ->
-            uri?.let {
-                imageUri = uri // Update the UI with the selected image URI
-
-                try {
-                    val bitmap = ImageDecoder.decodeBitmap(createSource(context.contentResolver, uri))
-                    imageBitmap = bitmap
-                } catch (e: Exception) {
-                    Log.e(
-                        "OverviewScreen",
-                        "Error decoding image: $e," + " are you sure the image is a bitmap?")
-                }
-            }
-        }
-
-    var showPictureDialog by remember {mutableStateOf(false)}
-
-    if(showPictureDialog){
-        PictureDialog(
-            onDismiss = {showPictureDialog = false},
-            onTakePic = callCamera(context, startCamera, requestPermissionLauncher),
-            onImportPic = {pickImageLauncher.launch("image/*")}
-        )
-    }
-
-
-    Box(modifier = Modifier.padding(paddingValues).fillMaxWidth()) {
+  Box(modifier = Modifier.padding(paddingValues).fillMaxWidth()) {
     LazyColumn(contentPadding = PaddingValues(horizontal = 30.dp, vertical = 20.dp)) {
       item {
         Text(
@@ -300,7 +296,7 @@ fun OverviewContent(paddingValues: PaddingValues) {
                                 MaterialTheme.colorScheme.inversePrimary,
                                 MaterialTheme.colorScheme.primary))),
             colors = CardDefaults.cardColors(Color.Transparent)) {
-              CalorieCardContent(){showPictureDialog = true}
+              CalorieCardContent() { showPictureDialog = true }
             }
       }
       item {
@@ -320,8 +316,6 @@ fun OverviewContent(paddingValues: PaddingValues) {
             colors = CardDefaults.cardColors(Color.Transparent)) {
 
               //
-
-
 
               imageBitmap?.let {
                 Image(bitmap = it.asImageBitmap(), contentDescription = "Captured image")
