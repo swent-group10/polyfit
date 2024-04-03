@@ -15,56 +15,62 @@ data class Meal(
     val nutritionalInformation: NutritionalInformation,
     val ingredients: MutableList<Ingredient> = mutableListOf()
 ) {
-  init {
-    require(mealID >= 0)
+    init {
+        require(mealID >= 0)
 
-    updateMeal()
-  }
-
-  fun addIngredient(ingredient: Ingredient) {
-    ingredients.add(ingredient)
-    updateMeal()
-  }
-
-  private fun updateMeal() {
-
-    var newNutritionalInformation = NutritionalInformation(mutableListOf())
-
-    for (ingredient in ingredients) {
-      newNutritionalInformation += ingredient.nutritionalInformation
-    }
-    nutritionalInformation.update(newNutritionalInformation)
-  }
-
-  companion object {
-
-    fun serialize(data: Meal): Map<String, Any> {
-      return mutableMapOf<String, Any>().apply {
-        this["mealID"] = data.mealID
-        this["occasion"] = data.occasion.name
-        this["name"] = data.name
-        this["mealTemp"] = data.mealTemp
-        this["nutritionalInformation"] =
-            NutritionalInformation.serialize(data.nutritionalInformation)
-      }
+        updateMeal()
     }
 
-    fun deserialize(data: Map<String, Any>): Meal? {
-      return try {
-        val mealID = data["mealID"] as Int
-        val occasion = data["occasion"]?.let { MealOccasion.valueOf(it as String) } as MealOccasion
-        val mealTemp = data["mealTemp"] as Double
-        val name = data["name"] as String
-        val nutritionalInformationData =
-            NutritionalInformation.deserialize(
-                data["nutritionalInformation"] as List<Map<String, Any>>)
-        val newMeal = Meal(occasion, name, mealID, mealTemp, nutritionalInformationData)
-
-        newMeal
-      } catch (e: Exception) {
-        Log.e("Meal", "Failed to deserialize Meal object: ${e.message}", e)
-        throw IllegalArgumentException("Failed to deserialize Meal object", e)
-      }
+    fun addIngredient(ingredient: Ingredient) {
+        ingredients.add(ingredient)
+        updateMeal()
     }
-  }
+
+    private fun updateMeal() {
+
+        var newNutritionalInformation = NutritionalInformation(mutableListOf())
+
+        for (ingredient in ingredients) {
+            newNutritionalInformation += ingredient.nutritionalInformation
+        }
+        nutritionalInformation.update(newNutritionalInformation)
+    }
+
+    fun serialize(): Map<String, Any> {
+        return serialize(this)
+    }
+
+    companion object {
+
+        fun serialize(data: Meal): Map<String, Any> {
+            return mutableMapOf<String, Any>().apply {
+                this["mealID"] = data.mealID
+                this["occasion"] = data.occasion.name
+                this["name"] = data.name
+                this["mealTemp"] = data.mealTemp
+                this["nutritionalInformation"] =
+                    NutritionalInformation.serialize(data.nutritionalInformation)
+            }
+        }
+
+        fun deserialize(data: Map<String, Any>): Meal? {
+            return try {
+                val mealID = data["mealID"] as Int
+                val occasion =
+                    data["occasion"]?.let { MealOccasion.valueOf(it as String) } as MealOccasion
+                val mealTemp = data["mealTemp"] as Double
+                val name = data["name"] as String
+                val nutritionalInformationData =
+                    NutritionalInformation.deserialize(
+                        data["nutritionalInformation"] as List<Map<String, Any>>
+                    )
+                val newMeal = Meal(occasion, name, mealID, mealTemp, nutritionalInformationData)
+
+                newMeal
+            } catch (e: Exception) {
+                Log.e("Meal", "Failed to deserialize Meal object: ${e.message}", e)
+                throw IllegalArgumentException("Failed to deserialize Meal object", e)
+            }
+        }
+    }
 }

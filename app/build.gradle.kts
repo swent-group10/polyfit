@@ -90,7 +90,7 @@ android {
 
 
     dependencies {
-
+        // General dependencies
         implementation("androidx.core:core-ktx:1.12.0")
         implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
         implementation("androidx.activity:activity-compose:1.8.2")
@@ -101,72 +101,53 @@ android {
         implementation("androidx.compose.material3:material3")
         implementation("androidx.navigation:navigation-compose:2.7.7")
         implementation("com.google.firebase:firebase-auth:22.3.1")
-        testImplementation("junit:junit:4.13.2")
-        androidTestImplementation("androidx.test.ext:junit:1.1.5")
-        androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-        androidTestImplementation(platform("androidx.compose:compose-bom:2023.04.00"))
-        androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-        debugImplementation("androidx.compose.ui:ui-tooling")
-        debugImplementation("androidx.compose.ui:ui-test-manifest")
-
-        // Firebase
         implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
         implementation("com.google.firebase:firebase-analytics")
         implementation("com.google.firebase:firebase-database-ktx:20.3.0")
         implementation("com.google.firebase:firebase-firestore:24.10.0")
         implementation("com.google.android.play:core-ktx:1.7.0")
         implementation("com.firebaseui:firebase-ui-auth:7.2.0")
-        implementation("com.google.firebase:firebase-analytics")
-        implementation("com.google.firebase:firebase-database")
-        implementation("com.google.android.play:core-ktx:1.7.0")
         implementation("com.google.firebase:firebase-auth-ktx:22.3.0")
-
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0")
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
         implementation("org.json:json:20210307")
-        androidTestImplementation("androidx.test.espresso:espresso-intents:3.5.1")
+        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
+        implementation("com.google.dagger:hilt-android:2.51")
+        implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
+        // Test dependencies
+        testImplementation("junit:junit:4.13.2")
+        testImplementation("org.jetbrains.kotlin:kotlin-test:1.7.10")
+        testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.7.10")
+        testImplementation("io.mockk:mockk:1.13.7")
+        testImplementation("com.google.dagger:hilt-android-testing:2.51")
+
+        // Android test dependencies
+        androidTestImplementation("androidx.test.ext:junit:1.1.5")
+        androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+        androidTestImplementation(platform("androidx.compose:compose-bom:2023.04.00"))
+        androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+        androidTestImplementation("androidx.test.espresso:espresso-intents:3.5.1")
         androidTestImplementation("io.mockk:mockk:1.13.7")
         androidTestImplementation("io.mockk:mockk-android:1.13.7")
         androidTestImplementation("io.mockk:mockk-agent:1.13.7")
-
-        testImplementation("junit:junit:4.13.2")
-        androidTestImplementation("androidx.test.ext:junit:1.1.5")
-        androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-        androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.4.0")
-        debugImplementation("androidx.compose.ui:ui-tooling:1.4.0")
-        debugImplementation("androidx.compose.ui:ui-test-manifest:1.4.0")
-
-        // For the tests
+        androidTestImplementation("org.jetbrains.kotlin:kotlin-test:1.7.10")
+        androidTestImplementation("org.mockito:mockito-core:3.12.4")
+        androidTestImplementation("org.mockito:mockito-android:3.12.4")
         androidTestImplementation("com.kaspersky.android-components:kaspresso:1.4.3")
         androidTestImplementation("com.kaspersky.android-components:kaspresso-allure-support:1.4.3")
         androidTestImplementation("com.kaspersky.android-components:kaspresso-compose-support:1.4.1")
-        testImplementation("org.mockito:mockito-inline:2.13.0")
-        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
-        testImplementation("org.jetbrains.kotlin:kotlin-test:1.7.10")
-        testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.7.10")
+        androidTestImplementation("com.google.dagger:hilt-android-testing:2.51")
 
-        // Hilts
-        implementation("com.google.dagger:hilt-android:2.51")
-        annotationProcessor("com.google.dagger:hilt-compiler:2.51")
+        // Debug dependencies
+        debugImplementation("androidx.compose.ui:ui-tooling")
+        debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+        // Kapt dependencies
         kapt("com.google.dagger:hilt-android-compiler:2.51")
         kapt("com.google.dagger:hilt-compiler:2.51")
-        implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
-
-
-        androidTestImplementation("com.google.dagger:hilt-android-testing:2.51")
         kaptAndroidTest("com.google.dagger:hilt-compiler:2.51")
-
-        // For local unit tests
-        testImplementation("com.google.dagger:hilt-android-testing:2.51")
         kaptTest("com.google.dagger:hilt-compiler:2.51")
-        // Mockito
-        androidTestImplementation("org.mockito:mockito-core:5.11.0")
-
-        testImplementation("io.mockk:mockk:1.13.7")
-        androidTestImplementation("io.mockk:mockk:1.13.7")
-        androidTestImplementation("io.mockk:mockk-android:1.13.7")
-        androidTestImplementation("io.mockk:mockk-agent:1.13.7")
     }
 
 // Allow references to generated code
