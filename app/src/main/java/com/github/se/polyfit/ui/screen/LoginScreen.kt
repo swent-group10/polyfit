@@ -27,6 +27,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.github.se.polyfit.R
+import com.github.se.polyfit.ui.compose.Title
+import com.github.se.polyfit.ui.theme.PrimaryPurple
 import com.github.se.polyfit.ui.viewModel.LoginViewModel
 
 @Composable
@@ -86,5 +88,34 @@ fun LoginScreen(goTo: () -> Unit) {
                   }
               Spacer(Modifier.weight(0.3f))
             }
+      }
+}
+
+val termText = buildAnnotatedString {
+  append("By clicking continue, you agree to our \n")
+  withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) { append("Terms of Service") }
+  append(" and ")
+
+  withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) { append("Privacy Policy") }
+}
+
+@Composable
+fun SignInButton(onClick: () -> Unit) {
+
+  Button(
+      onClick = { onClick() },
+      shape = RoundedCornerShape(20.dp),
+      colors =
+          ButtonDefaults.buttonColors(
+              contentColor = MaterialTheme.colorScheme.onPrimary, containerColor = PrimaryPurple),
+      modifier = Modifier.testTag("LoginButton")) {
+        val imageModifierGoogle = Modifier.size(24.dp).absoluteOffset(x = (-13).dp, y = 0.dp)
+
+        Image(
+            painter = painterResource(id = R.drawable.google_logo),
+            contentDescription = "Google_logo",
+            contentScale = ContentScale.Fit,
+            modifier = imageModifierGoogle)
+        Text(text = "Sign in with Google")
       }
 }
