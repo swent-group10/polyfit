@@ -39,6 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
+import com.github.se.polyfit.ui.components.AddIngredientDialog
 import com.github.se.polyfit.ui.components.GradientButton
 import com.github.se.polyfit.ui.components.IngredientList
 import com.github.se.polyfit.ui.navigation.Navigation

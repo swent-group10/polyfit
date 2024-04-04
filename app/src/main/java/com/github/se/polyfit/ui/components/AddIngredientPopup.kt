@@ -1,4 +1,4 @@
-package com.github.se.polyfit.ui.screen
+package com.github.se.polyfit.ui.components
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -19,7 +19,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.github.se.polyfit.ui.components.GradientBox
 import com.github.se.polyfit.ui.theme.*
 
 // Check if the input is not just a single "0", and if it has leading zeros
