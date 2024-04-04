@@ -78,6 +78,7 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
             excludes += "/META-INF/*.md"
             excludes += "**/libmockkjvmtiagent.so"
+            excludes += "**/mockito-extensions/org.mockito.plugins.MockMaker"
         }
     }
     testOptions {
@@ -133,11 +134,11 @@ android {
         androidTestImplementation("io.mockk:mockk-agent:1.13.7")
         androidTestImplementation("org.jetbrains.kotlin:kotlin-test:1.7.10")
         androidTestImplementation("org.mockito:mockito-core:3.12.4")
-        androidTestImplementation("org.mockito:mockito-android:3.12.4")
+        androidTestImplementation("org.mockito:mockito-android:4.0.0")
         androidTestImplementation("com.kaspersky.android-components:kaspresso:1.4.3")
         androidTestImplementation("com.kaspersky.android-components:kaspresso-allure-support:1.4.3")
         androidTestImplementation("com.kaspersky.android-components:kaspresso-compose-support:1.4.1")
-        androidTestImplementation("com.google.dagger:hilt-android-testing:2.51")
+        androidTestImplementation("org.robolectric:robolectric:4.6.1")
 
         // Debug dependencies
         debugImplementation("androidx.compose.ui:ui-tooling")
@@ -148,6 +149,16 @@ android {
         kapt("com.google.dagger:hilt-compiler:2.51")
         kaptAndroidTest("com.google.dagger:hilt-compiler:2.51")
         kaptTest("com.google.dagger:hilt-compiler:2.51")
+        androidTestImplementation("androidx.test:runner:1.4.0")
+        androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
+        androidTestImplementation("org.mockito:mockito-inline:4.0.0") // For final class mocking
+
+        // Firebase
+        androidTestImplementation("com.google.firebase:firebase-core:19.0.1") // replace with the latest version
+        androidTestImplementation("com.google.firebase:firebase-firestore:23.2.3") // replace with the latest version
+
+        // Google Play Services
+        androidTestImplementation("com.google.android.gms:play-services-tasks:18.0.1") // replace with the latest version
     }
 
 // Allow references to generated code
