@@ -2,68 +2,107 @@ import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
-import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
-import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
-import com.google.android.gms.tasks.Tasks
-import org.junit.Assert.assertNotNull
+import com.google.android.gms.tasks.Task
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
+import io.mockk.every
+import io.mockk.mockk
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
 class MealFirebaseRepositoryTest {
 
-    private val db = MealFirebaseRepository("test")
-    private val meal = Meal(
-        occasion = MealOccasion.BREAKFAST,
-        name = "Test Meal",
-        mealID = 0,
-        nutritionalInformation = NutritionalInformation(
-            mutableListOf(
-                Nutrient("Test", 0.0, MeasurementUnit.UNIT),
-                Nutrient("Test2", 0.0, MeasurementUnit.UNIT)
-
-            )
-        )
-    )
+    private lateinit var db: MealFirebaseRepository
+    private lateinit var firestore: FirebaseFirestore
+    private lateinit var meal: Meal
 
     @Before
     fun setUp() {
-        meal.addIngredient(
-            Ingredient(
-                name = "Test Ingredient",
-                id = 0,
-                nutritionalInformation = NutritionalInformation(
-                    mutableListOf(
-                        Nutrient("Test", 0.0, MeasurementUnit.UNIT),
-                        Nutrient("Test2", 0.0, MeasurementUnit.UNIT)
-                    )
-                )
+        firestore = mockk(relaxed = true)
+        val ingredient = Ingredient(
+            "Test Ingredient", 1, NutritionalInformation(
+                mutableListOf()
             )
-        )
+        )// Create a real instance of Ingredient
+        val ingredients = mutableListOf(ingredient)
+        meal = mockk<Meal>(relaxed = true)
+        every { meal.mealID } returns 1
+        every { meal.occasion } returns MealOccasion.BREAKFAST // replace with the appropriate MealOccasion
+        every { meal.name } returns "Test Meal"
+        every { meal.mealTemp } returns 20.0
+        every { meal.nutritionalInformation } returns mockk(relaxed = true)
+//        every { meal.ingredients } returns ingredients
+        db = MealFirebaseRepository("test", firestore)
+
+        val documentReference = mockk<DocumentReference>(relaxed = true)
+        val collectionReference = mockk<CollectionReference> {
+            every { document(any()) } returns documentReference
+        }
+
+        every { firestore.collection(any()) } returns collectionReference
     }
 
     @Test
-    fun storeMeal() {
-        val task = db.storeMeal(meal)
-        val result = Tasks.await(task)
-        assertNotNull(result)
+    fun storeMealSuccessfully() {
+        val task = mockk<Task<DocumentReference>>()
+        every {
+            firestore.collection(any()).document(any()).collection(any()).add(any())
+        } returns task
+
+        val result = db.storeMeal(meal)
+
+        assertEquals(task, result)
     }
 
     @Test
-    fun getAllMeals() {
-        //make sure we are given a list of two meals
-        val task = db.getAllMeals()
-        val result = Tasks.await(task)
-        assertNotNull(result)
+    fun getMealSuccessfully() {
+        val task = mockk<Task<DocumentSnapshot>>()
+        val documentSnapshot = mockk<DocumentSnapshot>()
+        every {
+            firestore.collection(any()).document(any()).collection(any()).document(any()).get()
+        } returns task
+        every { documentSnapshot.toObject(Meal::class.java) } returns meal
 
+        val result = db.getMeal("0")
 
+        val mealTask = task.continueWith { task ->
+            val snapshot = task.result
+            snapshot?.toObject(Meal::class.java)
+        }
+
+        assertEquals(mealTask, result)
     }
 
     @Test
-    fun getOneMeal() {
-        //make sure we are given a list of two meals
-        val task = db.getMeal("0")
-        val result = Tasks.await(task)
-        assertNotNull(result)
+    fun getAllMealsSuccessfully() {
+        val task = mockk<Task<QuerySnapshot>>()
+        every { firestore.collection(any()).document(any()).collection(any()).get() } returns task
+
+        val result = db.getAllMeals()
+
+        assertEquals(task, result)
+    }
+
+    @Test(expected = Exception::class)
+    fun getMealThrowsExceptionWhenFailed() {
+        every {
+            firestore.collection(any()).document(any()).collection(any()).document(any()).get()
+        } throws Exception()
+
+        db.getMeal("0")
+    }
+
+    @Test(expected = Exception::class)
+    fun getAllMealsThrowsExceptionWhenFailed() {
+        every {
+            firestore.collection(any()).document(any()).collection(any()).get()
+        } throws Exception()
+
+        db.getAllMeals()
     }
 }
