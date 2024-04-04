@@ -7,6 +7,11 @@ plugins {
     id("dagger.hilt.android.plugin")
     kotlin("kapt")
     id("com.ncorti.ktfmt.gradle") version "0.16.0"
+    id("jacoco")
+
+}
+jacoco {
+    toolVersion = "0.8.11"
 }
 sonar {
 
@@ -118,7 +123,6 @@ android {
         implementation("com.google.android.play:core-ktx:1.7.0")
         implementation("com.google.firebase:firebase-auth-ktx:22.3.0")
 
-
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0")
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
         implementation("org.json:json:20210307")
@@ -159,10 +163,10 @@ android {
         // For local unit tests
         testImplementation("com.google.dagger:hilt-android-testing:2.51")
         kaptTest("com.google.dagger:hilt-compiler:2.51")
-
         // Mockito
         androidTestImplementation("org.mockito:mockito-core:5.11.0")
 
+        testImplementation("io.mockk:mockk:1.13.7")
         androidTestImplementation("io.mockk:mockk:1.13.7")
         androidTestImplementation("io.mockk:mockk-android:1.13.7")
         androidTestImplementation("io.mockk:mockk-agent:1.13.7")
@@ -176,6 +180,7 @@ android {
 
 }
 tasks.register("jacocoTestReport", JacocoReport::class) {
+
     mustRunAfter("testDebugUnitTest", "connectedDebugAndroidTest")
 
     reports {
@@ -202,4 +207,7 @@ tasks.register("jacocoTestReport", JacocoReport::class) {
         include("outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec")
         include("outputs/code_coverage/debugAndroidTest/connected/*/coverage.ec")
     })
+}
+dependencies {
+    implementation(kotlin("reflect"))
 }

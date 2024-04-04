@@ -33,4 +33,4 @@ class MainActivity : ComponentActivity() {
   }
 }
 
-@HiltAndroidApp class ExampleApplication : Application() {}
+@HiltAndroidApp class ExampleApplication : Application()
