@@ -69,6 +69,10 @@ class NutritionalInformation {
     return newNutritionalInformation
   }
 
+  fun getNutrient(nutrientType: String): Nutrient? {
+    return nutrients.find { it.nutrientType == nutrientType }
+  }
+
   companion object {
     fun serialize(nutritionalInformation: NutritionalInformation): List<Map<String, Any>> {
       return nutritionalInformation.nutrients.map { Nutrient.serialize(it) }

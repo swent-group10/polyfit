@@ -173,7 +173,7 @@ fun IngredientList(
 }
 
 @Composable
-fun BottomBar() {
+private fun BottomBar() {
   Column(
       modifier =
           Modifier.background(MaterialTheme.colorScheme.background)
