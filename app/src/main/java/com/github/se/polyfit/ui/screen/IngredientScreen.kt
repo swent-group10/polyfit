@@ -21,11 +21,13 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -53,6 +55,7 @@ data class Ingredient(
     val probability: Float = 1.0f,
 ) {}
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IngredientScreen(
     navigation: Navigation,
@@ -68,7 +71,29 @@ fun IngredientScreen(
   val showAddIngredDialog = remember { mutableStateOf(false) }
 
   Scaffold(
-      topBar = { TopBar(navigation) },
+      topBar = {
+        TopAppBar(
+            title = {
+              Text(
+                  "Ingredients",
+                  modifier = Modifier.testTag("IngredientTitle"),
+                  color = MaterialTheme.colorScheme.secondary,
+                  fontSize = MaterialTheme.typography.headlineMedium.fontSize)
+            },
+            navigationIcon = {
+              IconButton(
+                  onClick = { navigation.goBack() },
+                  content = {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back",
+                        modifier = Modifier.testTag("BackButton"),
+                        tint = PrimaryPurple)
+                  },
+                  modifier = Modifier.testTag("BackButton"))
+            },
+            modifier = Modifier.testTag("TopBar"))
+      },
       bottomBar = { BottomBar(onClickAddIngred = { showAddIngredDialog.value = true }) }) {
         IngredientList(
             it,
@@ -140,7 +165,7 @@ fun BottomBar(
         modifier = Modifier.fillMaxWidth().testTag("DoneBox"),
         contentAlignment = Alignment.Center) {
           Button(
-              onClick = {}, // TODO: Finish adding ingredients
+              onClick = { Log.v("Finished", "Clicked") }, // TODO: Finish adding ingredients
               modifier = Modifier.width(200.dp).testTag("DoneButton"),
               colors = ButtonDefaults.buttonColors(containerColor = PrimaryPurple)) {
                 Text(text = "Done", fontSize = 24.sp)
@@ -149,8 +174,9 @@ fun BottomBar(
   }
 }
 
-@Preview
-@Composable
-fun IngredientScreenPreview() {
+// Comment out increases coverage...
+ @Preview
+ @Composable
+ fun IngredientScreenPreview() {
   IngredientScreen(Navigation(rememberNavController()), listOf(), listOf())
-}
+ }

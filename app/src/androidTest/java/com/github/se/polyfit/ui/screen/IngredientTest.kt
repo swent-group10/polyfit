@@ -1,7 +1,7 @@
 package com.github.se.polyfit.ui.screen
 
+import android.util.Log
 import androidx.compose.ui.test.assertCountEquals
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -11,7 +11,11 @@ import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.mockk.confirmVerified
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit4.MockKRule
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import io.mockk.verify
+import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -23,6 +27,16 @@ class IngredientTest : TestCase() {
   @get:Rule val mockkRule = MockKRule(this)
 
   @RelaxedMockK lateinit var mockNav: Navigation
+
+  @Before
+  fun setup() {
+    mockkStatic(Log::class)
+  }
+
+  @After
+  fun tearDown() {
+    unmockkStatic(Log::class)
+  }
 
   private fun launchIngredientScreenWithTestData(
       testIngredients: List<Ingredient>,
@@ -88,6 +102,36 @@ class IngredientTest : TestCase() {
   }
 
   @Test
+  fun addIngredientButton() {
+    launchIngredientScreenWithTestData(emptyList(), emptyList())
+    ComposeScreen.onComposeScreen<IngredientsBottomBar>(composeTestRule) {
+      addIngredientGradientButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+        performClick()
+      }
+
+      // TODO: @April Update with proper test
+      verify { Log.v("Add Ingredient", "Clicked") }
+    }
+  }
+
+  @Test
+  fun doneButton() {
+    launchIngredientScreenWithTestData(emptyList(), emptyList())
+    ComposeScreen.onComposeScreen<IngredientsBottomBar>(composeTestRule) {
+      doneButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+        performClick()
+      }
+
+      // TODO: @April Update with proper test
+      verify { Log.v("Finished", "Clicked") }
+    }
+  }
+
+  @Test
   fun noIngredientMessageDisplay() {
     launchIngredientScreenWithTestData(emptyList(), emptyList())
     ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
@@ -98,7 +142,7 @@ class IngredientTest : TestCase() {
 
       ingredientButton { assertDoesNotExist() }
       potentialIngredientButton { assertDoesNotExist() }
-      morePotentialIngredients { assertDoesNotExist() }
+      morePotentialIngredientsButton { assertDoesNotExist() }
     }
   }
 
@@ -107,16 +151,34 @@ class IngredientTest : TestCase() {
     launchIngredientScreenWithTestData(manyIngredients, emptyList())
 
     ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
-      morePotentialIngredients { assertDoesNotExist() }
+      morePotentialIngredientsButton { assertDoesNotExist() }
       potentialIngredientButton { assertDoesNotExist() }
       noIngredients { assertDoesNotExist() }
 
       ingredientButton {
         assertIsDisplayed()
         assertTextContains("Olive Oil 5ml")
+        assertHasClickAction()
       }
 
       composeTestRule.onAllNodesWithTag("Ingredient").assertCountEquals(5)
+    }
+  }
+
+  @Test
+  fun expandIngredient() {
+    launchIngredientScreenWithTestData(manyIngredients, emptyList())
+
+    ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
+      ingredientButton {
+        assertIsDisplayed()
+        assertTextContains("Olive Oil 5ml")
+        assertHasClickAction()
+        performClick()
+      }
+
+      // TODO: @April Update with proper test
+      verify { Log.v("Expand Ingredients", "Clicked") }
     }
   }
 
@@ -128,13 +190,16 @@ class IngredientTest : TestCase() {
       potentialIngredientButton {
         assertIsDisplayed()
         assertTextContains("Carrots")
+        assertHasClickAction()
       }
 
-      morePotentialIngredients { assertDoesNotExist() }
+      morePotentialIngredientsButton { assertDoesNotExist() }
       ingredientButton { assertDoesNotExist() }
       noIngredients { assertDoesNotExist() }
 
-      composeTestRule.onAllNodesWithTag("PotentialIngredient").assertCountEquals(1)
+      composeTestRule
+          .onAllNodesWithTag("PotentialIngredient")
+          .assertCountEquals(fewPotentialIngredients.size)
     }
   }
 
@@ -149,9 +214,14 @@ class IngredientTest : TestCase() {
       potentialIngredientButton {
         assertIsDisplayed()
         assertTextContains("Carrots")
+        assertHasClickAction()
       }
 
-      morePotentialIngredients { assertIsDisplayed() }
+      morePotentialIngredientsButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+        assertContentDescriptionEquals("More Options")
+      }
 
       composeTestRule.onAllNodesWithTag("PotentialIngredient").assertCountEquals(3)
     }
@@ -167,17 +237,65 @@ class IngredientTest : TestCase() {
       ingredientButton {
         assertIsDisplayed()
         assertTextContains("Olive Oil 5ml")
+        assertHasClickAction()
       }
 
       potentialIngredientButton {
         assertIsDisplayed()
         assertTextContains("Carrots")
+        assertHasClickAction()
       }
 
-      morePotentialIngredients { assertIsDisplayed() }
+      morePotentialIngredientsButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+      }
 
-      composeTestRule.onAllNodesWithTag("Ingredient").assertCountEquals(5)
+      composeTestRule.onAllNodesWithTag("Ingredient").assertCountEquals(manyIngredients.size)
       composeTestRule.onAllNodesWithTag("PotentialIngredient").assertCountEquals(3)
+    }
+  }
+
+  @Test
+  fun addPotentialIngredient() {
+    launchIngredientScreenWithTestData(emptyList(), fewPotentialIngredients)
+
+    ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
+      ingredientButton { assertDoesNotExist() }
+
+      potentialIngredientButton {
+        assertIsDisplayed()
+        assertTextContains("Carrots")
+        assertHasClickAction()
+        performClick()
+      }
+
+      ingredientButton {
+        assertIsDisplayed()
+        assertTextContains("Carrots 100g")
+      }
+
+      potentialIngredientButton { assertDoesNotExist() }
+    }
+  }
+
+  @Test
+  fun expandPotentialIngredients() {
+    launchIngredientScreenWithTestData(emptyList(), manyPotentialIngredients)
+
+    ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
+      composeTestRule.onAllNodesWithTag("PotentialIngredient").assertCountEquals(3)
+
+      morePotentialIngredientsButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+        performClick()
+        assertDoesNotExist()
+      }
+
+      composeTestRule
+          .onAllNodesWithTag("PotentialIngredient")
+          .assertCountEquals(manyPotentialIngredients.size)
     }
   }
 }

@@ -24,9 +24,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import com.github.se.polyfit.ui.theme.GradientButtonGrey
+import com.github.se.polyfit.ui.theme.GradientButtonPink
+import com.github.se.polyfit.ui.theme.GradientButtonPurple
 
 /**
- * A button with a gradient border.
+ * A button with a gradient border. NOTE: For testing, see SelectIngredientsScreen.kt to see how to
+ * properly select the click actions.
  *
  * @param onClick The callback to be invoked when this button is clicked.
  * @param active Whether the button is active or not. Inactive button is gray.
@@ -44,47 +48,47 @@ fun GradientButton(
     icon: @Composable (() -> Unit)? = null,
     round: Boolean = false,
 ) {
-  val styles =
-      mapOf(
-          "gradient" to
-              if (active) {
-                Brush.horizontalGradient(colors = listOf(Color(0xFF8E2DE2), Color(0xFF4A00E0)))
-              } else {
-                Brush.horizontalGradient(colors = listOf(Color(0xFFE0E0E0), Color(0xFFE0E0E0)))
-              },
-          "textColor" to
-              if (active) {
-                MaterialTheme.colorScheme.primary
-              } else {
-                MaterialTheme.colorScheme.secondary
-              },
-          "rounding" to
-              if (round) {
-                RoundedCornerShape(50.dp)
-              } else {
-                RoundedCornerShape(20.dp)
-              },
-          "buttonModifier" to
-              if (round) {
-                Modifier.size(48.dp)
-              } else {
-                Modifier
-              })
+  val gradient =
+      if (active) {
+        Brush.horizontalGradient(colors = listOf(GradientButtonPurple, GradientButtonPink))
+      } else {
+        // colors must be of length 2
+        Brush.horizontalGradient(colors = listOf(GradientButtonGrey, GradientButtonGrey))
+      }
+
+  val textColor =
+      if (active) {
+        MaterialTheme.colorScheme.primary
+      } else {
+        MaterialTheme.colorScheme.secondary
+      }
+
+  val rounding =
+      if (round) {
+        RoundedCornerShape(50.dp)
+      } else {
+        RoundedCornerShape(20.dp)
+      }
+
+  val buttonModifier =
+      if (round) {
+        Modifier.size(48.dp)
+      } else {
+        Modifier
+      }
 
   Box(contentAlignment = Alignment.Center, modifier = modifier.padding(4.dp)) {
     Canvas(modifier = Modifier.matchParentSize()) {
       drawRoundRect(
-          brush = styles["gradient"] as Brush,
-          cornerRadius = CornerRadius(20.dp.toPx()),
-          style = Stroke(2.dp.toPx()))
+          brush = gradient, cornerRadius = CornerRadius(20.dp.toPx()), style = Stroke(2.dp.toPx()))
     }
 
     Button(
         onClick = onClick,
-        shape = styles["rounding"] as RoundedCornerShape,
+        shape = rounding,
         colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
         contentPadding = PaddingValues(12.dp),
-        modifier = (styles["buttonModifier"] as Modifier).testTag("GradientButton")) {
+        modifier = buttonModifier.testTag("GradientButton")) {
           Row(
               verticalAlignment = Alignment.CenterVertically,
               horizontalArrangement = Arrangement.Center) {
@@ -92,7 +96,7 @@ fun GradientButton(
                 if (text != null) {
                   Text(
                       text = text,
-                      color = styles["textColor"] as Color,
+                      color = textColor,
                       fontSize = TextUnit(16f, TextUnitType.Sp),
                       fontWeight = FontWeight.Normal,
                       modifier = Modifier.testTag("ButtonText"))
