@@ -10,36 +10,36 @@ class MealFirebaseRepository(
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
 ) {
 
-  private val mealCollection = db.collection("users").document(userId).collection("meals")
+    private val mealCollection = db.collection("users").document(userId).collection("meals")
 
-  fun storeMeal(meal: Meal): Task<DocumentReference> {
-    val mealData = Meal.serialize(meal)
-    return mealCollection.add(mealData)
-  }
-
-  // maybe ok for now, but in the future will need to find a better way to
-  // distinguish between meals
-  fun getMeal(mealId: String): Task<Meal?> {
-    return getAllMeals().continueWith { task ->
-      if (task.isSuccessful) {
-
-        task.result?.find { it.mealID.toString() == mealId }
-      } else {
-        throw task.exception ?: Exception("Failed to fetch meals")
-      }
+    fun storeMeal(meal: Meal): Task<DocumentReference> {
+        val mealData = Meal.serialize(meal)
+        return mealCollection.add(mealData)
     }
-  }
 
-  fun getAllMeals(): Task<List<Meal>> {
-    return mealCollection.get().continueWith { task ->
-      if (task.isSuccessful) {
+    // maybe ok for now, but in the future will need to find a better way to
+    // distinguish between meals
+    fun getMeal(mealId: String): Task<Meal?> {
+        return getAllMeals().continueWith { task ->
+            if (task.isSuccessful) {
 
-        task.result?.documents?.mapNotNull { document ->
-          document.data?.let { Meal.deserialize(it) }
-        } ?: listOf()
-      } else {
-        throw task.exception ?: Exception("Failed to fetch meals")
-      }
+                task.result?.find { it.mealID.toString() == mealId }
+            } else {
+                throw Exception("Failed to fetch meals : " + task.exception?.message)
+            }
+        }
     }
-  }
+
+    fun getAllMeals(): Task<List<Meal>> {
+        return mealCollection.get().continueWith { task ->
+            if (task.isSuccessful) {
+
+                task.result?.documents?.mapNotNull { document ->
+                    document.data?.let { Meal.deserialize(it) }
+                } ?: listOf()
+            } else {
+                throw Exception("Failed to fetch meals")
+            }
+        }
+    }
 }

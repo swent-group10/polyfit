@@ -101,44 +101,46 @@ android {
         implementation("androidx.compose.ui:ui-tooling-preview")
         implementation("androidx.compose.material3:material3")
         implementation("androidx.navigation:navigation-compose:2.7.7")
-        implementation("com.google.firebase:firebase-auth:22.3.1")
-        implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
-        implementation("com.google.firebase:firebase-analytics")
-        implementation("com.google.firebase:firebase-database-ktx:20.3.0")
-        implementation("com.google.firebase:firebase-firestore:24.10.0")
-        implementation("com.google.android.play:core-ktx:1.7.0")
-        implementation("com.firebaseui:firebase-ui-auth:7.2.0")
-        implementation("com.google.firebase:firebase-auth-ktx:22.3.0")
-        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0")
-        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
+        implementation("com.google.android.play:core-ktx:1.8.1")
         implementation("org.json:json:20210307")
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0")
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
         implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
         implementation("com.google.dagger:hilt-android:2.51")
         implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
+        // Firebase dependencies
+        implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
+        implementation("com.google.firebase:firebase-auth:22.3.1")
+        implementation("com.google.firebase:firebase-auth-ktx:22.3.1")
+        implementation("com.google.firebase:firebase-analytics")
+        implementation("com.google.firebase:firebase-database-ktx:20.3.1")
+        implementation("com.google.firebase:firebase-firestore:24.11.0")
+        implementation("com.firebaseui:firebase-ui-auth:8.0.2")
+        androidTestImplementation("com.google.firebase:firebase-firestore:24.11.0")
+
         // Test dependencies
         testImplementation("junit:junit:4.13.2")
-        testImplementation("org.jetbrains.kotlin:kotlin-test:1.7.10")
-        testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.7.10")
-        testImplementation("io.mockk:mockk:1.13.7")
+        testImplementation("org.jetbrains.kotlin:kotlin-test:1.8.22")
+        testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.8.22")
+        testImplementation("io.mockk:mockk:1.13.10")
         testImplementation("com.google.dagger:hilt-android-testing:2.51")
 
         // Android test dependencies
         androidTestImplementation("androidx.test.ext:junit:1.1.5")
         androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-        androidTestImplementation(platform("androidx.compose:compose-bom:2023.04.00"))
+        androidTestImplementation(platform("androidx.compose:compose-bom:2024.04.00"))
         androidTestImplementation("androidx.compose.ui:ui-test-junit4")
         androidTestImplementation("androidx.test.espresso:espresso-intents:3.5.1")
-        androidTestImplementation("io.mockk:mockk:1.13.7")
-        androidTestImplementation("io.mockk:mockk-android:1.13.7")
-        androidTestImplementation("io.mockk:mockk-agent:1.13.7")
-        androidTestImplementation("org.jetbrains.kotlin:kotlin-test:1.7.10")
-        androidTestImplementation("org.mockito:mockito-core:3.12.4")
-        androidTestImplementation("org.mockito:mockito-android:4.0.0")
+        androidTestImplementation("io.mockk:mockk-android:1.13.10")
+        androidTestImplementation("org.mockito:mockito-core:5.11.0")
+        androidTestImplementation("org.mockito:mockito-android:4.2.0")
+        androidTestImplementation("org.mockito:mockito-inline:4.2.0") // For final class mocking
         androidTestImplementation("com.kaspersky.android-components:kaspresso:1.4.3")
         androidTestImplementation("com.kaspersky.android-components:kaspresso-allure-support:1.4.3")
         androidTestImplementation("com.kaspersky.android-components:kaspresso-compose-support:1.4.1")
-        androidTestImplementation("org.robolectric:robolectric:4.6.1")
+        androidTestImplementation("org.robolectric:robolectric:4.7.3")
+        androidTestImplementation("androidx.test:runner:1.5.2")
 
         // Debug dependencies
         debugImplementation("androidx.compose.ui:ui-tooling")
@@ -149,16 +151,6 @@ android {
         kapt("com.google.dagger:hilt-compiler:2.51")
         kaptAndroidTest("com.google.dagger:hilt-compiler:2.51")
         kaptTest("com.google.dagger:hilt-compiler:2.51")
-        androidTestImplementation("androidx.test:runner:1.4.0")
-        androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
-        androidTestImplementation("org.mockito:mockito-inline:4.0.0") // For final class mocking
-
-        // Firebase
-        androidTestImplementation("com.google.firebase:firebase-core:19.0.1") // replace with the latest version
-        androidTestImplementation("com.google.firebase:firebase-firestore:23.2.3") // replace with the latest version
-
-        // Google Play Services
-        androidTestImplementation("com.google.android.gms:play-services-tasks:18.0.1") // replace with the latest version
     }
 
 // Allow references to generated code

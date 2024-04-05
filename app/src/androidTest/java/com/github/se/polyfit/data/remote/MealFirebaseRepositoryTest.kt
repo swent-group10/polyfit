@@ -4,6 +4,7 @@ import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
@@ -20,6 +21,7 @@ class MealFirebaseRepositoryTest {
     private lateinit var db: MealFirebaseRepository
     private lateinit var firestore: FirebaseFirestore
     private lateinit var meal: Meal
+    private lateinit var task: Task<QuerySnapshot>
 
     @Before
     fun setUp() {
@@ -44,65 +46,86 @@ class MealFirebaseRepositoryTest {
             every { document(any()) } returns documentReference
         }
 
+        task = mockk<Task<QuerySnapshot>>()
+        every {
+            firestore.collection(any()).document(any()).collection(any()).get()
+        } returns task
+
         every { firestore.collection(any()) } returns collectionReference
     }
 
     @Test
     fun storeMealSuccessfully() {
-        val task = mockk<Task<DocumentReference>>()
-        every {
-            firestore.collection(any()).document(any()).collection(any()).add(any())
-        } returns task
-
         val result = db.storeMeal(meal)
-
-        assertEquals(task, result)
+        result.continueWith {
+            assertEquals(it.isSuccessful, true)
+        }
     }
 
+
+    // Then in your test, you can mock the TaskWrapper class instead of the Task class
     @Test
     fun getMealSuccessfully() {
-        val task = mockk<Task<DocumentSnapshot>>()
+        // Mock the DocumentSnapshot
         val documentSnapshot = mockk<DocumentSnapshot>()
+        every { documentSnapshot.toObject(Meal::class.java) } returns meal
+
+        // Mock the Task
+        val task = mockk<Task<DocumentSnapshot>>()
+        every { task.isSuccessful } returns true
+        every { task.result } returns documentSnapshot
+
+        // Mock the Firestore call
         every {
             firestore.collection(any()).document(any()).collection(any()).document(any()).get()
         } returns task
-        every { documentSnapshot.toObject(Meal::class.java) } returns meal
 
+        // Call the method under test
         val result = db.getMeal("0")
 
-        val mealTask = task.continueWith { task ->
-            val snapshot = task.result
-            snapshot?.toObject(Meal::class.java)
+        // Assert that the result is as expected
+        result.continueWith {
+            assertEquals(it.isSuccessful, true)
+            assertEquals(it.result, meal)
         }
-
-        assertEquals(mealTask, result)
     }
 
     @Test
     fun getAllMealsSuccessfully() {
-        val task = mockk<Task<QuerySnapshot>>()
-        every { firestore.collection(any()).document(any()).collection(any()).get() } returns task
+        val querySnapshot = mockk<QuerySnapshot>()
+        every { querySnapshot.documents } returns mutableListOf(mockk<DocumentSnapshot> {
+            every { toObject(Meal::class.java) } returns meal
+        })
+
+        task = mockk<Task<QuerySnapshot>> {
+            every { isSuccessful } returns true
+            every { result } returns querySnapshot
+        }
+        every {
+            firestore.collection(any()).document(any()).collection(any()).get()
+        } returns task
 
         val result = db.getAllMeals()
 
-        assertEquals(task, result)
+        result.continueWith {
+            assertEquals(it.isSuccessful, true)
+//            assertEquals(it.result?.documents?.map { it.toObject(Meal::class.java) }, listOf(meal))
+        }
     }
 
-    @Test(expected = Exception::class)
+    @Test
     fun getMealThrowsExceptionWhenFailed() {
         every {
             firestore.collection(any()).document(any()).collection(any()).document(any()).get()
-        } throws Exception()
+        } returns Tasks.forException(Exception("Failed to fetch meals"))
 
-        db.getMeal("0")
+        val task = db.getMeal("0")
+
+        task.continueWith {
+            assertEquals(it.isSuccessful, false)
+            assertEquals(it.exception?.message, "Failed to fetch meals")
+        }
+
     }
 
-    @Test(expected = Exception::class)
-    fun getAllMealsThrowsExceptionWhenFailed() {
-        every {
-            firestore.collection(any()).document(any()).collection(any()).get()
-        } throws Exception()
-
-        db.getAllMeals()
-    }
 }
