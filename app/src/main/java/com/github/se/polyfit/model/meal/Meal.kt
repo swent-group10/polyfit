@@ -16,96 +16,95 @@ data class Meal(
     val ingredients: MutableList<Ingredient> = mutableListOf(),
     var firebasaeId: String = ""
 ) {
-    init {
-        require(mealID >= 0)
+  init {
+    require(mealID >= 0)
 
-        updateMeal()
+    updateMeal()
+  }
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (other !is Meal) return false
+
+    if (mealID != other.mealID) return false
+    if (name != other.name) return false
+    if (occasion != other.occasion) return false
+    if (mealTemp != other.mealTemp) return false
+    if (nutritionalInformation != other.nutritionalInformation) return false
+    if (ingredients != other.ingredients) return false
+    if (firebasaeId != other.firebasaeId) return false
+
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var result = mealID
+    result = 31 * result + name.hashCode()
+    result = 31 * result + occasion.hashCode()
+    result = 31 * result + mealTemp.hashCode()
+    result = 31 * result + nutritionalInformation.hashCode()
+    result = 31 * result + ingredients.hashCode()
+    result = 31 * result + firebasaeId.hashCode()
+    return result
+  }
+
+  fun addIngredient(ingredient: Ingredient) {
+    ingredients.add(ingredient)
+    updateMeal()
+  }
+
+  private fun updateMeal() {
+
+    var newNutritionalInformation = NutritionalInformation(mutableListOf())
+
+    for (ingredient in ingredients) {
+      newNutritionalInformation += ingredient.nutritionalInformation
+    }
+    nutritionalInformation.update(newNutritionalInformation)
+  }
+
+  fun serialize(): Map<String, Any> {
+    return serialize(this)
+  }
+
+  companion object {
+
+    fun serialize(data: Meal): Map<String, Any> {
+      return mutableMapOf<String, Any>().apply {
+        this["mealID"] = data.mealID
+        this["occasion"] = data.occasion.name
+        this["name"] = data.name
+        this["mealTemp"] = data.mealTemp
+        this["nutritionalInformation"] =
+            NutritionalInformation.serialize(data.nutritionalInformation)
+        this["ingredients"] = data.ingredients.map { Ingredient.serialize(it) }
+      }
     }
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is Meal) return false
+    fun deserialize(data: Map<String, Any>): Meal? {
+      return try {
+        val mealID = (data["mealID"] as Long).toInt()
+        val occasion = data["occasion"]?.let { MealOccasion.valueOf(it as String) } as MealOccasion
 
-        if (mealID != other.mealID) return false
-        if (name != other.name) return false
-        if (occasion != other.occasion) return false
-        if (mealTemp != other.mealTemp) return false
-        if (nutritionalInformation != other.nutritionalInformation) return false
-        if (ingredients != other.ingredients) return false
-        if (firebasaeId != other.firebasaeId) return false
+        val mealTemp = data["mealTemp"] as Double
 
-        return true
-    }
+        val name = data["name"] as String
 
-    override fun hashCode(): Int {
-        var result = mealID
-        result = 31 * result + name.hashCode()
-        result = 31 * result + occasion.hashCode()
-        result = 31 * result + mealTemp.hashCode()
-        result = 31 * result + nutritionalInformation.hashCode()
-        result = 31 * result + ingredients.hashCode()
-        result = 31 * result + firebasaeId.hashCode()
-        return result
-    }
+        val nutritionalInformationData =
+            NutritionalInformation.deserialize(
+                data["nutritionalInformation"] as List<Map<String, Any>>)
 
-    fun addIngredient(ingredient: Ingredient) {
-        ingredients.add(ingredient)
-        updateMeal()
-    }
+        val newMeal = Meal(occasion, name, mealID, mealTemp, nutritionalInformationData)
 
-    private fun updateMeal() {
-
-        var newNutritionalInformation = NutritionalInformation(mutableListOf())
-
-        for (ingredient in ingredients) {
-            newNutritionalInformation += ingredient.nutritionalInformation
+        val ingredientsData = data["ingredients"] as List<Map<String, Any>>
+        for (ingredientData in ingredientsData) {
+          newMeal.addIngredient(Ingredient.deserialize(ingredientData))
         }
-        nutritionalInformation.update(newNutritionalInformation)
+        newMeal
+      } catch (e: Exception) {
+        Log.e("Meal", "Failed to deserialize Meal object: ${e.message}", e)
+        throw IllegalArgumentException("Failed to deserialize Meal object", e)
+      }
     }
-
-    fun serialize(): Map<String, Any> {
-        return serialize(this)
-    }
-
-    companion object {
-
-        fun serialize(data: Meal): Map<String, Any> {
-            return mutableMapOf<String, Any>().apply {
-                this["mealID"] = data.mealID
-                this["occasion"] = data.occasion.name
-                this["name"] = data.name
-                this["mealTemp"] = data.mealTemp
-                this["nutritionalInformation"] =
-                    NutritionalInformation.serialize(data.nutritionalInformation)
-                this["ingredients"] = data.ingredients.map { Ingredient.serialize(it) }
-            }
-        }
-
-        fun deserialize(data: Map<String, Any>): Meal? {
-            return try {
-                val mealID = (data["mealID"] as Long).toInt()
-                val occasion =
-                    data["occasion"]?.let { MealOccasion.valueOf(it as String) } as MealOccasion
-
-                val mealTemp = data["mealTemp"] as Double
-
-                val name = data["name"] as String
-
-                val nutritionalInformationData = NutritionalInformation.deserialize(
-                    data["nutritionalInformation"] as List<Map<String, Any>>
-                )
-
-                val newMeal = Meal(occasion, name, mealID, mealTemp, nutritionalInformationData)
-
-                val ingredientsData = data["ingredients"] as List<Map<String, Any>>
-                for (ingredientData in ingredientsData) {
-                    newMeal.addIngredient(Ingredient.deserialize(ingredientData))
-                }
-                newMeal
-            } catch (e: Exception) {
-                Log.e("Meal", "Failed to deserialize Meal object: ${e.message}", e)
-                throw IllegalArgumentException("Failed to deserialize Meal object", e)
-            }
-        }
-    }
+  }
 }

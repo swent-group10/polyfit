@@ -14,81 +14,72 @@ import org.junit.Test
 
 class MealRepositoryTest {
 
-    private lateinit var mealRepository: MealRepository
-    private lateinit var mealFirebaseRepository: MealFirebaseRepository
+  private lateinit var mealRepository: MealRepository
+  private lateinit var mealFirebaseRepository: MealFirebaseRepository
 
-    @Before
-    fun setup() {
-        mealFirebaseRepository = mockk()
-        mealRepository = MealRepository(mealFirebaseRepository)
-    }
+  @Before
+  fun setup() {
+    mealFirebaseRepository = mockk()
+    mealRepository = MealRepository(mealFirebaseRepository)
+  }
 
-    @Test
-    fun storeMeal_successfullyStoresMeal() = runTest {
-        val meal =
-            Meal(
-                MealOccasion.DINNER,
-                "name",
-                1,
-                12.0,
-                NutritionalInformation(mutableListOf()),
-                mutableListOf()
-            )
-        val documentReference = mockk<DocumentReference>()
-        coEvery { mealFirebaseRepository.storeMeal(meal) } returns Tasks.forResult(documentReference)
+  @Test
+  fun storeMeal_successfullyStoresMeal() = runTest {
+    val meal =
+        Meal(
+            MealOccasion.DINNER,
+            "name",
+            1,
+            12.0,
+            NutritionalInformation(mutableListOf()),
+            mutableListOf())
+    val documentReference = mockk<DocumentReference>()
+    coEvery { mealFirebaseRepository.storeMeal(meal) } returns Tasks.forResult(documentReference)
 
-        mealRepository.storeMeal(meal)
-    }
+    mealRepository.storeMeal(meal)
+  }
 
-    @Test
-    fun getMeal_returnsExpectedMeal() = runTest {
-        val expectedMeal =
-            Meal(
-                MealOccasion.DINNER,
-                "name",
-                1,
-                12.0,
-                NutritionalInformation(mutableListOf()),
-                mutableListOf()
-            )
+  @Test
+  fun getMeal_returnsExpectedMeal() = runTest {
+    val expectedMeal =
+        Meal(
+            MealOccasion.DINNER,
+            "name",
+            1,
+            12.0,
+            NutritionalInformation(mutableListOf()),
+            mutableListOf())
 
-        coEvery { mealFirebaseRepository.getMeal("id") } returns Tasks.forResult(expectedMeal)
+    coEvery { mealFirebaseRepository.getMeal("id") } returns Tasks.forResult(expectedMeal)
 
-        val actualMeal = mealRepository.getMeal("id")
+    val actualMeal = mealRepository.getMeal("id")
 
-        assertEquals(expectedMeal, actualMeal)
-    }
+    assertEquals(expectedMeal, actualMeal)
+  }
 
-    @Test
-    fun getAllMeals_returnsExpectedMeals() = runTest {
-        val expectedMeals = listOf(
+  @Test
+  fun getAllMeals_returnsExpectedMeals() = runTest {
+    val expectedMeals =
+        listOf(
             Meal(
                 MealOccasion.DINNER,
                 "name1",
                 1,
                 1.2,
-
                 NutritionalInformation(mutableListOf()),
             ),
-            Meal(
-                MealOccasion.DINNER,
-                "name2",
-                2,
-                1.3,
-                NutritionalInformation(mutableListOf())
-            )
-        )
-        coEvery { mealFirebaseRepository.getAllMeals() } returns Tasks.forResult(expectedMeals)
+            Meal(MealOccasion.DINNER, "name2", 2, 1.3, NutritionalInformation(mutableListOf())))
+    coEvery { mealFirebaseRepository.getAllMeals() } returns Tasks.forResult(expectedMeals)
 
-        val actualMeals = mealRepository.getAllMeals()
+    val actualMeals = mealRepository.getAllMeals()
 
-        assertEquals(expectedMeals, actualMeals)
-    }
+    assertEquals(expectedMeals, actualMeals)
+  }
 
-    @Test
-    fun deleteMeal_successfullyDeletesMeal() = runTest {
-        coEvery { mealFirebaseRepository.deleteMeal("id") } returns Tasks.forResult(null)
+  @Test
+  fun deleteMeal_successfullyDeletesMeal() = runTest {
+    coEvery { mealFirebaseRepository.deleteMeal("id") } returns Tasks.forResult(null)
 
-        mealRepository.deleteMeal("id")
-    }
+    mealRepository.deleteMeal("id")
+  }
 }
