@@ -1,4 +1,4 @@
-package com.github.se.polyfit.ui.screen
+package com.github.se.polyfit.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,7 +20,13 @@ import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PictureDialog(onDismiss: () -> Unit, onTakePic: () -> Unit, onImportPic: () -> Unit) {
+fun PictureDialog(
+    onDismiss: () -> Unit,
+    onFirstButtonClick: () -> Unit,
+    onSecondButtonClick: () -> Unit,
+    firstButtonName: String,
+    secondButtonName: String
+) {
   AlertDialog(
       onDismissRequest = onDismiss,
       confirmButton = {},
@@ -35,12 +41,14 @@ fun PictureDialog(onDismiss: () -> Unit, onTakePic: () -> Unit, onImportPic: () 
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center) {
-              Button(onClick = onTakePic, modifier = Modifier.width(180.dp).padding(10.dp)) {
-                Text("Take Photo")
-              }
-              Button(onClick = onImportPic, modifier = Modifier.width(180.dp).padding(10.dp)) {
-                Text("Import Photo")
-              }
+              Button(
+                  onClick = onFirstButtonClick, modifier = Modifier.width(180.dp).padding(10.dp)) {
+                    Text(firstButtonName)
+                  }
+              Button(
+                  onClick = onSecondButtonClick, modifier = Modifier.width(180.dp).padding(10.dp)) {
+                    Text(secondButtonName)
+                  }
             }
       })
 }

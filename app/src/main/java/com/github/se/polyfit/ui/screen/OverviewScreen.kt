@@ -27,19 +27,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
@@ -47,90 +44,68 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import com.github.se.polyfit.R
-import com.github.se.polyfit.ui.compose.kaiseiFont
+import com.github.se.polyfit.ui.components.PictureDialog
 
 @Composable
-@Preview
-fun OverviewScreen() {
-  // Context is used to launch the intent from the current Composable
-
-  Scaffold(
-      modifier = Modifier,
-      topBar = {
-        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
-          Title(modifier = Modifier, 35.sp)
-        }
-      }) { paddingValues ->
-        OverviewContent(paddingValues)
-      }
-}
-
-@Composable
-fun Title(modifier: Modifier, fontSize: TextUnit) {
-  val shape = RoundedCornerShape(35)
-
-  Box(
-      modifier =
-          Modifier.clip(shape)
-              .background(color = MaterialTheme.colorScheme.background)
-              .padding(horizontal = 16.dp, vertical = 8.dp)) {
-        Text(
-            text = "Polyfit",
-            fontSize = fontSize,
-            modifier = modifier,
-            fontWeight = FontWeight.Bold,
-            fontFamily = kaiseiFont)
-      }
-}
-
-@Composable
-fun CalorieCardContent(onPhoto: () -> Unit) {
+fun CalorieCardContent(onPhoto: () -> Unit, Button2 : () -> Unit = {}, Button3 : () -> Unit = {}) {
 
   Box(modifier = Modifier.fillMaxSize()) {
     Text(
         text = "Calories Goal",
         modifier = Modifier.align(Alignment.TopStart).padding(start = 10.dp, top = 10.dp),
-        fontSize = 22.sp,
+        fontSize = MaterialTheme.typography.headlineMedium.fontSize,
         fontWeight = FontWeight.Bold,
-        color = Color.DarkGray)
-    Row(modifier = Modifier.align(Alignment.TopStart).padding(start = 10.dp, top = 50.dp)) {
+        color = MaterialTheme.colorScheme.secondary)
+    Row(modifier = Modifier.align(Alignment.TopStart).padding(start = 30.dp, top = 60.dp)) {
       Text(
           text = "756",
-          fontSize = 30.sp,
+          fontSize = MaterialTheme.typography.headlineMedium.fontSize,
           fontWeight = FontWeight.Bold,
           color = MaterialTheme.colorScheme.primary)
 
       Text(
           text = "/",
-          fontSize = 30.sp,
+          fontSize = MaterialTheme.typography.headlineMedium.fontSize,
           fontWeight = FontWeight.Bold,
           color = MaterialTheme.colorScheme.primary)
 
       Text(
           text = "2200",
-          fontSize = 30.sp,
+          fontSize = MaterialTheme.typography.headlineMedium.fontSize,
           fontWeight = FontWeight.Bold,
           color = MaterialTheme.colorScheme.primary)
     }
 
     Column(modifier = Modifier.align(Alignment.TopEnd).padding(end = 90.dp, top = 50.dp)) {
+      val size = MaterialTheme.typography.bodyMedium.fontSize
       Text(
           text = "Breakfast",
           color = colorResource(R.color.purple_200),
-          fontWeight = FontWeight.Bold)
-      Text(text = "Lunch", color = colorResource(R.color.purple_200), fontWeight = FontWeight.Bold)
-      Text(text = "Dinner", color = colorResource(R.color.purple_200), fontWeight = FontWeight.Bold)
+          fontWeight = FontWeight.Bold,
+          fontSize = size)
+      Text(
+          text = "Lunch",
+          color = colorResource(R.color.purple_200),
+          fontWeight = FontWeight.Bold,
+          fontSize = size)
+      Text(
+          text = "Dinner",
+          color = colorResource(R.color.purple_200),
+          fontWeight = FontWeight.Bold,
+          fontSize = size)
+      Text(
+          text = "Snacks",
+          color = colorResource(R.color.purple_200),
+          fontWeight = FontWeight.Bold,
+          fontSize = size)
     }
     Text(
         text = "Track your meals",
         modifier = Modifier.align(Alignment.CenterStart).padding(top = 30.dp, start = 10.dp),
-        fontSize = 16.sp,
+        fontSize = MaterialTheme.typography.titleMedium.fontSize,
         fontWeight = FontWeight.SemiBold,
         color = MaterialTheme.colorScheme.secondary)
 
@@ -152,7 +127,7 @@ fun CalorieCardContent(onPhoto: () -> Unit) {
         }
 
     Button(
-        onClick = { /*TODO*/},
+        onClick = Button2,
         border = BorderStroke(2.dp, MaterialTheme.colorScheme.primaryContainer),
         elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp),
         colors =
@@ -169,7 +144,7 @@ fun CalorieCardContent(onPhoto: () -> Unit) {
         }
 
     Button(
-        onClick = { /*TODO*/},
+        onClick = Button3,
         elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp),
         border = BorderStroke(2.dp, MaterialTheme.colorScheme.primaryContainer),
         colors =
@@ -271,8 +246,10 @@ fun OverviewContent(paddingValues: PaddingValues) {
   if (showPictureDialog) {
     PictureDialog(
         onDismiss = { showPictureDialog = false },
-        onTakePic = callCamera(context, startCamera, requestPermissionLauncher),
-        onImportPic = { pickImageLauncher.launch("image/*") })
+        onFirstButtonClick = callCamera(context, startCamera, requestPermissionLauncher),
+        onSecondButtonClick = { pickImageLauncher.launch("image/*") },
+        firstButtonName = "Take Picture",
+        secondButtonName = "Import Image")
   }
 
   Box(modifier = Modifier.padding(paddingValues).fillMaxWidth()) {
@@ -280,7 +257,7 @@ fun OverviewContent(paddingValues: PaddingValues) {
       item {
         Text(
             text = "Welcome Back, User432!",
-            fontSize = 20.sp,
+            fontSize = MaterialTheme.typography.titleLarge.fontSize,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary)
       }
@@ -296,7 +273,12 @@ fun OverviewContent(paddingValues: PaddingValues) {
                                 MaterialTheme.colorScheme.inversePrimary,
                                 MaterialTheme.colorScheme.primary))),
             colors = CardDefaults.cardColors(Color.Transparent)) {
-              CalorieCardContent() { showPictureDialog = true }
+              CalorieCardContent(
+                  onPhoto = {
+                      Log.i("Dialog", "Show photo Picture Dialog Box")
+                      showPictureDialog = true
+                  }
+              )
             }
       }
       item {
