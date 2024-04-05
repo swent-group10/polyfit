@@ -1,3 +1,6 @@
+import java.io.FileReader
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -35,7 +38,9 @@ sonar {
 android {
     namespace = "com.github.se.polyfit"
     compileSdk = 34
-
+    buildFeatures {
+        buildConfig = true
+    }
     defaultConfig {
         applicationId = "com.github.se.polyfit"
         minSdk = 29
@@ -47,6 +52,10 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        val properties = Properties()
+        properties.load(FileReader(project.rootProject.file("local.properties")))
+        buildConfigField("String", "X_RapidAPI_Key", "\"${properties["X_RapidAPI_Key"]}\"")
     }
 
     buildTypes {
@@ -140,6 +149,7 @@ android {
         androidTestImplementation(platform("androidx.compose:compose-bom:2023.08.00"))
         debugImplementation("androidx.compose.ui:ui-tooling:1.4.0")
         debugImplementation("androidx.compose.ui:ui-test-manifest:1.4.0")
+        androidTestImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
 
         // For the tests
         androidTestImplementation("com.kaspersky.android-components:kaspresso:1.4.3")
@@ -149,7 +159,6 @@ android {
         implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
         testImplementation("org.jetbrains.kotlin:kotlin-test:1.7.10")
         testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.7.10")
-
         // Hilts
         implementation("com.google.dagger:hilt-android:2.51")
         annotationProcessor("com.google.dagger:hilt-compiler:2.51")
