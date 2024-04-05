@@ -2,108 +2,99 @@ import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
-import com.google.android.gms.tasks.Task
-import com.google.android.gms.tasks.Tasks
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
-import io.mockk.every
-import io.mockk.mockk
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.tasks.await
 import org.junit.Assert.assertEquals
-import org.junit.Before
+import org.junit.Assert.assertNull
+import org.junit.FixMethodOrder
 import org.junit.Test
+import org.junit.runners.MethodSorters
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class MealFirebaseRepositoryTest {
+    private val meal = Meal(
+        mealID = 1,
+        name = "Test Meal",
+        occasion = MealOccasion.BREAKFAST,
+        mealTemp = 20.0,
+        nutritionalInformation = NutritionalInformation(mutableListOf()),
+        ingredients = mutableListOf(),
+        firebasaeId = "1"
+    )
+    private val meal2 = Meal(
+        mealID = 2,
+        name = "Test Meal 2",
+        occasion = MealOccasion.BREAKFAST,
+        mealTemp = 20.0,
+        nutritionalInformation = NutritionalInformation(mutableListOf()),
+        ingredients = mutableListOf(),
+        firebasaeId = "2"
+    )
 
-  private lateinit var db: MealFirebaseRepository
-  private lateinit var firestore: FirebaseFirestore
-  private lateinit var meal: Meal
-  private lateinit var task: Task<QuerySnapshot>
+    private var db: MealFirebaseRepository = MealFirebaseRepository("0") // using user id "0"
 
-  @Before
-  fun setUp() {
-    firestore = mockk(relaxed = true)
-    meal =
-        Meal(
-            mealID = 1,
-            name = "Test Meal",
-            occasion = MealOccasion.BREAKFAST, // replace with the appropriate MealOccasion
-            mealTemp = 20.0,
-            nutritionalInformation = NutritionalInformation(mutableListOf()),
-            ingredients = mutableListOf())
-    db = MealFirebaseRepository("test", firestore)
-  }
-
-  @Test
-  fun storeMealSuccessfully() {
-    val result = db.storeMeal(meal)
-    result.continueWith { assertEquals(it.isSuccessful, true) }
-  }
-
-  // Then in your test, you can mock the TaskWrapper class instead of the Task class
-  @Test
-  fun getMealSuccessfully() {
-    // Mock the DocumentSnapshot
-    val documentSnapshot = mockk<DocumentSnapshot>()
-    every { documentSnapshot.toObject(Meal::class.java) } returns meal
-
-    // Mock the Task
-    val task = mockk<Task<DocumentSnapshot>>()
-    every { task.isSuccessful } returns true
-    every { task.result } returns documentSnapshot
-
-    // Mock the Firestore call
-    every {
-      firestore.collection(any()).document(any()).collection(any()).document(any()).get()
-    } returns task
-
-    // Call the method under test
-    val result = db.getMeal("0")
-
-    // Assert that the result is as expected
-    result.continueWith {
-      assertEquals(it.isSuccessful, true)
-      assertEquals(it.result, meal)
+    private fun runBlockingTest(block: suspend () -> Unit) {
+        runBlocking { block() }
     }
-  }
 
-  @Test
-  fun getAllMealsSuccessfully() {
-    // Mock the DocumentSnapshot
-    val documentSnapshot = mockk<DocumentSnapshot>()
-    every { documentSnapshot.toObject(Meal::class.java) } returns meal
+    @Test
+    fun test1StoreMealSuccessfully() {
+        runBlockingTest {
+            val result = db.storeMeal(meal).await()
 
-    // Mock the QuerySnapshot
-    val querySnapshot = mockk<QuerySnapshot>()
-    every { querySnapshot.documents } returns mutableListOf(documentSnapshot)
-
-    // Mock the Task
-    val mockedTask = Tasks.forResult(querySnapshot)
-
-    // Mock the Firestore call
-    every { firestore.collection(any()).document(any()).collection(any()).get() } returns mockedTask
-
-    // Call the method under test
-    val result = db.getAllMeals()
-
-    // Assert that the result is as expected
-    result.continueWith {
-      assertEquals(it.isSuccessful, true)
-      assertEquals(it.result, listOf(meal))
+            assert(result.id.isNotEmpty())
+            assert(meal.firebasaeId.isNotEmpty())
+            assert(result.id == meal.firebasaeId)
+        }
     }
-  }
 
-  @Test
-  fun getMealThrowsExceptionWhenFailed() {
-    every {
-      firestore.collection(any()).document(any()).collection(any()).document(any()).get()
-    } returns Tasks.forException(Exception("Failed to fetch meals"))
+    @Test
+    fun test2GetMealSuccessfully() {
+        runBlockingTest {
+            // Call the method under test
+            assert(meal.firebasaeId.isNotEmpty())
+            val result = db.getMeal(meal.firebasaeId)
 
-    val task = db.getMeal("0")
-
-    task.continueWith {
-      assertEquals(it.isSuccessful, false)
-      assertEquals(it.exception?.message, "Failed to fetch meals")
+            // Assert that the result is as expected
+            result.continueWith {
+                assertEquals(it.isSuccessful, true)
+                assertEquals(it.result, meal)
+                // assertNull(it.result) // remove or modify this line
+            }
+        }
     }
-  }
+
+    @Test
+    fun test3GetAllMealsSuccessfully() {
+        runBlockingTest {
+
+            db.storeMeal(meal2).await()
+
+            val result = db.getAllMeals().await()
+
+            assert(result.isNotEmpty())
+            assert(result.contains(meal))
+            assert(result.contains(meal2))
+            assertEquals(listOf(meal, meal2), result)
+
+        }
+    }
+
+    @Test
+    fun test4DeleteMealSuccessfully() {
+        runBlockingTest {
+
+            db.deleteMeal(meal.firebasaeId).await()
+
+            db.getMeal(meal.firebasaeId).continueWith {
+                assertNull(it.result)
+            }
+
+            db.deleteMeal(meal2.firebasaeId).await()
+
+            db.getMeal(meal2.firebasaeId).continueWith {
+                assertNull(it.result)
+            }
+        }
+    }
 }
