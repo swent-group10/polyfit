@@ -1,37 +1,35 @@
-// package com.github.se.polyfit.data.repository
-//
-// import com.github.se.polyfit.data.local.dao.MealDao
-// import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
-// import com.github.se.polyfit.model.meal.Meal
-// import kotlinx.coroutines.Dispatchers
-// import kotlinx.coroutines.withContext
-//
-// class MealRepository(
-//    private val mealDao: MealDao,
-//    private val mealFirebaseRepository: MealFirebaseRepository
-// ) {
-//
-//    suspend fun storeMeal(meal: Meal) {
-//        withContext(Dispatchers.IO) {
-//            mealDao.insert(meal)
-//            mealFirebaseRepository.storeMeal(meal)
-//        }
-//    }
-//
-//    suspend fun getMeal(mealId: Int): Meal? {
-//        return withContext(Dispatchers.IO) {
-//            mealDao.getMeal(mealId) ?: mealFirebaseRepository.getMeal(mealId)
-//        }
-//    }
-//
-//    suspend fun getAllMeals(): List<Meal> {
-//        return withContext(Dispatchers.IO) {
-//            val localMeals = mealDao.getAllMeals()
-//            if (localMeals.isNotEmpty()) {
-//                localMeals
-//            } else {
-//                mealFirebaseRepository.getAllMeals()
-//            }
-//        }
-//    }
-// }
+package com.github.se.polyfit.data.repository
+
+
+import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
+import com.github.se.polyfit.model.meal.Meal
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
+
+/**
+ * Repository for meals responsible for handling the firebase repository
+ * and the local database (future implementation)
+ */
+class MealRepository(
+    private val mealFirebaseRepository: MealFirebaseRepository,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.Default
+) {
+
+    suspend fun storeMeal(meal: Meal) = withContext(dispatcher) {
+        mealFirebaseRepository.storeMeal(meal).await()
+    }
+
+    suspend fun getMeal(firebaseID: String) = withContext(dispatcher) {
+        mealFirebaseRepository.getMeal(firebaseID).await()
+    }
+
+    suspend fun getAllMeals() = withContext(dispatcher) {
+        mealFirebaseRepository.getAllMeals().await()
+    }
+
+    suspend fun deleteMeal(firebaseID: String) = withContext(dispatcher) {
+        mealFirebaseRepository.deleteMeal(firebaseID).await()
+    }
+}

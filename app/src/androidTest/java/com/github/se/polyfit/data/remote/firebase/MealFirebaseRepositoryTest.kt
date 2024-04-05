@@ -1,4 +1,5 @@
-import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
+package com.github.se.polyfit.data.remote.firebase
+
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
