@@ -139,8 +139,11 @@ android {
         androidTestImplementation("com.kaspersky.android-components:kaspresso:1.4.3")
         androidTestImplementation("com.kaspersky.android-components:kaspresso-allure-support:1.4.3")
         androidTestImplementation("com.kaspersky.android-components:kaspresso-compose-support:1.4.1")
-        androidTestImplementation("org.robolectric:robolectric:4.7.3")
         androidTestImplementation("androidx.test:runner:1.5.2")
+        androidTestImplementation("androidx.test:core:1.5.0")
+        androidTestImplementation("androidx.test:runner:1.5.2")
+        androidTestImplementation("androidx.test:rules:1.5.0")
+        androidTestImplementation("androidx.test.ext:junit:1.1.5")
 
         // Debug dependencies
         debugImplementation("androidx.compose.ui:ui-tooling")

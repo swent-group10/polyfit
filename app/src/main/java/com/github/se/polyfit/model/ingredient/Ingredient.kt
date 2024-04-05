@@ -13,33 +13,33 @@ import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
  */
 data class Ingredient(
     val name: String, // name is now a val
-    val id: Int,
+    val id: Long,
     val nutritionalInformation: NutritionalInformation,
 ) {
 
-  companion object {
-    fun serialize(ingredient: Ingredient): Map<String, Any> {
-      val map = mutableMapOf<String, Any>()
-      map["name"] = ingredient.name
-      map["id"] = ingredient.id
-      map["nutritionalInformation"] =
-          NutritionalInformation.serialize(ingredient.nutritionalInformation)
-      return map
+    companion object {
+        fun serialize(ingredient: Ingredient): Map<String, Any> {
+            val map = mutableMapOf<String, Any>()
+            map["name"] = ingredient.name
+            map["id"] = ingredient.id
+            map["nutritionalInformation"] =
+                NutritionalInformation.serialize(ingredient.nutritionalInformation)
+            return map
+        }
+
+        fun deserialize(data: Map<String, Any>): Ingredient {
+            return try {
+                val name = data["name"] as String
+                val id = data["id"] as Long
+                val nutValue = data["nutritionalInformation"] as List<Map<String, Any>>
+
+                val nutritionalInformation = NutritionalInformation.deserialize(nutValue)
+
+                Ingredient(name, id, nutritionalInformation)
+            } catch (e: Exception) {
+                Log.e("Ingredient", "Failed to deserialize Ingredient object: ${e.message}", e)
+                throw IllegalArgumentException("Failed to deserialize Ingredient object", e)
+            }
+        }
     }
-
-    fun deserialize(data: Map<String, Any>): Ingredient {
-      return try {
-        val name = data["name"] as String
-        val id = (data["id"] as Long).toInt()
-        val nutValue = data["nutritionalInformation"] as List<Map<String, Any>>
-
-        val nutritionalInformation = NutritionalInformation.deserialize(nutValue)
-
-        Ingredient(name, id, nutritionalInformation)
-      } catch (e: Exception) {
-        Log.e("Ingredient", "Failed to deserialize Ingredient object: ${e.message}", e)
-        throw IllegalArgumentException("Failed to deserialize Ingredient object", e)
-      }
-    }
-  }
 }
