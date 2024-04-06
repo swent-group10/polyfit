@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.github.se.polyfit.ui.theme.*
 
@@ -49,13 +50,19 @@ fun GradientBox(
         Box(
             modifier =
                 innerModifier
+                    .testTag("GradientBox")
                     .fillMaxWidth()
                     .padding(borderSize.dp)
                     .background(color = Color.White, shape = RoundedCornerShape(round.dp))) {
               content()
             }
 
-        IconButton(onClick = iconOnClick, modifier = Modifier.align(Alignment.TopEnd)) {
+        IconButton(
+            onClick = iconOnClick,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .testTag("TopRightIconInGradientBox")
+        ) {
           Icon(icon, iconDescriptor, tint = iconColor)
         }
       }
