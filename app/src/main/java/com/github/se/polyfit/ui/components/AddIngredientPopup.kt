@@ -1,5 +1,6 @@
 package com.github.se.polyfit.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,11 +17,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.github.se.polyfit.ui.theme.*
+import com.github.se.polyfit.ui.utils.removeLeadingZerosAndNonDigits
 
 // Constants
 // Add to list for new nutrition fields
@@ -29,48 +30,37 @@ val NUTRITION_UNITS = listOf("g", "kcal", "g", "g", "g")
 // Temporary list of available ingredient to search
 val TMP_AVAILABLE_INGREDIENT = listOf("Apple", "Banana", "Carrot", "Date", "Eggplant", "apes")
 
-// Check if the input is not just a single "0", and if it has leading zeros
-fun removeLeadingZeros(input: String): String {
-  return if (input != "0" && input.startsWith("0")) {
-    input.trimStart('0').ifEmpty { "0" }
-  } else {
-    input
-  }
-}
-
 @Composable
 fun NutritionFacts() {
 
   val nutritionLabels = NUTRITION_LABELS
   val nutritionUnit = NUTRITION_UNITS
 
-    // TODO: Integrate backend data fields here or pass in nutrition viewmodel
-    val nutritionSize = remember { mutableStateListOf("0", "0", "0", "0", "0") }
+  // TODO: Integrate backend data fields here or pass in nutrition viewmodel
+  val nutritionSize = remember { mutableStateListOf("0", "0", "0", "0", "0") }
 
   val nutritionLabelCount = nutritionLabels.size - 1
 
   (0..nutritionLabelCount).forEach { index ->
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .testTag("NutritionInfoContainer " + nutritionLabels[index])
-            .fillMaxWidth()
-            .padding(start = 20.dp, end = 0.dp)) {
+        modifier =
+            Modifier.testTag("NutritionInfoContainer " + nutritionLabels[index])
+                .fillMaxWidth()
+                .padding(start = 20.dp, end = 0.dp)) {
           Text(
               text = nutritionLabels[index],
               color = SecondaryGrey,
               style = TextStyle(fontSize = 18.sp),
-              modifier = Modifier
-                  .testTag("NutritionLabel " + nutritionLabels[index])
-                  .weight(1.5f)
-          )
+              modifier = Modifier.testTag("NutritionLabel " + nutritionLabels[index]).weight(1.5f))
 
           TextField(
               value = nutritionSize[index],
-              onValueChange = { newValue -> nutritionSize[index] = removeLeadingZeros(newValue) },
-              modifier = Modifier
-                  .testTag("NutritionSizeInput " + nutritionLabels[index])
-                  .weight(0.5f),
+              onValueChange = { newValue ->
+                nutritionSize[index] = removeLeadingZerosAndNonDigits(newValue)
+              },
+              modifier =
+                  Modifier.testTag("NutritionSizeInput " + nutritionLabels[index]).weight(0.5f),
               singleLine = true,
               colors =
                   TextFieldDefaults.colors(
@@ -83,10 +73,10 @@ fun NutritionFacts() {
               text = nutritionUnit[index],
               style = TextStyle(fontSize = 18.sp),
               color = SecondaryGrey,
-              modifier = Modifier
-                  .testTag("NutritionUnit " + nutritionLabels[index])
-                  .weight(0.4f)
-                  .padding(start = 8.dp))
+              modifier =
+                  Modifier.testTag("NutritionUnit " + nutritionLabels[index])
+                      .weight(0.4f)
+                      .padding(start = 8.dp))
         }
     Spacer(modifier = Modifier.height(10.dp))
   }
@@ -95,8 +85,8 @@ fun NutritionFacts() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchIngredients() {
-//  val searchText = remember { mutableStateOf("") }
-    var searchText by remember { mutableStateOf("") }
+  //  val searchText = remember { mutableStateOf("") }
+  var searchText by remember { mutableStateOf("") }
 
   val showIngredientSearch = remember { mutableStateOf(false) }
 
@@ -110,40 +100,34 @@ fun SearchIngredients() {
       }
 
   SearchBar(
-      modifier = Modifier
-          .padding(start = 20.dp, end = 20.dp)
-          .testTag("SearchIngredientBar"),
+      modifier = Modifier.padding(start = 20.dp, end = 20.dp).testTag("SearchIngredientBar"),
       query = searchText,
       onQueryChange = { searchText = it },
-      onSearch = {},
+      onSearch = { Log.v("Search", "Searching for $searchText") },
       active = showIngredientSearch.value,
       onActiveChange = { showIngredientSearch.value = true },
       leadingIcon = {
-          Icon(
-              Icons.Filled.Search,
-              contentDescription = "search",
-              tint = SecondaryGrey
-          )
+        Icon(Icons.Filled.Search, contentDescription = "search", tint = SecondaryGrey)
       },
       placeholder = {
-          Text(
-              text = "Find an Ingredient...",
-              color = SecondaryGrey,
-              style = TextStyle(fontSize = 17.sp))
+        Text(
+            text = "Find an Ingredient...",
+            color = SecondaryGrey,
+            style = TextStyle(fontSize = 17.sp))
       }) {
         LazyColumn(modifier = Modifier.testTag("IngredientSearchScrollableList")) {
           items(filteredIngredients) { ingredient ->
             Text(
                 text = ingredient,
-                modifier = Modifier
-                    .testTag("SearchResult $ingredient")
-                    .fillMaxWidth()
-                    .clickable {
-                        searchText = ingredient
-                        showIngredientSearch.value = false
-                        // TODO: Apply according nutrition facts to nutrition text fields
-                    }
-                    .padding(8.dp))
+                modifier =
+                    Modifier.testTag("SearchResult $ingredient")
+                        .fillMaxWidth()
+                        .clickable {
+                          searchText = ingredient
+                          showIngredientSearch.value = false
+                          // TODO: Apply according nutrition facts to nutrition text fields
+                        }
+                        .padding(8.dp))
             Divider()
           }
         }
@@ -154,9 +138,7 @@ fun SearchIngredients() {
 fun AddButton(onClick: () -> Unit, modifier: Modifier) {
   Button(
       onClick = onClick,
-      modifier = modifier
-          .padding(top = 16.dp)
-          .fillMaxWidth(0.5f),
+      modifier = modifier.padding(top = 16.dp).fillMaxWidth(0.5f),
       shape = RoundedCornerShape(50.dp),
       colors = ButtonDefaults.buttonColors(containerColor = PrimaryPurple)) {
         Text("Add", color = Color.White)
@@ -175,37 +157,35 @@ fun AddIngredientDialog(onClickCloseDialog: () -> Unit) {
         iconDescriptor = "close",
     ) {
       Column(
-          modifier = Modifier
-              .fillMaxWidth()
-              .padding(top = 20.dp, bottom = 20.dp)
-              .testTag("AddIngredientContentContainer")
-      ) {
-        Spacer(modifier = Modifier.height(16.dp))
+          modifier =
+              Modifier.fillMaxWidth()
+                  .padding(top = 20.dp, bottom = 20.dp)
+                  .testTag("AddIngredientContentContainer")) {
+            Spacer(modifier = Modifier.height(16.dp))
 
-        SearchIngredients()
+            SearchIngredients()
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        NutritionFacts()
+            NutritionFacts()
 
-        AddButton(
-            onClick = {
-              // TODO: Add ingredient to ingredient list
-              onClickCloseDialog()
-            },
-            modifier = Modifier
-                .testTag("AddIngredientToListButton")
-                .align(Alignment.CenterHorizontally)
-        )
-      }
+            AddButton(
+                onClick = {
+                  // TODO: Add ingredient to ingredient list
+                  onClickCloseDialog()
+                },
+                modifier =
+                    Modifier.testTag("AddIngredientToListButton")
+                        .align(Alignment.CenterHorizontally))
+          }
     }
   }
 }
 
 // Temporary function for testing purpose
-@Composable
-@Preview
-fun TestPopupWindow() {
+// @Composable
+// @Preview
+// fun TestPopupWindow() {
 //  val showAddIngredDialog = remember { mutableStateOf(true) }
 //
 //  Button(onClick = { showAddIngredDialog.value = true }) { Text("Show Pop-Up") }
@@ -213,5 +193,5 @@ fun TestPopupWindow() {
 //  if (showAddIngredDialog.value) {
 //    AddIngredientDialog(onClickCloseDialog = { showAddIngredDialog.value = false })
 //  }
-    AddIngredientDialog(onClickCloseDialog = { })
-}
+//    AddIngredientDialog(onClickCloseDialog = { })
+// }

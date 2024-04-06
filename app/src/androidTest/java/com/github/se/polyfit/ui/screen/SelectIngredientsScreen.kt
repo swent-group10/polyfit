@@ -26,6 +26,29 @@ class IngredientsBottomBar(semanticsProvider: SemanticsNodeInteractionsProvider)
   val doneButton: KNode = doneBox.child { hasTestTag("DoneButton") }
 }
 
+class AddIngredientPopupBox(semanticsProvider: SemanticsNodeInteractionsProvider) :
+    ComposeScreen<AddIngredientPopupBox>(
+        semanticsProvider = semanticsProvider,
+        viewBuilderAction = { hasTestTag("AddIngredientScaffold") }) {
+
+  private val bottomBar: KNode = child { hasTestTag("BottomBar") }
+  private val addIngredientBox: KNode = bottomBar.child { hasTestTag("AddIngredientBox") }
+  val addIngredientButton: KNode = addIngredientBox.child { hasTestTag("AddIngredientButton") }
+  val addIngredientGradientButton: KNode =
+      addIngredientButton.child { hasTestTag("GradientButton") }
+
+  val addIngredientDialogContainer: KNode = child { hasTestTag("AddIngredientPopupContainer") }
+  val addIngredientDialog: KNode = addIngredientDialogContainer.child { hasTestTag("GradientBox") }
+
+  val closePopupIcon: KNode =
+      addIngredientDialogContainer.child { hasTestTag("TopRightIconInGradientBox") }
+
+  val addIngredientContent: KNode =
+      addIngredientDialog.child { hasTestTag("AddIngredientContentContainer") }
+  val finishAddIngredientButton: KNode =
+      addIngredientContent.child { hasTestTag("AddIngredientToListButton") }
+}
+
 class IngredientsList(semanticsProvider: SemanticsNodeInteractionsProvider) :
     ComposeScreen<IngredientsList>(
         semanticsProvider = semanticsProvider,

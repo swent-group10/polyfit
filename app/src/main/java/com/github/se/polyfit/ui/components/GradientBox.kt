@@ -59,11 +59,8 @@ fun GradientBox(
 
         IconButton(
             onClick = iconOnClick,
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .testTag("TopRightIconInGradientBox")
-        ) {
-          Icon(icon, iconDescriptor, tint = iconColor)
-        }
+            modifier = Modifier.align(Alignment.TopEnd).testTag("TopRightIconInGradientBox")) {
+              Icon(icon, iconDescriptor, tint = iconColor)
+            }
       }
 }

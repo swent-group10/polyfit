@@ -1,5 +1,6 @@
 package com.github.se.polyfit.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -33,12 +34,12 @@ fun IngredientList(
     potentialIngredients: List<Ingredient>,
     onAddIngredient: (Int) -> Unit,
 ) {
+
   val initialSuggestions = 3
   val potentialIndex = remember {
     // equivalent to min(3, potentialIngredients.size)
     mutableIntStateOf(initialSuggestions.coerceAtMost(potentialIngredients.size))
   }
-
   Column(
       modifier =
           Modifier.fillMaxSize()
@@ -55,13 +56,13 @@ fun IngredientList(
               fontSize = MaterialTheme.typography.headlineSmall.fontSize)
         } else {
           FlowRow(
-              horizontalArrangement = Arrangement.Start,
-              verticalArrangement = Arrangement.Top,
-              maxItemsInEachRow = Int.MAX_VALUE) {
+              horizontalArrangement = Arrangement.Start, verticalArrangement = Arrangement.Top) {
                 ingredients.forEach { ingredient ->
                   GradientButton(
                       text = "${ingredient.name} ${ingredient.quantity}${ingredient.unit}",
-                      onClick = {}, // TODO: Expand to see more information
+                      onClick = {
+                        Log.v("Expand Ingredients", "Clicked")
+                      }, // TODO: Expand to see more information
                       active = true,
                       modifier = Modifier.testTag("Ingredient"))
                 }
