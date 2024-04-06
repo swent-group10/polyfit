@@ -41,6 +41,7 @@ android {
     buildFeatures {
         buildConfig = true
     }
+
     defaultConfig {
         applicationId = "com.github.se.polyfit"
         minSdk = 29
@@ -56,6 +57,7 @@ android {
         val properties = Properties()
         properties.load(FileReader(project.rootProject.file("local.properties")))
         buildConfigField("String", "X_RapidAPI_Key", "\"${properties["X_RapidAPI_Key"]}\"")
+        buildConfigField("String", "X_RapidAPI_Host", "\"${properties["X_RapidAPI_Host"]}\"")
     }
 
     buildTypes {
