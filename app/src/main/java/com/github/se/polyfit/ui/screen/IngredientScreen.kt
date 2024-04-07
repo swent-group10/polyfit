@@ -49,7 +49,6 @@ data class Ingredient(
     val probability: Float = 1.0f,
 ) {}
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IngredientScreen(
     navigation: Navigation,
@@ -63,40 +62,16 @@ fun IngredientScreen(
     mutableStateListOf(*initialPotentialIngredients.toTypedArray())
   }
 
-  Scaffold(
-      topBar = {
-        TopAppBar(
-            title = {
-              Text(
-                  "Ingredients",
-                  modifier = Modifier.testTag("IngredientTitle"),
-                  color = MaterialTheme.colorScheme.secondary,
-                  fontSize = MaterialTheme.typography.headlineMedium.fontSize)
-            },
-            navigationIcon = {
-              IconButton(
-                  onClick = { navigation.goBack() },
-                  content = {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back",
-                        modifier = Modifier.testTag("BackButton"),
-                        tint = PrimaryPurple)
-                  },
-                  modifier = Modifier.testTag("BackButton"))
-            },
-            modifier = Modifier.testTag("TopBar"))
-      },
-      bottomBar = { BottomBar() }) {
-        IngredientList(
-            it,
-            ingredients,
-            potentialIngredients,
-            onAddIngredient = { index ->
-              val item = potentialIngredients.removeAt(index)
-              ingredients.add(item)
-            })
-      }
+  Scaffold(topBar = { TopBar(navigation) }, bottomBar = { BottomBar() }) {
+    IngredientList(
+        it,
+        ingredients,
+        potentialIngredients,
+        onAddIngredient = { index ->
+          val item = potentialIngredients.removeAt(index)
+          ingredients.add(item)
+        })
+  }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -206,6 +181,32 @@ private fun BottomBar() {
               }
         }
   }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TopBar(navigation: Navigation) {
+  TopAppBar(
+      title = {
+        Text(
+            "Ingredients",
+            modifier = Modifier.testTag("IngredientTitle"),
+            color = MaterialTheme.colorScheme.secondary,
+            fontSize = MaterialTheme.typography.headlineMedium.fontSize)
+      },
+      navigationIcon = {
+        IconButton(
+            onClick = { navigation.goBack() },
+            content = {
+              Icon(
+                  imageVector = Icons.Default.ArrowBack,
+                  contentDescription = "Back",
+                  modifier = Modifier.testTag("BackButton"),
+                  tint = PrimaryPurple)
+            },
+            modifier = Modifier.testTag("BackButton"))
+      },
+      modifier = Modifier.testTag("TopBar"))
 }
 
 // Comment out increases coverage...

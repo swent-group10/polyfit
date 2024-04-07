@@ -59,7 +59,10 @@ private fun MealName(mealName: String) {
 }
 
 @Composable
-private fun NutrientInfo(nutrient: Nutrient, style: TextStyle = MaterialTheme.typography.bodyMedium) {
+private fun NutrientInfo(
+    nutrient: Nutrient,
+    style: TextStyle = MaterialTheme.typography.bodyMedium
+) {
   Row(
       horizontalArrangement = Arrangement.SpaceBetween,
       modifier = Modifier.fillMaxWidth().testTag("NutrientInfo")) {
