@@ -39,9 +39,7 @@ fun NutritionFacts() {
   // TODO: Integrate backend data fields here or pass in nutrition viewmodel
   val nutritionSize = remember { mutableStateListOf("0", "0", "0", "0", "0") }
 
-  val nutritionLabelCount = nutritionLabels.size - 1
-
-  (0..nutritionLabelCount).forEach { index ->
+ingredients.forEach { ingredient ->
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier =
