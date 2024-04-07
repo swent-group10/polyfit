@@ -58,7 +58,6 @@ class LoginTest : TestCase() {
 
   @Test
   fun googleSignInReturnsValidActivityResult() {
-    Thread.sleep(2000) // wait for 2 seconds before the test starts
 
     ComposeScreen.onComposeScreen<LoginScreen>(composeTestRule) {
       loginButton {
