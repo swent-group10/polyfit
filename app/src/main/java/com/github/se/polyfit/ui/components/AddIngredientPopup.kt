@@ -83,7 +83,6 @@ ingredients.forEach { ingredient ->
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchIngredients() {
-  //  val searchText = remember { mutableStateOf("") }
   var searchText by remember { mutableStateOf("") }
 
   val showIngredientSearch = remember { mutableStateOf(false) }
