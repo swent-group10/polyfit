@@ -5,7 +5,6 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
@@ -31,7 +30,7 @@ val NUTRITION_UNITS = listOf("g", "kcal", "g", "g", "g")
 val TMP_AVAILABLE_INGREDIENT = listOf("Apple", "Banana", "Carrot", "Date", "Eggplant", "apes")
 
 @Composable
-fun NutritionFacts() {
+fun EditIngredientNutrition() {
 
   val nutritionLabels = NUTRITION_LABELS
   val nutritionUnit = NUTRITION_UNITS
@@ -39,7 +38,8 @@ fun NutritionFacts() {
   // TODO: Integrate backend data fields here or pass in nutrition viewmodel
   val nutritionSize = remember { mutableStateListOf("0", "0", "0", "0", "0") }
 
-ingredients.forEach { ingredient ->
+  val nutritionLabelCount = nutritionLabels.size - 1
+  (0..nutritionLabelCount).forEach { index ->
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier =
@@ -131,16 +131,16 @@ fun SearchIngredients() {
       }
 }
 
-@Composable
-fun AddButton(onClick: () -> Unit, modifier: Modifier) {
-  Button(
-      onClick = onClick,
-      modifier = modifier.padding(top = 16.dp).fillMaxWidth(0.5f),
-      shape = RoundedCornerShape(50.dp),
-      colors = ButtonDefaults.buttonColors(containerColor = PrimaryPurple)) {
-        Text("Add", color = Color.White)
-      }
-}
+// @Composable
+// fun AddButton(onClick: () -> Unit, modifier: Modifier) {
+//  Button(
+//      onClick = onClick,
+//      modifier = modifier.padding(top = 16.dp).fillMaxWidth(0.5f),
+//      shape = RoundedCornerShape(50.dp),
+//      colors = ButtonDefaults.buttonColors(containerColor = PrimaryPurple)) {
+//        Text("Add", color = Color.White)
+//      }
+// }
 
 @Composable
 fun AddIngredientDialog(onClickCloseDialog: () -> Unit) {
@@ -164,16 +164,15 @@ fun AddIngredientDialog(onClickCloseDialog: () -> Unit) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            NutritionFacts()
+            EditIngredientNutrition()
 
-            AddButton(
+            PrimaryPurpleButton(
                 onClick = {
                   // TODO: Add ingredient to ingredient list
                   onClickCloseDialog()
                 },
-                modifier =
-                    Modifier.testTag("AddIngredientToListButton")
-                        .align(Alignment.CenterHorizontally))
+                modifier = Modifier.padding(top = 16.dp).align(Alignment.CenterHorizontally),
+                text = "Add")
           }
     }
   }

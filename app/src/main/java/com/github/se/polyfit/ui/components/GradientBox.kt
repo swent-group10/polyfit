@@ -30,7 +30,7 @@ fun GradientBox(
     round: Double = 20.0, // Corner radius in dp
     borderSize: Double = 3.0, // Border thickness in dp
     gradientColors: List<Color> = listOf(PrimaryPurple, PrimaryPink), // Default gradient colors
-    iconOnClick: () -> Unit,
+    iconOnClick: () -> Unit = {},
     icon: ImageVector = EmptyImageVector,
     iconColor: Color = Color.Transparent,
     iconDescriptor: String = "",

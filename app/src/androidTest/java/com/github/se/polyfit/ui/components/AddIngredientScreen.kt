@@ -64,5 +64,5 @@ class AddIngredientButton(semanticsProvider: SemanticsNodeInteractionsProvider) 
         semanticsProvider = semanticsProvider,
         viewBuilderAction = { hasTestTag("AddIngredientContentContainer") }) {
 
-  val addIngredientButton: KNode = child { hasTestTag("AddIngredientToListButton") }
+  val addIngredientButton: KNode = child { hasTestTag("PrimaryPurpleButton") }
 }
