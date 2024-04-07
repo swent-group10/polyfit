@@ -39,7 +39,7 @@ fun EditIngredientNutrition() {
   val nutritionSize = remember { mutableStateListOf("0", "0", "0", "0", "0") }
 
   val nutritionLabelCount = nutritionLabels.size - 1
-  (0..nutritionLabelCount).forEach { index ->
+  nutritionLabels.forEach { label ->
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier =
