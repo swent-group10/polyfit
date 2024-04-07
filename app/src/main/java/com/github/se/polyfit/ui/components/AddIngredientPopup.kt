@@ -43,7 +43,7 @@ fun EditIngredientNutrition() {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier =
-            Modifier.testTag("NutritionInfoContainer " + nutritionLabels[index])
+            Modifier.testTag("NutritionInfoContainer " + label)
                 .fillMaxWidth()
                 .padding(start = 20.dp, end = 0.dp)) {
           Text(
