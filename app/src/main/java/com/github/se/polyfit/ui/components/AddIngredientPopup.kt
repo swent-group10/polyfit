@@ -68,7 +68,7 @@ fun EditIngredientNutrition() {
                       unfocusedContainerColor = Color.Transparent))
 
           Text(
-              text = nutritionUnit[index],
+              text = label,
               style = TextStyle(fontSize = 18.sp),
               color = SecondaryGrey,
               modifier =
