@@ -36,9 +36,8 @@ sonar {
 android {
     namespace = "com.github.se.polyfit"
     compileSdk = 34
-    buildFeatures {
-        buildConfig = true
-    }
+    buildFeatures.buildConfig = true // to enable custom build config keys
+
 
     defaultConfig {
         applicationId = "com.github.se.polyfit"
