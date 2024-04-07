@@ -79,6 +79,7 @@ class IngredientTest : TestCase() {
       backButton {
         assertIsDisplayed()
         assertHasClickAction()
+        assertContentDescriptionEquals("Back")
         performClick()
       }
 
@@ -123,6 +124,7 @@ class IngredientTest : TestCase() {
       doneButton {
         assertIsDisplayed()
         assertHasClickAction()
+        assertTextEquals("Done")
         performClick()
       }
 
@@ -190,6 +192,7 @@ class IngredientTest : TestCase() {
       potentialIngredientButton {
         assertIsDisplayed()
         assertTextContains("Carrots")
+        assertContentDescriptionEquals("Add Carrots")
         assertHasClickAction()
       }
 

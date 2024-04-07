@@ -15,8 +15,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -49,7 +49,6 @@ data class Ingredient(
     val probability: Float = 1.0f,
 ) {}
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IngredientScreen(
     navigation: Navigation,
@@ -63,40 +62,16 @@ fun IngredientScreen(
     mutableStateListOf(*initialPotentialIngredients.toTypedArray())
   }
 
-  Scaffold(
-      topBar = {
-        TopAppBar(
-            title = {
-              Text(
-                  "Ingredients",
-                  modifier = Modifier.testTag("IngredientTitle"),
-                  color = MaterialTheme.colorScheme.secondary,
-                  fontSize = MaterialTheme.typography.headlineMedium.fontSize)
-            },
-            navigationIcon = {
-              IconButton(
-                  onClick = { navigation.goBack() },
-                  content = {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back",
-                        modifier = Modifier.testTag("BackButton"),
-                        tint = PrimaryPurple)
-                  },
-                  modifier = Modifier.testTag("BackButton"))
-            },
-            modifier = Modifier.testTag("TopBar"))
-      },
-      bottomBar = { BottomBar() }) {
-        IngredientList(
-            it,
-            ingredients,
-            potentialIngredients,
-            onAddIngredient = { index ->
-              val item = potentialIngredients.removeAt(index)
-              ingredients.add(item)
-            })
-      }
+  Scaffold(topBar = { TopBar(navigation) }, bottomBar = { BottomBar() }) {
+    IngredientList(
+        it,
+        ingredients,
+        potentialIngredients,
+        onAddIngredient = { index ->
+          val item = potentialIngredients.removeAt(index)
+          ingredients.add(item)
+        })
+  }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -173,7 +148,7 @@ fun IngredientList(
 }
 
 @Composable
-fun BottomBar() {
+private fun BottomBar() {
   Column(
       modifier =
           Modifier.background(MaterialTheme.colorScheme.background)
@@ -208,7 +183,32 @@ fun BottomBar() {
   }
 }
 
-// Comment out increases coverage...
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TopBar(navigation: Navigation) {
+  TopAppBar(
+      title = {
+        Text(
+            "Ingredients",
+            modifier = Modifier.testTag("IngredientTitle"),
+            color = MaterialTheme.colorScheme.secondary,
+            fontSize = MaterialTheme.typography.headlineMedium.fontSize)
+      },
+      navigationIcon = {
+        IconButton(
+            onClick = { navigation.goBack() },
+            content = {
+              Icon(
+                  imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                  contentDescription = "Back",
+                  modifier = Modifier.testTag("BackButton"),
+                  tint = PrimaryPurple)
+            },
+            modifier = Modifier.testTag("BackButton"))
+      },
+      modifier = Modifier.testTag("TopBar"))
+}
+
 // @Preview
 // @Composable
 // fun IngredientScreenPreview() {
