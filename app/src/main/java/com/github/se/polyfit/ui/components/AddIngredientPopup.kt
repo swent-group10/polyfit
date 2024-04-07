@@ -47,7 +47,7 @@ fun EditIngredientNutrition() {
                 .fillMaxWidth()
                 .padding(start = 20.dp, end = 0.dp)) {
           Text(
-              text = nutritionLabels[index],
+              text = label,
               color = SecondaryGrey,
               style = TextStyle(fontSize = 18.sp),
               modifier = Modifier.testTag("NutritionLabel " + nutritionLabels[index]).weight(1.5f))
