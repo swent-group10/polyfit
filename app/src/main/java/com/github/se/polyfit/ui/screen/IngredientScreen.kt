@@ -15,8 +15,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -199,7 +199,7 @@ private fun TopBar(navigation: Navigation) {
             onClick = { navigation.goBack() },
             content = {
               Icon(
-                  imageVector = Icons.Default.ArrowBack,
+                  imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                   contentDescription = "Back",
                   modifier = Modifier.testTag("BackButton"),
                   tint = PrimaryPurple)
@@ -209,7 +209,6 @@ private fun TopBar(navigation: Navigation) {
       modifier = Modifier.testTag("TopBar"))
 }
 
-// Comment out increases coverage...
 // @Preview
 // @Composable
 // fun IngredientScreenPreview() {
