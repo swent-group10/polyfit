@@ -53,7 +53,7 @@ fun EditIngredientNutrition() {
               modifier = Modifier.testTag("NutritionLabel " + label).weight(1.5f))
 
           TextField(
-              value = nutritionSize[index],
+              value = label,
               onValueChange = { newValue ->
                 nutritionSize[index] = removeLeadingZerosAndNonDigits(newValue)
               },
