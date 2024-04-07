@@ -30,35 +30,40 @@ val NUTRITION_UNITS = listOf("g", "kcal", "g", "g", "g")
 val TMP_AVAILABLE_INGREDIENT = listOf("Apple", "Banana", "Carrot", "Date", "Eggplant", "apes")
 
 @Composable
-fun EditIngredientNutrition() {
+fun EditIngredientNutrition(
+    // TODO: pass in viewmodel for editing specific ingredient's nutrition info
+) {
 
+  // TODO: currently the implementation hardcodes the field we want for quick editing the nutrition
+  // info of an ingredient. This should be changed in the future depend on how we integrate the
+  // ingredient info in a meal.
   val nutritionLabels = NUTRITION_LABELS
   val nutritionUnit = NUTRITION_UNITS
-
-  // TODO: Integrate backend data fields here or pass in nutrition viewmodel
   val nutritionSize = remember { mutableStateListOf("0", "0", "0", "0", "0") }
 
+  // TODO: when integrating with viewmodel, can be wrapped into a data class for cleaner code, for
+  // now we are using indexing to access the three hardcoded list above.
   val nutritionLabelCount = nutritionLabels.size - 1
-  nutritionLabels.forEach { label ->
+  (0..nutritionLabelCount).forEach { index ->
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier =
-            Modifier.testTag("NutritionInfoContainer " + label)
+            Modifier.testTag("NutritionInfoContainer " + nutritionLabels[index])
                 .fillMaxWidth()
                 .padding(start = 20.dp, end = 0.dp)) {
           Text(
-              text = label,
+              text = nutritionLabels[index],
               color = SecondaryGrey,
               style = TextStyle(fontSize = 18.sp),
-              modifier = Modifier.testTag("NutritionLabel " + label).weight(1.5f))
+              modifier = Modifier.testTag("NutritionLabel " + nutritionLabels[index]).weight(1.5f))
 
           TextField(
-              value = label,
+              value = nutritionSize[index],
               onValueChange = { newValue ->
                 nutritionSize[index] = removeLeadingZerosAndNonDigits(newValue)
               },
               modifier =
-                  Modifier.testTag("NutritionSizeInput " + label).weight(0.5f),
+                  Modifier.testTag("NutritionSizeInput " + nutritionLabels[index]).weight(0.5f),
               singleLine = true,
               colors =
                   TextFieldDefaults.colors(
@@ -68,7 +73,7 @@ fun EditIngredientNutrition() {
                       unfocusedContainerColor = Color.Transparent))
 
           Text(
-              text = label,
+              text = nutritionUnit[index],
               style = TextStyle(fontSize = 18.sp),
               color = SecondaryGrey,
               modifier =
@@ -178,16 +183,9 @@ fun AddIngredientDialog(onClickCloseDialog: () -> Unit) {
   }
 }
 
-// Temporary function for testing purpose
+// Function for previewing the popup page
 // @Composable
 // @Preview
 // fun TestPopupWindow() {
-//  val showAddIngredDialog = remember { mutableStateOf(true) }
-//
-//  Button(onClick = { showAddIngredDialog.value = true }) { Text("Show Pop-Up") }
-//
-//  if (showAddIngredDialog.value) {
-//    AddIngredientDialog(onClickCloseDialog = { showAddIngredDialog.value = false })
-//  }
 //    AddIngredientDialog(onClickCloseDialog = { })
 // }

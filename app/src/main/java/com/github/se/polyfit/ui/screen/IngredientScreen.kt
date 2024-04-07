@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -42,7 +43,6 @@ data class Ingredient(
     val probability: Float = 1.0f,
 ) {}
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IngredientScreen(
     navigation: Navigation,
@@ -58,30 +58,7 @@ fun IngredientScreen(
   val showAddIngredDialog = remember { mutableStateOf(false) }
 
   Scaffold(
-      modifier = Modifier.testTag("AddIngredientScaffold"),
-      topBar = {
-        TopAppBar(
-            title = {
-              Text(
-                  "Ingredients",
-                  modifier = Modifier.testTag("IngredientTitle"),
-                  color = MaterialTheme.colorScheme.secondary,
-                  fontSize = MaterialTheme.typography.headlineMedium.fontSize)
-            },
-            navigationIcon = {
-              IconButton(
-                  onClick = { navigation.goBack() },
-                  content = {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back",
-                        modifier = Modifier.testTag("BackButton"),
-                        tint = PrimaryPurple)
-                  },
-                  modifier = Modifier.testTag("BackButton"))
-            },
-            modifier = Modifier.testTag("TopBar"))
-      },
+      topBar = { TopBar(navigation) },
       bottomBar = { BottomBar(onClickAddIngred = { showAddIngredDialog.value = true }) }) {
         IngredientList(
             it,
@@ -91,7 +68,6 @@ fun IngredientScreen(
               val item = potentialIngredients.removeAt(index)
               ingredients.add(item)
             })
-
         if (showAddIngredDialog.value) {
           AddIngredientDialog(onClickCloseDialog = { showAddIngredDialog.value = false })
         }
@@ -99,7 +75,7 @@ fun IngredientScreen(
 }
 
 @Composable
-fun BottomBar(
+private fun BottomBar(
     onClickAddIngred: () -> Unit,
 ) {
   Column(
@@ -139,7 +115,32 @@ fun BottomBar(
   }
 }
 
-// Comment out increases coverage...
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TopBar(navigation: Navigation) {
+  TopAppBar(
+      title = {
+        Text(
+            "Ingredients",
+            modifier = Modifier.testTag("IngredientTitle"),
+            color = MaterialTheme.colorScheme.secondary,
+            fontSize = MaterialTheme.typography.headlineMedium.fontSize)
+      },
+      navigationIcon = {
+        IconButton(
+            onClick = { navigation.goBack() },
+            content = {
+              Icon(
+                  imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                  contentDescription = "Back",
+                  modifier = Modifier.testTag("BackButton"),
+                  tint = PrimaryPurple)
+            },
+            modifier = Modifier.testTag("BackButton"))
+      },
+      modifier = Modifier.testTag("TopBar"))
+}
+
 // @Preview
 // @Composable
 // fun IngredientScreenPreview() {

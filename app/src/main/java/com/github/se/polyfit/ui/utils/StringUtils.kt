@@ -9,3 +9,10 @@ fun removeLeadingZerosAndNonDigits(input: String): String {
     onlyDigits
   }
 }
+
+fun titleCase(input: String): String {
+  return input.split(" ").joinToString(" ") { word ->
+    val smallCaseWord = word.lowercase()
+    smallCaseWord.replaceFirstChar(Char::titlecaseChar)
+  }
+}
