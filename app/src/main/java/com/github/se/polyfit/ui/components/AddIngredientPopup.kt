@@ -58,7 +58,7 @@ fun EditIngredientNutrition() {
                 nutritionSize[index] = removeLeadingZerosAndNonDigits(newValue)
               },
               modifier =
-                  Modifier.testTag("NutritionSizeInput " + nutritionLabels[index]).weight(0.5f),
+                  Modifier.testTag("NutritionSizeInput " + label).weight(0.5f),
               singleLine = true,
               colors =
                   TextFieldDefaults.colors(
