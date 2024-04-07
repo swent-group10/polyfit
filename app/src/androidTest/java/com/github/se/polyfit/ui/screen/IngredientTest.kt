@@ -103,17 +103,55 @@ class IngredientTest : TestCase() {
   }
 
   @Test
-  fun addIngredientButton() {
+  fun openCloseAddIngredientPopup() {
     launchIngredientScreenWithTestData(emptyList(), emptyList())
-    ComposeScreen.onComposeScreen<IngredientsBottomBar>(composeTestRule) {
+    ComposeScreen.onComposeScreen<AddIngredientPopupBox>(composeTestRule) {
+      addIngredientDialog { assertDoesNotExist() }
+
       addIngredientGradientButton {
         assertIsDisplayed()
         assertHasClickAction()
         performClick()
       }
 
-      // TODO: @April Update with proper test
       verify { Log.v("Add Ingredient", "Clicked") }
+
+      // make sure cross icon button closes popup properly
+      addIngredientDialog { assertIsDisplayed() }
+
+      closePopupIcon {
+        assertIsDisplayed()
+        assertHasClickAction()
+        performClick()
+      }
+
+      addIngredientDialog { assertDoesNotExist() }
+    }
+  }
+
+  @Test
+  fun addNewIngredientToList() {
+    launchIngredientScreenWithTestData(emptyList(), emptyList())
+    ComposeScreen.onComposeScreen<AddIngredientPopupBox>(composeTestRule) {
+      addIngredientDialog { assertDoesNotExist() }
+
+      addIngredientGradientButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+        performClick()
+      }
+
+      addIngredientDialog { assertIsDisplayed() }
+
+      finishAddIngredientButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+        performClick()
+      }
+
+      // TODO: Check that ingredient is properly added to the ingredient list
+
+      addIngredientDialog { assertDoesNotExist() }
     }
   }
 
