@@ -1,7 +1,6 @@
 package com.github.se.polyfit.utils
 
 import com.github.se.polyfit.ui.utils.removeLeadingZerosAndNonDigits
-import com.github.se.polyfit.ui.utils.splitStringByCharacter
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
 
@@ -53,54 +52,5 @@ class StringUtilsTest {
   fun `removeLeadingZeros and non-digits - zeros and non-digits`() {
     val result = removeLeadingZerosAndNonDigits("00abc")
     assertEquals("0", result)
-  }
-
-  // Tests for splitStringByCharacter
-  @Test
-  fun `splits normal string by given character`() {
-    val result = splitStringByCharacter("hello world", ' ')
-    assertEquals(listOf("hello", "world"), result)
-  }
-
-  @Test
-  fun `splits string with multiple delimiters`() {
-    val result = splitStringByCharacter("a-b--c", '-')
-    assertEquals(listOf("a", "b", "c"), result)
-  }
-
-  @Test
-  fun `returns empty list when input is empty`() {
-    val result = splitStringByCharacter("", ' ')
-    assertEquals(emptyList<String>(), result)
-  }
-
-  @Test
-  fun `returns list with input when delimiter is not found`() {
-    val result = splitStringByCharacter("hello", ' ')
-    assertEquals(listOf("hello"), result)
-  }
-
-  @Test
-  fun `splits string with delimiter at the start`() {
-    val result = splitStringByCharacter("-start", '-')
-    assertEquals(listOf("start"), result)
-  }
-
-  @Test
-  fun `splits string with delimiter at the end`() {
-    val result = splitStringByCharacter("end-", '-')
-    assertEquals(listOf("end"), result)
-  }
-
-  @Test
-  fun `ignores empty strings between consecutive delimiters`() {
-    val result = splitStringByCharacter("ab--cd", '-')
-    assertEquals(listOf("ab", "cd"), result)
-  }
-
-  @Test
-  fun `handles string with only delimiters`() {
-    val result = splitStringByCharacter("----", '-')
-    assertEquals(emptyList<String>(), result)
   }
 }

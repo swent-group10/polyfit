@@ -94,7 +94,7 @@ fun IngredientScreen(
 
         if (showAddIngredDialog.value) {
           AddIngredientDialog(onClickCloseDialog = { showAddIngredDialog.value = false })
-        } else {}
+        }
       }
 }
 

@@ -49,8 +49,8 @@ data class Nutrient(val nutrientType: String, val amount: Double, val unit: Meas
 
         Nutrient(nutrientType, amount, measurementUnit)
       } catch (e: Exception) {
-        Log.e("Nutrient", "Failed to deserialize Nutrient object")
-        throw Exception("Failed to deserialize Nutrient object " + e.message)
+        Log.e("Nutrient", "Failed to deserialize Nutrient object : ${e.message}", e)
+        throw IllegalArgumentException("Failed to deserialize Nutrient object ", e)
       }
     }
   }

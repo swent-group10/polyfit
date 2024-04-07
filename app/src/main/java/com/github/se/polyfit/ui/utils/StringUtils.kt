@@ -9,7 +9,3 @@ fun removeLeadingZerosAndNonDigits(input: String): String {
     onlyDigits
   }
 }
-
-fun splitStringByCharacter(input: String, delimiter: Char): List<String> {
-  return input.split(delimiter).filter { it.isNotEmpty() }
-}
