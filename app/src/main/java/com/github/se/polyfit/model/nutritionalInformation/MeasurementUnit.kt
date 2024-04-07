@@ -10,7 +10,21 @@ enum class MeasurementUnit {
   IU,
   CAL,
   UNIT,
+  ML,
   NONE;
+
+  override fun toString(): String {
+    return when (this) {
+      G -> "g"
+      MG -> "mg"
+      UG -> "µg"
+      IU -> "IU"
+      CAL -> "cal"
+      UNIT -> "unit"
+      ML -> "ml"
+      NONE -> ""
+    }
+  }
 
   companion object {
     fun fromString(unit: String): MeasurementUnit {
@@ -21,7 +35,8 @@ enum class MeasurementUnit {
         "IU" -> IU
         "CAL" -> CAL
         "UNIT" -> UNIT
-        "NONE" -> NONE
+        "ML" -> ML
+        "" -> NONE
         else -> throw IllegalArgumentException("Invalid unit: $unit")
       }
     }

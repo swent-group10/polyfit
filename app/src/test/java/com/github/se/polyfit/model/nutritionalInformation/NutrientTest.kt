@@ -22,7 +22,7 @@ class NutrientTest {
     val nutrient = Nutrient("fats", 100.0, MeasurementUnit.G)
     val serializedData = Nutrient.serialize(nutrient)
     val expectedData =
-        mapOf("nutrientType" to "fats", "amount" to 100.0, "unit" to MeasurementUnit.G.name)
+        mapOf("nutrientType" to "fats", "amount" to 100.0, "unit" to MeasurementUnit.G.toString())
     Assert.assertEquals(expectedData, serializedData)
 
     val deserializedData = Nutrient.deserialize(serializedData)
@@ -56,7 +56,7 @@ class NutrientTest {
     val nutrient = Nutrient("fats", 100.0, MeasurementUnit.G)
     val serializedData = Nutrient.serialize(nutrient)
     val expectedData =
-        mapOf("nutrientType" to "fats", "amount" to 100.0, "unit" to MeasurementUnit.G.name)
+        mapOf("nutrientType" to "fats", "amount" to 100.0, "unit" to MeasurementUnit.G.toString())
     Assert.assertEquals(expectedData, serializedData)
 
     val deserializedData = Nutrient.deserialize(serializedData)

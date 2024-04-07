@@ -17,36 +17,36 @@ data class Ingredient(
     val id: Int,
     val amount: Double,
     val unit: MeasurementUnit,
-    val nutritionalInformation: NutritionalInformation,
+    val nutritionalInformation: NutritionalInformation = NutritionalInformation(mutableListOf()),
 ) {
 
-    companion object {
-        fun serializeIngredient(ingredient: Ingredient): Map<String, Any> {
-            val map = mutableMapOf<String, Any>()
-            map["name"] = ingredient.name
-            map["id"] = ingredient.id
-            map["amount"] = ingredient.amount
-            map["unit"] = ingredient.unit.toString()
-            map["nutritionalInformation"] =
-                NutritionalInformation.serialize(ingredient.nutritionalInformation)
-            return map
-        }
-
-        fun deserializeIngredient(data: Map<String, Any>): Ingredient {
-            return try {
-                val name = data["name"] as String
-                val id = data["id"] as Int
-                val amount = data["amount"] as Double
-                val unit = MeasurementUnit.fromString(data["unit"] as String)
-                val nutValue = data["nutritionalInformation"] as List<Map<String, Any>>
-
-                val nutritionalInformation = NutritionalInformation.deserialize(nutValue)
-
-                Ingredient(name, id, amount, unit, nutritionalInformation)
-            } catch (e: Exception) {
-                Log.e("Ingredient", "Failed to deserialize Ingredient object: ${e.message}", e)
-                throw IllegalArgumentException("Failed to deserialize Ingredient object", e)
-            }
-        }
+  companion object {
+    fun serializeIngredient(ingredient: Ingredient): Map<String, Any> {
+      val map = mutableMapOf<String, Any>()
+      map["name"] = ingredient.name
+      map["id"] = ingredient.id
+      map["amount"] = ingredient.amount
+      map["unit"] = ingredient.unit.toString()
+      map["nutritionalInformation"] =
+          NutritionalInformation.serialize(ingredient.nutritionalInformation)
+      return map
     }
+
+    fun deserializeIngredient(data: Map<String, Any>): Ingredient {
+      return try {
+        val name = data["name"] as String
+        val id = data["id"] as Int
+        val amount = data["amount"] as Double
+        val unit = MeasurementUnit.fromString(data["unit"] as String)
+        val nutValue = data["nutritionalInformation"] as List<Map<String, Any>>
+
+        val nutritionalInformation = NutritionalInformation.deserialize(nutValue)
+
+        Ingredient(name, id, amount, unit, nutritionalInformation)
+      } catch (e: Exception) {
+        Log.e("Ingredient", "Failed to deserialize Ingredient object: ${e.message}", e)
+        throw IllegalArgumentException("Failed to deserialize Ingredient object", e)
+      }
+    }
+  }
 }
