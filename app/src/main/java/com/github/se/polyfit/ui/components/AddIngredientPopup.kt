@@ -50,7 +50,7 @@ fun EditIngredientNutrition() {
               text = label,
               color = SecondaryGrey,
               style = TextStyle(fontSize = 18.sp),
-              modifier = Modifier.testTag("NutritionLabel " + nutritionLabels[index]).weight(1.5f))
+              modifier = Modifier.testTag("NutritionLabel " + label).weight(1.5f))
 
           TextField(
               value = nutritionSize[index],
