@@ -55,34 +55,34 @@ jobs:
           asset_path: app/build/outputs/apk/release/app-release.apk
           asset_name: app-release.apk
           asset_content_type: application/vnd.android.package-archive
-      - name: Notify Build Success
-        if: success()
-        uses: actions/github-script@v5
-        with:
-          script: |
-            const commitComment = `
-              Build and Release successful
-            `;
-            github.rest.repos.createCommitComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              commit_sha: context.sha,
-              body: commitComment,
-            });
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Notify Build Failure
-        if: failure()
-        uses: actions/github-script@v5
-        with:
-          script: |
-            const commitComment = `
-              Build or Release failed
-            `;
-            github.rest.repos.createCommitComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              commit_sha: context.sha,
-              body: commitComment,
-            });
-          token: ${{ secrets.GITHUB_TOKEN }}
+#      - name: Notify Build Success
+#        if: success()
+#        uses: actions/github-script@v5
+#        with:
+#          script: |
+#            const commitComment = `
+#              Build and Release successful
+#            `;
+#            github.rest.repos.createCommitComment({
+#              owner: context.repo.owner,
+#              repo: context.repo.repo,
+#              commit_sha: context.sha,
+#              body: commitComment,
+#            });
+#          token: ${{ secrets.GITHUB_TOKEN }}
+#
+#      - name: Notify Build Failure
+#        if: failure()
+#        uses: actions/github-script@v5
+#        with:
+#          script: |
+#            const commitComment = `
+#              Build or Release failed
+#            `;
+#            github.rest.repos.createCommitComment({
+#              owner: context.repo.owner,
+#              repo: context.repo.repo,
+#              commit_sha: context.sha,
+#              body: commitComment,
+#            });
+#          token: ${{ secrets.GITHUB_TOKEN }}
