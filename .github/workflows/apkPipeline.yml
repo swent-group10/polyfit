@@ -26,7 +26,7 @@ jobs:
       - name: List output APK directory
         run: ls -l app/build/outputs/apk/release/
       - name: Upload APK
-              
+
         uses: actions/upload-artifact@v4
         with:
           name: app-release.apk
@@ -54,11 +54,30 @@ jobs:
           asset_content_type: application/vnd.android.package-archive
       - name: Notify Build Success
         if: success()
-        uses: some/notification-action@v1
+        uses: actions/github-script@v5
         with:
-          message: 'Build and Release successful'
+          script: |
+            const commitComment = `
+              Build and Release successful
+            `;
+            github.rest.repos.createCommitComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: context.sha,
+              body: commitComment,
+            });
+
       - name: Notify Build Failure
         if: failure()
-        uses: some/notification-action@v1
+        uses: actions/github-script@v5
         with:
-          message: 'Build or Release failed'
+          script: |
+            const commitComment = `
+              Build or Release failed
+            `;
+            github.rest.repos.createCommitComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: context.sha,
+              body: commitComment,
+            });
