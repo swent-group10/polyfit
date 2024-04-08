@@ -22,10 +22,43 @@ jobs:
           java-version: "17"
       - name: Build APK
         run: ./gradlew assembleRelease
+
       - name: List output APK directory
         run: ls -l app/build/outputs/apk/release/
       - name: Upload APK
+              
         uses: actions/upload-artifact@v4
         with:
           name: app-release.apk
           path: app/build/outputs/apk/release/app-release-unsigned.apk
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          body: 'Description of the release'
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: app/build/outputs/apk/release/app-release.apk
+          asset_name: app-release.apk
+          asset_content_type: application/vnd.android.package-archive
+      - name: Notify Build Success
+        if: success()
+        uses: some/notification-action@v1
+        with:
+          message: 'Build and Release successful'
+      - name: Notify Build Failure
+        if: failure()
+        uses: some/notification-action@v1
+        with:
+          message: 'Build or Release failed'
