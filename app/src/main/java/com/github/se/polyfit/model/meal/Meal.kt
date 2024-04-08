@@ -14,7 +14,7 @@ data class Meal(
     val mealTemp: Double = 20.0,
     val nutritionalInformation: NutritionalInformation,
     val ingredients: MutableList<Ingredient> = mutableListOf(),
-    var firebasaeId: String = ""
+    var firebaseId: String = ""
 ) {
   init {
     require(mealID >= 0)
@@ -32,7 +32,7 @@ data class Meal(
     if (mealTemp != other.mealTemp) return false
     if (nutritionalInformation != other.nutritionalInformation) return false
     if (ingredients != other.ingredients) return false
-    if (firebasaeId != other.firebasaeId) return false
+    if (firebaseId != other.firebaseId) return false
 
     return true
   }
@@ -44,7 +44,7 @@ data class Meal(
     result = 31 * result + mealTemp.hashCode()
     result = 31 * result + nutritionalInformation.hashCode()
     result = 31 * result + ingredients.hashCode()
-    result = 31 * result + firebasaeId.hashCode()
+    result = 31 * result + firebaseId.hashCode()
     return result
   }
 
@@ -81,10 +81,10 @@ data class Meal(
       }
     }
 
-    fun deserialize(data: Map<String, Any>): Meal? {
+    fun deserialize(data: Map<String, Any>): Meal {
       return try {
         val mealID = data["mealID"] as Long
-        val occasion = data["occasion"]?.let { MealOccasion.valueOf(it as String) } as MealOccasion
+        val occasion = data["occasion"].let { MealOccasion.valueOf(it as String) }
 
         val mealTemp = data["mealTemp"] as Double
 

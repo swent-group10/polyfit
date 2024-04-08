@@ -3,6 +3,7 @@ package com.github.se.polyfit.data.remote.firebase
 import android.util.Log
 import com.github.se.polyfit.model.meal.Meal
 import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -15,54 +16,69 @@ class MealFirebaseRepository(
 
   fun storeMeal(meal: Meal): Task<DocumentReference> {
     val mealData = Meal.serialize(meal)
-    return if (meal.firebasaeId.isNotEmpty()) {
-      mealCollection.document(meal.firebasaeId).set(mealData).continueWith { task ->
-        if (task.isSuccessful) {
-          mealCollection.document(meal.firebasaeId)
+
+    return if (meal.firebaseId.isNotEmpty()) {
+      mealCollection.document(meal.firebaseId).set(mealData).continueWithTask {
+        if (it.isSuccessful) {
+          Tasks.forResult(mealCollection.document(meal.firebaseId))
         } else {
-          throw task.exception!!
+          Log.e("MealFirebaseRepository", "Failed to store meal: ${it.exception?.message}")
+          throw Exception("Failed to store meal: ${it.exception?.message}")
         }
       }
     } else {
-      mealCollection.add(mealData).continueWith { task ->
+      mealCollection.add(mealData).continueWithTask { task ->
         if (task.isSuccessful) {
-          meal.firebasaeId = task.result!!.id
-          task.result
+          meal.firebaseId = task.result!!.id
+          Tasks.forResult(mealCollection.document(meal.firebaseId))
         } else {
-          throw task.exception!!
+          Log.e("MealFirebaseRepository", "Failed to store meal: ${task.exception?.message}")
+          throw Exception("Failed to store meal: ${task.exception?.message}")
         }
       }
     }
   }
 
-  // maybe ok for now, but in the future will need to find a better way to
-  // distinguish between meals
-  fun getMeal(firebaseID: String): Task<Meal> {
-
-    return getAllMeals().continueWith { task ->
-      Log.d("MealFirebaseRepository", "getMeal: $firebaseID")
+  /**
+   * Fetches a meal from the database
+   *
+   * @param firebaseID the id of the meal to fetch
+   * @return a Task that will resolve to the fetched meal or null if the meal does not exist
+   */
+  fun getMeal(firebaseID: String): Task<Meal?> {
+    return mealCollection.document(firebaseID).get().continueWith { task ->
       if (task.isSuccessful) {
-
-        task.result?.find { it.firebasaeId == firebaseID }
+        task.result?.data?.let {
+          try {
+            Meal.deserialize(it).apply { this.firebaseId = firebaseID }
+          } catch (e: Exception) {
+            Log.e("MealFirebaseRepository", "Error processing meal document", e)
+            throw Exception("Error processing meal document : ${e.message} ")
+          }
+        }
       } else {
-        throw Exception("Failed to fetch meals : " + task.exception?.message)
+        Log.e("MealFirebaseRepository", "Failed to fetch meal: ${task.exception?.message}")
+        throw Exception("Failed to fetch meal: ${task.exception?.message}")
       }
     }
   }
 
-  fun getAllMeals(): Task<List<Meal>> {
-    val task = mealCollection.get()
-
-    return task.continueWith { task ->
-      if (task.isSuccessful && task.result != null) {
+  /**
+   * Fetches all meals from the database
+   *
+   * @return a Task that will resolve to a list of all meals
+   */
+  fun getAllMeals(): Task<List<Meal?>> {
+    return mealCollection.get().continueWith { task ->
+      if (task.isSuccessful) {
         try {
           // Convert documents to Meal objects
           task.result.documents.mapNotNull { document ->
-            document.data?.let { Meal.deserialize(it).apply { this!!.firebasaeId = document.id } }
+            document.data?.let { Meal.deserialize(it).apply { this.firebaseId = document.id } }
           }
         } catch (e: Exception) {
           Log.e("MealFirebaseRepository", "Error processing meal documents", e)
-          listOf<Meal>()
+          throw Exception("Error processing meal documents: ${e.message}")
         }
       } else {
         Log.e("MealFirebaseRepository", "Failed to fetch meals: ${task.exception?.message}")
@@ -71,7 +87,14 @@ class MealFirebaseRepository(
     }
   }
 
-  fun deleteMeal(firebaseID: String): Task<Void> {
-    return mealCollection.document(firebaseID).delete()
+  fun deleteMeal(firebaseID: String): Task<Unit> {
+    return mealCollection.document(firebaseID).delete().continueWithTask {
+      if (it.isSuccessful) {
+        Tasks.forResult(Unit)
+      } else {
+        Log.e("MealFirebaseRepository", "Failed to delete meal: ${it.exception?.message}")
+        throw Exception("Failed to delete meal: ${it.exception?.message}")
+      }
+    }
   }
 }

@@ -126,6 +126,7 @@ android {
         implementation("com.google.firebase:firebase-firestore:24.11.0")
         implementation("com.firebaseui:firebase-ui-auth:8.0.2")
         androidTestImplementation("com.google.firebase:firebase-firestore:24.11.0")
+        androidTestImplementation("org.jetbrains.kotlin:kotlin-test:1.8.22")
 
         // Test dependencies
         testImplementation("junit:junit:4.13.2")

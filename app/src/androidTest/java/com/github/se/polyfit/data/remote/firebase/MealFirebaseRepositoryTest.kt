@@ -5,6 +5,7 @@ import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.FixMethodOrder
@@ -21,7 +22,7 @@ class MealFirebaseRepositoryTest {
           mealTemp = 20.0,
           nutritionalInformation = NutritionalInformation(mutableListOf()),
           ingredients = mutableListOf(),
-          firebasaeId = "1")
+          firebaseId = "1")
   private val meal2 =
       Meal(
           mealID = 2,
@@ -30,7 +31,7 @@ class MealFirebaseRepositoryTest {
           mealTemp = 20.0,
           nutritionalInformation = NutritionalInformation(mutableListOf()),
           ingredients = mutableListOf(),
-          firebasaeId = "2")
+          firebaseId = "2")
 
   private var db: MealFirebaseRepository = MealFirebaseRepository("0") // using user id "0"
 
@@ -44,8 +45,8 @@ class MealFirebaseRepositoryTest {
       val result = db.storeMeal(meal).await()
 
       assert(result.id.isNotEmpty())
-      assert(meal.firebasaeId.isNotEmpty())
-      assert(result.id == meal.firebasaeId)
+      assert(meal.firebaseId.isNotEmpty())
+      assert(result.id == meal.firebaseId)
     }
   }
 
@@ -53,8 +54,8 @@ class MealFirebaseRepositoryTest {
   fun test2GetMealSuccessfully() {
     runBlockingTest {
       // Call the method under test
-      assert(meal.firebasaeId.isNotEmpty())
-      val result = db.getMeal(meal.firebasaeId)
+      assert(meal.firebaseId.isNotEmpty())
+      val result = db.getMeal(meal.firebaseId)
 
       // Assert that the result is as expected
       result.continueWith {
@@ -80,15 +81,14 @@ class MealFirebaseRepositoryTest {
   }
 
   @Test
-  fun test4DeleteMealSuccessfully() {
-    runBlockingTest {
-      db.deleteMeal(meal.firebasaeId).await()
+  fun test4DeleteMealSuccessfully() = runTest {
+    db.deleteMeal(meal.firebaseId).await()
 
-      db.getMeal(meal.firebasaeId).continueWith { assertNull(it.result) }
+    val mealResult = db.getMeal(meal.firebaseId).await()
+    assertNull(mealResult)
+    db.deleteMeal(meal2.firebaseId).await()
 
-      db.deleteMeal(meal2.firebasaeId).await()
-
-      db.getMeal(meal2.firebasaeId).continueWith { assertNull(it.result) }
-    }
+    val meal2Result = db.getMeal(meal2.firebaseId).await()
+    assertNull(meal2Result)
   }
 }

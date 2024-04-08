@@ -2,6 +2,7 @@ package com.github.se.polyfit.ui.screen
 
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.espresso.intent.Intents.intended
+import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import androidx.test.espresso.intent.matcher.IntentMatchers.toPackage
 import androidx.test.espresso.intent.rule.IntentsTestRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -58,7 +59,6 @@ class LoginTest : TestCase() {
 
   @Test
   fun googleSignInReturnsValidActivityResult() {
-
     ComposeScreen.onComposeScreen<LoginScreen>(composeTestRule) {
       loginButton {
         assertIsDisplayed()
@@ -66,7 +66,7 @@ class LoginTest : TestCase() {
       }
 
       // assert that an Intent resolving to Google Mobile Services has been sent (for sign-in)
-      intended(toPackage("com.google.android.gms"))
+      intended(hasComponent("com.google.android.gms.auth.api.signin.internal.SignInHubActivity"))
     }
   }
 }
