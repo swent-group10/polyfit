@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - M1
-      - feature/apk-build-pipeline
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -39,7 +38,7 @@ jobs:
         with:
           tag_name: ${{ github.ref_name }}-${{ github.sha }}-v${{ github.run_number }}-${{ github.run_id }}
           release_name: Release ${{ github.ref_name }} Version ${{ github.run_number }} on ${{ github.event.commits[0].timestamp }}
-          draft: true # not shown to users and it does not trigger any notifications or webhooks.
+          draft: false # not shown to users and it does not trigger any notifications or webhooks.
           prerelease: true # indicates that the release is a pre-release.
           body: |
             Changes in this release:
