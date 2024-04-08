@@ -1,122 +1,144 @@
 import android.util.Log
+import androidx.test.platform.app.InstrumentationRegistry
 import com.github.se.polyfit.data.api.APIReponse
 import com.github.se.polyfit.data.api.ImageAnalysisResponseAPI
 import com.github.se.polyfit.data.api.RecipeNutritionResponseAPI
 import com.github.se.polyfit.data.api.SpoonacularApiCaller
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
+import java.io.File
+import kotlin.test.assertFailsWith
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.json.JSONObject
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import java.io.File
-
 
 class SpoonacularApiCallerTest {
 
-    private lateinit var mockWebServer: MockWebServer
+  private lateinit var mockWebServer: MockWebServer
+  private lateinit var file: File
 
-    @Before
-    fun setUp() {
-        mockWebServer = MockWebServer()
-        mockWebServer.start()
-    }
+  @Before
+  fun setUp() {
+    mockWebServer = MockWebServer()
+    mockWebServer.start()
 
-    @Test
-    fun imageAnalysisReturnsExpectedResponse() {
-//        val mockResponse = MockResponse()
-//            .setBody(jsonImageAnalysis) // Add your expected JSON response here
-//            .addHeader("Content-Type", "application/json")
-//        mockWebServer.enqueue(mockResponse)
-//
-//        val file = File("...") // Add your test file path here
-//        val response = SpoonacularApiCaller.imageAnalysis(file)
+    val inputStream =
+        InstrumentationRegistry.getInstrumentation().context.assets.open("cheesecake.jpg")
 
-        // Add your assertions here
-    }
+    inputStream.available()
 
-    @Test
-    fun imageAnalysisHandlesErrorResponse() {
-        val mockResponse = MockResponse()
-            .setResponseCode(500)
-        mockWebServer.enqueue(mockResponse)
+    file = File.createTempFile("image", ".jpg")
 
-        val file = File("...") // Add your test file path here
+    file.outputStream().use { outputStream -> inputStream.copyTo(outputStream) }
+  }
 
-        assertFailsWith<Exception> {
-            val response = SpoonacularApiCaller.imageAnalysis(file)
-        }
-
-        // Add your assertions here
-    }
-
-    @Test
-    fun getRecipeNutritionReturnsExpectedResponse() {
-        val mockResponse = MockResponse()
-            .setBody("...") // Add your expected JSON response here
+  @Test
+  fun imageAnalysisReturnsExpectedResponse() {
+    val mockResponse =
+        MockResponse()
+            .setBody(jsonImageAnalysis.toString()) // Add your expected JSON response here
             .addHeader("Content-Type", "application/json")
-        mockWebServer.enqueue(mockResponse)
+    mockWebServer.enqueue(mockResponse)
 
-        val response = SpoonacularApiCaller.getRecipeNutrition(1) // Add your test recipeId here
+    val response = SpoonacularApiCaller.imageAnalysis(file.absolutePath)
 
-        // Add your assertions here
+    // Add your assertions here
+
+    assert(response != null)
+    assert(response.status == APIReponse.SUCCESS)
+    assert(response.category == "cheesecake")
+    assert(response.nutrition.filter { it.unit == MeasurementUnit.CAL }.first().amount == 293.0)
+    val fatNutrient = response.nutrition.find { it.nutrientType == "fat" }
+    assert(fatNutrient != null)
+    assert(fatNutrient!!.amount == 17.0) // Check the value of fat
+    assert(fatNutrient.unit == MeasurementUnit.G) // Check the unit of fat
+  }
+
+  @Test
+  fun imageAnalysisHandlesErrorResponse() {
+    // empty server queue
+    val mockResponse = MockResponse().setResponseCode(500)
+
+    //        assert(.http2ErrorCode == 500)
+    // force a timeout
+
+    mockWebServer.enqueue(mockResponse)
+
+    assertFailsWith<Exception> {
+      val response = SpoonacularApiCaller.imageAnalysis(file)
     }
+  }
 
-    @Test
-    fun getRecipeNutritionHandlesErrorResponse() {
-        val mockResponse = MockResponse()
-            .setResponseCode(500)
-        mockWebServer.enqueue(mockResponse)
+  @Test
+  fun getRecipeNutritionReturnsExpectedResponse() {
+    val mockResponse =
+        MockResponse()
+            .setBody(jsonRecipeNutrition.toString()) // Add your expected JSON response here
+            .addHeader("Content-Type", "application/json")
+    mockWebServer.enqueue(mockResponse)
 
-        val response = SpoonacularApiCaller.getRecipeNutrition(1) // Add your test recipeId here
+    val response = SpoonacularApiCaller.getRecipeNutrition(1) // Add your test recipeId here
 
-        // Add your assertions here
+    assert(response != null)
+    assert(response.nutrients.filter { it.unit == MeasurementUnit.KCAL }.first().amount == 792.34)
+    assert(response.nutrients.filter { it.nutrientType == "Carbohydrates" }.first().amount == 32.28)
+    assert(response.nutrients.filter { it.nutrientType == "Fat" }.first().amount == 26.56)
+    assert(response.nutrients.filter { it.nutrientType == "Protein" }.first().amount == 98.46)
+  }
+
+  @Test
+  fun getRecipeNutritionHandlesErrorResponse() {
+    val mockResponse = MockResponse().setResponseCode(500)
+    mockWebServer.enqueue(mockResponse)
+
+    assertFailsWith<Exception> {
+      val response = SpoonacularApiCaller.getRecipeNutrition(1) // Add your test recipeId here
     }
+  }
 
+  @Test
+  fun testImageAnalysisFromJson() {
+    val response = ImageAnalysisResponseAPI.fromJsonObject(jsonImageAnalysis)
 
-    @Test
-    fun testImageAnalysisFromJson() {
-        val response = ImageAnalysisResponseAPI.fromJsonObject(jsonImageAnalysis)
+    assert(response != null)
+    assert(response.status == APIReponse.SUCCESS)
+    assert(response.category == "cheesecake")
+    assert(response.nutrition.filter { it.unit == MeasurementUnit.CAL }.first().amount == 293.0)
+    val fatNutrient = response.nutrition.find { it.nutrientType == "fat" }
+    assert(fatNutrient != null)
+    assert(fatNutrient!!.amount == 17.0) // Check the value of fat
+    assert(fatNutrient.unit == MeasurementUnit.G) // Check the unit of fat
+  }
 
-        assert(response != null)
-        assert(response.status == APIReponse.SUCCESS)
-        assert(response.category == "cheesecake")
-        assert(response.nutrition.filter { it.unit == MeasurementUnit.CAL }
-            .first().amount == 293.0)
-        val fatNutrient = response.nutrition.find { it.nutrientType == "fat" }
-        assert(fatNutrient != null)
-        assert(fatNutrient!!.amount == 17.0) // Check the value of fat
-        assert(fatNutrient.unit == MeasurementUnit.G) // Check the unit of fat
+  @Test
+  fun testRecipeNutritionFromJson() {
+    val response = RecipeNutritionResponseAPI.fromJsonObject(jsonRecipeNutrition)
 
-    }
+    assert(response != null)
+    assert(
+        response.nutrients
+            .filter {
+              Log.e("SpoonacularApiCallerTest", "testRecipeNutritionFromJson: it.unit = ${it.unit}")
+              it.unit == MeasurementUnit.KCAL
+            }
+            .first()
+            .amount == 899.16)
+    assert(
+        response.nutrients.filter { it.nutrientType == "Carbohydrates" }.first().amount == 111.24)
+    assert(response.nutrients.filter { it.nutrientType == "Fat" }.first().amount == 45.33)
+    assert(response.nutrients.filter { it.nutrientType == "Protein" }.first().amount == 11.64)
+  }
 
-    @Test
-    fun testRecipeNutritionFromJson() {
-        val response = RecipeNutritionResponseAPI.fromJsonObject(jsonRecipeNutrition)
+  @After
+  fun tearDown() {
+    mockWebServer.shutdown()
+  }
 
-        assert(response != null)
-        assert(response.nutrients.filter {
-            Log.e(
-                "SpoonacularApiCallerTest", "testRecipeNutritionFromJson: it.unit = ${it.unit}"
-            )
-            it.unit == MeasurementUnit.KCAL
-        }
-            .first().amount == 899.16)
-        assert(response.nutrients.filter { it.nutrientType == "Carbohydrates" }
-            .first().amount == 111.24)
-        assert(response.nutrients.filter { it.nutrientType == "Fat" }.first().amount == 45.33)
-        assert(response.nutrients.filter { it.nutrientType == "Protein" }
-            .first().amount == 11.64)
-    }
-
-    @After
-    fun tearDown() {
-        mockWebServer.shutdown()
-    }
-
-    private val jsonImageAnalysis = JSONObject(
-        """
+  private val jsonImageAnalysis =
+      JSONObject(
+          """
             {
               "status": "success",
               "nutrition": {
@@ -219,10 +241,10 @@ class SpoonacularApiCallerTest {
                 }
               ]
             }
-        """
-    )
-    private val jsonRecipeNutrition = JSONObject(
-        """
+        """)
+  private val jsonRecipeNutrition =
+      JSONObject(
+          """
     {
     "calories":"899",
     "carbs":"111g",
@@ -3989,7 +4011,5 @@ class SpoonacularApiCallerTest {
     "expires":1692095820085,
     "isStale":true
 }
-    """
-    )
-
+    """)
 }

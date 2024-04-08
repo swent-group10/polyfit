@@ -148,7 +148,8 @@ android {
         debugImplementation("androidx.compose.ui:ui-tooling:1.4.0")
         debugImplementation("androidx.compose.ui:ui-test-manifest:1.4.0")
         androidTestImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
-
+        androidTestImplementation("org.jetbrains.kotlin:kotlin-test:1.7.10")
+        androidTestImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.7.10")
         // For the tests
         androidTestImplementation("com.kaspersky.android-components:kaspresso:1.4.3")
         androidTestImplementation("com.kaspersky.android-components:kaspresso-allure-support:1.4.3")

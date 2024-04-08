@@ -11,42 +11,39 @@ data class ImageAnalysisResponseAPI(
     val category: String,
     val recipes: List<Int>
 ) {
-    companion object {
-        fun fromJsonObject(jsonObject: JSONObject): ImageAnalysisResponseAPI {
-            Log.d(
-                "ImageAnalysisResponse", "response : ${jsonObject}"
-            )
-            val nutritionObject = jsonObject.getJSONObject("nutrition")
-            // Iterate over all elements
-            val nutrients = mutableListOf<Nutrient>()
-            //iterage over all nutrients
+  companion object {
+    fun fromJsonObject(jsonObject: JSONObject): ImageAnalysisResponseAPI {
+      Log.d("ImageAnalysisResponse", "response : ${jsonObject}")
+      val nutritionObject = jsonObject.getJSONObject("nutrition")
+      // Iterate over all elements
+      val nutrients = mutableListOf<Nutrient>()
+      // iterage over all nutrients
 
-            for (key in nutritionObject.keys().asSequence().filter { it != "recipesUsed" }) {
+      for (key in nutritionObject.keys().asSequence().filter { it != "recipesUsed" }) {
 
-                val nutrient = Nutrient(
-                    nutrientType = key,
-                    amount = nutritionObject.getJSONObject(key).getDouble("value"),
-                    unit = MeasurementUnit.fromString(
-                        nutritionObject.getJSONObject(key).getString("unit")
-                    )
-                )
-                nutrients.add(nutrient)
-            }
+        val nutrient =
+            Nutrient(
+                nutrientType = key,
+                amount = nutritionObject.getJSONObject(key).getDouble("value"),
+                unit =
+                    MeasurementUnit.fromString(
+                        nutritionObject.getJSONObject(key).getString("unit")))
+        nutrients.add(nutrient)
+      }
 
-            val category = jsonObject.getJSONObject("category").getString("name")
+      val category = jsonObject.getJSONObject("category").getString("name")
 
-            val recipesArray = jsonObject.getJSONArray("recipes")
-            val recipes = mutableListOf<Int>()
-            for (i in 0 until recipesArray.length()) {
-                recipes.add(recipesArray.getJSONObject(i).getInt("id"))
-            }
+      val recipesArray = jsonObject.getJSONArray("recipes")
+      val recipes = mutableListOf<Int>()
+      for (i in 0 until recipesArray.length()) {
+        recipes.add(recipesArray.getJSONObject(i).getInt("id"))
+      }
 
-            return ImageAnalysisResponseAPI(
-                status = APIReponse.fromString(jsonObject.getString("status")),
-                nutrition = nutrients,
-                category = category,
-                recipes = recipes
-            )
-        }
+      return ImageAnalysisResponseAPI(
+          status = APIReponse.fromString(jsonObject.getString("status")),
+          nutrition = nutrients,
+          category = category,
+          recipes = recipes)
     }
+  }
 }
