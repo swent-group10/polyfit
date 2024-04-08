@@ -1,0 +1,27 @@
+name: Build Android APK
+
+# Run the workflow when commits are pushed on main or when a PR is modified
+on:
+  push:
+    branches:
+      - M1
+      - feature/apk-build-pipeline
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # First step : Checkout the repository on the runner
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+      - name: Build APK
+        run: ./gradlew assembleRelease
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-release.apk
+          path: app/build/outputs/apk/release/app-release.apk
