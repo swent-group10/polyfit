@@ -1,7 +1,7 @@
 package com.github.se.polyfit.model.meal
 
-import com.github.se.polyfit.model.ingredient.Ingredient
 import android.util.Log
+import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
@@ -12,6 +12,7 @@ import kotlin.test.assertFailsWith
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
+
 class MealTest {
   @Before
   fun setup() {
@@ -19,6 +20,7 @@ class MealTest {
     every { Log.e(any(), any()) } returns 0
     every { Log.e(any(), any(), any()) } returns 0
   }
+
   @Test
   fun `Meal addIngredient should update meal`() {
     val meal = Meal(MealOccasion.DINNER, "eggs", 1, 102.2, NutritionalInformation(mutableListOf()))
@@ -33,6 +35,7 @@ class MealTest {
 
     assertEquals(1.0, meal.nutritionalInformation.nutrients[0].amount, 0.001)
   }
+
   @Test
   fun `Meal serialize should serialize meal correctly`() {
     val meal = Meal(MealOccasion.DINNER, "eggs", 1, 102.2, NutritionalInformation(mutableListOf()))
@@ -42,6 +45,7 @@ class MealTest {
     assertEquals("eggs", serializedMeal["name"])
     assertEquals(102.2, serializedMeal["mealTemp"])
   }
+
   @Test
   fun `Meal deserialize should return null if data is incorrect`() {
     val data =
@@ -54,6 +58,7 @@ class MealTest {
     // Make sure that an exception is thrown
     assertFailsWith<Exception> { Meal.deserialize(data) }
   }
+
   @Test
   fun `Meal deserialize should return meal if data is correct`() {
     val data =
@@ -70,6 +75,7 @@ class MealTest {
     assertEquals("eggs", meal?.name)
     assertEquals(102.2, meal?.mealTemp)
   }
+
   @Test
   fun `testing deserialize with Firebase type`() {
     val data: Map<String, Any> =
