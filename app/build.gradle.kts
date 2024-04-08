@@ -144,7 +144,6 @@ android {
         androidTestImplementation("io.mockk:mockk-android:1.13.10")
         androidTestImplementation("org.mockito:mockito-core:5.11.0")
         androidTestImplementation("org.mockito:mockito-android:4.2.0")
-        androidTestImplementation("org.mockito:mockito-inline:4.2.0") // For final class mocking
         debugImplementation("androidx.compose.ui:ui-test-manifest:1.4.0")
         debugImplementation("androidx.compose.ui:ui-tooling:1.4.0")
         androidTestImplementation("com.kaspersky.android-components:kaspresso:1.4.3")
