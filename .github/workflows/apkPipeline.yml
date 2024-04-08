@@ -1,6 +1,5 @@
 name: Build Android APK
 
-# Run the workflow when commits are pushed on main or when a PR is modified
 on:
   push:
     branches:
@@ -27,8 +26,6 @@ jobs:
       - name: Build APK
         run: ./gradlew assembleRelease
 
-      - name: List output APK directory
-        run: ls -l app/build/outputs/apk/release/
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
@@ -40,11 +37,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref_name }}-${{ github.sha }}
-          release_name: Release ${{ github.ref_name }}
-          draft: true
-          prerelease: true
-          body: 'Description of the release'
+          tag_name: ${{ github.ref_name }}-${{ github.sha }}-v${{ github.run_number }}-${{ github.run_id }}
+          release_name: Release ${{ github.ref_name }} Version ${{ github.run_number }} on ${{ github.event.commits[0].timestamp }}
+          draft: true # not shown to users and it does not trigger any notifications or webhooks.
+          prerelease: true # indicates that the release is a pre-release.
+          body: |
+            Changes in this release:
+            ${{ github.event.commits[0].message }}
 
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
@@ -55,34 +54,3 @@ jobs:
           asset_path: app/build/outputs/apk/release/app-release-unsigned.apk
           asset_name: app-release.apk
           asset_content_type: application/vnd.android.package-archive
-#      - name: Notify Build Success
-#        if: success()
-#        uses: actions/github-script@v5
-#        with:
-#          script: |
-#            const commitComment = `
-#              Build and Release successful
-#            `;
-#            github.rest.repos.createCommitComment({
-#              owner: context.repo.owner,
-#              repo: context.repo.repo,
-#              commit_sha: context.sha,
-#              body: commitComment,
-#            });
-#          token: ${{ secrets.GITHUB_TOKEN }}
-#
-#      - name: Notify Build Failure
-#        if: failure()
-#        uses: actions/github-script@v5
-#        with:
-#          script: |
-#            const commitComment = `
-#              Build or Release failed
-#            `;
-#            github.rest.repos.createCommitComment({
-#              owner: context.repo.owner,
-#              repo: context.repo.repo,
-#              commit_sha: context.sha,
-#              body: commitComment,
-#            });
-#          token: ${{ secrets.GITHUB_TOKEN }}
