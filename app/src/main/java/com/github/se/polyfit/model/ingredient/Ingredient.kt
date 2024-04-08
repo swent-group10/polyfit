@@ -1,14 +1,14 @@
 package com.github.se.polyfit.model.ingredient
 
 import android.util.Log
-import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
+import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 
 /**
  * Represents an ingredient in a meal. Automatically updates the parent meal when any property
  * changes.
- *
  * @property name is unique for each meal
+ *
  * @property id is the unique id given in API response
  * @property nutritionalInformation
  */
@@ -31,7 +31,6 @@ data class Ingredient(
           NutritionalInformation.serialize(ingredient.nutritionalInformation)
       return map
     }
-
     fun deserializeIngredient(data: Map<String, Any>): Ingredient {
       return try {
         val name = data["name"] as String
@@ -41,7 +40,6 @@ data class Ingredient(
         val nutValue = data["nutritionalInformation"] as List<Map<String, Any>>
 
         val nutritionalInformation = NutritionalInformation.deserialize(nutValue)
-
         Ingredient(name, id, amount, unit, nutritionalInformation)
       } catch (e: Exception) {
         Log.e("Ingredient", "Failed to deserialize Ingredient object: ${e.message}", e)

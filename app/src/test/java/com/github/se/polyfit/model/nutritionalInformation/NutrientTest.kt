@@ -69,4 +69,30 @@ class NutrientTest {
       Nutrient.deserialize(mapOf("amount" to 100.0, "unit" to "INVALID"))
     }
   }
+
+  @Test
+  fun `get formatted amount shows properly`() {
+    val nutrientGrams = Nutrient("fats", 100.0, MeasurementUnit.G)
+    val nutrientCalories = Nutrient("calories", 100.2421, MeasurementUnit.CAL)
+    Assert.assertEquals("100 g", nutrientGrams.getFormattedAmount())
+    Assert.assertEquals("100 cal", nutrientCalories.getFormattedAmount())
+  }
+
+  @Test
+  fun `get formatted name show properly for one word name`() {
+    val nutrient = Nutrient("fats", 100.0, MeasurementUnit.G)
+    Assert.assertEquals("Fats", nutrient.getFormattedName())
+  }
+
+  @Test
+  fun `get formatted name shows properly for multiple word name`() {
+    val nutrient = Nutrient("saturatedFats", 100.0, MeasurementUnit.G)
+    Assert.assertEquals("Saturated Fats", nutrient.getFormattedName())
+  }
+
+  @Test
+  fun `get formatted name shows properly for vitamin`() {
+    val nutrient = Nutrient("vitaminb4", 100.0, MeasurementUnit.IU)
+    Assert.assertEquals("Vitamin B4", nutrient.getFormattedName())
+  }
 }

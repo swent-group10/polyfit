@@ -82,11 +82,12 @@ class IngredientTest : TestCase() {
                 assertTextEquals("Ingredients")
             }
 
-            backButton {
-                assertIsDisplayed()
-                assertHasClickAction()
-                performClick()
-            }
+      backButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+        assertContentDescriptionEquals("Back")
+        performClick()
+      }
 
             verify { mockNav.goBack() }
             confirmVerified(mockNav)
@@ -107,30 +108,68 @@ class IngredientTest : TestCase() {
         }
     }
 
-    @Test
-    fun addIngredientButton() {
-        launchIngredientScreenWithTestData(emptyList(), emptyList())
-        ComposeScreen.onComposeScreen<IngredientsBottomBar>(composeTestRule) {
-            addIngredientGradientButton {
-                assertIsDisplayed()
-                assertHasClickAction()
-                performClick()
-            }
+  @Test
+  fun openCloseAddIngredientPopup() {
+    launchIngredientScreenWithTestData(emptyList(), emptyList())
+    ComposeScreen.onComposeScreen<AddIngredientPopupBox>(composeTestRule) {
+      addIngredientDialog { assertDoesNotExist() }
 
-            // TODO: @April Update with proper test
-            verify { Log.v("Add Ingredient", "Clicked") }
-        }
+      addIngredientGradientButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+        performClick()
+      }
+
+      verify { Log.v("Add Ingredient", "Clicked") }
+
+      // make sure cross icon button closes popup properly
+      addIngredientDialog { assertIsDisplayed() }
+
+      closePopupIcon {
+        assertIsDisplayed()
+        assertHasClickAction()
+        performClick()
+      }
+
+      addIngredientDialog { assertDoesNotExist() }
     }
 
-    @Test
-    fun doneButton() {
-        launchIngredientScreenWithTestData(emptyList(), emptyList())
-        ComposeScreen.onComposeScreen<IngredientsBottomBar>(composeTestRule) {
-            doneButton {
-                assertIsDisplayed()
-                assertHasClickAction()
-                performClick()
-            }
+  @Test
+  fun addNewIngredientToList() {
+    launchIngredientScreenWithTestData(emptyList(), emptyList())
+    ComposeScreen.onComposeScreen<AddIngredientPopupBox>(composeTestRule) {
+      addIngredientDialog { assertDoesNotExist() }
+
+      addIngredientGradientButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+        performClick()
+      }
+
+      addIngredientDialog { assertIsDisplayed() }
+
+      finishAddIngredientButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+        performClick()
+      }
+
+      // TODO: Check that ingredient is properly added to the ingredient list
+
+      addIngredientDialog { assertDoesNotExist() }
+    }
+  }
+
+  @Test
+  fun doneButton() {
+    launchIngredientScreenWithTestData(emptyList(), emptyList())
+    ComposeScreen.onComposeScreen<IngredientsBottomBar>(composeTestRule) {
+      doneButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+        assertTextEquals("Done")
+        performClick()
+      }
 
             // TODO: @April Update with proper test
             verify { Log.v("Finished", "Clicked") }
@@ -192,12 +231,13 @@ class IngredientTest : TestCase() {
     fun displayOnePotential() {
         launchIngredientScreenWithTestData(emptyList(), fewPotentialIngredients)
 
-        ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
-            potentialIngredientButton {
-                assertIsDisplayed()
-                assertTextContains("Carrots")
-                assertHasClickAction()
-            }
+    ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
+      potentialIngredientButton {
+        assertIsDisplayed()
+        assertTextContains("Carrots")
+        assertContentDescriptionEquals("Add Carrots")
+        assertHasClickAction()
+      }
 
             morePotentialIngredientsButton { assertDoesNotExist() }
             ingredientButton { assertDoesNotExist() }
