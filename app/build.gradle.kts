@@ -219,4 +219,5 @@ tasks.register("jacocoTestReport", JacocoReport::class) {
 }
 dependencies {
     implementation(kotlin("reflect"))
+    implementation(kotlin("test"))
 }

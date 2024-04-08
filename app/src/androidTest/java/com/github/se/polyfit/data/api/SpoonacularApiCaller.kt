@@ -7,44 +7,72 @@ import com.github.se.polyfit.data.api.SpoonacularApiCaller
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import java.io.File
 import kotlin.test.assertFailsWith
+import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
+import okhttp3.mockwebserver.RecordedRequest
 import org.json.JSONObject
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
 class SpoonacularApiCallerTest {
-
   private lateinit var mockWebServer: MockWebServer
   private lateinit var file: File
+
+  private val dispatcher =
+      object : Dispatcher() {
+        override fun dispatch(request: RecordedRequest): MockResponse {
+          Log.d("SpoonacularApiCallerTest", "Received request: ${request.method} ${request.path}")
+          return when (request.path) {
+            "/food/images/analyze" ->
+                MockResponse()
+                    .setResponseCode(200)
+                    .setBody(jsonImageAnalysis.toString())
+                    .addHeader("Content-Type", "application/json")
+            "/recipes/1/nutritionWidget.json" ->
+                MockResponse()
+                    .setResponseCode(200)
+                    .addHeader("Content-Type", "application/json")
+                    .setBody(jsonRecipeNutrition.toString())
+            "/error" -> MockResponse().setResponseCode(500).setBody("Server error")
+            else -> MockResponse().setResponseCode(404).setBody("Not found")
+          }
+        }
+      }
+
+  private val faultyDispatcher =
+      object : Dispatcher() {
+        override fun dispatch(request: RecordedRequest): MockResponse {
+          return when (request.path) {
+            "/food/images/analyze" -> MockResponse().setResponseCode(404)
+            "/recipes/1/nutritionWidget.json" ->
+                MockResponse().setResponseCode(500).addHeader("Content-Type", "application/json")
+            "/error" -> MockResponse().setResponseCode(500).setBody("Server error")
+            else -> MockResponse().setResponseCode(404).setBody("Not found")
+          }
+        }
+      }
 
   @Before
   fun setUp() {
     mockWebServer = MockWebServer()
+    mockWebServer.dispatcher = dispatcher
     mockWebServer.start()
+
+    // Set the base URL to the mock server URL
+    SpoonacularApiCaller.setBaseUrl(mockWebServer.url("/").toString())
 
     val inputStream =
         InstrumentationRegistry.getInstrumentation().context.assets.open("cheesecake.jpg")
-
-    inputStream.available()
-
     file = File.createTempFile("image", ".jpg")
-
     file.outputStream().use { outputStream -> inputStream.copyTo(outputStream) }
   }
 
   @Test
   fun imageAnalysisReturnsExpectedResponse() {
-    val mockResponse =
-        MockResponse()
-            .setBody(jsonImageAnalysis.toString()) // Add your expected JSON response here
-            .addHeader("Content-Type", "application/json")
-    mockWebServer.enqueue(mockResponse)
 
     val response = SpoonacularApiCaller.imageAnalysis(file.absolutePath)
-
-    // Add your assertions here
 
     assert(response != null)
     assert(response.status == APIReponse.SUCCESS)
@@ -59,12 +87,7 @@ class SpoonacularApiCallerTest {
   @Test
   fun imageAnalysisHandlesErrorResponse() {
     // empty server queue
-    val mockResponse = MockResponse().setResponseCode(500)
-
-    //        assert(.http2ErrorCode == 500)
-    // force a timeout
-
-    mockWebServer.enqueue(mockResponse)
+    mockWebServer.dispatcher = faultyDispatcher
 
     assertFailsWith<Exception> {
       val response = SpoonacularApiCaller.imageAnalysis(file)
@@ -73,25 +96,20 @@ class SpoonacularApiCallerTest {
 
   @Test
   fun getRecipeNutritionReturnsExpectedResponse() {
-    val mockResponse =
-        MockResponse()
-            .setBody(jsonRecipeNutrition.toString()) // Add your expected JSON response here
-            .addHeader("Content-Type", "application/json")
-    mockWebServer.enqueue(mockResponse)
 
     val response = SpoonacularApiCaller.getRecipeNutrition(1) // Add your test recipeId here
 
     assert(response != null)
-    assert(response.nutrients.filter { it.unit == MeasurementUnit.KCAL }.first().amount == 792.34)
-    assert(response.nutrients.filter { it.nutrientType == "Carbohydrates" }.first().amount == 32.28)
-    assert(response.nutrients.filter { it.nutrientType == "Fat" }.first().amount == 26.56)
-    assert(response.nutrients.filter { it.nutrientType == "Protein" }.first().amount == 98.46)
+    assert(response.nutrients.filter { it.unit == MeasurementUnit.KCAL }.first().amount == 899.16)
+    assert(
+        response.nutrients.filter { it.nutrientType == "Carbohydrates" }.first().amount == 111.24)
+    assert(response.nutrients.filter { it.nutrientType == "Fat" }.first().amount == 45.33)
+    assert(response.nutrients.filter { it.nutrientType == "Protein" }.first().amount == 11.64)
   }
 
   @Test
   fun getRecipeNutritionHandlesErrorResponse() {
-    val mockResponse = MockResponse().setResponseCode(500)
-    mockWebServer.enqueue(mockResponse)
+    mockWebServer.dispatcher = faultyDispatcher
 
     assertFailsWith<Exception> {
       val response = SpoonacularApiCaller.getRecipeNutrition(1) // Add your test recipeId here

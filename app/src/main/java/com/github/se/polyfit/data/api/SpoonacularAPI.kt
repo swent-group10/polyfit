@@ -13,9 +13,13 @@ import org.json.JSONObject
 
 object SpoonacularApiCaller {
   private val client = OkHttpClient()
-  private val API_URL = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com"
-  private val IMAGE_ANALYSIS_ENDPOINT = "$API_URL/food/images/analyze"
-  private val RECIPE_NUTRITION_ENDPOINT = "$API_URL/recipes/%d/nutritionWidget.json"
+  private var API_URL = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/"
+  private const val IMAGE_ANALYSIS_ENDPOINT = "food/images/analyze"
+  private const val RECIPE_NUTRITION_ENDPOINT = "recipes/%d/nutritionWidget.json"
+
+  fun setBaseUrl(baseUrl: String) {
+    API_URL = baseUrl
+  }
 
   fun imageAnalysis(filePath: String): ImageAnalysisResponseAPI {
     val file = File(filePath)
@@ -40,7 +44,7 @@ object SpoonacularApiCaller {
 
     val request =
         Request.Builder()
-            .url(IMAGE_ANALYSIS_ENDPOINT)
+            .url(API_URL + IMAGE_ANALYSIS_ENDPOINT)
             .post(body)
             .addHeader("content-type", "multipart/form-data; boundary=---011000010111000001101001")
             .addHeader("X-RapidAPI-Key", BuildConfig.X_RapidAPI_Key)
@@ -48,6 +52,9 @@ object SpoonacularApiCaller {
             .build()
 
     return try {
+      Log.e(
+          "SpoonacularApiCaller",
+          "Sending image analysis request to ${API_URL + IMAGE_ANALYSIS_ENDPOINT}")
       val response = client.newCall(request).execute()
 
       if (!response.isSuccessful) {
@@ -72,7 +79,7 @@ object SpoonacularApiCaller {
   fun getRecipeNutrition(recipeId: Int): RecipeNutritionResponseAPI {
     val request =
         Request.Builder()
-            .url(RECIPE_NUTRITION_ENDPOINT.format(recipeId))
+            .url(API_URL + RECIPE_NUTRITION_ENDPOINT.format(recipeId))
             .get()
             .addHeader("X-RapidAPI-Key", BuildConfig.X_RapidAPI_Key)
             .addHeader("X-RapidAPI-Host", BuildConfig.X_RapidAPI_Host)
