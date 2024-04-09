@@ -147,7 +147,7 @@ fun SearchIngredients() {
                           // TODO: Apply according nutrition facts to nutrition text fields
                         }
                         .padding(8.dp))
-              HorizontalDivider()
+            HorizontalDivider()
           }
         }
       }
