@@ -8,18 +8,12 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun FunctionalityNotAvailablePopup(onDismiss: () -> Unit) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        text = {
-            Text(
-                text = "Functionality not available \uD83D\uDE48",
-                style = MaterialTheme.typography.bodyMedium
-            )
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text(text = "CLOSE")
-            }
-        }
-    )
+  AlertDialog(
+      onDismissRequest = onDismiss,
+      text = {
+        Text(
+            text = "Functionality not available \uD83D\uDE48",
+            style = MaterialTheme.typography.bodyMedium)
+      },
+      confirmButton = { TextButton(onClick = onDismiss) { Text(text = "CLOSE") } })
 }

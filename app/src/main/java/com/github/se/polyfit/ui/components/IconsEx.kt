@@ -79,23 +79,27 @@ fun DarkPreviewAppIcon() {
 @Preview
 @Composable
 fun PreviewSearchIcon() {
-  PolyfitTheme(dynamicColor = false){SearchIcon(onClick = { /*TODO: Handle onClick*/})}
+  PolyfitTheme(dynamicColor = false) { SearchIcon(onClick = { /*TODO: Handle onClick*/}) }
 }
 
 @Preview
 @Composable
 fun DarkPreviewSearchIcon() {
-    PolyfitTheme(dynamicColor = false, darkTheme = true){SearchIcon(onClick = { /*TODO: Handle onClick*/})}
+  PolyfitTheme(dynamicColor = false, darkTheme = true) {
+    SearchIcon(onClick = { /*TODO: Handle onClick*/})
+  }
 }
 
 @Preview
 @Composable
 fun PreviewUserIcon() {
-  PolyfitTheme(dynamicColor = false){ UserIcon(onClick = { /*TODO: Handle onClick*/})}
+  PolyfitTheme(dynamicColor = false) { UserIcon(onClick = { /*TODO: Handle onClick*/}) }
 }
 
 @Preview
 @Composable
 fun DarkPreviewUserIcon() {
-    PolyfitTheme(dynamicColor = false, darkTheme = true){ UserIcon(onClick = { /*TODO: Handle onClick*/})}
+  PolyfitTheme(dynamicColor = false, darkTheme = true) {
+    UserIcon(onClick = { /*TODO: Handle onClick*/})
+  }
 }

@@ -5,4 +5,4 @@ import io.github.kakaocup.compose.node.element.ComposeScreen
 
 class GradientBox(semanticsProvider: SemanticsNodeInteractionsProvider) :
     ComposeScreen<GradientBox>(
-        semanticsProvider = semanticsProvider, viewBuilderAction = { hasTestTag("GradientBox") }) {}
+        semanticsProvider = semanticsProvider, viewBuilderAction = { hasTestTag("GradientBox") })

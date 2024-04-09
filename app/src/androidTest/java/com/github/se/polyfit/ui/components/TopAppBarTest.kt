@@ -9,60 +9,51 @@ import org.junit.Test
 
 class TopAppBarTest {
 
-    @get:Rule
-    val composeTestRule = createComposeRule()
+  @get:Rule val composeTestRule = createComposeRule()
 
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Test
-    fun defaultDrawerAppBar_isDisplayed() {
-        composeTestRule.setContent {
-            DefaultDrawerAppBar(title = { Text("Test Title") })
-        }
+  @OptIn(ExperimentalMaterial3Api::class)
+  @Test
+  fun defaultDrawerAppBar_isDisplayed() {
+    composeTestRule.setContent { DefaultDrawerAppBar(title = { Text("Test Title") }) }
 
-        composeTestRule.onNodeWithText("Test Title").assertIsDisplayed()
+    composeTestRule.onNodeWithText("Test Title").assertIsDisplayed()
+  }
+
+  @OptIn(ExperimentalMaterial3Api::class)
+  @Test
+  fun withSearchDrawerAppBar_isDisplayed() {
+    composeTestRule.setContent { WithSearchDrawerAppBar(title = { Text("Test Title") }) }
+
+    composeTestRule.onNodeWithText("Test Title").assertIsDisplayed()
+  }
+
+  @OptIn(ExperimentalMaterial3Api::class)
+  @Test
+  fun defaultDrawerAppBar_onNavIconPressed_isCalled() {
+    var navIconPressed = false
+
+    composeTestRule.setContent {
+      DefaultDrawerAppBar(
+          title = { Text("Test Title") }, onNavIconPressed = { navIconPressed = true })
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Test
-    fun withSearchDrawerAppBar_isDisplayed() {
-        composeTestRule.setContent {
-            WithSearchDrawerAppBar(title = { Text("Test Title") })
-        }
+    composeTestRule.onNodeWithContentDescription("App Icon").performClick()
 
-        composeTestRule.onNodeWithText("Test Title").assertIsDisplayed()
+    assert(navIconPressed)
+  }
+
+  @OptIn(ExperimentalMaterial3Api::class)
+  @Test
+  fun withSearchDrawerAppBar_onNavIconPressed_isCalled() {
+    var navIconPressed = false
+
+    composeTestRule.setContent {
+      WithSearchDrawerAppBar(
+          title = { Text("Test Title") }, onNavIconPressed = { navIconPressed = true })
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Test
-    fun defaultDrawerAppBar_onNavIconPressed_isCalled() {
-        var navIconPressed = false
+    composeTestRule.onNodeWithContentDescription("App Icon").performClick()
 
-        composeTestRule.setContent {
-            DefaultDrawerAppBar(
-                title = { Text("Test Title") },
-                onNavIconPressed = { navIconPressed = true }
-            )
-        }
-
-        composeTestRule.onNodeWithContentDescription("App Icon").performClick()
-
-        assert(navIconPressed)
-    }
-
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Test
-    fun withSearchDrawerAppBar_onNavIconPressed_isCalled() {
-        var navIconPressed = false
-
-        composeTestRule.setContent {
-            WithSearchDrawerAppBar(
-                title = { Text("Test Title") },
-                onNavIconPressed = { navIconPressed = true }
-            )
-        }
-
-        composeTestRule.onNodeWithContentDescription("App Icon").performClick()
-
-        assert(navIconPressed)
-    }
+    assert(navIconPressed)
+  }
 }

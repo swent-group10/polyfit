@@ -6,4 +6,4 @@ import io.github.kakaocup.compose.node.element.ComposeScreen
 class PrimaryPurpleButtonScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
     ComposeScreen<PrimaryPurpleButtonScreen>(
         semanticsProvider = semanticsProvider,
-        viewBuilderAction = { hasTestTag("PrimaryPurpleButton") }) {}
+        viewBuilderAction = { hasTestTag("PrimaryPurpleButton") })

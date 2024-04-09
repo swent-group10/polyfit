@@ -1,8 +1,6 @@
 package com.github.se.polyfit.ui.components
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -28,20 +26,19 @@ fun WithSearchDrawerAppBar(
     onNavIconPressed: () -> Unit = {},
     title: @Composable () -> Unit,
 ) {
-    var functionalityNotAvailablePopupShown by remember { mutableStateOf(false) }
-    if (functionalityNotAvailablePopupShown) {
-        FunctionalityNotAvailablePopup { functionalityNotAvailablePopupShown = false }
-    }
-    AppBarWithPopup(
-        modifier = modifier,
-        scrollBehavior = scrollBehavior,
-        title = title,
-        onNavIconPressed = onNavIconPressed,
-        actions = {
-            SearchIcon(onClick = { functionalityNotAvailablePopupShown = true })
-            UserIcon(onClick = { functionalityNotAvailablePopupShown = true })
-        }
-    )
+  var functionalityNotAvailablePopupShown by remember { mutableStateOf(false) }
+  if (functionalityNotAvailablePopupShown) {
+    FunctionalityNotAvailablePopup { functionalityNotAvailablePopupShown = false }
+  }
+  AppBarWithPopup(
+      modifier = modifier,
+      scrollBehavior = scrollBehavior,
+      title = title,
+      onNavIconPressed = onNavIconPressed,
+      actions = {
+        SearchIcon(onClick = { functionalityNotAvailablePopupShown = true })
+        UserIcon(onClick = { functionalityNotAvailablePopupShown = true })
+      })
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -53,18 +50,17 @@ fun DefaultDrawerAppBar(
     title: @Composable () -> Unit,
     actions: @Composable RowScope.() -> Unit = {}
 ) {
-    var functionalityNotAvailablePopupShown by remember { mutableStateOf(false) }
-    if (functionalityNotAvailablePopupShown) {
-        FunctionalityNotAvailablePopup { functionalityNotAvailablePopupShown = false }
-    }
-    AppBarWithPopup(
-        modifier = modifier,
-        scrollBehavior = scrollBehavior,
-        title = title,
-        onNavIconPressed = onNavIconPressed,
-        actions = { UserIcon(onClick = { functionalityNotAvailablePopupShown = true }) },
-
-    )
+  var functionalityNotAvailablePopupShown by remember { mutableStateOf(false) }
+  if (functionalityNotAvailablePopupShown) {
+    FunctionalityNotAvailablePopup { functionalityNotAvailablePopupShown = false }
+  }
+  AppBarWithPopup(
+      modifier = modifier,
+      scrollBehavior = scrollBehavior,
+      title = title,
+      onNavIconPressed = onNavIconPressed,
+      actions = { UserIcon(onClick = { functionalityNotAvailablePopupShown = true }) },
+  )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -77,18 +73,15 @@ private fun AppBarWithPopup(
     onNavIconPressed: () -> Unit = {}
 ) {
 
-    CenterAlignedTopAppBar(
-        modifier = modifier,
-        actions = actions,
-        title = title,
-        scrollBehavior = scrollBehavior,
-        navigationIcon = {
-            AppIcon(onClick = onNavIconPressed, modifier = Modifier.size(64.dp).padding(16.dp))
-        }
-    )
+  CenterAlignedTopAppBar(
+      modifier = modifier,
+      actions = actions,
+      title = title,
+      scrollBehavior = scrollBehavior,
+      navigationIcon = {
+        AppIcon(onClick = onNavIconPressed, modifier = Modifier.size(64.dp).padding(16.dp))
+      })
 }
-
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview

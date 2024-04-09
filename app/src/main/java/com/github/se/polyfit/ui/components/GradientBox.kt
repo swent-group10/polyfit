@@ -1,7 +1,9 @@
 package com.github.se.polyfit.ui.components
 
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -15,7 +17,8 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import com.github.se.polyfit.ui.theme.*
+import com.github.se.polyfit.ui.theme.PrimaryPink
+import com.github.se.polyfit.ui.theme.PrimaryPurple
 
 val EmptyImageVector =
     ImageVector.Builder(
