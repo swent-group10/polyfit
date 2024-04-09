@@ -1,14 +1,16 @@
 package com.github.se.polyfit.ui.screen
 
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import androidx.test.espresso.intent.matcher.IntentMatchers.toPackage
-import androidx.test.espresso.intent.rule.IntentsTestRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.MainActivity
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.kakaocup.compose.node.element.ComposeScreen
+import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -17,7 +19,15 @@ import org.junit.runner.RunWith
 class LoginTest : TestCase() {
   @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
 
-  @get:Rule val intentsTestRule = IntentsTestRule(MainActivity::class.java)
+  @Before
+  fun setup() {
+    Intents.init()
+  }
+
+  @After
+  fun tearDown() {
+    Intents.release()
+  }
 
   @Test
   fun titleAndButtonAreCorrectlyDisplayed() {
@@ -60,7 +70,6 @@ class LoginTest : TestCase() {
   @Test
   fun googleSignInReturnsValidActivityResult() {
     // Wait for the Compose UI to be idle before proceeding with the test
-    composeTestRule.waitForIdle()
 
     ComposeScreen.onComposeScreen<LoginScreen>(composeTestRule) {
       loginButton {
