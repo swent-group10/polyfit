@@ -27,12 +27,12 @@ class MealTest {
     val newNutritionalInformation =
         NutritionalInformation(mutableListOf(Nutrient("calcium", 1.0, MeasurementUnit.G)))
 
-    val ingredient = Ingredient("milk", 1, newNutritionalInformation)
+    val ingredient = Ingredient("milk", 1, 102.0, MeasurementUnit.MG, newNutritionalInformation)
     meal.addIngredient(ingredient)
     // Assert that the meal has been updated after adding an ingredient
     assertEquals(1, meal.ingredients.size)
-
     // Assert that the meal's nutritional information has been updated
+
     assertEquals(1.0, meal.nutritionalInformation.nutrients[0].amount, 0.001)
   }
 

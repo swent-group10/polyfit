@@ -1,6 +1,7 @@
 package com.github.se.polyfit.model.ingredient
 
 import android.util.Log
+import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 
 /**
@@ -14,7 +15,9 @@ import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 data class Ingredient(
     val name: String, // name is now a val
     val id: Int,
-    val nutritionalInformation: NutritionalInformation,
+    val amount: Double,
+    val unit: MeasurementUnit,
+    val nutritionalInformation: NutritionalInformation = NutritionalInformation(mutableListOf()),
 ) {
 
   companion object {
@@ -22,6 +25,8 @@ data class Ingredient(
       val map = mutableMapOf<String, Any>()
       map["name"] = ingredient.name
       map["id"] = ingredient.id
+      map["amount"] = ingredient.amount
+      map["unit"] = ingredient.unit.toString()
       map["nutritionalInformation"] =
           NutritionalInformation.serialize(ingredient.nutritionalInformation)
       return map
@@ -31,11 +36,12 @@ data class Ingredient(
       return try {
         val name = data["name"] as String
         val id = data["id"] as Int
+        val amount = data["amount"] as Double
+        val unit = MeasurementUnit.fromString(data["unit"] as String)
         val nutValue = data["nutritionalInformation"] as List<Map<String, Any>>
 
         val nutritionalInformation = NutritionalInformation.deserialize(nutValue)
-
-        Ingredient(name, id, nutritionalInformation)
+        Ingredient(name, id, amount, unit, nutritionalInformation)
       } catch (e: Exception) {
         Log.e("Ingredient", "Failed to deserialize Ingredient object: ${e.message}", e)
         throw IllegalArgumentException("Failed to deserialize Ingredient object", e)

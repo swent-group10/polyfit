@@ -5,6 +5,8 @@ import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.se.polyfit.model.ingredient.Ingredient
+import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.kakaocup.compose.node.element.ComposeScreen
@@ -47,24 +49,25 @@ class IngredientTest : TestCase() {
 
   private val manyIngredients =
       listOf(
-          Ingredient("Olive Oil", 5, "ml"),
-          Ingredient("Beef Tenderloin", 50, "g"),
-          Ingredient("White Asparagus", 10, "g"),
-          Ingredient("Corn", 4, "g"),
-          Ingredient("Foie Gras", 100, "g"))
+          Ingredient("Olive Oil", 5, 5.0, MeasurementUnit.ML),
+          Ingredient("Beef Tenderloin", 50, 50.0, MeasurementUnit.G),
+          Ingredient("White Asparagus", 10, 10.0, MeasurementUnit.G),
+          Ingredient("Corn", 4, 4.0, MeasurementUnit.G),
+          Ingredient("Foie Gras", 100, 100.0, MeasurementUnit.G),
+      )
   private val fewPotentialIngredients =
       listOf(
-          Ingredient("Carrots", 100, "g"),
+          Ingredient("Carrots", 100, 100.0, MeasurementUnit.G),
       )
 
   private val manyPotentialIngredients =
       listOf(
-          Ingredient("Carrots", 100, "g"),
-          Ingredient("Peas", 100, "g"),
-          Ingredient("Worcestershire Sauce", 15, "ml"),
-          Ingredient("Salt", 5, "g"),
-          Ingredient("Pepper", 5, "g"),
-          Ingredient("Garlic", 1, "clove"),
+          Ingredient("Carrots", 100, 100.0, MeasurementUnit.G),
+          Ingredient("Peas", 100, 100.0, MeasurementUnit.G),
+          Ingredient("Worcestershire Sauce", 15, 15.0, MeasurementUnit.ML),
+          Ingredient("Salt", 5, 5.0, MeasurementUnit.G),
+          Ingredient("Pepper", 5, 5.0, MeasurementUnit.G),
+          Ingredient("Garlic", 1, 1.0, MeasurementUnit.UNIT),
       )
 
   @Test
@@ -197,7 +200,7 @@ class IngredientTest : TestCase() {
 
       ingredientButton {
         assertIsDisplayed()
-        assertTextContains("Olive Oil 5ml")
+        assertTextContains("Olive Oil 5.0ML")
         assertHasClickAction()
       }
 
@@ -212,7 +215,7 @@ class IngredientTest : TestCase() {
     ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
       ingredientButton {
         assertIsDisplayed()
-        assertTextContains("Olive Oil 5ml")
+        assertTextContains("Olive Oil 5.0ML")
         assertHasClickAction()
         performClick()
       }
@@ -277,7 +280,7 @@ class IngredientTest : TestCase() {
 
       ingredientButton {
         assertIsDisplayed()
-        assertTextContains("Olive Oil 5ml")
+        assertTextContains("Olive Oil 5.0ML")
         assertHasClickAction()
       }
 
@@ -313,7 +316,7 @@ class IngredientTest : TestCase() {
 
       ingredientButton {
         assertIsDisplayed()
-        assertTextContains("Carrots 100g")
+        assertTextContains("Carrots 100.0G")
       }
 
       potentialIngredientButton { assertDoesNotExist() }
