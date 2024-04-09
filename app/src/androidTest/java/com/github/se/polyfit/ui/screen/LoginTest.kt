@@ -70,7 +70,6 @@ class LoginTest : TestCase() {
   @Test
   fun googleSignInReturnsValidActivityResult() {
 
-
     ComposeScreen.onComposeScreen<LoginScreen>(composeTestRule) {
       loginButton {
         assertIsDisplayed()
