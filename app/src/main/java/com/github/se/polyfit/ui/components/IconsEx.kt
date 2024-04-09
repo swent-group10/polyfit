@@ -16,7 +16,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import com.github.se.polyfit.data.User
+import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.ui.theme.PolyfitTheme
 
 @Composable
