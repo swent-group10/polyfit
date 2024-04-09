@@ -69,7 +69,7 @@ class LoginTest : TestCase() {
 
   @Test
   fun googleSignInReturnsValidActivityResult() {
-    // Wait for the Compose UI to be idle before proceeding with the test
+
 
     ComposeScreen.onComposeScreen<LoginScreen>(composeTestRule) {
       loginButton {
