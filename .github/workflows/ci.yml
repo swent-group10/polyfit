@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - main
-      - *
+      - '*'    # The other branches to be analyzed
 
 
   pull_request:
