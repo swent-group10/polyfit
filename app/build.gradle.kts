@@ -136,6 +136,8 @@ android {
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0")
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
         implementation("org.json:json:20210307")
+        implementation("com.google.code.gson:gson:2.10.1")
+
         androidTestImplementation("androidx.test.espresso:espresso-intents:3.5.1")
 
         androidTestImplementation("io.mockk:mockk:1.13.10")

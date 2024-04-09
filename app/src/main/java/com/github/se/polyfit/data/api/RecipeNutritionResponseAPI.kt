@@ -1,5 +1,6 @@
 package com.github.se.polyfit.data.api
 
+import android.util.Log
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
@@ -7,58 +8,65 @@ import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import org.json.JSONObject
 
 data class RecipeNutritionResponseAPI(
-    val nutrients: MutableList<Nutrient>,
-    val ingredients: MutableList<Ingredient>
+    val status: APIResponse,
+    val nutrients: List<Nutrient>,
+    val ingredients: List<Ingredient>
 ) {
   companion object {
+    private fun failure(): RecipeNutritionResponseAPI {
+      return RecipeNutritionResponseAPI(
+          status = APIResponse.FAILURE, nutrients = emptyList(), ingredients = emptyList())
+    }
+
     fun fromJsonObject(jsonObject: JSONObject): RecipeNutritionResponseAPI {
-      val nutrientsJsonArray = jsonObject.getJSONArray("nutrients")
-      val nutrients = mutableListOf<Nutrient>()
-
-      for (i in 0 until nutrientsJsonArray.length()) {
-        val nutrientJsonObject = nutrientsJsonArray.getJSONObject(i)
-        val nutrient =
-            Nutrient(
-                nutrientType = nutrientJsonObject.getString("name"),
-                amount = nutrientJsonObject.getDouble("amount"),
-                unit = MeasurementUnit.fromString(nutrientJsonObject.getString("unit")),
-            )
-        nutrients.add(nutrient)
-      }
-
-      val ingredientsJsonArray = jsonObject.getJSONArray("ingredients")
-
-      val ingredients = mutableListOf<Ingredient>()
-
-      for (i in 0 until ingredientsJsonArray.length()) {
-        val ingredientJsonObject = ingredientsJsonArray.getJSONObject(i)
-        val nutritionalInformation = NutritionalInformation(mutableListOf())
-
-        val nutrientsJSONArray = ingredientJsonObject.getJSONArray("nutrients")
-
-        for (j in 0 until nutrientsJSONArray.length()) {
-          val currNutrient = nutrientsJSONArray.getJSONObject(j)
-          val newNutrient =
+      try {
+        val nutrientsJsonObject = jsonObject.optJSONArray("nutrients") ?: return failure()
+        val nutrients: List<Nutrient> =
+            (0 until nutrientsJsonObject.length()).map {
               Nutrient(
-                  nutrientType = currNutrient.getString("name"),
-                  amount = currNutrient.getDouble("amount"),
-                  unit = MeasurementUnit.fromString(currNutrient.getString("unit")))
+                  nutrientType = nutrientsJsonObject.getJSONObject(it).getString("name"),
+                  amount = nutrientsJsonObject.getJSONObject(it).getDouble("amount"),
+                  unit =
+                      MeasurementUnit.fromString(
+                          nutrientsJsonObject.getJSONObject(it).getString("unit")))
+            }
 
-          nutritionalInformation.nutrients.add(newNutrient)
-        }
+        val ingredientsJsonArray = jsonObject.optJSONArray("ingredients") ?: return failure()
 
-        val newIngredient =
-            Ingredient(
-                name = ingredientJsonObject.getString("name"),
-                id = ingredientJsonObject.getString("id").toInt(),
-                amount = ingredientJsonObject.getString("amount").toDouble(),
-                unit = MeasurementUnit.fromString(ingredientJsonObject.getString("unit")),
-                nutritionalInformation = nutritionalInformation)
+        val ingredients =
+            (0 until ingredientsJsonArray.length())
+                .map {
+                  val ingredientJsonArray = ingredientsJsonArray.getJSONObject(it)
+                  val nutrientArray = ingredientJsonArray.getJSONArray("nutrients")
 
-        ingredients.add(newIngredient)
+                  val nutrients =
+                      (0 until nutrientArray.length())
+                          .map {
+                            val currentNutrient = nutrientArray.getJSONObject(it)
+                            Nutrient(
+                                nutrientType = currentNutrient.getString("name"),
+                                amount = currentNutrient.getDouble("amount"),
+                                unit =
+                                    MeasurementUnit.fromString(currentNutrient.getString("unit")))
+                          }
+                          .toMutableList()
+
+                  val nutritionalInformation = NutritionalInformation(nutrients)
+
+                  Ingredient(
+                      id = ingredientJsonArray.getInt("id"),
+                      name = ingredientJsonArray.getString("name"),
+                      nutritionalInformation = nutritionalInformation,
+                      amount = ingredientJsonArray.getDouble("amount"),
+                      unit = MeasurementUnit.fromString(ingredientJsonArray.getString("unit")))
+                }
+                .toList()
+
+        return RecipeNutritionResponseAPI(APIResponse.SUCCESS, nutrients, ingredients)
+      } catch (e: Exception) {
+        Log.e("RecipeNutritionResponseAPI", "Error parsing JSON", e)
+        return failure()
       }
-
-      return RecipeNutritionResponseAPI(nutrients = nutrients, ingredients = ingredients)
     }
   }
 }

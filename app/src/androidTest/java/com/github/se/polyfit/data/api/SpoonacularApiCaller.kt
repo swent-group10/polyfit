@@ -1,6 +1,6 @@
 import android.util.Log
 import androidx.test.platform.app.InstrumentationRegistry
-import com.github.se.polyfit.data.api.APIReponse
+import com.github.se.polyfit.data.api.APIResponse
 import com.github.se.polyfit.data.api.ImageAnalysisResponseAPI
 import com.github.se.polyfit.data.api.RecipeNutritionResponseAPI
 import com.github.se.polyfit.data.api.SpoonacularApiCaller
@@ -75,7 +75,7 @@ class SpoonacularApiCallerTest {
     val response = SpoonacularApiCaller.imageAnalysis(file.absolutePath)
 
     assert(response != null)
-    assert(response.status == APIReponse.SUCCESS)
+    assert(response.status == APIResponse.SUCCESS)
     assert(response.category == "cheesecake")
     assert(response.nutrition.filter { it.unit == MeasurementUnit.CAL }.first().amount == 293.0)
     val fatNutrient = response.nutrition.find { it.nutrientType == "fat" }
@@ -121,7 +121,7 @@ class SpoonacularApiCallerTest {
     val response = ImageAnalysisResponseAPI.fromJsonObject(jsonImageAnalysis)
 
     assert(response != null)
-    assert(response.status == APIReponse.SUCCESS)
+    assert(response.status == APIResponse.SUCCESS)
     assert(response.category == "cheesecake")
     assert(response.nutrition.filter { it.unit == MeasurementUnit.CAL }.first().amount == 293.0)
     val fatNutrient = response.nutrition.find { it.nutrientType == "fat" }
