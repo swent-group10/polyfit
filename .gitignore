@@ -224,5 +224,3 @@ fabric.properties
 **/.DS_Store
 
 .vscode/
-
-gradle.properties
