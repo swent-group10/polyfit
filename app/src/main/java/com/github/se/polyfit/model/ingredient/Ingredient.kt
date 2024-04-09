@@ -21,7 +21,7 @@ data class Ingredient(
 ) {
 
   companion object {
-    fun serializeIngredient(ingredient: Ingredient): Map<String, Any> {
+    fun serialize(ingredient: Ingredient): Map<String, Any> {
       val map = mutableMapOf<String, Any>()
       map["name"] = ingredient.name
       map["id"] = ingredient.id
@@ -32,7 +32,7 @@ data class Ingredient(
       return map
     }
 
-    fun deserializeIngredient(data: Map<String, Any>): Ingredient {
+    fun deserialize(data: Map<String, Any>): Ingredient {
       return try {
         val name = data["name"] as String
         val id = data["id"] as Int

@@ -38,9 +38,11 @@ class MealTest {
 
   @Test
   fun `Meal serialize should serialize meal correctly`() {
-    val meal = Meal(MealOccasion.DINNER, "eggs", 1, 102.2, NutritionalInformation(mutableListOf()))
+    val meal =
+        Meal(
+            MealOccasion.DINNER, "eggs", 1.toLong(), 102.2, NutritionalInformation(mutableListOf()))
     val serializedMeal = Meal.serialize(meal)
-    assertEquals(1, serializedMeal["mealID"])
+    assertEquals(1.toLong(), serializedMeal["mealID"])
     assertEquals(MealOccasion.DINNER.name, serializedMeal["occasion"])
     assertEquals("eggs", serializedMeal["name"])
     assertEquals(102.2, serializedMeal["mealTemp"])
@@ -63,14 +65,14 @@ class MealTest {
   fun `Meal deserialize should return meal if data is correct`() {
     val data =
         mapOf(
-            "mealID" to 1,
+            "mealID" to 1.toLong(),
             "occasion" to "DINNER",
             "name" to "eggs",
             "mealTemp" to 102.2,
             "nutritionalInformation" to NutritionalInformation(mutableListOf()).serialize())
     val meal = Meal.deserialize(data)
     assertNotNull(meal)
-    assertEquals(1, meal?.mealID)
+    assertEquals(1.toLong(), meal?.mealID)
     assertEquals(MealOccasion.DINNER, meal?.occasion)
     assertEquals("eggs", meal?.name)
     assertEquals(102.2, meal?.mealTemp)
@@ -80,7 +82,7 @@ class MealTest {
   fun `testing deserialize with Firebase type`() {
     val data: Map<String, Any> =
         mapOf(
-            "mealID" to 1,
+            "mealID" to 1.toLong(),
             "occasion" to "DINNER",
             "name" to "eggs",
             "mealTemp" to 102.2,
