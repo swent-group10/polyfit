@@ -36,6 +36,7 @@ fun WithSearchDrawerAppBar(
         modifier = modifier,
         scrollBehavior = scrollBehavior,
         title = title,
+        onNavIconPressed = onNavIconPressed,
         actions = {
             SearchIcon(onClick = { functionalityNotAvailablePopupShown = true })
             UserIcon(onClick = { functionalityNotAvailablePopupShown = true })
@@ -60,6 +61,7 @@ fun DefaultDrawerAppBar(
         modifier = modifier,
         scrollBehavior = scrollBehavior,
         title = title,
+        onNavIconPressed = onNavIconPressed,
         actions = { UserIcon(onClick = { functionalityNotAvailablePopupShown = true }) },
 
     )
