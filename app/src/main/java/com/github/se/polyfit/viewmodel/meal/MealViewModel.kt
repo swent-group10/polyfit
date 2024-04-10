@@ -1,17 +1,93 @@
 package com.github.se.polyfit.viewmodel.meal
 
+import android.graphics.Bitmap
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.map
+import com.github.se.polyfit.data.api.APIResponse
+import com.github.se.polyfit.data.api.SpoonacularApiCaller
 import com.github.se.polyfit.data.repository.MealRepository
 import com.github.se.polyfit.model.ingredient.Ingredient
+import com.github.se.polyfit.model.meal.Meal
+import com.github.se.polyfit.model.meal.MealOccasion
+import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import java.io.File
+import java.io.FileOutputStream
 
 class MealViewModel(userID: String) {
     // after friday use hilt dependency injection to make code cleaner, for now
     // i gues this is ok
     private val mealRepo: MealRepository = MealRepository(userID)
 
-    fun getAllMeals() {
+    fun getAllMeals(): LiveData<List<Meal?>> {
+        var liveMeals = MutableLiveData<List<Meal?>>()
+        var allMeals = mealRepo.getAllMeals()
+
+        // way to avoid crashing if getting all the meals is not successfull
+        //also can livedata can be observed to make the view non blocking
+        return liveMeals.map {
+            if (allMeals.isComplete && allMeals.isSuccessful) {
+                allMeals.result
+            } else {
+                // Placeholder for now
+                listOf(Meal.default())
+            }
+
+
+        }
+
     }
 
-    fun getIngredientsFromImage(image: String) {}
+    fun getIngredientsFromImage(imageBitmap: Bitmap): LiveData<Meal> {
+        // need to conver to File
+        var file = File.createTempFile("image", ".jpg")
+        imageBitmap.compress(
+            Bitmap.CompressFormat.PNG, 100, FileOutputStream(file)
+        )
+        //Gets Api response
+        val imageAnalysisResponse = SpoonacularApiCaller.imageAnalysis(file)
+
+        val meal = MutableLiveData<Meal>()
+        meal.value = Meal.default()
+
+
+        runBlocking {
+            launch {
+                val apiReponse = SpoonacularApiCaller.imageAnalysis(file)
+                if (apiReponse.status == APIResponse.SUCCESS) {
+                    //chooses from a bunch of recipes
+                    val recipeInformation =
+                        SpoonacularApiCaller.getRecipeNutrition(apiReponse.recipes.first())
+
+                    if (recipeInformation.status == APIResponse.SUCCESS) {
+                        val newMeal = Meal(
+                            MealOccasion.NONE,
+                            apiReponse.category,
+                            apiReponse.recipes.first().toLong(),
+                            20.0,
+                            NutritionalInformation(recipeInformation.nutrients.toMutableList()),
+                            recipeInformation.ingredients.toMutableList(),
+                            //firebase id not defined yet because no calls to store the information
+                            ""
+
+                        )
+
+                        mealRepo.storeMeal(newMeal).addOnCompleteListener {
+                            newMeal.firebaseId = it.result.id
+
+                            meal.value = newMeal
+
+                        }
+
+                    }
+                }
+            }
+        }
+
+        return meal
+    }
 
     fun setIngredients(mealID: Long, ingredient: Ingredient) {}
 
@@ -24,7 +100,7 @@ class MealViewModel(userID: String) {
 
 
 /*
-features requested by mesha : Sweet!
+features requested by mesha :
 
 
 getIngredients (for initial display, i guess either a list of all ingredients or if we support it, one for confirmed and one for potential ingredients)
