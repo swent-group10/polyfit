@@ -20,6 +20,7 @@ class UserTest {
 
   @Test
   fun `currentUser is null by default`() {
+    User.resetCurrentUser()
     assertNull(User.currentUser)
   }
 
