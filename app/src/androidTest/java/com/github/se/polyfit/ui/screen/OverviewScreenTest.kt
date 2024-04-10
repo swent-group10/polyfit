@@ -3,11 +3,13 @@ package com.github.se.polyfit.ui.screen
 import android.util.Log
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollToNode
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -127,10 +129,16 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
   @Test
   fun OverviewScreenContent_Displayed() {
     ComposeScreen.onComposeScreen<OverviewScreen>(composeTestRule) {
+      composeTestRule
+          .onNodeWithTag("OverviewScreenLazyColumn")
+          .performScrollToNode(hasTestTag("ThirdCard"))
       thirdCard {
         assertExists()
         assertIsDisplayed()
       }
+      composeTestRule
+          .onNodeWithTag("OverviewScreenLazyColumn")
+          .performScrollToNode(hasTestTag("CalorieCard"))
 
       secondCard {
         assertExists()
