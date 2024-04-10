@@ -271,4 +271,16 @@ class NutritionalInformationTest {
 
     assertEquals(nutritionalInformation1.hashCode(), nutritionalInformation2.hashCode())
   }
+
+  @Test
+  fun `getNutrient returns the correct nutrient`() {
+    val nutrient = nutritionalInformation.getNutrient("totalWeight")
+    assertEquals(Nutrient("totalWeight", 100.0, MeasurementUnit.G), nutrient)
+  }
+
+  @Test
+  fun `getNutrient returns null if nutrient does not exist`() {
+    val nutrient = nutritionalInformation.getNutrient("nonExistentNutrient")
+    assertEquals(null, nutrient)
+  }
 }

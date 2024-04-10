@@ -1,6 +1,7 @@
 package com.github.se.polyfit.model.nutritionalInformation
 
 import android.util.Log
+import com.github.se.polyfit.ui.utils.titleCase
 
 data class Nutrient(val nutrientType: String, val amount: Double, val unit: MeasurementUnit) {
 
@@ -12,6 +13,24 @@ data class Nutrient(val nutrientType: String, val amount: Double, val unit: Meas
 
   fun deepCopy(): Nutrient {
     return Nutrient(nutrientType, amount, unit)
+  }
+
+  fun getFormattedName(): String {
+    return if (!isVitamin()) {
+      val regex = "(?=[A-Z])".toRegex()
+      titleCase(nutrientType.split(regex).joinToString(" "))
+    } else {
+      val vitaminType = nutrientType.substringAfter("vitamin", "")
+      titleCase("vitamin $vitaminType")
+    }
+  }
+
+  fun getFormattedAmount(): String {
+    return "${amount.toInt()} ${unit.toString().lowercase()}"
+  }
+
+  private fun isVitamin(): Boolean {
+    return nutrientType.startsWith("vitamin", ignoreCase = true)
   }
 
   override fun equals(other: Any?): Boolean {
