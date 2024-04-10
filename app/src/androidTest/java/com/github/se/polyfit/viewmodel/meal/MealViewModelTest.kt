@@ -24,60 +24,53 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class MealViewModelTest {
 
-    @MockK
-    private var mealRepository: MealRepository = mockk(relaxed = true)
+  @MockK private var mealRepository: MealRepository = mockk(relaxed = true)
 
-    private lateinit var viewModel: MealViewModel
+  private lateinit var viewModel: MealViewModel
 
-    private var spoonacularApiCaller: SpoonacularApiCaller = mockk(relaxed = true)
+  private var spoonacularApiCaller: SpoonacularApiCaller = mockk(relaxed = true)
 
-    @get:Rule
-    val instantTaskExecutorRule = InstantTaskExecutorRule()
+  @get:Rule val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    private val meal = Meal(
-        MealOccasion.DINNER,
-        "name",
-        123,
-        20.3,
-        NutritionalInformation(mutableListOf())
-    )
+  private val meal =
+      Meal(MealOccasion.DINNER, "name", 123, 20.3, NutritionalInformation(mutableListOf()))
 
-    @Before
-    fun setUp() {
-        viewModel = MealViewModel(mealRepository, spoonacularApiCaller)
+  @Before
+  fun setUp() {
+    viewModel = MealViewModel(mealRepository, spoonacularApiCaller)
+  }
 
-    }
+  @Test
+  fun testGetAllMeals_Success() = runTest {
+    val expectedMeals = listOf(meal)
+    every { mealRepository.getAllMeals() } returns
+        Tasks.forResult(expectedMeals) // Adapt this mock to correctly reflect your repository API
 
-    @Test
-    fun testGetAllMeals_Success() = runTest {
-        val expectedMeals = listOf(meal)
-        every { mealRepository.getAllMeals() } returns Tasks.forResult(expectedMeals)  // Adapt this mock to correctly reflect your repository API
+    val observer = mockk<Observer<List<Meal?>>>(relaxed = true)
+    viewModel.getAllMeals().observeForever(observer)
 
-        val observer = mockk<Observer<List<Meal?>>>(relaxed = true)
-        viewModel.getAllMeals().observeForever(observer)
+    verify { observer.onChanged(expectedMeals) }
+  }
 
-        verify { observer.onChanged(expectedMeals) }
-    }
+  @Test
+  fun testGetAllMeals_Faillure() = runTest {
+    val expectedMeals = listOf(meal)
+    every { mealRepository.getAllMeals() } returns
+        Tasks.forException(
+            Exception(
+                "An error occurred")) // Adapt this mock to correctly reflect your repository API
 
-    @Test
-    fun testGetAllMeals_Faillure() = runTest {
-        val expectedMeals = listOf(meal)
-        every { mealRepository.getAllMeals() } returns Tasks.forException(
-            Exception("An error occurred")
-        )  // Adapt this mock to correctly reflect your repository API
+    val observer = mockk<Observer<List<Meal?>>>(relaxed = true)
+    viewModel.getAllMeals().observeForever(observer)
 
-        val observer = mockk<Observer<List<Meal?>>>(relaxed = true)
-        viewModel.getAllMeals().observeForever(observer)
+    verify { observer.onChanged(listOf(Meal.default())) }
+  }
 
-        verify { observer.onChanged(listOf(Meal.default())) }
-    }
-
-    @Test
-    fun getMealsFromImage() {
-        val inputStream =
-            InstrumentationRegistry.getInstrumentation().context.assets.open("cheesecake.jpg")
-        val bitmap = BitmapFactory.decodeStream(inputStream)
-        viewModel.getMealsFromImage(bitmap)
-    }
+  @Test
+  fun getMealsFromImage() {
+    val inputStream =
+        InstrumentationRegistry.getInstrumentation().context.assets.open("cheesecake.jpg")
+    val bitmap = BitmapFactory.decodeStream(inputStream)
+    viewModel.getMealsFromImage(bitmap)
+  }
 }
-
