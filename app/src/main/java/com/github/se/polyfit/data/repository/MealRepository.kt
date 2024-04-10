@@ -12,14 +12,11 @@ class MealRepository(
     private val mealFirebaseRepository: MealFirebaseRepository = MealFirebaseRepository(userID),
 ) {
 
-    fun storeMeal(meal: Meal) = mealFirebaseRepository.storeMeal(meal)
+  fun storeMeal(meal: Meal) = mealFirebaseRepository.storeMeal(meal)
 
-    fun getMeal(firebaseID: String) =
-        mealFirebaseRepository.getMeal(firebaseID)
+  fun getMeal(firebaseID: String) = mealFirebaseRepository.getMeal(firebaseID)
 
-    fun getAllMeals() =
-        mealFirebaseRepository.getAllMeals()
+  fun getAllMeals() = mealFirebaseRepository.getAllMeals()
 
-    fun deleteMeal(firebaseID: String) =
-        mealFirebaseRepository.deleteMeal(firebaseID)
+  fun deleteMeal(firebaseID: String) = mealFirebaseRepository.deleteMeal(firebaseID)
 }

@@ -37,90 +37,75 @@ import com.github.se.polyfit.viewmodel.login.LoginViewModel
 
 @Composable
 fun LoginScreen(goTo: () -> Unit) {
-    // Create an instance of the Authentication class
+  // Create an instance of the Authentication class
 
-    val viewModel: LoginViewModel = hiltViewModel()
+  val viewModel: LoginViewModel = hiltViewModel()
 
-    val signInLauncher =
-        rememberLauncherForActivityResult(contract = FirebaseAuthUIActivityResultContract()) { res ->
-            viewModel.onSignInResult(res) {
-                if (it) goTo() else Log.d(
-                    "LoginScreen",
-                    "Sign in failed"
-                )
-            }
-        }
+  val signInLauncher =
+      rememberLauncherForActivityResult(contract = FirebaseAuthUIActivityResultContract()) { res ->
+        viewModel.onSignInResult(res) { if (it) goTo() else Log.d("LoginScreen", "Sign in failed") }
+      }
 
-    // Set the signInLauncher in the Authentication class
-    viewModel.setSignInLauncher(signInLauncher)
+  // Set the signInLauncher in the Authentication class
+  viewModel.setSignInLauncher(signInLauncher)
 
-    // This function starts the sign-in process
-    fun createSignInIntent() {
-        viewModel.signIn()
-    }
+  // This function starts the sign-in process
+  fun createSignInIntent() {
+    viewModel.signIn()
+  }
 
-    Surface(
-        modifier = Modifier
-            .fillMaxSize()
-            .testTag("LoginScreen"),
-        color = MaterialTheme.colorScheme.background
-    ) {
+  Surface(
+      modifier = Modifier.fillMaxSize().testTag("LoginScreen"),
+      color = MaterialTheme.colorScheme.background) {
         Column(
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Spacer(Modifier.weight(0.2f))
+            horizontalAlignment = Alignment.CenterHorizontally) {
+              Spacer(Modifier.weight(0.2f))
 
-            Title(Modifier.testTag("LoginTitle"), 50.sp)
+              Title(Modifier.testTag("LoginTitle"), 50.sp)
 
-            Spacer(Modifier.weight(0.6f))
+              Spacer(Modifier.weight(0.6f))
 
-            SignInButton {
+              SignInButton {
                 Log.d("LoginScreen", "button clicked")
                 createSignInIntent()
+              }
+
+              Spacer(Modifier.weight(0.03f))
+
+              Text(
+                  termText, textAlign = TextAlign.Center, modifier = Modifier.testTag("LoginTerms"))
+
+              Spacer(Modifier.weight(0.2f))
             }
-
-            Spacer(Modifier.weight(0.03f))
-
-            Text(
-                termText, textAlign = TextAlign.Center, modifier = Modifier.testTag("LoginTerms")
-            )
-
-            Spacer(Modifier.weight(0.2f))
-        }
-    }
+      }
 }
 
 val termText = buildAnnotatedString {
-    append("By clicking continue, you agree to our \n")
-    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) { append("Terms of Service") }
-    append(" and ")
+  append("By clicking continue, you agree to our \n")
+  withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) { append("Terms of Service") }
+  append(" and ")
 
-    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) { append("Privacy Policy") }
+  withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) { append("Privacy Policy") }
 }
 
 @Composable
 fun SignInButton(onClick: () -> Unit) {
 
-    Button(
-        onClick = { onClick() },
-        shape = RoundedCornerShape(20.dp),
-        colors =
-        ButtonDefaults.buttonColors(
-            contentColor = MaterialTheme.colorScheme.onPrimary, containerColor = PrimaryPurple
-        ),
-        modifier = Modifier.testTag("LoginButton")
-    ) {
-        val imageModifierGoogle = Modifier
-            .size(24.dp)
-            .absoluteOffset(x = (-13).dp, y = 0.dp)
+  Button(
+      onClick = { onClick() },
+      shape = RoundedCornerShape(20.dp),
+      colors =
+          ButtonDefaults.buttonColors(
+              contentColor = MaterialTheme.colorScheme.onPrimary, containerColor = PrimaryPurple),
+      modifier = Modifier.testTag("LoginButton")) {
+        val imageModifierGoogle = Modifier.size(24.dp).absoluteOffset(x = (-13).dp, y = 0.dp)
 
         Image(
             painter = painterResource(id = R.drawable.google_logo),
             contentDescription = "Google_logo",
             contentScale = ContentScale.Fit,
-            modifier = imageModifierGoogle
-        )
+            modifier = imageModifierGoogle)
         Text(text = "Sign in with Google")
-    }
+      }
 }
