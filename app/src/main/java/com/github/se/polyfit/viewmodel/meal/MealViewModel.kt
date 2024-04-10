@@ -16,30 +16,36 @@ import java.io.File
 import java.io.FileOutputStream
 import kotlinx.coroutines.launch
 
-class MealViewModel(userID: String) : ViewModel() {
-  // after friday use hilt dependency injection to make code cleaner, for now
-  // i guess this is ok
+class MealViewModel(userID: String, firebaseID: String = "") : ViewModel() {
+  // after friday use hilt dependency injection to make code cleaner, for now i guess this is ok
   private val mealRepo: MealRepository = MealRepository(userID)
-  private val _ingredients: MutableLiveData<List<Ingredient>> = MutableLiveData(listOf())
 
-  fun getAllMeals(): LiveData<List<Meal?>> {
-    var liveMeals = MutableLiveData<List<Meal?>>()
-    mealRepo.getAllMeals().continueWith {
-      if (it.isSuccessful) {
-        liveMeals.value = it.result
-      } else {
-        liveMeals.value = listOf(Meal.default())
+  private val _meal: MutableLiveData<Meal> = MutableLiveData(null)
+  val meal: LiveData<Meal> = _meal
+
+  init {
+    if (firebaseID.isNotEmpty()) {
+      mealRepo.getMeal(firebaseID).addOnCompleteListener {
+        if (it.isSuccessful) {
+          _meal.value = it.result
+        }
       }
+    } else {
+      _meal.value =
+          Meal(
+              MealOccasion.NONE,
+              "Temporary Meal Name",
+              0,
+              20.0,
+              NutritionalInformation(mutableListOf()),
+              mutableListOf(),
+              firebaseID)
     }
-
-    // way to avoid crashing if getting all the meals is not successfull
-    // also can livedata can be observed to make the view non blocking
-    return liveMeals
   }
 
-  fun getMealsFromImage(imageBitmap: Bitmap): LiveData<Meal> {
-    // need to conver to File
-    var file = File.createTempFile("image", ".jpg")
+  fun getMealFromImage(imageBitmap: Bitmap): LiveData<Meal> {
+    // Convert to file
+    val file = File.createTempFile("image", ".jpg")
     imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, FileOutputStream(file))
     // Gets Api response
 
@@ -47,24 +53,24 @@ class MealViewModel(userID: String) : ViewModel() {
     meal.value = Meal.default()
 
     viewModelScope.launch {
-      val apiReponse = SpoonacularApiCaller.imageAnalysis(file)
-      if (apiReponse.status == APIResponse.SUCCESS) {
+      val apiResponse = SpoonacularApiCaller.imageAnalysis(file)
+      if (apiResponse.status == APIResponse.SUCCESS) {
         // chooses from a bunch of recipes
-        val recipeInformation = SpoonacularApiCaller.getMealNutrition(apiReponse.recipes.first())
+        val recipeInformation = SpoonacularApiCaller.getMealNutrition(apiResponse.recipes.first())
 
         if (recipeInformation.status == APIResponse.SUCCESS) {
           val newMeal =
               Meal(
                   MealOccasion.NONE,
-                  apiReponse.category,
-                  apiReponse.recipes.first().toLong(),
+                  apiResponse.category,
+                  apiResponse.recipes.first().toLong(),
                   20.0,
                   NutritionalInformation(recipeInformation.nutrients.toMutableList()),
                   recipeInformation.ingredients.toMutableList(),
                   // firebase id not defined yet because no calls to store the information
                   "")
 
-          mealRepo.storeMeal(newMeal).addOnCompleteListener {
+          mealRepo.storeMeal(newMeal).addOnCompleteListener { it ->
             newMeal.firebaseId = it.result.id
 
             meal.value = newMeal
@@ -81,23 +87,41 @@ class MealViewModel(userID: String) : ViewModel() {
     return meal
   }
 
-  fun setMeal(meal: Meal) {
-    mealRepo.storeMeal(meal)
+  fun setMeal() {
+    if (_meal.value == null) {
+      throw IllegalStateException("Meal is null")
+    }
+
+    if (!_meal.value!!.isComplete()) {
+      throw Exception("Meal is incomplete")
+    }
+
+    mealRepo.storeMeal(_meal.value!!)
   }
 
-  fun getAllIngredients(): LiveData<List<Ingredient>> {
-    return _ingredients
+  fun addIngredient(ingredient: Ingredient) {
+    val currentMeal = _meal.value
+    if (currentMeal != null) {
+      // TODO: Ideally use the Meal.addIngredient method but its not working rn...
+      val updatedMeal =
+          currentMeal.copy(
+              ingredients = currentMeal.ingredients.toMutableList().apply { add(ingredient) },
+              nutritionalInformation =
+                  currentMeal.nutritionalInformation.plus(ingredient.nutritionalInformation))
+      _meal.value = updatedMeal // Emit the new instance as the current state
+    }
+  }
+
+  fun removeIngredient(ingredient: Ingredient) {
+    val currentMeal = _meal.value
+    if (currentMeal != null) {
+      // TODO: Use a method of Meal somehow
+      val updatedMeal =
+          currentMeal.copy(
+              ingredients = currentMeal.ingredients.toMutableList().apply { remove(ingredient) },
+              nutritionalInformation =
+                  currentMeal.nutritionalInformation.minus(ingredient.nutritionalInformation))
+      _meal.value = updatedMeal
+    }
   }
 }
-
-/*
-features requested by mesha :
-
-
-getIngredients (for initial display, i guess either a list of all ingredients or if we support it, one for confirmed and one for potential ingredients)
-addIngredient (add from potential ingredient list, or from the add button)
-removeIngredient (for when expanding the ingredient is supported)
-
-
-
- */

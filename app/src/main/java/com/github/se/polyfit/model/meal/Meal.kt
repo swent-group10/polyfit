@@ -55,6 +55,12 @@ data class Meal(
     updateMeal()
   }
 
+  fun isComplete(): Boolean {
+    return name.isNotEmpty() &&
+        ingredients.isNotEmpty() &&
+        nutritionalInformation.nutrients.isNotEmpty()
+  }
+
   private fun updateMeal() {
 
     var newNutritionalInformation = NutritionalInformation(mutableListOf())
