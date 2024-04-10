@@ -9,6 +9,8 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -16,6 +18,7 @@ import androidx.navigation.navigation
 import com.github.se.polyfit.ui.components.MainBottomNavBar
 import com.github.se.polyfit.ui.components.OverviewTopBar
 import com.github.se.polyfit.ui.navigation.BottomNavItem
+import com.github.se.polyfit.ui.navigation.NavItemTags
 import com.github.se.polyfit.ui.navigation.Route
 
 @Composable
@@ -31,16 +34,29 @@ fun GenericScreens(
             items =
                 listOf(
                     BottomNavItem(
-                        name = "Overview", route = Route.Overview, icon = Icons.Default.Menu),
-                    BottomNavItem(name = "Map", route = Route.Map, icon = Icons.Default.Place),
+                        name = NavItemTags.overviewName,
+                        route = Route.Overview,
+                        icon = Icons.Default.Menu,
+                        itemTag = NavItemTags.overviewItem,
+                        iconTag = NavItemTags.overviewIcon),
                     BottomNavItem(
-                        name = "Settings", route = Route.Settings, icon = Icons.Default.Settings)),
+                        name = NavItemTags.mapName,
+                        route = Route.Map,
+                        icon = Icons.Default.Place,
+                        itemTag = NavItemTags.mapItem,
+                        iconTag = NavItemTags.mapIcon),
+                    BottomNavItem(
+                        name = NavItemTags.settingsName,
+                        route = Route.Settings,
+                        icon = Icons.Default.Settings,
+                        itemTag = NavItemTags.settingsItem,
+                        iconTag = NavItemTags.settingsIcon)),
             navController = navController,
             onItemClick = {
-                Log.i("Navigation", "Bottom bar navigation to ${it.route}")
-                navController.navigate(it.route)
+              Log.i("Navigation", "Bottom bar navigation to ${it.route}")
+              navController.navigate(it.route)
             },
-        )
+            modifier = Modifier.testTag("MainBottomBar"))
       },
       content = content)
 }

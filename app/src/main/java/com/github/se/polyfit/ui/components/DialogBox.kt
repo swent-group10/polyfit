@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,24 +31,32 @@ fun PictureDialog(
   AlertDialog(
       onDismissRequest = onDismiss,
       confirmButton = {},
-      modifier = Modifier.height(250.dp),
+      modifier = Modifier.height(250.dp).testTag("PictureDialog"),
       title = {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-          Text(text = "Choose Option", fontSize = 25.sp, fontWeight = FontWeight.ExtraBold)
-        }
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.testTag("PictureDialogRow")) {
+              Text(
+                  text = "Choose Option",
+                  fontSize = 25.sp,
+                  fontWeight = FontWeight.ExtraBold,
+                  modifier = Modifier.testTag("PictureDialogTitle"))
+            }
       },
       text = {
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().testTag("PictureDialogColumn"),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center) {
               Button(
-                  onClick = onFirstButtonClick, modifier = Modifier.width(180.dp).padding(10.dp)) {
-                    Text(firstButtonName)
+                  onClick = onFirstButtonClick,
+                  modifier = Modifier.width(180.dp).padding(10.dp).testTag("FirstButton")) {
+                    Text(text = firstButtonName, modifier = Modifier.testTag("FirstButtonName"))
                   }
               Button(
-                  onClick = onSecondButtonClick, modifier = Modifier.width(180.dp).padding(10.dp)) {
-                    Text(secondButtonName)
+                  onClick = onSecondButtonClick,
+                  modifier = Modifier.width(180.dp).padding(10.dp).testTag("SecondButton")) {
+                    Text(text = secondButtonName, modifier = Modifier.testTag("SecondButtonName"))
                   }
             }
       })

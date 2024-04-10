@@ -9,6 +9,7 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -26,7 +27,7 @@ fun MainBottomNavBar(
 ) {
   val backStackEntry = navController.currentBackStackEntryAsState()
   NavigationBar(
-      modifier = modifier,
+      modifier = modifier.testTag("MainBottomBar"),
       containerColor = MaterialTheme.colorScheme.primaryContainer,
       contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
       tonalElevation = 5.dp) {
@@ -35,16 +36,21 @@ fun MainBottomNavBar(
           val selectedContentColor = MaterialTheme.colorScheme.inversePrimary
           val unselectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer
           NavigationBarItem(
+              modifier = Modifier.testTag(item.itemTag),
               selected = selected,
               icon = {
                 Column {
-                  Icon(imageVector = item.icon, contentDescription = item.name)
+                  Icon(
+                      imageVector = item.icon,
+                      contentDescription = item.name,
+                      modifier = Modifier.testTag(item.iconTag))
                   if (selected) {
                     Text(
                         text = item.name,
                         fontSize = 10.sp,
                         fontWeight = FontWeight.SemiBold,
-                        textAlign = TextAlign.Center)
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.testTag(item.name))
                   }
                 }
               },

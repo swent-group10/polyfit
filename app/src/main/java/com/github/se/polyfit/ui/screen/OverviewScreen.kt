@@ -41,6 +41,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -50,61 +51,82 @@ import com.github.se.polyfit.R
 import com.github.se.polyfit.ui.components.PictureDialog
 
 @Composable
-fun CalorieCardContent(onPhoto: () -> Unit, Button2 : () -> Unit = {}, Button3 : () -> Unit = {}) {
+fun CalorieCardContent(onPhoto: () -> Unit, Button2: () -> Unit = {}, Button3: () -> Unit = {}) {
 
-  Box(modifier = Modifier.fillMaxSize()) {
+  Box(modifier = Modifier.fillMaxSize().testTag("CalorieCard")) {
     Text(
         text = "Calories Goal",
-        modifier = Modifier.align(Alignment.TopStart).padding(start = 10.dp, top = 10.dp),
+        modifier =
+            Modifier.align(Alignment.TopStart)
+                .padding(start = 10.dp, top = 10.dp)
+                .testTag("CalorieCardTitle"),
         fontSize = MaterialTheme.typography.headlineMedium.fontSize,
         fontWeight = FontWeight.Bold,
         color = MaterialTheme.colorScheme.secondary)
-    Row(modifier = Modifier.align(Alignment.TopStart).padding(start = 30.dp, top = 60.dp)) {
-      Text(
-          text = "756",
-          fontSize = MaterialTheme.typography.headlineMedium.fontSize,
-          fontWeight = FontWeight.Bold,
-          color = MaterialTheme.colorScheme.primary)
+    Row(
+        modifier =
+            Modifier.align(Alignment.TopStart)
+                .padding(start = 30.dp, top = 60.dp)
+                .testTag("CalorieAmount")) {
+          Text(
+              text = "756",
+              fontSize = MaterialTheme.typography.headlineMedium.fontSize,
+              fontWeight = FontWeight.Bold,
+              color = MaterialTheme.colorScheme.primary,
+              modifier = Modifier.testTag("Number"))
 
-      Text(
-          text = "/",
-          fontSize = MaterialTheme.typography.headlineMedium.fontSize,
-          fontWeight = FontWeight.Bold,
-          color = MaterialTheme.colorScheme.primary)
+          Text(
+              text = "/",
+              fontSize = MaterialTheme.typography.headlineMedium.fontSize,
+              fontWeight = FontWeight.Bold,
+              color = MaterialTheme.colorScheme.primary,
+              modifier = Modifier.testTag("Slash"))
 
-      Text(
-          text = "2200",
-          fontSize = MaterialTheme.typography.headlineMedium.fontSize,
-          fontWeight = FontWeight.Bold,
-          color = MaterialTheme.colorScheme.primary)
-    }
+          Text(
+              text = "2200",
+              fontSize = MaterialTheme.typography.headlineMedium.fontSize,
+              fontWeight = FontWeight.Bold,
+              color = MaterialTheme.colorScheme.primary,
+              modifier = Modifier.testTag("Goal"))
+        }
 
-    Column(modifier = Modifier.align(Alignment.TopEnd).padding(end = 90.dp, top = 50.dp)) {
-      val size = MaterialTheme.typography.bodyMedium.fontSize
-      Text(
-          text = "Breakfast",
-          color = colorResource(R.color.purple_200),
-          fontWeight = FontWeight.Bold,
-          fontSize = size)
-      Text(
-          text = "Lunch",
-          color = colorResource(R.color.purple_200),
-          fontWeight = FontWeight.Bold,
-          fontSize = size)
-      Text(
-          text = "Dinner",
-          color = colorResource(R.color.purple_200),
-          fontWeight = FontWeight.Bold,
-          fontSize = size)
-      Text(
-          text = "Snacks",
-          color = colorResource(R.color.purple_200),
-          fontWeight = FontWeight.Bold,
-          fontSize = size)
-    }
+    Column(
+        modifier =
+            Modifier.align(Alignment.TopEnd)
+                .padding(end = 90.dp, top = 50.dp)
+                .testTag("CaloriePerMeal")) {
+          val size = MaterialTheme.typography.bodyMedium.fontSize
+          Text(
+              text = "Breakfast",
+              color = colorResource(R.color.purple_200),
+              fontWeight = FontWeight.Bold,
+              fontSize = size,
+              modifier = Modifier.testTag("Breakfast"))
+          Text(
+              text = "Lunch",
+              color = colorResource(R.color.purple_200),
+              fontWeight = FontWeight.Bold,
+              fontSize = size,
+              modifier = Modifier.testTag("Lunch"))
+          Text(
+              text = "Dinner",
+              color = colorResource(R.color.purple_200),
+              fontWeight = FontWeight.Bold,
+              fontSize = size,
+              modifier = Modifier.testTag("Dinner"))
+          Text(
+              text = "Snacks",
+              color = colorResource(R.color.purple_200),
+              fontWeight = FontWeight.Bold,
+              fontSize = size,
+              modifier = Modifier.testTag("Snacks"))
+        }
     Text(
         text = "Track your meals",
-        modifier = Modifier.align(Alignment.CenterStart).padding(top = 30.dp, start = 10.dp),
+        modifier =
+            Modifier.align(Alignment.CenterStart)
+                .padding(top = 30.dp, start = 10.dp)
+                .testTag("MealTracking"),
         fontSize = MaterialTheme.typography.titleMedium.fontSize,
         fontWeight = FontWeight.SemiBold,
         color = MaterialTheme.colorScheme.secondary)
@@ -120,10 +142,11 @@ fun CalorieCardContent(onPhoto: () -> Unit, Button2 : () -> Unit = {}, Button3 :
         modifier =
             Modifier.align(Alignment.BottomStart)
                 .padding(start = 25.dp, bottom = 15.dp)
-                .background(MaterialTheme.colorScheme.background)) {
+                .background(MaterialTheme.colorScheme.background)
+                .testTag("PhotoButton")) {
           Icon(
-              painter = painterResource(R.drawable.outline_photo_camera_24),
-              contentDescription = null)
+              painter = painterResource(R.drawable.outline_photo_camera),
+              contentDescription = "photoIcon")
         }
 
     Button(
@@ -137,10 +160,11 @@ fun CalorieCardContent(onPhoto: () -> Unit, Button2 : () -> Unit = {}, Button3 :
         modifier =
             Modifier.align(Alignment.BottomStart)
                 .padding(start = 130.dp, bottom = 15.dp)
-                .background(Color.Transparent)) {
+                .background(Color.Transparent)
+                .testTag("EditButton")) {
           Icon(
-              painter = painterResource(R.drawable.baseline_mode_edit_outline_24),
-              contentDescription = null)
+              painter = painterResource(R.drawable.baseline_mode_edit_outline),
+              contentDescription = "penIcon")
         }
 
     Button(
@@ -154,10 +178,11 @@ fun CalorieCardContent(onPhoto: () -> Unit, Button2 : () -> Unit = {}, Button3 :
         modifier =
             Modifier.align(Alignment.BottomStart)
                 .padding(start = 235.dp, bottom = 15.dp)
-                .background(Color.Transparent)) {
+                .background(Color.Transparent)
+                .testTag("HistoryButton")) {
           Icon(
-              painter = painterResource(R.drawable.outline_assignment_24),
-              contentDescription = null)
+              painter = painterResource(R.drawable.outline_assignment),
+              contentDescription = "historyIcon")
         }
   }
 }
@@ -252,74 +277,84 @@ fun OverviewContent(paddingValues: PaddingValues) {
         secondButtonName = "Import Image")
   }
 
-  Box(modifier = Modifier.padding(paddingValues).fillMaxWidth()) {
-    LazyColumn(contentPadding = PaddingValues(horizontal = 30.dp, vertical = 20.dp)) {
-      item {
-        Text(
-            text = "Welcome Back, User432!",
-            fontSize = MaterialTheme.typography.titleLarge.fontSize,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary)
-      }
-      item {
-        OutlinedCard(
-            modifier = Modifier.align(Alignment.Center).size(width = 350.dp, height = 210.dp),
-            border =
-                BorderStroke(
-                    2.dp,
-                    brush =
-                        Brush.linearGradient(
-                            listOf(
-                                MaterialTheme.colorScheme.inversePrimary,
-                                MaterialTheme.colorScheme.primary))),
-            colors = CardDefaults.cardColors(Color.Transparent)) {
-              CalorieCardContent(
-                  onPhoto = {
-                      Log.i("Dialog", "Show photo Picture Dialog Box")
-                      showPictureDialog = true
+  Box(modifier = Modifier.padding(paddingValues).fillMaxWidth().testTag("OverviewScreen")) {
+    LazyColumn(
+        contentPadding = PaddingValues(horizontal = 30.dp, vertical = 20.dp),
+        modifier = Modifier.testTag("OverviewScreenLazyColumn")) {
+          item {
+            Text(
+                text = "Welcome Back, User432!",
+                fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.testTag("WelcomeMessage"))
+          }
+          item {
+            OutlinedCard(
+                modifier =
+                    Modifier.align(Alignment.Center)
+                        .size(width = 350.dp, height = 210.dp)
+                        .testTag("CalorieCard"),
+                border =
+                    BorderStroke(
+                        2.dp,
+                        brush =
+                            Brush.linearGradient(
+                                listOf(
+                                    MaterialTheme.colorScheme.inversePrimary,
+                                    MaterialTheme.colorScheme.primary))),
+                colors = CardDefaults.cardColors(Color.Transparent)) {
+                  CalorieCardContent(
+                      onPhoto = {
+                        Log.i("Dialog", "Show photo Picture Dialog Box")
+                        showPictureDialog = true
+                      })
+                }
+          }
+          item {
+            OutlinedCard(
+                modifier =
+                    Modifier.align(Alignment.Center)
+                        .padding(top = 10.dp)
+                        .size(width = 350.dp, height = 300.dp)
+                        .testTag("SecondCard"),
+                border =
+                    BorderStroke(
+                        2.dp,
+                        brush =
+                            Brush.linearGradient(
+                                listOf(
+                                    MaterialTheme.colorScheme.inversePrimary,
+                                    MaterialTheme.colorScheme.primary))),
+                colors = CardDefaults.cardColors(Color.Transparent)) {
+
+                  //
+
+                  imageBitmap?.let {
+                    Image(
+                        bitmap = it.asImageBitmap(),
+                        contentDescription = "Captured image",
+                        modifier = Modifier.testTag("GenericPicture"))
                   }
-              )
-            }
-      }
-      item {
-        OutlinedCard(
-            modifier =
-                Modifier.align(Alignment.Center)
-                    .padding(top = 10.dp)
-                    .size(width = 350.dp, height = 300.dp),
-            border =
-                BorderStroke(
-                    2.dp,
-                    brush =
-                        Brush.linearGradient(
-                            listOf(
-                                MaterialTheme.colorScheme.inversePrimary,
-                                MaterialTheme.colorScheme.primary))),
-            colors = CardDefaults.cardColors(Color.Transparent)) {
-
-              //
-
-              imageBitmap?.let {
-                Image(bitmap = it.asImageBitmap(), contentDescription = "Captured image")
-              }
-            }
-      }
-      item {
-        OutlinedCard(
-            modifier =
-                Modifier.align(Alignment.Center)
-                    .padding(top = 10.dp)
-                    .size(width = 350.dp, height = 200.dp),
-            border =
-                BorderStroke(
-                    2.dp,
-                    brush =
-                        Brush.linearGradient(
-                            listOf(
-                                MaterialTheme.colorScheme.inversePrimary,
-                                MaterialTheme.colorScheme.primary))),
-            colors = CardDefaults.cardColors(Color.Transparent)) {}
-      }
-    }
+                }
+          }
+          item {
+            OutlinedCard(
+                modifier =
+                    Modifier.align(Alignment.Center)
+                        .padding(top = 10.dp)
+                        .size(width = 350.dp, height = 200.dp)
+                        .testTag("ThirdCard"),
+                border =
+                    BorderStroke(
+                        2.dp,
+                        brush =
+                            Brush.linearGradient(
+                                listOf(
+                                    MaterialTheme.colorScheme.inversePrimary,
+                                    MaterialTheme.colorScheme.primary))),
+                colors = CardDefaults.cardColors(Color.Transparent)) {}
+          }
+        }
   }
 }

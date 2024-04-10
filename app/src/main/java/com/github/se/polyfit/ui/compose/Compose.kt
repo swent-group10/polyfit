@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.github.se.polyfit.ui.theme.PrimaryPink
@@ -29,7 +30,7 @@ fun Title(modifier: Modifier, text: String) {
         Text(
             text = text,
             fontSize = MaterialTheme.typography.displayMedium.fontSize,
-            modifier = modifier,
+            modifier = Modifier.testTag("TopBarTitle"),
             fontWeight = FontWeight.Bold,
             fontFamily = kaiseiFont)
       }
