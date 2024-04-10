@@ -36,7 +36,9 @@ class AddIngredientPopupTest : TestCase() {
   @Before
   fun setup() {
     mockkStatic(Log::class)
-    composeTestRule.setContent { AddIngredientDialog(onClickCloseDialog = {}) }
+    composeTestRule.setContent {
+      AddIngredientDialog(onAddIngredient = {}, onClickCloseDialog = {})
+    }
   }
 
   @After

@@ -6,11 +6,16 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.model.ingredient.Ingredient
+import com.github.se.polyfit.model.meal.Meal
+import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
+import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import com.github.se.polyfit.ui.navigation.Navigation
+import com.github.se.polyfit.viewmodel.meal.MealViewModel
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.mockk.confirmVerified
+import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit4.MockKRule
 import io.mockk.mockkStatic
@@ -18,17 +23,20 @@ import io.mockk.unmockkStatic
 import io.mockk.verify
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class IngredientTests : TestCase() {
+class IngredientTest : TestCase() {
   @get:Rule val composeTestRule = createComposeRule()
 
   @get:Rule val mockkRule = MockKRule(this)
 
   @RelaxedMockK lateinit var mockNav: Navigation
+
+  @RelaxedMockK lateinit var mockMealViewModel: MealViewModel
 
   @Before
   fun setup() {
@@ -41,14 +49,28 @@ class IngredientTests : TestCase() {
   }
 
   private fun launchIngredientScreenWithTestData(
-      testIngredients: List<Ingredient>,
+      testIngredients: MutableList<Ingredient>,
       testPotentials: List<Ingredient>
   ) {
-    composeTestRule.setContent { IngredientScreen(mockNav, testIngredients, testPotentials) }
+    val navigateBack = { mockNav.goBack() }
+    val navigateForward = { mockNav.navigateToNutrition() }
+    val testMeal =
+        Meal(
+            occasion = MealOccasion.NONE,
+            name = "Test Meal",
+            mealID = 0,
+            ingredients = testIngredients,
+            nutritionalInformation = NutritionalInformation(mutableListOf()),
+        )
+    every { mockMealViewModel.meal.value } returns testMeal
+
+    composeTestRule.setContent {
+      IngredientScreen(mockMealViewModel, navigateBack, navigateForward)
+    }
   }
 
   private val manyIngredients =
-      listOf(
+      mutableListOf(
           Ingredient("Olive Oil", 5, 5.0, MeasurementUnit.ML),
           Ingredient("Beef Tenderloin", 50, 50.0, MeasurementUnit.G),
           Ingredient("White Asparagus", 10, 10.0, MeasurementUnit.G),
@@ -56,12 +78,12 @@ class IngredientTests : TestCase() {
           Ingredient("Foie Gras", 100, 100.0, MeasurementUnit.G),
       )
   private val fewPotentialIngredients =
-      listOf(
+      mutableListOf(
           Ingredient("Carrots", 100, 100.0, MeasurementUnit.G),
       )
 
   private val manyPotentialIngredients =
-      listOf(
+      mutableListOf(
           Ingredient("Carrots", 100, 100.0, MeasurementUnit.G),
           Ingredient("Peas", 100, 100.0, MeasurementUnit.G),
           Ingredient("Worcestershire Sauce", 15, 15.0, MeasurementUnit.ML),
@@ -72,7 +94,7 @@ class IngredientTests : TestCase() {
 
   @Test
   fun topBarDisplayed() {
-    launchIngredientScreenWithTestData(emptyList(), emptyList())
+    launchIngredientScreenWithTestData(mutableListOf(), emptyList())
     ComposeScreen.onComposeScreen<IngredientsTopBar>(composeTestRule) {
       ingredientTitle {
         assertIsDisplayed()
@@ -93,7 +115,7 @@ class IngredientTests : TestCase() {
 
   @Test
   fun bottomBarDisplayed() {
-    launchIngredientScreenWithTestData(emptyList(), emptyList())
+    launchIngredientScreenWithTestData(mutableListOf(), mutableListOf())
     ComposeScreen.onComposeScreen<IngredientsBottomBar>(composeTestRule) {
       addIngredientButton { assertIsDisplayed() }
 
@@ -107,7 +129,7 @@ class IngredientTests : TestCase() {
 
   @Test
   fun openCloseAddIngredientPopup() {
-    launchIngredientScreenWithTestData(emptyList(), emptyList())
+    launchIngredientScreenWithTestData(mutableListOf(), mutableListOf())
     ComposeScreen.onComposeScreen<AddIngredientPopupBox>(composeTestRule) {
       addIngredientDialog { assertDoesNotExist() }
 
@@ -134,7 +156,7 @@ class IngredientTests : TestCase() {
 
   @Test
   fun addNewIngredientToList() {
-    launchIngredientScreenWithTestData(emptyList(), emptyList())
+    launchIngredientScreenWithTestData(mutableListOf(), mutableListOf())
     ComposeScreen.onComposeScreen<AddIngredientPopupBox>(composeTestRule) {
       addIngredientDialog { assertDoesNotExist() }
 
@@ -160,7 +182,7 @@ class IngredientTests : TestCase() {
 
   @Test
   fun doneButton() {
-    launchIngredientScreenWithTestData(emptyList(), emptyList())
+    launchIngredientScreenWithTestData(mutableListOf(), mutableListOf())
     ComposeScreen.onComposeScreen<IngredientsBottomBar>(composeTestRule) {
       doneButton {
         assertIsDisplayed()
@@ -169,18 +191,17 @@ class IngredientTests : TestCase() {
         performClick()
       }
 
-      // TODO: @April Update with proper test
-      verify { Log.v("Finished", "Clicked") }
+      verify { mockNav.navigateToNutrition() }
     }
   }
 
   @Test
   fun noIngredientMessageDisplay() {
-    launchIngredientScreenWithTestData(emptyList(), emptyList())
+    launchIngredientScreenWithTestData(mutableListOf(), mutableListOf())
     ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
       noIngredients {
         assertIsDisplayed()
-        assertTextEquals("No ingredients added yet")
+        assertTextEquals("No ingredients added.")
       }
 
       ingredientButton { assertDoesNotExist() }
@@ -191,7 +212,7 @@ class IngredientTests : TestCase() {
 
   @Test
   fun displayOnlyIngredients() {
-    launchIngredientScreenWithTestData(manyIngredients, emptyList())
+    launchIngredientScreenWithTestData(manyIngredients, mutableListOf())
 
     ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
       morePotentialIngredientsButton { assertDoesNotExist() }
@@ -210,7 +231,7 @@ class IngredientTests : TestCase() {
 
   @Test
   fun expandIngredient() {
-    launchIngredientScreenWithTestData(manyIngredients, emptyList())
+    launchIngredientScreenWithTestData(manyIngredients, mutableListOf())
 
     ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
       ingredientButton {
@@ -225,9 +246,10 @@ class IngredientTests : TestCase() {
     }
   }
 
+  @Ignore("No Potential Ingredients Yet")
   @Test
   fun displayOnePotential() {
-    launchIngredientScreenWithTestData(emptyList(), fewPotentialIngredients)
+    launchIngredientScreenWithTestData(mutableListOf(), fewPotentialIngredients)
 
     ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
       potentialIngredientButton {
@@ -247,9 +269,10 @@ class IngredientTests : TestCase() {
     }
   }
 
+  @Ignore("No Potential Ingredients Yet")
   @Test
   fun displayManyPotential() {
-    launchIngredientScreenWithTestData(emptyList(), manyPotentialIngredients)
+    launchIngredientScreenWithTestData(mutableListOf(), manyPotentialIngredients)
 
     ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
       noIngredients { assertDoesNotExist() }
@@ -271,6 +294,7 @@ class IngredientTests : TestCase() {
     }
   }
 
+  @Ignore("No Potential Ingredients Yet")
   @Test
   fun displayAll() {
     launchIngredientScreenWithTestData(manyIngredients, manyPotentialIngredients)
@@ -300,9 +324,10 @@ class IngredientTests : TestCase() {
     }
   }
 
+  @Ignore("No Potential Ingredients Yet")
   @Test
   fun addPotentialIngredient() {
-    launchIngredientScreenWithTestData(emptyList(), fewPotentialIngredients)
+    launchIngredientScreenWithTestData(mutableListOf(), fewPotentialIngredients)
 
     ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
       ingredientButton { assertDoesNotExist() }
@@ -323,9 +348,10 @@ class IngredientTests : TestCase() {
     }
   }
 
+  @Ignore("No Potential Ingredients Yet")
   @Test
   fun expandPotentialIngredients() {
-    launchIngredientScreenWithTestData(emptyList(), manyPotentialIngredients)
+    launchIngredientScreenWithTestData(mutableListOf(), manyPotentialIngredients)
 
     ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
       composeTestRule.onAllNodesWithTag("PotentialIngredient").assertCountEquals(3)

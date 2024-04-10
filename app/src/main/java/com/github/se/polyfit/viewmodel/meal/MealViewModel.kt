@@ -16,9 +16,10 @@ import java.io.File
 import java.io.FileOutputStream
 import kotlinx.coroutines.launch
 
-class MealViewModel(userID: String, firebaseID: String = "") : ViewModel() {
+class MealViewModel(userID: String, firebaseID: String = "", meal: Meal? = null) : ViewModel() {
   // after friday use hilt dependency injection to make code cleaner, for now i guess this is ok
   private val mealRepo: MealRepository = MealRepository(userID)
+  private val spoonacularApiCaller = SpoonacularApiCaller()
 
   private val _meal: MutableLiveData<Meal> = MutableLiveData(null)
   val meal: LiveData<Meal> = _meal
@@ -30,6 +31,8 @@ class MealViewModel(userID: String, firebaseID: String = "") : ViewModel() {
           _meal.value = it.result
         }
       }
+    } else if (meal != null) {
+      _meal.value = meal.copy()
     } else {
       _meal.value =
           Meal(
@@ -53,10 +56,10 @@ class MealViewModel(userID: String, firebaseID: String = "") : ViewModel() {
     meal.value = Meal.default()
 
     viewModelScope.launch {
-      val apiResponse = SpoonacularApiCaller.imageAnalysis(file)
+      val apiResponse = spoonacularApiCaller.imageAnalysis(file)
       if (apiResponse.status == APIResponse.SUCCESS) {
         // chooses from a bunch of recipes
-        val recipeInformation = SpoonacularApiCaller.getMealNutrition(apiResponse.recipes.first())
+        val recipeInformation = spoonacularApiCaller.getMealNutrition(apiResponse.recipes.first())
 
         if (recipeInformation.status == APIResponse.SUCCESS) {
           val newMeal =
@@ -74,16 +77,6 @@ class MealViewModel(userID: String, firebaseID: String = "") : ViewModel() {
             newMeal.firebaseId = it.result.id
 
             meal.value = newMeal
-
-            // maybe in next spring better to store ingredients in a local database
-            _ingredients.value =
-                _ingredients.value?.plus(
-                    newMeal.ingredients.map {
-                      Ingredient(it.name, it.id, 0.0, it.unit, it.nutritionalInformation.deepCopy())
-                    })
-                    ?: newMeal.ingredients.map {
-                      Ingredient(it.name, it.id, 0.0, it.unit, it.nutritionalInformation.deepCopy())
-                    }
           }
         }
       }
