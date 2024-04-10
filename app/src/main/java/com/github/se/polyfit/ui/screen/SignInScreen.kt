@@ -60,7 +60,7 @@ fun SignScreen(goTo: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally) {
               Spacer(Modifier.weight(0.2f))
 
-              Title(Modifier.testTag("LoginTitle"), "Polyfit")
+              Title(modifier = Modifier.testTag("LoginTitle"), "Polyfit")
 
               Spacer(Modifier.weight(0.6f))
 

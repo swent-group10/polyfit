@@ -4,13 +4,16 @@ import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.navigation.Route
 import com.github.se.polyfit.ui.screen.SignScreen
-import com.github.se.polyfit.ui.screen.globalNavigation
 import com.github.se.polyfit.ui.theme.PolyfitTheme
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
@@ -20,13 +23,27 @@ class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
+    // hides the system bar
+    WindowCompat.setDecorFitsSystemWindows(window, false)
+
+    val controller = WindowInsetsControllerCompat(window, window.decorView)
+    controller.hide(WindowInsetsCompat.Type.systemBars())
+
+    // Set the behavior to show transient bars by swipe
+    controller.systemBarsBehavior =
+        WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+
     setContent {
       PolyfitTheme {
         val navController = rememberNavController()
         val navigation = Navigation(navController)
-        NavHost(navController = navController, startDestination = Route.Home) {
+        NavHost(navController = navController, startDestination = Route.Register) {
           composable(Route.Register) { SignScreen(navigation::navigateToHome) }
-          globalNavigation(navController = navController)
+          composable(Route.Overview) {
+            GenericScreen(
+                navController = navController,
+            )
+          }
         }
       }
     }

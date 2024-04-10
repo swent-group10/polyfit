@@ -47,6 +47,7 @@ fun GradientButton(
     text: String? = null,
     icon: @Composable (() -> Unit)? = null,
     round: Boolean = false,
+    textBold: Boolean = false,
 ) {
   val gradient =
       if (active) {
@@ -98,7 +99,7 @@ fun GradientButton(
                       text = text,
                       color = textColor,
                       fontSize = TextUnit(16f, TextUnitType.Sp),
-                      fontWeight = FontWeight.Normal,
+                      fontWeight = if (textBold) FontWeight.ExtraBold else FontWeight.Normal,
                       modifier = Modifier.testTag("ButtonText"))
                 }
               }
