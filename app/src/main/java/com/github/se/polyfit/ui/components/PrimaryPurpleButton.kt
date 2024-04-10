@@ -17,10 +17,12 @@ import com.github.se.polyfit.ui.theme.PrimaryPurple
 fun PrimaryPurpleButton(
     onClick: () -> Unit = {},
     modifier: Modifier = Modifier,
-    text: String = ""
+    text: String = "",
+    isEnabled: Boolean = true
 ) {
   Button(
       onClick = onClick,
+      enabled = isEnabled,
       modifier = modifier.fillMaxWidth(0.5f).testTag("PrimaryPurpleButton"),
       shape = RoundedCornerShape(50.dp),
       colors = ButtonDefaults.buttonColors(containerColor = PrimaryPurple)) {
