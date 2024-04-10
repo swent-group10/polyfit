@@ -16,3 +16,7 @@ Tracking of the standup meeting minutes is an integral part of the Scrum softwar
 
 [Access Standup Meeting Minutes Template](https://github.com/swent-group10/polyfit/wiki)
 
+
+### Implementation readme
+[main/readme](app/src/main/java/com/github/se/polyfit/README.md)
+
