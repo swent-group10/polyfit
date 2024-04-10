@@ -21,281 +21,285 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class IngredientTestz : TestCase() {
-  @get:Rule val composeTestRule = createComposeRule()
+class IngredientTests : TestCase() {
+    @get:Rule
+    val composeTestRule = createComposeRule()
 
-  @get:Rule val mockkRule = MockKRule(this)
+    @get:Rule
+    val mockkRule = MockKRule(this)
 
-  @RelaxedMockK lateinit var mockNav: Navigation
+    @RelaxedMockK
+    lateinit var mockNav: Navigation
 
-  @Before
-  fun setup() {
-    mockkStatic(Log::class)
-  }
-
-  @After
-  fun tearDown() {
-    unmockkStatic(Log::class)
-  }
-
-  private fun launchIngredientScreenWithTestData(
-      testIngredients: List<Ingredient>,
-      testPotentials: List<Ingredient>
-  ) {
-    composeTestRule.setContent { IngredientScreen(mockNav, testIngredients, testPotentials) }
-  }
-
-  private val manyIngredients =
-      listOf(
-          Ingredient("Olive Oil", 5, "ml"),
-          Ingredient("Beef Tenderloin", 50, "g"),
-          Ingredient("White Asparagus", 10, "g"),
-          Ingredient("Corn", 4, "g"),
-          Ingredient("Foie Gras", 100, "g"))
-  private val fewPotentialIngredients =
-      listOf(
-          Ingredient("Carrots", 100, "g"),
-      )
-
-  private val manyPotentialIngredients =
-      listOf(
-          Ingredient("Carrots", 100, "g"),
-          Ingredient("Peas", 100, "g"),
-          Ingredient("Worcestershire Sauce", 15, "ml"),
-          Ingredient("Salt", 5, "g"),
-          Ingredient("Pepper", 5, "g"),
-          Ingredient("Garlic", 1, "clove"),
-      )
-
-  @Test
-  fun topBarDisplayed() {
-    launchIngredientScreenWithTestData(emptyList(), emptyList())
-    ComposeScreen.onComposeScreen<IngredientsTopBar>(composeTestRule) {
-      ingredientTitle {
-        assertIsDisplayed()
-        assertTextEquals("Ingredients")
-      }
-
-      backButton {
-        assertIsDisplayed()
-        assertHasClickAction()
-        performClick()
-      }
-
-      verify { mockNav.goBack() }
-      confirmVerified(mockNav)
+    @Before
+    fun setup() {
+        mockkStatic(Log::class)
     }
-  }
 
-  @Test
-  fun bottomBarDisplayed() {
-    launchIngredientScreenWithTestData(emptyList(), emptyList())
-    ComposeScreen.onComposeScreen<IngredientsBottomBar>(composeTestRule) {
-      addIngredientButton { assertIsDisplayed() }
-
-      doneButton {
-        assertIsDisplayed()
-        assertTextEquals("Done")
-        assertHasClickAction()
-      }
+    @After
+    fun tearDown() {
+        unmockkStatic(Log::class)
     }
-  }
 
-  @Test
-  fun addIngredientButton() {
-    launchIngredientScreenWithTestData(emptyList(), emptyList())
-    ComposeScreen.onComposeScreen<IngredientsBottomBar>(composeTestRule) {
-      addIngredientGradientButton {
-        assertIsDisplayed()
-        assertHasClickAction()
-        performClick()
-      }
-
-      // TODO: @April Update with proper test
-      verify { Log.v("Add Ingredient", "Clicked") }
+    private fun launchIngredientScreenWithTestData(
+        testIngredients: List<Ingredient>,
+        testPotentials: List<Ingredient>
+    ) {
+        composeTestRule.setContent { IngredientScreen(mockNav, testIngredients, testPotentials) }
     }
-  }
 
-  @Test
-  fun doneButton() {
-    launchIngredientScreenWithTestData(emptyList(), emptyList())
-    ComposeScreen.onComposeScreen<IngredientsBottomBar>(composeTestRule) {
-      doneButton {
-        assertIsDisplayed()
-        assertHasClickAction()
-        performClick()
-      }
+    private val manyIngredients =
+        listOf(
+            Ingredient("Olive Oil", 5, "ml"),
+            Ingredient("Beef Tenderloin", 50, "g"),
+            Ingredient("White Asparagus", 10, "g"),
+            Ingredient("Corn", 4, "g"),
+            Ingredient("Foie Gras", 100, "g")
+        )
+    private val fewPotentialIngredients =
+        listOf(
+            Ingredient("Carrots", 100, "g"),
+        )
 
-      // TODO: @April Update with proper test
-      verify { Log.v("Finished", "Clicked") }
+    private val manyPotentialIngredients =
+        listOf(
+            Ingredient("Carrots", 100, "g"),
+            Ingredient("Peas", 100, "g"),
+            Ingredient("Worcestershire Sauce", 15, "ml"),
+            Ingredient("Salt", 5, "g"),
+            Ingredient("Pepper", 5, "g"),
+            Ingredient("Garlic", 1, "clove"),
+        )
+
+    @Test
+    fun topBarDisplayed() {
+        launchIngredientScreenWithTestData(emptyList(), emptyList())
+        ComposeScreen.onComposeScreen<IngredientsTopBar>(composeTestRule) {
+            ingredientTitle {
+                assertIsDisplayed()
+                assertTextEquals("Ingredients")
+            }
+
+            backButton {
+                assertIsDisplayed()
+                assertHasClickAction()
+                performClick()
+            }
+
+            verify { mockNav.goBack() }
+            confirmVerified(mockNav)
+        }
     }
-  }
 
-  @Test
-  fun noIngredientMessageDisplay() {
-    launchIngredientScreenWithTestData(emptyList(), emptyList())
-    ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
-      noIngredients {
-        assertIsDisplayed()
-        assertTextEquals("No ingredients added yet")
-      }
+    @Test
+    fun bottomBarDisplayed() {
+        launchIngredientScreenWithTestData(emptyList(), emptyList())
+        ComposeScreen.onComposeScreen<IngredientsBottomBar>(composeTestRule) {
+            addIngredientButton { assertIsDisplayed() }
 
-      ingredientButton { assertDoesNotExist() }
-      potentialIngredientButton { assertDoesNotExist() }
-      morePotentialIngredientsButton { assertDoesNotExist() }
+            doneButton {
+                assertIsDisplayed()
+                assertTextEquals("Done")
+                assertHasClickAction()
+            }
+        }
     }
-  }
 
-  @Test
-  fun displayOnlyIngredients() {
-    launchIngredientScreenWithTestData(manyIngredients, emptyList())
+    @Test
+    fun addIngredientButton() {
+        launchIngredientScreenWithTestData(emptyList(), emptyList())
+        ComposeScreen.onComposeScreen<IngredientsBottomBar>(composeTestRule) {
+            addIngredientGradientButton {
+                assertIsDisplayed()
+                assertHasClickAction()
+                performClick()
+            }
 
-    ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
-      morePotentialIngredientsButton { assertDoesNotExist() }
-      potentialIngredientButton { assertDoesNotExist() }
-      noIngredients { assertDoesNotExist() }
-
-      ingredientButton {
-        assertIsDisplayed()
-        assertTextContains("Olive Oil 5ml")
-        assertHasClickAction()
-      }
-
-      composeTestRule.onAllNodesWithTag("Ingredient").assertCountEquals(5)
+            // TODO: @April Update with proper test
+            verify { Log.v("Add Ingredient", "Clicked") }
+        }
     }
-  }
 
-  @Test
-  fun expandIngredient() {
-    launchIngredientScreenWithTestData(manyIngredients, emptyList())
+    @Test
+    fun doneButton() {
+        launchIngredientScreenWithTestData(emptyList(), emptyList())
+        ComposeScreen.onComposeScreen<IngredientsBottomBar>(composeTestRule) {
+            doneButton {
+                assertIsDisplayed()
+                assertHasClickAction()
+                performClick()
+            }
 
-    ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
-      ingredientButton {
-        assertIsDisplayed()
-        assertTextContains("Olive Oil 5ml")
-        assertHasClickAction()
-        performClick()
-      }
-
-      // TODO: @April Update with proper test
-      verify { Log.v("Expand Ingredients", "Clicked") }
+            // TODO: @April Update with proper test
+            verify { Log.v("Finished", "Clicked") }
+        }
     }
-  }
 
-  @Test
-  fun displayOnePotential() {
-    launchIngredientScreenWithTestData(emptyList(), fewPotentialIngredients)
+    @Test
+    fun noIngredientMessageDisplay() {
+        launchIngredientScreenWithTestData(emptyList(), emptyList())
+        ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
+            noIngredients {
+                assertIsDisplayed()
+                assertTextEquals("No ingredients added yet")
+            }
 
-    ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
-      potentialIngredientButton {
-        assertIsDisplayed()
-        assertTextContains("Carrots")
-        assertHasClickAction()
-      }
-
-      morePotentialIngredientsButton { assertDoesNotExist() }
-      ingredientButton { assertDoesNotExist() }
-      noIngredients { assertDoesNotExist() }
-
-      composeTestRule
-          .onAllNodesWithTag("PotentialIngredient")
-          .assertCountEquals(fewPotentialIngredients.size)
+            ingredientButton { assertDoesNotExist() }
+            potentialIngredientButton { assertDoesNotExist() }
+            morePotentialIngredientsButton { assertDoesNotExist() }
+        }
     }
-  }
 
-  @Test
-  fun displayManyPotential() {
-    launchIngredientScreenWithTestData(emptyList(), manyPotentialIngredients)
+    @Test
+    fun displayOnlyIngredients() {
+        launchIngredientScreenWithTestData(manyIngredients, emptyList())
 
-    ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
-      noIngredients { assertDoesNotExist() }
-      ingredientButton { assertDoesNotExist() }
+        ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
+            morePotentialIngredientsButton { assertDoesNotExist() }
+            potentialIngredientButton { assertDoesNotExist() }
+            noIngredients { assertDoesNotExist() }
 
-      potentialIngredientButton {
-        assertIsDisplayed()
-        assertTextContains("Carrots")
-        assertHasClickAction()
-      }
+            ingredientButton {
+                assertIsDisplayed()
+                assertTextContains("Olive Oil 5ml")
+                assertHasClickAction()
+            }
 
-      morePotentialIngredientsButton {
-        assertIsDisplayed()
-        assertHasClickAction()
-        assertContentDescriptionEquals("More Options")
-      }
-
-      composeTestRule.onAllNodesWithTag("PotentialIngredient").assertCountEquals(3)
+            composeTestRule.onAllNodesWithTag("Ingredient").assertCountEquals(5)
+        }
     }
-  }
 
-  @Test
-  fun displayAll() {
-    launchIngredientScreenWithTestData(manyIngredients, manyPotentialIngredients)
+    @Test
+    fun expandIngredient() {
+        launchIngredientScreenWithTestData(manyIngredients, emptyList())
 
-    ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
-      noIngredients { assertDoesNotExist() }
+        ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
+            ingredientButton {
+                assertIsDisplayed()
+                assertTextContains("Olive Oil 5ml")
+                assertHasClickAction()
+                performClick()
+            }
 
-      ingredientButton {
-        assertIsDisplayed()
-        assertTextContains("Olive Oil 5ml")
-        assertHasClickAction()
-      }
-
-      potentialIngredientButton {
-        assertIsDisplayed()
-        assertTextContains("Carrots")
-        assertHasClickAction()
-      }
-
-      morePotentialIngredientsButton {
-        assertIsDisplayed()
-        assertHasClickAction()
-      }
-
-      composeTestRule.onAllNodesWithTag("Ingredient").assertCountEquals(manyIngredients.size)
-      composeTestRule.onAllNodesWithTag("PotentialIngredient").assertCountEquals(3)
+            // TODO: @April Update with proper test
+            verify { Log.v("Expand Ingredients", "Clicked") }
+        }
     }
-  }
 
-  @Test
-  fun addPotentialIngredient() {
-    launchIngredientScreenWithTestData(emptyList(), fewPotentialIngredients)
+    @Test
+    fun displayOnePotential() {
+        launchIngredientScreenWithTestData(emptyList(), fewPotentialIngredients)
 
-    ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
-      ingredientButton { assertDoesNotExist() }
+        ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
+            potentialIngredientButton {
+                assertIsDisplayed()
+                assertTextContains("Carrots")
+                assertHasClickAction()
+            }
 
-      potentialIngredientButton {
-        assertIsDisplayed()
-        assertTextContains("Carrots")
-        assertHasClickAction()
-        performClick()
-      }
+            morePotentialIngredientsButton { assertDoesNotExist() }
+            ingredientButton { assertDoesNotExist() }
+            noIngredients { assertDoesNotExist() }
 
-      ingredientButton {
-        assertIsDisplayed()
-        assertTextContains("Carrots 100g")
-      }
-
-      potentialIngredientButton { assertDoesNotExist() }
+            composeTestRule
+                .onAllNodesWithTag("PotentialIngredient")
+                .assertCountEquals(fewPotentialIngredients.size)
+        }
     }
-  }
 
-  @Test
-  fun expandPotentialIngredients() {
-    launchIngredientScreenWithTestData(emptyList(), manyPotentialIngredients)
+    @Test
+    fun displayManyPotential() {
+        launchIngredientScreenWithTestData(emptyList(), manyPotentialIngredients)
 
-    ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
-      composeTestRule.onAllNodesWithTag("PotentialIngredient").assertCountEquals(3)
+        ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
+            noIngredients { assertDoesNotExist() }
+            ingredientButton { assertDoesNotExist() }
 
-      morePotentialIngredientsButton {
-        assertIsDisplayed()
-        assertHasClickAction()
-        performClick()
-        assertDoesNotExist()
-      }
+            potentialIngredientButton {
+                assertIsDisplayed()
+                assertTextContains("Carrots")
+                assertHasClickAction()
+            }
 
-      composeTestRule
-          .onAllNodesWithTag("PotentialIngredient")
-          .assertCountEquals(manyPotentialIngredients.size)
+            morePotentialIngredientsButton {
+                assertIsDisplayed()
+                assertHasClickAction()
+                assertContentDescriptionEquals("More Options")
+            }
+
+            composeTestRule.onAllNodesWithTag("PotentialIngredient").assertCountEquals(3)
+        }
     }
-  }
+
+    @Test
+    fun displayAll() {
+        launchIngredientScreenWithTestData(manyIngredients, manyPotentialIngredients)
+
+        ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
+            noIngredients { assertDoesNotExist() }
+
+            ingredientButton {
+                assertIsDisplayed()
+                assertTextContains("Olive Oil 5ml")
+                assertHasClickAction()
+            }
+
+            potentialIngredientButton {
+                assertIsDisplayed()
+                assertTextContains("Carrots")
+                assertHasClickAction()
+            }
+
+            morePotentialIngredientsButton {
+                assertIsDisplayed()
+                assertHasClickAction()
+            }
+
+            composeTestRule.onAllNodesWithTag("Ingredient").assertCountEquals(manyIngredients.size)
+            composeTestRule.onAllNodesWithTag("PotentialIngredient").assertCountEquals(3)
+        }
+    }
+
+    @Test
+    fun addPotentialIngredient() {
+        launchIngredientScreenWithTestData(emptyList(), fewPotentialIngredients)
+
+        ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
+            ingredientButton { assertDoesNotExist() }
+
+            potentialIngredientButton {
+                assertIsDisplayed()
+                assertTextContains("Carrots")
+                assertHasClickAction()
+                performClick()
+            }
+
+            ingredientButton {
+                assertIsDisplayed()
+                assertTextContains("Carrots 100g")
+            }
+
+            potentialIngredientButton { assertDoesNotExist() }
+        }
+    }
+
+    @Test
+    fun expandPotentialIngredients() {
+        launchIngredientScreenWithTestData(emptyList(), manyPotentialIngredients)
+
+        ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
+            composeTestRule.onAllNodesWithTag("PotentialIngredient").assertCountEquals(3)
+
+            morePotentialIngredientsButton {
+                assertIsDisplayed()
+                assertHasClickAction()
+                performClick()
+                assertDoesNotExist()
+            }
+
+            composeTestRule
+                .onAllNodesWithTag("PotentialIngredient")
+                .assertCountEquals(manyPotentialIngredients.size)
+        }
+    }
 }
