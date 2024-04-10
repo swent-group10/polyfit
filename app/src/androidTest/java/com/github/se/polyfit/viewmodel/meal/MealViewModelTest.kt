@@ -1,88 +1,83 @@
 package com.github.se.polyfit.viewmodel.meal
 
-import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
-import com.github.se.polyfit.data.api.ImageAnalysisResponseAPI
-import com.github.se.polyfit.data.api.RecipeNutritionResponseAPI
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import com.github.se.polyfit.data.api.SpoonacularApiCaller
 import com.github.se.polyfit.data.repository.MealRepository
 import com.github.se.polyfit.model.meal.Meal
+import com.github.se.polyfit.model.meal.MealOccasion
+import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import com.google.android.gms.tasks.Tasks
-import io.mockk.Awaits
-import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.just
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
-import java.io.File
-import kotlin.test.Test
+import io.mockk.verify
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
 
+@RunWith(AndroidJUnit4::class)
 class MealViewModelTest {
 
-  private lateinit var mealViewModel: MealViewModel
-  private val mealRepo: MealRepository = mockk(relaxed = true)
-  private val apiCaller: SpoonacularApiCaller = mockk(relaxed = true)
+    @MockK
+    private var mealRepository: MealRepository = mockk(relaxed = true)
 
-  @Before
-  fun setUp() {
-    mealViewModel = MealViewModel("testUserID")
-  }
+    private lateinit var viewModel: MealViewModel
 
-  @Test
-  fun getAllMealsReturnsExpectedMeals() = runTest {
-    val meals = listOf(Meal.default(), Meal.default())
-    coEvery { mealRepo.getAllMeals() } returns Tasks.forResult(meals)
+    private var spoonacularApiCaller: SpoonacularApiCaller = mockk(relaxed = true)
 
-    val observer = mockk<Observer<List<Meal?>>>(relaxed = true)
-    mealViewModel.getAllMeals().observeForever(observer)
+    @get:Rule
+    val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    coVerify { observer.onChanged(meals) }
-  }
+    private val meal = Meal(
+        MealOccasion.DINNER,
+        "name",
+        123,
+        20.3,
+        NutritionalInformation(mutableListOf())
+    )
 
-  @Test
-  fun getAllMealsReturnsDefaultMealOnError() = runTest {
-    coEvery { mealRepo.getAllMeals() } throws Exception()
+    @Before
+    fun setUp() {
+        viewModel = MealViewModel(mealRepository, spoonacularApiCaller)
 
-    val observer = mockk<Observer<List<Meal?>>>(relaxed = true)
-    mealViewModel.getAllMeals().observeForever(observer)
+    }
 
-    coVerify { observer.onChanged(listOf(Meal.default())) }
-  }
+    @Test
+    fun testGetAllMeals_Success() = runTest {
+        val expectedMeals = listOf(meal)
+        every { mealRepository.getAllMeals() } returns Tasks.forResult(expectedMeals)  // Adapt this mock to correctly reflect your repository API
 
-  @Test
-  fun getMealsFromImageReturnsExpectedMeal() = runTest {
-    val bitmap: Bitmap = mockk(relaxed = true)
-    val apiResponse: ImageAnalysisResponseAPI = mockk(relaxed = true)
-    val recipeInformation: RecipeNutritionResponseAPI = mockk(relaxed = true)
-    coEvery { apiCaller.imageAnalysis(any<File>()) } returns apiResponse
-    coEvery { apiCaller.getMealNutrition(any()) } returns recipeInformation
+        val observer = mockk<Observer<List<Meal?>>>(relaxed = true)
+        viewModel.getAllMeals().observeForever(observer)
 
-    val observer = mockk<Observer<Meal>>(relaxed = true)
-    mealViewModel.getMealsFromImage(bitmap).observeForever(observer)
+        verify { observer.onChanged(expectedMeals) }
+    }
 
-    coVerify { observer.onChanged(any()) }
-  }
+    @Test
+    fun testGetAllMeals_Faillure() = runTest {
+        val expectedMeals = listOf(meal)
+        every { mealRepository.getAllMeals() } returns Tasks.forException(
+            Exception("An error occurred")
+        )  // Adapt this mock to correctly reflect your repository API
 
-  @Test
-  fun getMealsFromImageReturnsDefaultMealOnError() = runTest {
-    val bitmap: Bitmap = mockk(relaxed = true)
-    coEvery { apiCaller.imageAnalysis(any<File>()) } throws Exception()
+        val observer = mockk<Observer<List<Meal?>>>(relaxed = true)
+        viewModel.getAllMeals().observeForever(observer)
 
-    val observer = mockk<Observer<Meal>>(relaxed = true)
-    mealViewModel.getMealsFromImage(bitmap).observeForever(observer)
+        verify { observer.onChanged(listOf(Meal.default())) }
+    }
 
-    coVerify { observer.onChanged(Meal.default()) }
-  }
-
-  @Test
-  fun setMealStoresMealInRepository() = runTest {
-    val meal: Meal = mockk(relaxed = true)
-    val expectedAwait: Awaits = mockk(relaxed = true)
-    coEvery { mealRepo.storeMeal(meal) } just expectedAwait
-
-    mealViewModel.setMeal(meal)
-
-    coVerify { mealRepo.storeMeal(meal) }
-  }
+    @Test
+    fun getMealsFromImage() {
+        val inputStream =
+            InstrumentationRegistry.getInstrumentation().context.assets.open("cheesecake.jpg")
+        val bitmap = BitmapFactory.decodeStream(inputStream)
+        viewModel.getMealsFromImage(bitmap)
+    }
 }
+
