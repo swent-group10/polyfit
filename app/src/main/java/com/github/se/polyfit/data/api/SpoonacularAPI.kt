@@ -71,12 +71,13 @@ object SpoonacularApiCaller {
   }
 
   /**
-   * Get the nutritional information for a recipe.
+   * Get the nutritional information for a recipe. Naming might be a bit confusing here. What we
+   * call a meal is called recipe in the Spoonacular API.
    *
    * @param recipeId The ID of the recipe
    * @return The response from the API
    */
-  fun getRecipeNutrition(recipeId: Int): RecipeNutritionResponseAPI {
+  fun getMealNutrition(recipeId: Int): RecipeNutritionResponseAPI {
     val request =
         Request.Builder()
             .url(API_URL + RECIPE_NUTRITION_ENDPOINT.format(recipeId))

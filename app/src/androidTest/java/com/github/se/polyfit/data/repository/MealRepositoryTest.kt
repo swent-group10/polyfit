@@ -20,7 +20,7 @@ class MealRepositoryTest {
   @Before
   fun setup() {
     mealFirebaseRepository = mockk()
-    mealRepository = MealRepository(mealFirebaseRepository)
+    mealRepository = MealRepository("0", mealFirebaseRepository)
   }
 
   @Test

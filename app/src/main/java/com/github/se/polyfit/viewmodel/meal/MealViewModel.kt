@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 
 class MealViewModel(userID: String) : ViewModel() {
   // after friday use hilt dependency injection to make code cleaner, for now
-  // i gues this is ok
+  // i guess this is ok
   private val mealRepo: MealRepository = MealRepository(userID)
   private val _ingredients: MutableLiveData<List<Ingredient>> = MutableLiveData(listOf())
 
@@ -50,7 +50,7 @@ class MealViewModel(userID: String) : ViewModel() {
       val apiReponse = SpoonacularApiCaller.imageAnalysis(file)
       if (apiReponse.status == APIResponse.SUCCESS) {
         // chooses from a bunch of recipes
-        val recipeInformation = SpoonacularApiCaller.getRecipeNutrition(apiReponse.recipes.first())
+        val recipeInformation = SpoonacularApiCaller.getMealNutrition(apiReponse.recipes.first())
 
         if (recipeInformation.status == APIResponse.SUCCESS) {
           val newMeal =

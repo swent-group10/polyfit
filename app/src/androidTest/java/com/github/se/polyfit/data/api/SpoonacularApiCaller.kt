@@ -97,7 +97,7 @@ class SpoonacularApiCallerTest {
   @Test
   fun getRecipeNutritionReturnsExpectedResponse() {
 
-    val response = SpoonacularApiCaller.getRecipeNutrition(1) // Add your test recipeId here
+    val response = SpoonacularApiCaller.getMealNutrition(1) // Add your test recipeId here
 
     assert(response != null)
     assert(response.nutrients.filter { it.unit == MeasurementUnit.KCAL }.first().amount == 899.16)
@@ -112,7 +112,7 @@ class SpoonacularApiCallerTest {
     mockWebServer.dispatcher = faultyDispatcher
 
     assertFailsWith<Exception> {
-      val response = SpoonacularApiCaller.getRecipeNutrition(1) // Add your test recipeId here
+      val response = SpoonacularApiCaller.getMealNutrition(1) // Add your test recipeId here
     }
   }
 
