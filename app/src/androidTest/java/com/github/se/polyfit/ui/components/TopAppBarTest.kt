@@ -1,5 +1,4 @@
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Text
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import com.github.se.polyfit.ui.components.DefaultDrawerAppBar
@@ -14,7 +13,7 @@ class TopAppBarTest {
   @OptIn(ExperimentalMaterial3Api::class)
   @Test
   fun defaultDrawerAppBar_isDisplayed() {
-    composeTestRule.setContent { DefaultDrawerAppBar(title = { Text("Test Title") }) }
+    composeTestRule.setContent { DefaultDrawerAppBar(title = "Test Title") }
 
     composeTestRule.onNodeWithText("Test Title").assertIsDisplayed()
   }
@@ -22,7 +21,7 @@ class TopAppBarTest {
   @OptIn(ExperimentalMaterial3Api::class)
   @Test
   fun withSearchDrawerAppBar_isDisplayed() {
-    composeTestRule.setContent { WithSearchDrawerAppBar(title = { Text("Test Title") }) }
+    composeTestRule.setContent { WithSearchDrawerAppBar(title = "Test Title") }
 
     composeTestRule.onNodeWithText("Test Title").assertIsDisplayed()
   }
@@ -33,8 +32,7 @@ class TopAppBarTest {
     var navIconPressed = false
 
     composeTestRule.setContent {
-      DefaultDrawerAppBar(
-          title = { Text("Test Title") }, onNavIconPressed = { navIconPressed = true })
+      DefaultDrawerAppBar(title = "Test Title", onNavIconPressed = { navIconPressed = true })
     }
 
     composeTestRule.onNodeWithContentDescription("App Icon").performClick()
@@ -48,8 +46,7 @@ class TopAppBarTest {
     var navIconPressed = false
 
     composeTestRule.setContent {
-      WithSearchDrawerAppBar(
-          title = { Text("Test Title") }, onNavIconPressed = { navIconPressed = true })
+      WithSearchDrawerAppBar(title = "Test Title", onNavIconPressed = { navIconPressed = true })
     }
 
     composeTestRule.onNodeWithContentDescription("App Icon").performClick()

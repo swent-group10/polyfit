@@ -1,6 +1,9 @@
 package com.github.se.polyfit.ui.components
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -13,9 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.github.se.polyfit.ui.theme.PolyfitTheme
 import com.github.se.polyfit.ui.utils.FunctionalityNotAvailablePopup
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -24,7 +25,7 @@ fun WithSearchDrawerAppBar(
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior? = null,
     onNavIconPressed: () -> Unit = {},
-    title: @Composable () -> Unit,
+    title: String
 ) {
   var functionalityNotAvailablePopupShown by remember { mutableStateOf(false) }
   if (functionalityNotAvailablePopupShown) {
@@ -33,7 +34,7 @@ fun WithSearchDrawerAppBar(
   AppBarWithPopup(
       modifier = modifier,
       scrollBehavior = scrollBehavior,
-      title = title,
+      title = { Title(title) },
       onNavIconPressed = onNavIconPressed,
       actions = {
         SearchIcon(onClick = { functionalityNotAvailablePopupShown = true })
@@ -47,8 +48,7 @@ fun DefaultDrawerAppBar(
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior? = null,
     onNavIconPressed: () -> Unit = {},
-    title: @Composable () -> Unit,
-    actions: @Composable RowScope.() -> Unit = {}
+    title: String
 ) {
   var functionalityNotAvailablePopupShown by remember { mutableStateOf(false) }
   if (functionalityNotAvailablePopupShown) {
@@ -57,10 +57,21 @@ fun DefaultDrawerAppBar(
   AppBarWithPopup(
       modifier = modifier,
       scrollBehavior = scrollBehavior,
-      title = title,
+      title = { Title(title, withSearch = false) },
       onNavIconPressed = onNavIconPressed,
       actions = { UserIcon(onClick = { functionalityNotAvailablePopupShown = true }) },
   )
+}
+
+@Composable
+private fun Title(title: String, withSearch: Boolean = true) {
+  Row(
+      modifier =
+          Modifier.fillMaxWidth()
+              .then(if (withSearch) Modifier.padding(start = 45.dp) else Modifier),
+      horizontalArrangement = if (withSearch) Arrangement.Start else Arrangement.Center) {
+        Text(text = title)
+      }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -79,15 +90,17 @@ private fun AppBarWithPopup(
       title = title,
       scrollBehavior = scrollBehavior,
       navigationIcon = {
-        AppIcon(onClick = onNavIconPressed, modifier = Modifier.size(64.dp).padding(16.dp))
+        AppIcon(
+            onClick = onNavIconPressed,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp).size(38.dp))
       })
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+/*@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 fun WithSearchAppBarPreview() {
-  PolyfitTheme(dynamicColor = false) { WithSearchDrawerAppBar(title = { Text("Preview!") }) }
+  PolyfitTheme(dynamicColor = false) { WithSearchDrawerAppBar(title = "Preview!") }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -95,7 +108,7 @@ fun WithSearchAppBarPreview() {
 @Composable
 fun WithSearchAppBarPreviewDark() {
   PolyfitTheme(darkTheme = true, dynamicColor = false) {
-    WithSearchDrawerAppBar(title = { Text("Preview!") })
+    WithSearchDrawerAppBar(title = "Preview!")
   }
 }
 
@@ -103,14 +116,12 @@ fun WithSearchAppBarPreviewDark() {
 @Preview
 @Composable
 fun DefaultAppBarPreview() {
-  PolyfitTheme(dynamicColor = false) { DefaultDrawerAppBar(title = { Text("Preview!") }) }
+  PolyfitTheme(dynamicColor = false) { DefaultDrawerAppBar(title = "Preview!") }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 fun DefaultAppBarPreviewDark() {
-  PolyfitTheme(darkTheme = true, dynamicColor = false) {
-    DefaultDrawerAppBar(title = { Text("Preview!") })
-  }
-}
+  PolyfitTheme(darkTheme = true, dynamicColor = false) { DefaultDrawerAppBar(title = "Preview") }
+}*/
