@@ -8,20 +8,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.tooling.preview.Preview
 import com.github.se.polyfit.ui.compose.Title
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@Preview
-fun OverviewTopBar() {
-  TopAppBar(
-      modifier = Modifier.testTag("MainTopBar"),
-      title = {
-        Box(
-            modifier = Modifier.fillMaxWidth().testTag("MainTopBar"),
-            contentAlignment = Alignment.TopCenter) {
-              Title(modifier = Modifier.testTag("TopBarTitle"), "Polyfit")
+fun AppTitle(
+    titleText: String = "Polyfit",
+    alignment: Alignment = Alignment.TopCenter
+) {
+    TopAppBar(
+        modifier = Modifier.testTag("MainTopBar"),
+        title = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("MainTopBar"),
+                contentAlignment = alignment
+            ) {
+                Title(modifier = Modifier.testTag("TopBarTitle"), titleText)
             }
-      })
+        }
+    )
 }
