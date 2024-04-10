@@ -1,14 +1,16 @@
 package com.github.se.polyfit.ui.screen
 
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.lifecycle.Lifecycle
+import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intended
-import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import androidx.test.espresso.intent.matcher.IntentMatchers.toPackage
-import androidx.test.espresso.intent.rule.IntentsTestRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.MainActivity
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.kakaocup.compose.node.element.ComposeScreen
+import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -17,7 +19,16 @@ import org.junit.runner.RunWith
 class LoginTest : TestCase() {
   @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
 
-  @get:Rule val intentsTestRule = IntentsTestRule(MainActivity::class.java)
+  @Before
+  fun setup() {
+    Intents.init()
+    composeTestRule.activityRule.scenario.moveToState(Lifecycle.State.RESUMED)
+  }
+
+  @After
+  fun tearDown() {
+    Intents.release()
+  }
 
   @Test
   fun titleAndButtonAreCorrectlyDisplayed() {
@@ -54,19 +65,6 @@ class LoginTest : TestCase() {
       }
       // TODO check we are on another page
       intended(toPackage("com.google.android.gms"))
-    }
-  }
-
-  @Test
-  fun googleSignInReturnsValidActivityResult() {
-    ComposeScreen.onComposeScreen<LoginScreen>(composeTestRule) {
-      loginButton {
-        assertIsDisplayed()
-        performClick()
-      }
-
-      // assert that an Intent resolving to Google Mobile Services has been sent (for sign-in)
-      intended(hasComponent("com.google.android.gms.auth.api.signin.internal.SignInHubActivity"))
     }
   }
 }

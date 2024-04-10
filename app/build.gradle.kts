@@ -88,6 +88,7 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
             excludes += "/META-INF/*.md"
             excludes += "**/libmockkjvmtiagent.so"
+            excludes += "**/mockito-extensions/org.mockito.plugins.MockMaker"
         }
     }
     testOptions {
@@ -111,6 +112,13 @@ android {
         implementation("androidx.compose.ui:ui-tooling-preview")
         implementation("androidx.compose.material3:material3")
         implementation("androidx.navigation:navigation-compose:2.7.7")
+        implementation("com.google.android.play:core-ktx:1.8.1")
+        implementation("org.json:json:20210307")
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0")
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
+        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
+        implementation("com.google.dagger:hilt-android:2.51")
+        implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
         implementation("com.google.firebase:firebase-auth:22.3.1")
         implementation("androidx.compose.material3:material3:1.2.1")
         testImplementation("junit:junit:4.13.2")
@@ -121,8 +129,10 @@ android {
         debugImplementation("androidx.compose.ui:ui-tooling")
         debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-        // Firebase
+        // Firebase dependencies
         implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
+        implementation("com.google.firebase:firebase-auth:22.3.1")
+        implementation("com.google.firebase:firebase-auth-ktx:22.3.1")
         implementation("com.google.firebase:firebase-analytics")
         implementation("com.google.firebase:firebase-database-ktx:20.3.1")
         implementation("com.google.firebase:firebase-firestore:24.11.0")
@@ -168,16 +178,13 @@ android {
         // Hilts
         implementation("com.google.dagger:hilt-android:2.51")
         annotationProcessor("com.google.dagger:hilt-compiler:2.51")
+        // Debug dependencies
+        debugImplementation("androidx.compose.ui:ui-tooling")
+        debugImplementation("androidx.compose.ui:ui-test-manifest")
+        // Kapt dependencies
         kapt("com.google.dagger:hilt-android-compiler:2.51")
         kapt("com.google.dagger:hilt-compiler:2.51")
-        implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
-
-
-        androidTestImplementation("com.google.dagger:hilt-android-testing:2.51")
         kaptAndroidTest("com.google.dagger:hilt-compiler:2.51")
-
-        // For local unit tests
-        testImplementation("com.google.dagger:hilt-android-testing:2.51")
         kaptTest("com.google.dagger:hilt-compiler:2.51")
         // Mockito
         androidTestImplementation("org.mockito:mockito-core:5.11.0")
@@ -227,4 +234,6 @@ tasks.register("jacocoTestReport", JacocoReport::class) {
 dependencies {
     implementation(kotlin("reflect"))
     implementation(kotlin("test"))
+    implementation("androidx.room:room-common:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
 }

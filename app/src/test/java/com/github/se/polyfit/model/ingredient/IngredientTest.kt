@@ -38,8 +38,8 @@ class IngredientTest {
 
   @Test
   fun deserializeIngredient() {
-    Ingredient.serializeIngredient(ingredient).also { serializedIngredient ->
-      val deserializedIngredient = Ingredient.deserializeIngredient(serializedIngredient)
+    Ingredient.serialize(ingredient).also { serializedIngredient ->
+      val deserializedIngredient = Ingredient.deserialize(serializedIngredient)
       assert(ingredient == deserializedIngredient)
     }
   }
@@ -51,8 +51,8 @@ class IngredientTest {
 
   @Test
   fun testSerializationDeserialization() {
-    val serializedIngredient = Ingredient.serializeIngredient(ingredient)
-    val deserializedIngredient = Ingredient.deserializeIngredient(serializedIngredient)
+    val serializedIngredient = Ingredient.serialize(ingredient)
+    val deserializedIngredient = Ingredient.deserialize(serializedIngredient)
     assert(ingredient == deserializedIngredient)
     assert(ingredient.name == deserializedIngredient.name)
     assert(ingredient.nutritionalInformation == deserializedIngredient.nutritionalInformation)
@@ -75,7 +75,7 @@ class IngredientTest {
     val map = mapOf("name" to "eggs", "nutritionalInformation" to "")
 
     // Deserialize the map
-    assertFailsWith<Exception> { Ingredient.deserializeIngredient(map) }
+    assertFailsWith<Exception> { Ingredient.deserialize(map) }
   }
 
   @Test
@@ -108,13 +108,13 @@ class IngredientTest {
             "id" to "invalid",
             "nutritionalInformation" to listOf<Map<String, Any>>())
 
-    assertFailsWith<IllegalArgumentException> { Ingredient.deserializeIngredient(data) }
+    assertFailsWith<IllegalArgumentException> { Ingredient.deserialize(data) }
   }
 
   @Test
   fun deserializeIngredient_withInvalidNutritionalInformation_throwsException() {
     val data = mapOf("name" to "eggs", "id" to 1, "nutritionalInformation" to "invalid")
 
-    assertFailsWith<IllegalArgumentException> { Ingredient.deserializeIngredient(data) }
+    assertFailsWith<IllegalArgumentException> { Ingredient.deserialize(data) }
   }
 }
