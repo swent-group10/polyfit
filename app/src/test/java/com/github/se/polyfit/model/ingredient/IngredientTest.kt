@@ -23,11 +23,11 @@ class IngredientTest {
   @Test
   fun serializeIngredient() {
 
-    val map = Ingredient.serializeIngredient(ingredient)
+    val map = Ingredient.serialize(ingredient)
     val expectedMap =
         mapOf(
             "name" to "eggs",
-            "id" to 1,
+            "id" to 1.toLong(),
             "nutritionalInformation" to
                 NutritionalInformation.serialize(ingredient.nutritionalInformation))
 
@@ -36,8 +36,8 @@ class IngredientTest {
 
   @Test
   fun deserializeIngredient() {
-    Ingredient.serializeIngredient(ingredient).also { serializedIngredient ->
-      val deserializedIngredient = Ingredient.deserializeIngredient(serializedIngredient)
+    Ingredient.serialize(ingredient).also { serializedIngredient ->
+      val deserializedIngredient = Ingredient.deserialize(serializedIngredient)
       assert(ingredient == deserializedIngredient)
     }
   }
@@ -50,8 +50,8 @@ class IngredientTest {
 
   @Test
   fun testSerializationDeserialization() {
-    val serializedIngredient = Ingredient.serializeIngredient(ingredient)
-    val deserializedIngredient = Ingredient.deserializeIngredient(serializedIngredient)
+    val serializedIngredient = Ingredient.serialize(ingredient)
+    val deserializedIngredient = Ingredient.deserialize(serializedIngredient)
     assert(ingredient == deserializedIngredient)
     assert(ingredient.name == deserializedIngredient.name)
     assert(ingredient.nutritionalInformation == deserializedIngredient.nutritionalInformation)
@@ -63,10 +63,10 @@ class IngredientTest {
     val ingredientWithDefaultValues = Ingredient("eggs", 1, NutritionalInformation(mutableListOf()))
 
     // Serialize the Ingredient object
-    val serializedIngredient = Ingredient.serializeIngredient(ingredientWithDefaultValues)
+    val serializedIngredient = Ingredient.serialize(ingredientWithDefaultValues)
 
     // Deserialize the serialized Ingredient object
-    val deserializedIngredient = Ingredient.deserializeIngredient(serializedIngredient)
+    val deserializedIngredient = Ingredient.deserialize(serializedIngredient)
 
     // Check if the deserialized Ingredient object is null
     assert(deserializedIngredient == ingredientWithDefaultValues)
@@ -78,15 +78,18 @@ class IngredientTest {
     val map = mapOf("name" to "eggs", "nutritionalInformation" to "")
 
     // Deserialize the map
-    assertFailsWith<Exception> { Ingredient.deserializeIngredient(map) }
+    assertFailsWith<Exception> { Ingredient.deserialize(map) }
   }
 
   @Test
   fun deserializeIngredient_withValidData_returnsIngredient() {
     val data =
-        mapOf("name" to "eggs", "id" to 1, "nutritionalInformation" to listOf<Map<String, Any>>())
+        mapOf(
+            "name" to "eggs",
+            "id" to 1.toLong(),
+            "nutritionalInformation" to listOf<Map<String, Any>>())
 
-    val result = Ingredient.deserializeIngredient(data)
+    val result = Ingredient.deserialize(data)
 
     assertEquals("eggs", result.name)
     assertEquals(1, result.id)
@@ -98,7 +101,7 @@ class IngredientTest {
     val data =
         mapOf("name" to 123, "id" to 1, "nutritionalInformation" to listOf<Map<String, Any>>())
 
-    assertFailsWith<IllegalArgumentException> { Ingredient.deserializeIngredient(data) }
+    assertFailsWith<IllegalArgumentException> { Ingredient.deserialize(data) }
   }
 
   @Test
@@ -109,13 +112,13 @@ class IngredientTest {
             "id" to "invalid",
             "nutritionalInformation" to listOf<Map<String, Any>>())
 
-    assertFailsWith<IllegalArgumentException> { Ingredient.deserializeIngredient(data) }
+    assertFailsWith<IllegalArgumentException> { Ingredient.deserialize(data) }
   }
 
   @Test
   fun deserializeIngredient_withInvalidNutritionalInformation_throwsException() {
     val data = mapOf("name" to "eggs", "id" to 1, "nutritionalInformation" to "invalid")
 
-    assertFailsWith<IllegalArgumentException> { Ingredient.deserializeIngredient(data) }
+    assertFailsWith<IllegalArgumentException> { Ingredient.deserialize(data) }
   }
 }

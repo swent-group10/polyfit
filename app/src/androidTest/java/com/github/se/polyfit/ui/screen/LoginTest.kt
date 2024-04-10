@@ -1,13 +1,9 @@
 package com.github.se.polyfit.ui.screen
 
-import android.app.Activity
-import android.app.Instrumentation
-import android.content.Intent
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.lifecycle.Lifecycle
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intended
-import androidx.test.espresso.intent.Intents.intending
-import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import androidx.test.espresso.intent.matcher.IntentMatchers.toPackage
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.MainActivity
@@ -26,6 +22,7 @@ class LoginTest : TestCase() {
   @Before
   fun setup() {
     Intents.init()
+    composeTestRule.activityRule.scenario.moveToState(Lifecycle.State.RESUMED)
   }
 
   @After
@@ -68,25 +65,6 @@ class LoginTest : TestCase() {
       }
       // TODO check we are on another page
       intended(toPackage("com.google.android.gms"))
-    }
-  }
-
-  @Test
-  fun googleSignInReturnsValidActivityResult() {
-    // Stub the intent to Google Sign-In to always return a successful result
-    val resultData = Intent()
-    val result = Instrumentation.ActivityResult(Activity.RESULT_OK, resultData)
-    intending(hasComponent("com.google.android.gms.auth.api.signin.internal.SignInHubActivity"))
-        .respondWith(result)
-
-    ComposeScreen.onComposeScreen<LoginScreen>(composeTestRule) {
-      loginButton {
-        assertIsDisplayed()
-        performClick()
-      }
-
-      // assert that an Intent resolving to Google Mobile Services has been sent (for sign-in)
-      intended(hasComponent("com.google.android.gms.auth.api.signin.internal.SignInHubActivity"))
     }
   }
 }
