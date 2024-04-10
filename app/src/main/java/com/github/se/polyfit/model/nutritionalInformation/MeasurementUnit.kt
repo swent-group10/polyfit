@@ -23,27 +23,32 @@ enum class MeasurementUnit {
   NONE;
 
   override fun toString(): String {
-    return when (this) {
-      G -> "G"
-      MG -> "MG"
-      UG -> "UG"
-      IU -> "IU"
-      KCAL -> "KCAL"
-      CAL -> "CAL"
-      UNIT -> "UNIT"
-      ML -> "ML"
-      CUPS -> "CUPS"
-      TABLESPOONS -> "TABLESPOONS"
-      TEASPOONS -> "TEASPOONS"
-      PINCHES -> "PINCHES"
-      LB -> "LB"
-      LEAVES -> "LEAVES"
-      SERVINGS -> "SERVINGS"
-      NONE -> ""
-    }
+    return this.name
   }
 
   companion object {
+    private val conversionTable: Map<Pair<MeasurementUnit, MeasurementUnit>, Double> =
+        mapOf(
+                Pair(G, LB) to 0.00220462,
+                Pair(G, MG) to 1000.0,
+                Pair(G, UG) to 1_000_000.0,
+                Pair(MG, G) to 0.001,
+                Pair(MG, UG) to 1000.0,
+                Pair(UG, G) to 0.000_001,
+                Pair(UG, MG) to 0.001,
+                Pair(ML, CUPS) to 0.00416667,
+                Pair(ML, TABLESPOONS) to 0.0666667,
+                Pair(ML, TEASPOONS) to 0.2,
+                Pair(CUPS, ML) to 240.0,
+                Pair(TABLESPOONS, ML) to 15.0,
+                Pair(TEASPOONS, ML) to 5.0,
+                Pair(CAL, KCAL) to 0.001,
+                Pair(KCAL, CAL) to 1000.0,
+                Pair(LB, G) to 453.592,
+                Pair(LB, MG) to 453_592.37,
+                Pair(LB, UG) to 453_592_370.0)
+            .withDefault { 1.0 }
+
     fun fromString(unit: String): MeasurementUnit {
 
       return when (unit.lowercase()) {
@@ -91,93 +96,7 @@ enum class MeasurementUnit {
         Log.e("MeasurementUnit", "Value cannot be negative")
         throw IllegalArgumentException("Value cannot be negative")
       }
-
-      val result =
-          when (from) {
-            G ->
-                when (to) {
-                  LB -> value / 453.59237
-                  G -> value
-                  MG -> value * 1000
-                  UG -> value * 1000000
-                  else -> value
-                }
-            MG ->
-                when (to) {
-                  LB -> value / 453592.37
-                  G -> value / 1000
-                  MG -> value
-                  UG -> value * 1000
-                  else -> value
-                }
-            UG ->
-                when (to) {
-                  LB -> value / 453592370
-                  G -> value / 1000000
-                  MG -> value / 1000
-                  UG -> value
-                  else -> value
-                }
-            ML ->
-                when (to) {
-                  ML -> value
-                  CUPS -> value / 240
-                  TABLESPOONS -> value / 15
-                  TEASPOONS -> value / 5
-                  else -> value
-                }
-            CUPS ->
-                when (to) {
-                  ML -> value * 240
-                  CUPS -> value
-                  TABLESPOONS -> value * 16
-                  TEASPOONS -> value * 48
-                  else -> value
-                }
-            TABLESPOONS ->
-                when (to) {
-                  ML -> value * 15
-                  CUPS -> value / 16
-                  TABLESPOONS -> value
-                  TEASPOONS -> value * 3
-                  else -> value
-                }
-            TEASPOONS ->
-                when (to) {
-                  ML -> value * 5
-                  CUPS -> value / 48
-                  TABLESPOONS -> value / 3
-                  TEASPOONS -> value
-                  else -> value
-                }
-            PINCHES ->
-                when (to) {
-                  PINCHES -> value
-                  else -> value
-                }
-            CAL ->
-                when (to) {
-                  CAL -> value
-                  KCAL -> value / 1000
-                  else -> value
-                }
-            KCAL ->
-                when (to) {
-                  CAL -> value * 1000
-                  KCAL -> value
-                  else -> value
-                }
-            LB ->
-                when (to) {
-                  LB -> value
-                  G -> value * 453.59237
-                  MG -> value * 453592.37
-                  UG -> value * 453592370
-                  else -> value
-                }
-            else -> value
-          }
-
+      val result = value * (conversionTable[Pair(from, to)] ?: 1.0)
       return round(result * 100) / 100
     }
   }
