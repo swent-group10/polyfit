@@ -26,6 +26,9 @@ It is important to correctly apply the appropriate color to the component, not o
 
 <br> In other words, if you don't know what color to apply, follow this guide as a first step.
 
+### UPDATE
+If you apply the function (in [Theme.kt](https://github.com/swent-group10/polyfit/blob/e23c2893838d6ca3d49c43c7a60bf706d92118c8/app/src/main/java/com/github/se/polyfit/ui/theme/Theme.kt#L37)) tn your composable, the default color set by the M3 developers is applied automatically. If you choose to override this color and pass your composable as an argument to a function, a strange color is applied. (I have not yet fully understood how this works)
+
 ### Samples of project
 <a href="https://github.com/android/compose-samples" target="_blank">Here</a>, you can find many different project made by android team, and can be helpful to solve many implementation problem.
 #### Hilt

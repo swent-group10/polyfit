@@ -6,4 +6,6 @@ object Route {
   const val Overview = "Overview"
   const val Map = "Map"
   const val Settings = "Settings"
+  const val Ingredients = "Ingredients"
+
 }
