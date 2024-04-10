@@ -19,6 +19,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.ui.theme.*
 import com.github.se.polyfit.ui.utils.removeLeadingZerosAndNonDigits
 
@@ -148,7 +149,7 @@ fun SearchIngredients() {
 // }
 
 @Composable
-fun AddIngredientDialog(onClickCloseDialog: () -> Unit) {
+fun AddIngredientDialog(onClickCloseDialog: () -> Unit, onAddIngredient: (Ingredient) -> Unit) {
   Dialog(onDismissRequest = onClickCloseDialog) {
     GradientBox(
         outerModifier = Modifier.testTag("AddIngredientPopupContainer"),
