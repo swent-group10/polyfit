@@ -40,7 +40,7 @@ class MealViewModel(
   }
 
   fun getMealsFromImage(imageBitmap: Bitmap): LiveData<Meal> {
-    // need to conver to File
+    // need to convert to File
     var file = File.createTempFile("image", ".jpg")
     imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, FileOutputStream(file))
     // Gets Api response
@@ -72,9 +72,14 @@ class MealViewModel(
             meal.value = newMeal
 
             // maybe in next spring better to store ingredients in a local database
-            newMeal.ingredients.map {
-              Ingredient(it.name, it.id, 0.0, it.unit, it.nutritionalInformation.deepCopy())
-            }
+            _ingredients.value =
+                _ingredients.value?.plus(
+                    newMeal.ingredients.map {
+                      Ingredient(it.name, it.id, 0.0, it.unit, it.nutritionalInformation.deepCopy())
+                    })
+                    ?: newMeal.ingredients.map {
+                      Ingredient(it.name, it.id, 0.0, it.unit, it.nutritionalInformation.deepCopy())
+                    }
           }
         }
       }
@@ -83,8 +88,24 @@ class MealViewModel(
     return meal
   }
 
-  fun setMeal(meal: Meal) {
-    mealRepo.storeMeal(meal)
+  /**
+   * Stores a meal in the database. The return value is not usefull for now but could be usefully in
+   * the future to show a message to the user
+   *
+   * @param meal the meal to store
+   * @return LiveData<Boolean> true if the meal was stored successfully, false otherwise
+   */
+  fun setMeal(meal: Meal): LiveData<Boolean> {
+    val isSuccessful = MutableLiveData<Boolean>()
+    mealRepo.storeMeal(meal).continueWith {
+      if (it.isSuccessful) {
+        isSuccessful.value = true
+        _ingredients.value = _ingredients.value?.plus(meal.ingredients) ?: meal.ingredients
+      } else {
+        isSuccessful.value = false
+      }
+    }
+    return isSuccessful
   }
 
   fun getAllIngredients(): LiveData<List<Ingredient>> {
