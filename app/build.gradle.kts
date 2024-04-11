@@ -144,6 +144,8 @@ android {
         implementation("com.google.android.play:core-ktx:1.8.1")
         implementation("com.google.firebase:firebase-auth-ktx:22.3.1")
 
+        testImplementation("org.robolectric:robolectric:4.8")
+
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0")
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
         implementation("org.json:json:20210307")

@@ -2,8 +2,6 @@ package com.github.se.polyfit.model.meal
 
 import android.util.Log
 import com.github.se.polyfit.model.ingredient.Ingredient
-import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
-import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 
 // modeled after the log meal api
