@@ -7,7 +7,7 @@ import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 // modeled after the log meal api
 data class Meal(
     val occasion: MealOccasion,
-    val name: String,
+    var name: String,
     val mealID: Long,
     // represent the ideal temperature at which should be eaten at,
     // usefull for later features
@@ -51,6 +51,12 @@ data class Meal(
   fun addIngredient(ingredient: Ingredient) {
     ingredients.add(ingredient)
     updateMeal()
+  }
+
+  fun isComplete(): Boolean {
+    return name.isNotEmpty() &&
+        ingredients.isNotEmpty() &&
+        nutritionalInformation.nutrients.isNotEmpty()
   }
 
   private fun updateMeal() {
@@ -107,6 +113,17 @@ data class Meal(
         Log.e("Meal", "Failed to deserialize Meal object: ${e.message}", e)
         throw IllegalArgumentException("Failed to deserialize Meal object", e)
       }
+    }
+
+    fun default(): Meal {
+      return Meal(
+          MealOccasion.OTHER,
+          "",
+          0,
+          20.0,
+          NutritionalInformation(mutableListOf()),
+          mutableListOf(),
+          "")
     }
   }
 }
