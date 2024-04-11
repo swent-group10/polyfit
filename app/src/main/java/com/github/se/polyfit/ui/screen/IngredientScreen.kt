@@ -34,8 +34,6 @@ import com.github.se.polyfit.ui.components.IngredientList
 import com.github.se.polyfit.ui.theme.PrimaryPurple
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
 
-// TODO: Replace with real data class
-
 @Composable
 fun IngredientScreen(
     mealViewModel: MealViewModel,
@@ -94,7 +92,7 @@ private fun BottomBar(onClickAddIngred: () -> Unit, navigateForward: () -> Unit)
               onClick = {
                 navigateForward()
                 Log.v("Finished", "Clicked")
-              }, // TODO: Finish adding ingredients
+              },
               modifier = Modifier.width(200.dp).testTag("DoneButton"),
               colors = ButtonDefaults.buttonColors(containerColor = PrimaryPurple)) {
                 Text(text = "Done", fontSize = 24.sp)
