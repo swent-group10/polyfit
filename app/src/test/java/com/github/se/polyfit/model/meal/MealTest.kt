@@ -72,10 +72,10 @@ class MealTest {
             "nutritionalInformation" to NutritionalInformation(mutableListOf()).serialize())
     val meal = Meal.deserialize(data)
     assertNotNull(meal)
-    assertEquals(1.toLong(), meal?.mealID)
-    assertEquals(MealOccasion.DINNER, meal?.occasion)
-    assertEquals("eggs", meal?.name)
-    assertEquals(102.2, meal?.mealTemp)
+    assertEquals(1.toLong(), meal.mealID)
+    assertEquals(MealOccasion.DINNER, meal.occasion)
+    assertEquals("eggs", meal.name)
+    assertEquals(102.2, meal.mealTemp, 0.001)
   }
 
   @Test
@@ -91,5 +91,85 @@ class MealTest {
     val meal = Meal.deserialize(data)
     val deserialized = Meal.deserialize(data)
     assertEquals(meal, deserialized)
+  }
+
+  @Test
+  fun `meal without name is incomplete`() {
+    val meal =
+        Meal(
+            MealOccasion.DINNER,
+            name = "",
+            mealID = 1,
+            mealTemp = 102.2,
+            nutritionalInformation =
+                NutritionalInformation(mutableListOf(Nutrient("calcium", 1.0, MeasurementUnit.G))),
+            ingredients =
+                mutableListOf(
+                    Ingredient(
+                        "milk",
+                        1,
+                        102.0,
+                        MeasurementUnit.MG,
+                        NutritionalInformation(mutableListOf()))))
+
+    assertEquals(false, meal.isComplete())
+  }
+
+  @Test
+  fun `meal without ingredients is incomplete`() {
+    val meal =
+        Meal(
+            MealOccasion.DINNER,
+            name = "eggs",
+            mealID = 1,
+            mealTemp = 102.2,
+            nutritionalInformation =
+                NutritionalInformation(mutableListOf(Nutrient("calcium", 1.0, MeasurementUnit.G))),
+            ingredients = mutableListOf())
+
+    assertEquals(false, meal.isComplete())
+  }
+
+  @Test
+  fun `meal without nutritional information is incomplete`() {
+    val meal =
+        Meal(
+            MealOccasion.DINNER,
+            name = "eggs",
+            mealID = 1,
+            mealTemp = 102.2,
+            nutritionalInformation = NutritionalInformation(mutableListOf()),
+            ingredients =
+                mutableListOf(
+                    Ingredient(
+                        "milk",
+                        1,
+                        102.0,
+                        MeasurementUnit.MG,
+                        NutritionalInformation(mutableListOf()))))
+
+    assertEquals(false, meal.isComplete())
+  }
+
+  @Test
+  fun `meal with all mandatory fields is complete`() {
+    val meal =
+        Meal(
+            MealOccasion.DINNER,
+            name = "eggs",
+            mealID = 1,
+            mealTemp = 102.2,
+            nutritionalInformation =
+                NutritionalInformation(mutableListOf(Nutrient("calcium", 1.0, MeasurementUnit.G))),
+            ingredients =
+                mutableListOf(
+                    Ingredient(
+                        "milk",
+                        1,
+                        102.0,
+                        MeasurementUnit.MG,
+                        NutritionalInformation(mutableListOf()))))
+
+    assertEquals(true, meal.isComplete())
   }
 }
