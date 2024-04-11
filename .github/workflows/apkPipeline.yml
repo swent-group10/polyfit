@@ -6,6 +6,7 @@ on:
       - release/*
       - main
       - Main
+      - feature/apk-build-pipeline
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -44,7 +45,7 @@ jobs:
           prerelease: true # indicates that the release is a pre-release.
           body: |
             Changes in this release:
-            ${{ github.event.commits[0].message }}
+            ${{ join('\n', github.event.commits.*.message) }}
         if: startsWith(github.ref, 'refs/heads/release/')
 
       - name: Upload Release Asset
