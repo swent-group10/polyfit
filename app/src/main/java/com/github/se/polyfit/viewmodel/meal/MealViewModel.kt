@@ -31,6 +31,10 @@ class MealViewModel(
     }
   }
 
+  fun setMealName(name: String) {
+    _meal.value!!.name = name
+  }
+
   fun setMeal() {
     if (_meal.value == null) {
       throw IllegalStateException("Meal is null")

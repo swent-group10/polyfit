@@ -7,7 +7,7 @@ import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 // modeled after the log meal api
 data class Meal(
     val occasion: MealOccasion,
-    val name: String,
+    var name: String,
     val mealID: Long,
     // represent the ideal temperature at which should be eaten at,
     // usefull for later features
