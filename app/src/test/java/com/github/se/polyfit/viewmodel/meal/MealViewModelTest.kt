@@ -137,4 +137,23 @@ class MealViewModelTest {
 
     verify { mealFirebaseRepository.storeMeal(meal) }
   }
+
+  @Test
+  fun `setMealName sets meal name`() {
+    val meal =
+        Meal(
+            MealOccasion.BREAKFAST,
+            "testMeal",
+            1,
+            20.0,
+            NutritionalInformation(mutableListOf()),
+            mutableListOf(),
+            "testID")
+    mealViewModel = MealViewModel(userID, initialMeal = meal, mealRepo = mealFirebaseRepository)
+
+    mealViewModel.setMealName("newName")
+
+    val updatedMeal = mealViewModel.meal.value!!
+    assertEquals(updatedMeal.name, "newName")
+  }
 }
