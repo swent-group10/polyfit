@@ -1,26 +1,17 @@
 package com.github.se.polyfit.viewmodel.meal
 
-import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.github.se.polyfit.data.api.APIResponse
-import com.github.se.polyfit.data.api.SpoonacularApiCaller
 import com.github.se.polyfit.data.repository.MealRepository
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
-import java.io.File
-import java.io.FileOutputStream
-import kotlinx.coroutines.launch
 
 class MealViewModel(userID: String, firebaseID: String = "", meal: Meal? = null) : ViewModel() {
   // after friday use hilt dependency injection to make code cleaner, for now i guess this is ok
   private val mealRepo: MealRepository = MealRepository(userID)
-  private val spoonacularApiCaller = SpoonacularApiCaller()
-
   private val _meal: MutableLiveData<Meal> = MutableLiveData(null)
   val meal: LiveData<Meal> = _meal
 
@@ -44,45 +35,6 @@ class MealViewModel(userID: String, firebaseID: String = "", meal: Meal? = null)
               mutableListOf(),
               firebaseID)
     }
-  }
-
-  fun getMealFromImage(imageBitmap: Bitmap): LiveData<Meal> {
-    // Convert to file
-    val file = File.createTempFile("image", ".jpg")
-    imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, FileOutputStream(file))
-    // Gets Api response
-
-    val meal = MutableLiveData<Meal>()
-    meal.value = Meal.default()
-
-    viewModelScope.launch {
-      val apiResponse = spoonacularApiCaller.imageAnalysis(file)
-      if (apiResponse.status == APIResponse.SUCCESS) {
-        // chooses from a bunch of recipes
-        val recipeInformation = spoonacularApiCaller.getMealNutrition(apiResponse.recipes.first())
-
-        if (recipeInformation.status == APIResponse.SUCCESS) {
-          val newMeal =
-              Meal(
-                  MealOccasion.NONE,
-                  apiResponse.category,
-                  apiResponse.recipes.first().toLong(),
-                  20.0,
-                  NutritionalInformation(recipeInformation.nutrients.toMutableList()),
-                  recipeInformation.ingredients.toMutableList(),
-                  // firebase id not defined yet because no calls to store the information
-                  "")
-
-          mealRepo.storeMeal(newMeal).addOnCompleteListener { it ->
-            newMeal.firebaseId = it.result.id
-
-            meal.value = newMeal
-          }
-        }
-      }
-    }
-
-    return meal
   }
 
   fun setMeal() {
