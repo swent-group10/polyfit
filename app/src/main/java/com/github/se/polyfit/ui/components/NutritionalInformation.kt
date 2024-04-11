@@ -15,12 +15,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.ui.theme.PrimaryPurple
+import com.github.se.polyfit.viewmodel.meal.MealViewModel
 
 @Composable
-fun NutritionalInformation(meal: Meal) {
+fun NutritionalInformation(mealViewModel: MealViewModel) {
+  val meal = mealViewModel.meal.value!!
   val nutritionalInformation = meal.nutritionalInformation
   val nutrients = nutritionalInformation.nutrients
   val calories = nutritionalInformation.getNutrient("calories")
@@ -39,7 +40,7 @@ fun NutritionalInformation(meal: Meal) {
     } else {
       item { NutrientInfo(nutrient = calories, style = MaterialTheme.typography.bodyLarge) }
       items(nutrients) { nutrient ->
-        if (nutrient.nutrientType != "calories") {
+        if (nutrient != calories) {
           NutrientInfo(nutrient = nutrient)
         }
       }
@@ -55,7 +56,7 @@ private fun MealName(mealName: String) {
         color = PrimaryPurple,
         style = MaterialTheme.typography.headlineSmall,
         modifier = Modifier.testTag("MealName"))
-    HorizontalDivider()
+    HorizontalDivider(modifier = Modifier.padding(bottom = 8.dp))
   }
 }
 

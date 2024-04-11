@@ -55,6 +55,12 @@ data class Meal(
     updateMeal()
   }
 
+  fun isComplete(): Boolean {
+    return name.isNotEmpty() &&
+        ingredients.isNotEmpty() &&
+        nutritionalInformation.nutrients.isNotEmpty()
+  }
+
   private fun updateMeal() {
 
     var newNutritionalInformation = NutritionalInformation(mutableListOf())
@@ -113,20 +119,13 @@ data class Meal(
 
     fun default(): Meal {
       return Meal(
-          MealOccasion.BREAKFAST,
-          "Ceareal",
-          1893,
+          MealOccasion.OTHER,
+          "",
+          0,
           20.0,
-          NutritionalInformation(
-              mutableListOf(
-                  Nutrient("Calories", 400.0, MeasurementUnit.CAL),
-                  Nutrient("Fat", 10.0, MeasurementUnit.G),
-                  Nutrient("Carbs", 20.0, MeasurementUnit.G),
-                  Nutrient("Sugar", 10.0, MeasurementUnit.G),
-              )),
-          mutableListOf(
-              Ingredient("Milk", 1789, 200.0, MeasurementUnit.ML),
-              Ingredient("Cereal", 13, 100.0, MeasurementUnit.G)))
+          NutritionalInformation(mutableListOf()),
+          mutableListOf(),
+          "")
     }
   }
 }

@@ -95,4 +95,20 @@ class NutrientTest {
     val nutrient = Nutrient("vitaminb4", 100.0, MeasurementUnit.IU)
     Assert.assertEquals("Vitamin B4", nutrient.getFormattedName())
   }
+
+  @Test
+  fun `multiply nutrient by a scalar`() {
+    val nutrient = Nutrient("fats", 100.0, MeasurementUnit.G)
+    val result = nutrient * 2.0
+    Assert.assertEquals(200.0, result.amount, 0.001)
+    Assert.assertEquals(MeasurementUnit.G, result.unit)
+  }
+
+  @Test
+  fun `multiply nutrient by negative scalar`() {
+    val nutrient = Nutrient("vitaminb4", 5.2, MeasurementUnit.IU)
+    val result = nutrient * -2.0
+    Assert.assertEquals(-10.4, result.amount, 0.001)
+    Assert.assertEquals(MeasurementUnit.IU, result.unit)
+  }
 }

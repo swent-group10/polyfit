@@ -25,21 +25,25 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.github.se.polyfit.model.ingredient.Ingredient
+import com.github.se.polyfit.viewmodel.meal.MealViewModel
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun IngredientList(
     it: PaddingValues,
-    ingredients: List<Ingredient>,
-    potentialIngredients: List<Ingredient>,
-    onAddIngredient: (Int) -> Unit,
+    mealViewModel: MealViewModel,
 ) {
+  val ingredients = mealViewModel.meal.value?.ingredients ?: emptyList()
 
+  // TODO: Implement potential ingredients
+  val potentialIngredients = listOf<Ingredient>()
+  val onAddIngredient = { index: Int -> Log.v("Add Ingredient", "Clicked") }
   val initialSuggestions = 3
   val potentialIndex = remember {
     // equivalent to min(3, potentialIngredients.size)
     mutableIntStateOf(initialSuggestions.coerceAtMost(potentialIngredients.size))
   }
+
   Column(
       modifier =
           Modifier.fillMaxSize()
@@ -50,7 +54,7 @@ fun IngredientList(
       horizontalAlignment = Alignment.CenterHorizontally) {
         if (ingredients.isEmpty() && potentialIngredients.isEmpty()) {
           Text(
-              "No ingredients added yet",
+              "No ingredients added.",
               modifier = Modifier.fillMaxSize().padding(16.dp, 0.dp).testTag("NoIngredients"),
               color = MaterialTheme.colorScheme.secondary,
               fontSize = MaterialTheme.typography.headlineSmall.fontSize)

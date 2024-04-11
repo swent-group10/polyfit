@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.github.se.polyfit.ui.flow.AddMealFlow
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.navigation.Route
 import com.github.se.polyfit.ui.screen.HomeScreen
@@ -27,6 +28,12 @@ class MainActivity : ComponentActivity() {
         NavHost(navController = navController, startDestination = Route.Register) {
           composable(Route.Register) { LoginScreen(navigation::navigateToHome) }
           composable(Route.Home) { HomeScreen() }
+          composable(Route.AddMeal) {
+            AddMealFlow(
+                navigation::goBack,
+                navigation::navigateToHome,
+                userID = "testUserID") // TODO: real userID
+          }
         }
       }
     }

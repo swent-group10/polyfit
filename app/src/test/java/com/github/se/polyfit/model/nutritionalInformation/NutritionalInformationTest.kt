@@ -109,7 +109,7 @@ class NutritionalInformationTest {
   }
 
   @Test
-  fun `plus operator  should add nutritional information correctly`() {
+  fun `plus operator should add nutritional information correctly`() {
     val nutritionalInformation1 =
         NutritionalInformation(
             mutableListOf(
@@ -134,6 +134,35 @@ class NutritionalInformationTest {
         result.nutrients.filter { it.nutrientType == "calories" }[0])
     assertEquals(
         Nutrient("fat", 15.0, MeasurementUnit.G),
+        result.nutrients.filter { it.nutrientType == "fat" }[0])
+  }
+
+  @Test
+  fun `minus operator should add nutritional information correctly`() {
+    val nutritionalInformation1 =
+        NutritionalInformation(
+            mutableListOf(
+                Nutrient("totalWeight", 100.0, MeasurementUnit.G),
+                Nutrient("calories", 200.0, MeasurementUnit.CAL),
+                Nutrient("fat", 10.0, MeasurementUnit.G)))
+
+    val nutritionalInformation2 =
+        NutritionalInformation(
+            mutableListOf(
+                Nutrient("totalWeight", 50.0, MeasurementUnit.G),
+                Nutrient("calories", 100.0, MeasurementUnit.CAL),
+                Nutrient("fat", 5.0, MeasurementUnit.G)))
+
+    val result = nutritionalInformation1 - nutritionalInformation2
+
+    assertEquals(
+        Nutrient("totalWeight", 50.0, MeasurementUnit.G),
+        result.nutrients.filter { it.nutrientType == "totalWeight" }[0])
+    assertEquals(
+        Nutrient("calories", 100.0, MeasurementUnit.CAL),
+        result.nutrients.filter { it.nutrientType == "calories" }[0])
+    assertEquals(
+        Nutrient("fat", 5.0, MeasurementUnit.G),
         result.nutrients.filter { it.nutrientType == "fat" }[0])
   }
 

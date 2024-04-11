@@ -13,6 +13,7 @@ import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
+import com.github.se.polyfit.viewmodel.meal.MealViewModel
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import org.junit.Rule
@@ -81,7 +82,9 @@ class NutritionalInformationTest : TestCase() {
           nutritionalInformation = nutritionalInformation)
 
   private fun setup(meal: Meal) {
-    composeTestRule.setContent { NutritionalInformation(meal = meal) }
+    composeTestRule.setContent {
+      NutritionalInformation(mealViewModel = MealViewModel("testUserID", initialMeal = meal))
+    }
   }
 
   @Test
