@@ -2,7 +2,13 @@ package com.github.se.polyfit.ui.screen
 
 import android.util.Log
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performImeAction
+import androidx.compose.ui.test.performTextClearance
+import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
@@ -138,6 +144,52 @@ class NutritionalInfoTest : TestCase() {
         assertIsDisplayed()
         assertTextEquals(meal.name)
       }
+    }
+  }
+
+  @Test
+  fun verifySuccessfulNameChange() {
+    ComposeScreen.onComposeScreen<NutritionalInformationBody>(composeTestRule) {
+      val mealNameText = composeTestRule.onNodeWithTag("MealName")
+      val editMealButton = composeTestRule.onNodeWithTag("EditMealButton")
+      val mealNameTextInput = composeTestRule.onNodeWithTag("EditMealNameTextField")
+
+      mealNameText.assertIsDisplayed()
+
+      editMealButton.performClick()
+
+      mealNameText.assertDoesNotExist()
+
+      mealNameTextInput.assertIsDisplayed().performTextClearance()
+
+      mealNameTextInput.performTextInput("Apple Pie")
+
+      mealNameTextInput.performImeAction()
+
+      mealNameTextInput.assertDoesNotExist()
+
+      mealNameText.assertIsDisplayed().assertTextEquals("Apple Pie")
+    }
+  }
+
+  @Test
+  fun verifyMealNamePlaceholder() {
+    ComposeScreen.onComposeScreen<NutritionalInformationBody>(composeTestRule) {
+      val mealNameText = composeTestRule.onNodeWithTag("MealName")
+      val editMealButton = composeTestRule.onNodeWithTag("EditMealButton")
+      val mealNameTextInput = composeTestRule.onNodeWithTag("EditMealNameTextField")
+
+      mealNameText.assertIsDisplayed()
+
+      editMealButton.performClick()
+
+      mealNameText.assertDoesNotExist()
+
+      mealNameTextInput.assertIsDisplayed().performTextClearance()
+
+      mealNameTextInput.performImeAction()
+
+      mealNameText.assertIsDisplayed().assertTextEquals("Enter name here")
     }
   }
 

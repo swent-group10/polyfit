@@ -45,6 +45,7 @@ class NavigationTest {
     verify { navHostController.navigate(Route.Home) }
   }
 
+  @Test
   fun navigateToAddMeal() {
     route = Route.AddMeal
     every { navHostController.navigate(route) } returns Unit
