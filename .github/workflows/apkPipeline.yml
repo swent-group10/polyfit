@@ -48,7 +48,7 @@ jobs:
           tag_name: ${{ github.ref_name }}-${{ github.sha }}-v${{ github.run_number }}-${{ github.run_id }}
           release_name: Release ${{ github.ref_name }} Version ${{ github.run_number }} on ${{ github.event.commits[0].timestamp }}
           draft: false # not shown to users and it does not trigger any notifications or webhooks.
-          prerelease: true # indicates that the release is a pre-release.
+          prerelease: false # indicates that the release is a pre-release.
           body: |
             Changes in this release:
             ${{ join('\n', github.event.commits.*.message) }}
