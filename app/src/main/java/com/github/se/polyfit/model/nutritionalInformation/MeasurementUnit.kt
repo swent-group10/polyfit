@@ -1,7 +1,6 @@
 package com.github.se.polyfit.model.nutritionalInformation
 
 import android.util.Log
-import java.util.Locale
 import kotlin.math.round
 
 enum class MeasurementUnit {
@@ -20,7 +19,7 @@ enum class MeasurementUnit {
   LB,
   LEAVES,
   SERVINGS,
-  NONE;
+  OTHER;
 
   override fun toString(): String {
     return this.name
@@ -73,10 +72,8 @@ enum class MeasurementUnit {
         "lb" -> LB
         "leaves" -> LEAVES
         "servings" -> SERVINGS
-        "" -> NONE
-        else ->
-            throw IllegalArgumentException(
-                "Invalid unit: $unit ${unit.uppercase(Locale.getDefault())}")
+        "other" -> OTHER
+        else -> OTHER
       }
     }
 
@@ -89,7 +86,7 @@ enum class MeasurementUnit {
      * @return the converted value with a rounded precision of two decimal places
      */
     fun unitConversion(from: MeasurementUnit, to: MeasurementUnit, value: Double): Double {
-      if (from == UNIT || to == UNIT || from == NONE || to == NONE) {
+      if (from == UNIT || to == UNIT || from == OTHER || to == OTHER) {
         Log.e("MeasurementUnit", "Unsupported conversion from $from to $to")
         throw IllegalArgumentException("Unsupported conversion from $from to $to")
       } else if (value < 0) {

@@ -2,6 +2,8 @@ package com.github.se.polyfit.model.meal
 
 import android.util.Log
 import com.github.se.polyfit.model.ingredient.Ingredient
+import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
+import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 
 // modeled after the log meal api
@@ -107,6 +109,24 @@ data class Meal(
         Log.e("Meal", "Failed to deserialize Meal object: ${e.message}", e)
         throw IllegalArgumentException("Failed to deserialize Meal object", e)
       }
+    }
+
+    fun default(): Meal {
+      return Meal(
+          MealOccasion.BREAKFAST,
+          "Ceareal",
+          1893,
+          20.0,
+          NutritionalInformation(
+              mutableListOf(
+                  Nutrient("Calories", 400.0, MeasurementUnit.CAL),
+                  Nutrient("Fat", 10.0, MeasurementUnit.G),
+                  Nutrient("Carbs", 20.0, MeasurementUnit.G),
+                  Nutrient("Sugar", 10.0, MeasurementUnit.G),
+              )),
+          mutableListOf(
+              Ingredient("Milk", 1789, 200.0, MeasurementUnit.ML),
+              Ingredient("Cereal", 13, 100.0, MeasurementUnit.G)))
     }
   }
 }

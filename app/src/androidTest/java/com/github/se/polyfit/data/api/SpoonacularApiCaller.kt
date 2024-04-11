@@ -1,29 +1,45 @@
+package com.github.se.polyfit.data
+
+import android.graphics.BitmapFactory
 import android.util.Log
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.se.polyfit.data.api.APIResponse
 import com.github.se.polyfit.data.api.ImageAnalysisResponseAPI
 import com.github.se.polyfit.data.api.RecipeNutritionResponseAPI
 import com.github.se.polyfit.data.api.SpoonacularApiCaller
+import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import java.io.File
+import java.io.InputStream
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 import kotlin.test.assertFailsWith
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.runBlocking
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import okhttp3.mockwebserver.RecordedRequest
 import org.json.JSONObject
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 
 class SpoonacularApiCallerTest {
+
+  @get:Rule val instantTaskExecutorRule = InstantTaskExecutorRule()
+
   private lateinit var mockWebServer: MockWebServer
   private lateinit var file: File
+  private lateinit var spoonacularApiCaller: SpoonacularApiCaller
 
   private val dispatcher =
       object : Dispatcher() {
         override fun dispatch(request: RecordedRequest): MockResponse {
-          Log.d("SpoonacularApiCallerTest", "Received request: ${request.method} ${request.path}")
+          Log.e("SpoonacularApiCallerTest", "Received request: ${request.method} ${request.path}")
           return when (request.path) {
             "/food/images/analyze" ->
                 MockResponse()
@@ -35,8 +51,34 @@ class SpoonacularApiCallerTest {
                     .setResponseCode(200)
                     .addHeader("Content-Type", "application/json")
                     .setBody(jsonRecipeNutrition.toString())
+            "/recipes/61867/nutritionWidget.json" ->
+                MockResponse()
+                    .setResponseCode(200)
+                    .addHeader("Content-Type", "application/json")
+                    .setBody(jsonRecipeNutrition.toString())
             "/error" -> MockResponse().setResponseCode(500).setBody("Server error")
-            else -> MockResponse().setResponseCode(404).setBody("Not found")
+            else -> MockResponse().setResponseCode(402).setBody("Not found")
+          }
+        }
+      }
+  private val halfFaultyDispacher =
+      object : Dispatcher() {
+        override fun dispatch(request: RecordedRequest): MockResponse {
+          Log.e("SpoonacularApiCallerTest", "Received request: ${request.method} ${request.path}")
+          return when (request.path) {
+            "/food/images/analyze" ->
+                MockResponse()
+                    .setResponseCode(200)
+                    .setBody(jsonImageAnalysis.toString())
+                    .addHeader("Content-Type", "application/json")
+            "/recipes/1/nutritionWidget.json" ->
+                MockResponse()
+                    .setResponseCode(200)
+                    .addHeader("Content-Type", "application/json")
+                    .setBody(jsonRecipeNutrition.toString())
+            "/recipes/61867/nutritionWidget.json" -> MockResponse().setResponseCode(300)
+            "/error" -> MockResponse().setResponseCode(500).setBody("Server error")
+            else -> MockResponse().setResponseCode(402).setBody("Not found")
           }
         }
       }
@@ -44,6 +86,8 @@ class SpoonacularApiCallerTest {
   private val faultyDispatcher =
       object : Dispatcher() {
         override fun dispatch(request: RecordedRequest): MockResponse {
+
+          Log.e("SpoonacularApiCallerTest", "Received request: ${request.method} ${request.path}")
           return when (request.path) {
             "/food/images/analyze" -> MockResponse().setResponseCode(404)
             "/recipes/1/nutritionWidget.json" ->
@@ -53,6 +97,7 @@ class SpoonacularApiCallerTest {
           }
         }
       }
+  lateinit var inputStream: InputStream
 
   @Before
   fun setUp() {
@@ -61,10 +106,10 @@ class SpoonacularApiCallerTest {
     mockWebServer.start()
 
     // Set the base URL to the mock server URL
-    SpoonacularApiCaller.setBaseUrl(mockWebServer.url("/").toString())
+    spoonacularApiCaller = SpoonacularApiCaller()
+    spoonacularApiCaller.setBaseUrl(mockWebServer.url("/").toString())
 
-    val inputStream =
-        InstrumentationRegistry.getInstrumentation().context.assets.open("cheesecake.jpg")
+    inputStream = InstrumentationRegistry.getInstrumentation().context.assets.open("cheesecake.jpg")
     file = File.createTempFile("image", ".jpg")
     file.outputStream().use { outputStream -> inputStream.copyTo(outputStream) }
   }
@@ -72,7 +117,7 @@ class SpoonacularApiCallerTest {
   @Test
   fun imageAnalysisReturnsExpectedResponse() {
 
-    val response = SpoonacularApiCaller.imageAnalysis(file.absolutePath)
+    val response = spoonacularApiCaller.imageAnalysis(file)
 
     assert(response != null)
     assert(response.status == APIResponse.SUCCESS)
@@ -90,14 +135,14 @@ class SpoonacularApiCallerTest {
     mockWebServer.dispatcher = faultyDispatcher
 
     assertFailsWith<Exception> {
-      val response = SpoonacularApiCaller.imageAnalysis(file)
+      val response = spoonacularApiCaller.imageAnalysis(file)
     }
   }
 
   @Test
   fun getRecipeNutritionReturnsExpectedResponse() {
 
-    val response = SpoonacularApiCaller.getRecipeNutrition(1) // Add your test recipeId here
+    val response = spoonacularApiCaller.getRecipeNutrition(1) // Add your test recipeId here
 
     assert(response != null)
     assert(response.nutrients.filter { it.unit == MeasurementUnit.KCAL }.first().amount == 899.16)
@@ -112,7 +157,7 @@ class SpoonacularApiCallerTest {
     mockWebServer.dispatcher = faultyDispatcher
 
     assertFailsWith<Exception> {
-      val response = SpoonacularApiCaller.getRecipeNutrition(1) // Add your test recipeId here
+      val response = spoonacularApiCaller.getRecipeNutrition(1) // Add your test recipeId here
     }
   }
 
@@ -147,6 +192,96 @@ class SpoonacularApiCallerTest {
         response.nutrients.filter { it.nutrientType == "Carbohydrates" }.first().amount == 111.24)
     assert(response.nutrients.filter { it.nutrientType == "Fat" }.first().amount == 45.33)
     assert(response.nutrients.filter { it.nutrientType == "Protein" }.first().amount == 11.64)
+  }
+
+  @Test
+  fun testingImageToMeal() {
+    mockWebServer.dispatcher = dispatcher
+
+    // Arrange
+    val inputStream =
+        InstrumentationRegistry.getInstrumentation().context.assets.open("cheesecake.jpg")
+
+    // Act
+    val liveDataMeal = runBlocking {
+      spoonacularApiCaller.getMealsFromImage(BitmapFactory.decodeStream(inputStream), GlobalScope)
+    }
+    val latch = CountDownLatch(2)
+
+    // Since LiveData is asynchronous, we need to observe it to get the value.
+    // We use a CountDownLatch to wait for LiveData to set a value.
+    var actualMeal: Meal? = null
+    liveDataMeal.observeForever {
+      actualMeal = it
+      latch.countDown() // LiveData has set a value, we can stop waiting.
+    }
+
+    // Wait for LiveData to set a value
+    latch.await(2, TimeUnit.SECONDS)
+
+    // Assert
+    assertEquals("cheesecake", actualMeal!!.name)
+
+    // Observe the LiveData returned by getMealsFromImage and log the result in the observer
+
+  }
+
+  @Test
+  fun testingImageToMealSecondAPIcallFails() {
+    mockWebServer.dispatcher = halfFaultyDispacher
+
+    // Arrange
+    val inputStream =
+        InstrumentationRegistry.getInstrumentation().context.assets.open("cheesecake.jpg")
+
+    // Act
+    val liveDataMeal = runBlocking {
+      spoonacularApiCaller.getMealsFromImage(BitmapFactory.decodeStream(inputStream), GlobalScope)
+    }
+    val latch = CountDownLatch(2)
+
+    // Since LiveData is asynchronous, we need to observe it to get the value.
+    // We use a CountDownLatch to wait for LiveData to set a value.
+    var actualMeal: Meal? = null
+    liveDataMeal.observeForever {
+      actualMeal = it
+      latch.countDown() // LiveData has set a value, we can stop waiting.
+    }
+
+    // Wait for LiveData to set a value
+    latch.await(2, TimeUnit.SECONDS)
+
+    // Assert
+    assertEquals(Meal.default(), actualMeal!!)
+  }
+
+  @Test
+  fun testingImageToMealAllAPIcallFails() {
+    mockWebServer.dispatcher = faultyDispatcher
+
+    // Arrange
+    val inputStream =
+        InstrumentationRegistry.getInstrumentation().context.assets.open("cheesecake.jpg")
+
+    // Act
+    val liveDataMeal = runBlocking {
+      spoonacularApiCaller.getMealsFromImage(BitmapFactory.decodeStream(inputStream), GlobalScope)
+    }
+    val latch = CountDownLatch(2)
+
+    // Since LiveData is asynchronous, we need to observe it to get the value.
+    // We use a CountDownLatch to wait for LiveData to set a value.
+    var actualMeal: Meal? = null
+    liveDataMeal.observeForever {
+      actualMeal = it
+      latch.countDown() // LiveData has set a value, we can stop waiting.
+    }
+
+    // Wait for LiveData to set a value
+    latch.await(2, TimeUnit.SECONDS)
+
+    // Assert
+    assertEquals(Meal.default(), actualMeal!!)
   }
 
   @After
