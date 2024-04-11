@@ -10,6 +10,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.github.se.polyfit.ui.flow.AddMealFlow
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.navigation.Route
 import com.github.se.polyfit.ui.navigation.globalNavigation
@@ -38,8 +39,19 @@ class MainActivity : ComponentActivity() {
         val navController = rememberNavController()
         val navigation = Navigation(navController)
         NavHost(navController = navController, startDestination = Route.Register) {
-          composable(Route.Register) { SignScreen(navigation::navigateToHome) }
+
+         
           globalNavigation(navController)
+
+          composable(Route.Register) { LoginScreen(navigation::navigateToHome) }
+          
+          composable(Route.AddMeal) {
+            AddMealFlow(
+                navigation::goBack,
+                navigation::navigateToHome,
+                userID = "testUserID") // TODO: real userID
+          }
+
         }
       }
     }

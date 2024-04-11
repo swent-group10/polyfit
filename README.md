@@ -20,3 +20,5 @@ Tracking of the standup meeting minutes is an integral part of the Scrum softwar
 ### Implementation readme
 [main/readme](app/src/main/java/com/github/se/polyfit/README.md)
 
+## Architecture Diagram
+![Architecture Diagram](Architecture.png)

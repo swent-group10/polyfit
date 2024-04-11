@@ -6,7 +6,8 @@ enum class MealOccasion {
   BREAKFAST,
   LUNCH,
   DINNER,
-  SNACK;
+  SNACK,
+  OTHER;
 
   fun toCapitalizedString(): String {
     return this.name.first() + this.name.substring(1).lowercase(Locale.ROOT)
@@ -19,6 +20,7 @@ enum class MealOccasion {
         "LUNCH" -> LUNCH
         "DINNER" -> DINNER
         "SNACK" -> SNACK
+        "OTHER" -> OTHER
         else -> throw IllegalArgumentException("Invalid value for MealOccasion")
       }
     }

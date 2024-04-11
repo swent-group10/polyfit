@@ -49,6 +49,10 @@ data class Nutrient(val nutrientType: String, val amount: Double, val unit: Meas
     return result
   }
 
+  operator fun times(factor: Double): Nutrient {
+    return Nutrient(nutrientType, amount * factor, unit)
+  }
+
   companion object {
     fun serialize(nutrient: Nutrient): Map<String, Any> {
       val map = mutableMapOf<String, Any>()

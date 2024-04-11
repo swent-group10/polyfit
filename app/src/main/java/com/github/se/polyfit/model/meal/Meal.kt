@@ -53,6 +53,12 @@ data class Meal(
     updateMeal()
   }
 
+  fun isComplete(): Boolean {
+    return name.isNotEmpty() &&
+        ingredients.isNotEmpty() &&
+        nutritionalInformation.nutrients.isNotEmpty()
+  }
+
   private fun updateMeal() {
 
     var newNutritionalInformation = NutritionalInformation(mutableListOf())
@@ -107,6 +113,17 @@ data class Meal(
         Log.e("Meal", "Failed to deserialize Meal object: ${e.message}", e)
         throw IllegalArgumentException("Failed to deserialize Meal object", e)
       }
+    }
+
+    fun default(): Meal {
+      return Meal(
+          MealOccasion.OTHER,
+          "",
+          0,
+          20.0,
+          NutritionalInformation(mutableListOf()),
+          mutableListOf(),
+          "")
     }
   }
 }

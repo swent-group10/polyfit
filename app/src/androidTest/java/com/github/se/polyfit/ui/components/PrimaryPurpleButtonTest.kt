@@ -3,6 +3,7 @@ package com.github.se.polyfit.ui.components
 import android.util.Log
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onChild
 import androidx.compose.ui.test.onNodeWithTag
@@ -47,6 +48,17 @@ class PrimaryPurpleButtonTest : TestCase() {
     ComposeScreen.onComposeScreen<GradientBox>(composeTestRule) {
       composeTestRule.onNodeWithTag("PrimaryPurpleButton").assertIsDisplayed()
       composeTestRule.onNodeWithTag("PrimaryPurpleButton").onChild().assertDoesNotExist()
+    }
+  }
+
+  @Test
+  fun disabledButton() {
+    composeTestRule.setContent {
+      PrimaryPurpleButton(onClick = {}, text = "Disabled Button", isEnabled = false)
+    }
+    ComposeScreen.onComposeScreen<GradientBox>(composeTestRule) {
+      composeTestRule.onNodeWithTag("PrimaryPurpleButton").assertIsDisplayed()
+      composeTestRule.onNodeWithTag("PrimaryPurpleButton").assertIsNotEnabled()
     }
   }
 
