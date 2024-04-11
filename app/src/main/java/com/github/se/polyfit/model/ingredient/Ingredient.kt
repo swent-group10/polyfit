@@ -13,12 +13,12 @@ import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
  */
 data class Ingredient(
     val name: String, // name is now a val
-    val id: Int,
+    val id: Long,
     val nutritionalInformation: NutritionalInformation,
 ) {
 
   companion object {
-    fun serializeIngredient(ingredient: Ingredient): Map<String, Any> {
+    fun serialize(ingredient: Ingredient): Map<String, Any> {
       val map = mutableMapOf<String, Any>()
       map["name"] = ingredient.name
       map["id"] = ingredient.id
@@ -27,10 +27,10 @@ data class Ingredient(
       return map
     }
 
-    fun deserializeIngredient(data: Map<String, Any>): Ingredient {
+    fun deserialize(data: Map<String, Any>): Ingredient {
       return try {
         val name = data["name"] as String
-        val id = data["id"] as Int
+        val id = data["id"] as Long
         val nutValue = data["nutritionalInformation"] as List<Map<String, Any>>
 
         val nutritionalInformation = NutritionalInformation.deserialize(nutValue)
