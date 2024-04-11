@@ -5,7 +5,7 @@ enum class MealOccasion {
   LUNCH,
   DINNER,
   SNACK,
-  NONE;
+  OTHER;
 
   companion object {
     fun fromString(value: String): MealOccasion {
@@ -14,7 +14,7 @@ enum class MealOccasion {
         "LUNCH" -> LUNCH
         "DINNER" -> DINNER
         "SNACK" -> SNACK
-        "NONE" -> NONE
+        "OTHER" -> OTHER
         else -> throw IllegalArgumentException("Invalid value for MealOccasion")
       }
     }

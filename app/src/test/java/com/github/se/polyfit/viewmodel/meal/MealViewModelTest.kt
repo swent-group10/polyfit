@@ -39,7 +39,7 @@ class MealViewModelTest {
     val meal = mealViewModel.meal.value!!
 
     assertEquals(meal.name, "")
-    assertEquals(meal.occasion, MealOccasion.NONE)
+    assertEquals(meal.occasion, MealOccasion.OTHER)
     assert(meal.nutritionalInformation.nutrients.isEmpty())
     assert(meal.ingredients.isEmpty())
     assertEquals(meal.firebaseId, "")

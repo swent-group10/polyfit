@@ -6,8 +6,6 @@ import androidx.lifecycle.ViewModel
 import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
-import com.github.se.polyfit.model.meal.MealOccasion
-import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 
 class MealViewModel(
     private val userId: String,
@@ -29,15 +27,7 @@ class MealViewModel(
     } else if (initialMeal != null) {
       _meal.value = initialMeal.copy()
     } else {
-      _meal.value =
-          Meal(
-              MealOccasion.NONE,
-              "",
-              0,
-              20.0,
-              NutritionalInformation(mutableListOf()),
-              mutableListOf(),
-              firebaseID)
+      _meal.value = Meal.default()
     }
   }
 
@@ -50,7 +40,11 @@ class MealViewModel(
       throw Exception("Meal is incomplete")
     }
 
-    mealRepo.storeMeal(_meal.value!!)
+    try {
+      mealRepo.storeMeal(_meal.value!!)
+    } catch (e: Exception) {
+      throw e
+    }
   }
 
   fun addIngredient(ingredient: Ingredient) {

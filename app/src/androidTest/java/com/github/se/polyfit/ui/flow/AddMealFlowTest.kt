@@ -1,17 +1,19 @@
 package com.github.se.polyfit.ui.flow
 
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.ui.navigation.Navigation
+import com.github.se.polyfit.ui.navigation.Route
+import com.github.se.polyfit.ui.screen.HomeScreen
 import com.github.se.polyfit.ui.screen.IngredientsBottomBar
 import com.github.se.polyfit.ui.screen.IngredientsList
 import com.github.se.polyfit.ui.screen.IngredientsTopBar
 import com.github.se.polyfit.ui.screen.NutritionalInformationTopBar
 import io.github.kakaocup.compose.node.element.ComposeScreen
-import io.mockk.confirmVerified
-import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit4.MockKRule
-import io.mockk.verify
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -23,11 +25,19 @@ class AddMealFlowTest {
 
   @get:Rule val mockkRule = MockKRule(this)
 
-  @RelaxedMockK lateinit var mockNav: Navigation
-
   @Before
   fun setup() {
-    composeTestRule.setContent { AddMealFlow(mockNav, "testUserID") }
+    composeTestRule.setContent {
+      val navController = rememberNavController()
+      val navigation = Navigation(navController)
+      NavHost(navController = navController, startDestination = Route.Home) {
+        composable(Route.Home) { HomeScreen() }
+        composable(Route.AddMeal) {
+          AddMealFlow(navigation::goBack, navigation::navigateToHome, "testUserID")
+        }
+      }
+      navigation.navigateToAddMeal()
+    }
   }
 
   @Test
@@ -45,9 +55,10 @@ class AddMealFlowTest {
         performClick()
       }
 
-      verify { mockNav.goBack() }
-      confirmVerified(mockNav)
+      ingredientTitle { assertDoesNotExist() }
+      backButton { assertDoesNotExist() }
     }
+
     ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
       ingredientButton { assertDoesNotExist() }
     }

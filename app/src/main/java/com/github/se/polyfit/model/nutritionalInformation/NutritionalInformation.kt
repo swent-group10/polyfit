@@ -69,6 +69,7 @@ class NutritionalInformation {
     return newNutritionalInformation
   }
 
+  // TODO: Prevent negative values
   operator fun minus(other: NutritionalInformation): NutritionalInformation {
     val newNutritionalInformation = NutritionalInformation(mutableListOf())
 

@@ -63,7 +63,7 @@ class IngredientTest : TestCase() {
     val navigateForward = { mockNav.navigateToNutrition() }
     val testMeal =
         Meal(
-            occasion = MealOccasion.NONE,
+            occasion = MealOccasion.OTHER,
             name = "Test Meal",
             mealID = 0,
             ingredients = testIngredients,

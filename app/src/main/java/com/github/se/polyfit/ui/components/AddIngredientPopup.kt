@@ -32,7 +32,7 @@ import com.github.se.polyfit.ui.utils.removeLeadingZerosAndNonDigits
 
 // Constants
 // Temporary list of available ingredient to search
-val TMP_AVAILABLE_INGREDIENT = listOf("Apple", "Banana", "Carrot", "Date", "Eggplant", "apes")
+val TMP_AVAILABLE_INGREDIENT = listOf("Apple", "Banana", "Carrot", "Date", "Eggplant", "Apes")
 
 @Composable
 fun AddIngredientDialog(

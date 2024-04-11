@@ -114,5 +114,16 @@ data class Meal(
         throw IllegalArgumentException("Failed to deserialize Meal object", e)
       }
     }
+
+    fun default(): Meal {
+      return Meal(
+          MealOccasion.OTHER,
+          "",
+          0,
+          20.0,
+          NutritionalInformation(mutableListOf()),
+          mutableListOf(),
+          "")
+    }
   }
 }

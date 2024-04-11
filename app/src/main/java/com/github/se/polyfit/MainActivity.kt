@@ -29,7 +29,10 @@ class MainActivity : ComponentActivity() {
           composable(Route.Register) { LoginScreen(navigation::navigateToHome) }
           composable(Route.Home) { HomeScreen() }
           composable(Route.AddMeal) {
-            AddMealFlow(mainNavigation = navigation, userID = "testUserID") // TODO: real userID
+            AddMealFlow(
+                navigation::goBack,
+                navigation::navigateToHome,
+                userID = "testUserID") // TODO: real userID
           }
         }
       }
