@@ -52,7 +52,7 @@ jobs:
           body: |
             Changes in this release:
             ${{ join('\n', github.event.commits.*.message) }}
-        if: startsWith(github.ref, 'refs/heads/release/')
+        if: startsWith(github.ref, 'refs/heads/bugfix/')
 
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
@@ -63,4 +63,4 @@ jobs:
           asset_path: app/build/outputs/apk/release/app-release-unsigned.apk
           asset_name: app-release.apk
           asset_content_type: application/vnd.android.package-archive
-        if: startsWith(github.ref, 'refs/heads/release/')
+        if: startsWith(github.ref, 'refs/heads/bugfix/')
