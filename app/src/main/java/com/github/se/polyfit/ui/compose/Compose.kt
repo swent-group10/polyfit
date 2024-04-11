@@ -31,7 +31,6 @@ fun Title(modifier: Modifier, text: String) {
             text = text,
             fontSize = MaterialTheme.typography.displayMedium.fontSize,
             modifier = Modifier.testTag("TopBarTitle"),
-            fontWeight = FontWeight.Bold,
-            fontFamily = kaiseiFont)
+            fontWeight = FontWeight.Bold)
       }
 }
