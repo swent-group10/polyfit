@@ -5,6 +5,7 @@ import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onChild
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
@@ -135,19 +136,20 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
         composeTestRule.onNodeWithTag(OverviewTags.overviewTrack).assertExists().assertIsDisplayed()
 
         composeTestRule
-            .onNodeWithTag(OverviewTags.overviewPictureBtn, useUnmergedTree = true)
+            .onNodeWithTag(OverviewTags.overviewPictureBtn)
+            .onChild()
             .assertExists()
             .assertIsDisplayed()
             .assertHasClickAction()
-
         composeTestRule
             .onNodeWithTag(OverviewTags.overviewManualBtn)
+            .onChild()
             .assertExists()
             .assertIsDisplayed()
             .assertHasClickAction()
-
         composeTestRule
             .onNodeWithTag(OverviewTags.overviewDetailsBtn)
+            .onChild()
             .assertExists()
             .assertIsDisplayed()
             .assertHasClickAction()

@@ -27,6 +27,7 @@ class CalorieCard(semanticsProvider: SemanticsNodeInteractionsProvider) :
     ComposeScreen<CalorieCard>(
         semanticsProvider = semanticsProvider,
         viewBuilderAction = { hasTestTag(OverviewTags.overviewMain) }) {
+
   val column: KNode = child { hasTestTag("MealColumn") }
   val title: KNode = column.child { hasTestTag(OverviewTags.overviewGoal) }
   val mealTracking: KNode = child { hasTestTag(OverviewTags.overviewTrack) }
