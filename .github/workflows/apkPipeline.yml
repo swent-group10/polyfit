@@ -43,8 +43,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref_name }}-${{ github.sha }}-${{ github.run_number }}-${{ github.run_id }}-${{ steps.date.outputs.date }}
-          release_name: Release ${{ github.ref_name }} Version ${{ github.run_number }} on ${{ github.event.commits[0].timestamp }}
+          tag_name: ${{ github.sha }}-${{ github.run_number }}
+          release_name: Release ${{ github.ref_name }} Version ${{ github.run_number }}
           draft: false
           prerelease: false
           body: "Changes in this release:\n${{ join('\n', github.event.commits.*.message) }}"
