@@ -22,7 +22,7 @@ class StringUtilsTest {
   @Test
   fun `removeLeadingZeros and non-digits - only non-digits`() {
     val result = removeLeadingZerosAndNonDigits("abc")
-    assertEquals("", result)
+    assertEquals("0", result)
   }
 
   @Test
@@ -46,13 +46,25 @@ class StringUtilsTest {
   @Test
   fun `removeLeadingZeros and non-digits - empty string`() {
     val result = removeLeadingZerosAndNonDigits("")
-    assertEquals("", result)
+    assertEquals("0", result)
   }
 
   @Test
   fun `removeLeadingZeros and non-digits - zeros and non-digits`() {
     val result = removeLeadingZerosAndNonDigits("00abc")
     assertEquals("0", result)
+  }
+
+  @Test
+  fun `encounter first dot`() {
+    val result = removeLeadingZerosAndNonDigits("00.1234")
+    assertEquals("0.1234", result)
+  }
+
+  @Test
+  fun `encounter many dots`() {
+    val result = removeLeadingZerosAndNonDigits("00.12.34")
+    assertEquals("0.1234", result)
   }
 
   @Test
