@@ -1,9 +1,8 @@
+package com.github.se.polyfit.data.api
+
 import android.util.Log
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.github.se.polyfit.data.api.APIResponse
-import com.github.se.polyfit.data.api.ImageAnalysisResponseAPI
-import com.github.se.polyfit.data.api.RecipeNutritionResponseAPI
-import com.github.se.polyfit.data.api.SpoonacularApiCaller
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import java.io.File
 import kotlin.test.assertFailsWith
@@ -15,7 +14,9 @@ import org.json.JSONObject
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
 
+@RunWith(AndroidJUnit4::class)
 class SpoonacularApiCallerTest {
   private lateinit var mockWebServer: MockWebServer
   private lateinit var file: File
