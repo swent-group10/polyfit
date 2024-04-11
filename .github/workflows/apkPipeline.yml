@@ -6,7 +6,7 @@ on:
       - release/*
       - main
       - Main
-      - feature/apk-build-pipeline
+
 jobs:
   build:
     runs-on: ubuntu-latest
