@@ -2,6 +2,7 @@ package com.github.se.polyfit.model.nutritionalInformation
 
 import android.util.Log
 import java.util.Locale
+import kotlin.math.round
 
 enum class MeasurementUnit {
   G,
@@ -9,20 +10,73 @@ enum class MeasurementUnit {
   UG,
   IU,
   CAL,
+  KCAL,
   UNIT,
+  ML,
+  CUPS,
+  TABLESPOONS,
+  TEASPOONS,
+  PINCHES,
+  LB,
+  LEAVES,
+  SERVINGS,
   NONE;
 
+  override fun toString(): String {
+    return this.name
+  }
+
   companion object {
+    private val conversionTable: Map<Pair<MeasurementUnit, MeasurementUnit>, Double> =
+        mapOf(
+                Pair(G, LB) to 0.00220462,
+                Pair(G, MG) to 1000.0,
+                Pair(G, UG) to 1_000_000.0,
+                Pair(MG, G) to 0.001,
+                Pair(MG, UG) to 1000.0,
+                Pair(UG, G) to 0.000_001,
+                Pair(UG, MG) to 0.001,
+                Pair(ML, CUPS) to 0.00416667,
+                Pair(ML, TABLESPOONS) to 0.0666667,
+                Pair(ML, TEASPOONS) to 0.2,
+                Pair(CUPS, ML) to 240.0,
+                Pair(TABLESPOONS, ML) to 15.0,
+                Pair(TEASPOONS, ML) to 5.0,
+                Pair(CAL, KCAL) to 0.001,
+                Pair(KCAL, CAL) to 1000.0,
+                Pair(LB, G) to 453.592,
+                Pair(LB, MG) to 453_592.37,
+                Pair(LB, UG) to 453_592_370.0)
+            .withDefault { 1.0 }
+
     fun fromString(unit: String): MeasurementUnit {
-      return when (unit.uppercase(Locale.getDefault())) {
-        "G" -> G
-        "MG" -> MG
-        "UG" -> UG
-        "IU" -> IU
-        "CAL" -> CAL
-        "UNIT" -> UNIT
-        "NONE" -> NONE
-        else -> throw IllegalArgumentException("Invalid unit: $unit")
+
+      return when (unit.lowercase()) {
+        "g" -> G
+        "mg" -> MG
+        "ug",
+        "µg" -> UG
+        "iu" -> IU
+        "cal" -> CAL
+        "unit" -> UNIT
+        "ml" -> ML
+        "kcal" -> KCAL
+        "cups",
+        "cup" -> CUPS
+        "tablespoons",
+        "tablespoon" -> TABLESPOONS
+        "teaspoons",
+        "teaspoon" -> TEASPOONS
+        "pinches",
+        "pinch" -> PINCHES
+        "calories" -> CAL
+        "lb" -> LB
+        "leaves" -> LEAVES
+        "servings" -> SERVINGS
+        "" -> NONE
+        else ->
+            throw IllegalArgumentException(
+                "Invalid unit: $unit ${unit.uppercase(Locale.getDefault())}")
       }
     }
 
@@ -42,34 +96,8 @@ enum class MeasurementUnit {
         Log.e("MeasurementUnit", "Value cannot be negative")
         throw IllegalArgumentException("Value cannot be negative")
       }
-
-      val result =
-          when (from) {
-            G ->
-                when (to) {
-                  G -> value
-                  MG -> value * 1000
-                  UG -> value * 1000000
-                  else -> value
-                }
-            MG ->
-                when (to) {
-                  G -> value / 1000
-                  MG -> value
-                  UG -> value * 1000
-                  else -> value
-                }
-            UG ->
-                when (to) {
-                  G -> value / 1000000
-                  MG -> value / 1000
-                  UG -> value
-                  else -> value
-                }
-            else -> value
-          }
-
-      return Math.round(result * 100.0) / 100.0
+      val result = value * (conversionTable[Pair(from, to)] ?: 1.0)
+      return round(result * 100) / 100
     }
   }
 }

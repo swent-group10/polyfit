@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.ui.components.AddIngredientDialog
 import com.github.se.polyfit.ui.components.GradientButton
 import com.github.se.polyfit.ui.components.IngredientList
@@ -35,12 +36,6 @@ import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.theme.PrimaryPurple
 
 // TODO: Replace with real data class
-data class Ingredient(
-    val name: String,
-    val quantity: Int,
-    val unit: String,
-    val probability: Float = 1.0f,
-)
 
 @Composable
 fun IngredientScreen(
