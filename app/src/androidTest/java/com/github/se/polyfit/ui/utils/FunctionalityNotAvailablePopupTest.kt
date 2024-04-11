@@ -9,7 +9,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.se.polyfit.ui.utils.FunctionalityNotAvailablePopup
+import com.github.se.polyfit.ui.components.FunctionalityNotAvailablePopup
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -36,7 +36,7 @@ class FunctionalityNotAvailablePopupTest {
 
     composeTestRule.onNodeWithText("Button Text").performClick()
 
-    composeTestRule.onNodeWithText("CLOSE").performClick()
+    composeTestRule.onNodeWithText("Close").performClick()
 
     composeTestRule.onNodeWithText("Functionality not available \uD83D\uDE48").assertDoesNotExist()
   }
@@ -49,6 +49,4 @@ fun SimpleComposable() {
     FunctionalityNotAvailablePopup { notAvailablePopup = false }
   }
   Button(onClick = { notAvailablePopup = true }, content = { Text("Button Text") })
-  //
-
 }

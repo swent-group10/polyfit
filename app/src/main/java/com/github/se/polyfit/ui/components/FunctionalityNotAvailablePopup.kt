@@ -1,4 +1,4 @@
-package com.github.se.polyfit.ui.utils
+package com.github.se.polyfit.ui.components
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
@@ -15,5 +15,5 @@ fun FunctionalityNotAvailablePopup(onDismiss: () -> Unit) {
             text = "Functionality not available \uD83D\uDE48",
             style = MaterialTheme.typography.bodyMedium)
       },
-      confirmButton = { TextButton(onClick = onDismiss) { Text(text = "CLOSE") } })
+      confirmButton = { TextButton(onClick = onDismiss) { Text(text = "Close") } })
 }
