@@ -31,10 +31,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.github.se.polyfit.R
 import com.github.se.polyfit.ui.compose.Title
+import com.github.se.polyfit.ui.theme.PrimaryPurple
 import com.github.se.polyfit.ui.viewModel.LoginViewModel
 
 @Composable
-fun SignScreen(goTo: () -> Unit) {
+fun LoginScreen(goTo: () -> Unit) {
   // Create an instance of the Authentication class
 
   val viewModel: LoginViewModel = hiltViewModel()
@@ -60,7 +61,7 @@ fun SignScreen(goTo: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally) {
               Spacer(Modifier.weight(0.2f))
 
-              Title(modifier = Modifier.testTag("LoginTitle"), "Polyfit")
+              Title(Modifier.testTag("LoginTitle"), "Polyfit")
 
               Spacer(Modifier.weight(0.6f))
 
@@ -95,8 +96,7 @@ fun SignInButton(onClick: () -> Unit) {
       shape = RoundedCornerShape(20.dp),
       colors =
           ButtonDefaults.buttonColors(
-              contentColor = MaterialTheme.colorScheme.onPrimary,
-              containerColor = MaterialTheme.colorScheme.primaryContainer),
+              contentColor = MaterialTheme.colorScheme.onPrimary, containerColor = PrimaryPurple),
       modifier = Modifier.testTag("LoginButton")) {
         val imageModifierGoogle = Modifier.size(24.dp).absoluteOffset(x = (-13).dp, y = 0.dp)
 

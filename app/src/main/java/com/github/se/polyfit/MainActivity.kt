@@ -14,7 +14,7 @@ import com.github.se.polyfit.ui.flow.AddMealFlow
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.navigation.Route
 import com.github.se.polyfit.ui.navigation.globalNavigation
-import com.github.se.polyfit.ui.screen.SignScreen
+import com.github.se.polyfit.ui.screen.LoginScreen
 import com.github.se.polyfit.ui.theme.PolyfitTheme
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
@@ -39,19 +39,16 @@ class MainActivity : ComponentActivity() {
         val navController = rememberNavController()
         val navigation = Navigation(navController)
         NavHost(navController = navController, startDestination = Route.Register) {
-
-         
           globalNavigation(navController)
 
           composable(Route.Register) { LoginScreen(navigation::navigateToHome) }
-          
+
           composable(Route.AddMeal) {
             AddMealFlow(
                 navigation::goBack,
                 navigation::navigateToHome,
                 userID = "testUserID") // TODO: real userID
           }
-
         }
       }
     }
