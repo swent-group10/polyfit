@@ -3,10 +3,9 @@ name: Build Android APK
 on:
   push:
     branches:
-      - release/*
-      - main
-      - Main
-      - bugfix/*
+      - 'release/**'
+      - 'main'
+      - 'bugfix/**'
 
 jobs:
   build:
@@ -20,7 +19,7 @@ jobs:
       - name: Create Google Services JSON File
         env:
           GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
-        run: echo $GOOGLE_SERVICES_JSON | base64 -di > ./app/google-services.json
+        run: echo "$GOOGLE_SERVICES_JSON" | base64 --decode > ./app/google-services.json
       - name: Set up API keys
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
@@ -33,7 +32,6 @@ jobs:
           java-version: "17"
       - name: Build APK
         run: ./gradlew assembleRelease
-
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
@@ -45,15 +43,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref_name }}-${{ github.sha }}-v${{ github.run_number }}-${{ github.run_id }}
+          tag_name: ${{ github.ref_name }}-${{ github.sha }}-${{ github.run_number }}-${{ github.run_id }}-${{ github.event.timestamp }}
           release_name: Release ${{ github.ref_name }} Version ${{ github.run_number }} on ${{ github.event.commits[0].timestamp }}
-          draft: false # not shown to users and it does not trigger any notifications or webhooks.
-          prerelease: false # indicates that the release is a pre-release.
-          body: |
-            Changes in this release:
-            ${{ join('\n', github.event.commits.*.message) }}
+          draft: false
+          prerelease: false
+          body: "Changes in this release:\n${{ join('\n', github.event.commits.*.message) }}"
         if: startsWith(github.ref, 'refs/heads/bugfix/')
-
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
         env:
