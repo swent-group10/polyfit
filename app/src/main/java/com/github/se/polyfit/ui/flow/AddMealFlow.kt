@@ -11,10 +11,13 @@ import com.github.se.polyfit.ui.screen.NutritionScreen
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
 
 @Composable
-fun AddMealFlow(mainNavigation: Navigation, userID: String) {
+fun AddMealFlow(
+    mainNavigation: Navigation,
+    userID: String,
+    mealViewModel: MealViewModel = MealViewModel(userID)
+) {
   val navController = rememberNavController()
   val navigation = Navigation(navController)
-  val mealViewModel = MealViewModel(userID)
 
   NavHost(navController = navController, startDestination = Route.Ingredients) {
     composable(Route.Ingredients) {

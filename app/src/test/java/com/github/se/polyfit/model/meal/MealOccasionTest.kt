@@ -11,6 +11,7 @@ class MealOccasionTest {
     assertEquals(MealOccasion.LUNCH, MealOccasion.fromString("LUNCH"))
     assertEquals(MealOccasion.DINNER, MealOccasion.fromString("DINNER"))
     assertEquals(MealOccasion.SNACK, MealOccasion.fromString("SNACK"))
+    assertEquals(MealOccasion.NONE, MealOccasion.fromString("NONE"))
   }
 
   @Test

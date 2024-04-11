@@ -83,7 +83,7 @@ class NutritionalInformationTest : TestCase() {
 
   private fun setup(meal: Meal) {
     composeTestRule.setContent {
-      NutritionalInformation(mealViewModel = MealViewModel(userID = "testUserID", meal = meal))
+      NutritionalInformation(mealViewModel = MealViewModel("testUserID", initialMeal = meal))
     }
   }
 

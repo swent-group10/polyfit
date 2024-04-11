@@ -9,9 +9,13 @@ import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 
-class MealViewModel(userID: String, firebaseID: String = "", meal: Meal? = null) : ViewModel() {
+class MealViewModel(
+    private val userId: String,
+    firebaseID: String = "",
+    initialMeal: Meal? = null,
+    private val mealRepo: MealFirebaseRepository = MealFirebaseRepository(userId)
+) : ViewModel() {
   // after friday use hilt dependency injection to make code cleaner, for now i guess this is ok
-  private val mealRepo: MealFirebaseRepository = MealFirebaseRepository(userID)
   private val _meal: MutableLiveData<Meal> = MutableLiveData(null)
   val meal: LiveData<Meal> = _meal
 
@@ -22,13 +26,13 @@ class MealViewModel(userID: String, firebaseID: String = "", meal: Meal? = null)
           _meal.value = it.result
         }
       }
-    } else if (meal != null) {
-      _meal.value = meal.copy()
+    } else if (initialMeal != null) {
+      _meal.value = initialMeal.copy()
     } else {
       _meal.value =
           Meal(
               MealOccasion.NONE,
-              "Temporary Meal Name",
+              "",
               0,
               20.0,
               NutritionalInformation(mutableListOf()),

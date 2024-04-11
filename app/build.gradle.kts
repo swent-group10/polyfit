@@ -176,6 +176,8 @@ android {
         implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
         testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.0")
         testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.9.0")
+        testImplementation("org.robolectric:robolectric:4.8")
+
         // Hilts
         implementation("com.google.dagger:hilt-android:2.51")
         annotationProcessor("com.google.dagger:hilt-compiler:2.51")
