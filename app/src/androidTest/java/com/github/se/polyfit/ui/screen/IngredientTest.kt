@@ -4,6 +4,10 @@ import android.util.Log
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
@@ -14,10 +18,12 @@ import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.kakaocup.compose.node.element.ComposeScreen
+import io.mockk.Runs
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit4.MockKRule
+import io.mockk.just
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import io.mockk.verify
@@ -41,6 +47,7 @@ class IngredientTest : TestCase() {
   @Before
   fun setup() {
     mockkStatic(Log::class)
+    every { mockMealViewModel.addIngredient(any()) } just Runs
   }
 
   @After
@@ -160,6 +167,8 @@ class IngredientTest : TestCase() {
     ComposeScreen.onComposeScreen<AddIngredientPopupBox>(composeTestRule) {
       addIngredientDialog { assertDoesNotExist() }
 
+      ingredientButton { assertDoesNotExist() }
+
       addIngredientGradientButton {
         assertIsDisplayed()
         assertHasClickAction()
@@ -168,13 +177,22 @@ class IngredientTest : TestCase() {
 
       addIngredientDialog { assertIsDisplayed() }
 
+      composeTestRule.onNodeWithText("Enter an Ingredient...").performTextInput("apple")
+
+      composeTestRule.onNodeWithTag("NutritionSizeInput Total Weight").performTextInput("1")
+
+      composeTestRule.onNodeWithTag("NutritionSizeInput Calories").performTextInput("1")
+
       finishAddIngredientButton {
         assertIsDisplayed()
         assertHasClickAction()
         performClick()
       }
 
-      // TODO: Check that ingredient is properly added to the ingredient list
+      verify {
+        mockMealViewModel.addIngredient(
+            match { it.name == "apple" && it.amount == 10.0 && it.unit == MeasurementUnit.G })
+      }
 
       addIngredientDialog { assertDoesNotExist() }
     }
