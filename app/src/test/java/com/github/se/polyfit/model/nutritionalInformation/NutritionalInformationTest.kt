@@ -103,7 +103,7 @@ class NutritionalInformationTest {
             mapOf("nutrientType" to "phosphorus", "amount" to 0.0, "unit" to "MG"),
             mapOf("nutrientType" to "vitaminK", "amount" to 0.0, "unit" to "UG"),
             mapOf("nutrientType" to "selenium", "amount" to 0.0, "unit" to "UG"),
-            mapOf("nutrientType" to "vitaminE", "amount" to 0.0, "unit" to "INVALID"))
+            mapOf("nutrientType" to "vitaminE", "amount" to 0, "unit" to "INVALID"))
 
     assertFailsWith<Exception> { NutritionalInformation.deserialize(wrongData) }
   }

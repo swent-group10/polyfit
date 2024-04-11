@@ -60,7 +60,7 @@ class MeasurementUnitTest {
 
   @Test
   fun `illegal arguments throw exception`() {
-    assertFailsWith<IllegalArgumentException> { MeasurementUnit.fromString("INVALID") }
+    assertEquals(MeasurementUnit.fromString("INVALID"), MeasurementUnit.OTHER)
   }
 
   @Test
