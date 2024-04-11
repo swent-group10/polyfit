@@ -1,7 +1,5 @@
 package com.github.se.polyfit.ui.components
 
-import android.content.Context
-import android.widget.Toast
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
@@ -20,40 +18,46 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 
 @Composable
-fun BottomNavigationBar(navController: NavController) {
-  val context = LocalContext.current
-  NavigationBar(
-      modifier = Modifier.testTag("MainBottomBar"),
-      containerColor = MaterialTheme.colorScheme.primaryContainer,
-      contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-  ) {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
+fun BottomNavigationBar(
+    navController: NavController,
+    navHome: () -> Unit,
+    navSearch: () -> Unit,
+    navSettings: () -> Unit,
+) {
+    val context = LocalContext.current
+    NavigationBar(
+        modifier = Modifier.testTag("MainBottomBar"),
+        containerColor = MaterialTheme.colorScheme.primaryContainer,
+        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+    ) {
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = navBackStackEntry?.destination?.route
 
-    NavigationBarItem(
-        icon = { Icon(Icons.Default.Home, contentDescription = null) },
-        label = { Text("Home") },
-        selected = currentRoute == "home",
-        onClick = { showToastMessage(context) })
+        NavigationBarItem(
+            modifier = Modifier.testTag("home"),
+            icon = { Icon(Icons.Default.Home, contentDescription = null) },
+            label = { Text("Home") },
+            selected = currentRoute == "home",
+            onClick = navHome
+        )
 
-    NavigationBarItem(
-        icon = { Icon(Icons.Default.Search, contentDescription = null) },
-        label = { Text("Search") },
-        selected = currentRoute == "search",
-        onClick = { showToastMessage(context) })
+        NavigationBarItem(
+            modifier = Modifier.testTag("search"),
+            icon = { Icon(Icons.Default.Search, contentDescription = null) },
+            label = { Text("Search") },
+            selected = currentRoute == "search",
+            onClick = navSearch
+        )
 
-    NavigationBarItem(
-        icon = { Icon(Icons.Default.Settings, contentDescription = null) },
-        label = { Text("Settings") },
-        selected = currentRoute == "settings",
-        onClick = {
-          // create a toast
-          showToastMessage(context)
-        })
-  }
+        NavigationBarItem(
+            modifier = Modifier.testTag("settings"),
+            icon = { Icon(Icons.Default.Settings, contentDescription = null) },
+            label = { Text("Settings") },
+            selected = currentRoute == "settings",
+            onClick = {
+                // create a toast
+                navSettings
+            })
+    }
 }
 
-fun showToastMessage(context: Context) {
-  val toast = Toast.makeText(context, "not available yet", Toast.LENGTH_SHORT)
-  toast.show()
-}

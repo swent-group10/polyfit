@@ -103,8 +103,8 @@ android {
     dependencies {
         implementation("com.squareup.okhttp3:okhttp:4.12.0")
         androidTestImplementation("com.squareup.okhttp3:okhttp:4.12.0")
-        implementation("com.squareup.okhttp3:okhttp:4.9.3")
-        
+        implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
         implementation("androidx.core:core-ktx:1.12.0")
         implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
         implementation("androidx.activity:activity-compose:1.8.2")
@@ -124,7 +124,7 @@ android {
         implementation("com.google.firebase:firebase-auth:22.3.1")
         implementation("androidx.compose.material3:material3:1.2.1")
         testImplementation("junit:junit:4.13.2")
-        implementation("androidx.navigation:navigation-compose:2.7.0-rc01")
+        implementation("androidx.navigation:navigation-compose:2.7.7")
 
         androidTestImplementation("androidx.test.ext:junit:1.1.5")
         androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -153,6 +153,7 @@ android {
         implementation("com.google.code.gson:gson:2.10.1")
 
         androidTestImplementation("androidx.test.espresso:espresso-intents:3.5.1")
+        androidTestImplementation("org.mockito:mockito-android:5.11.0")
 
         androidTestImplementation("io.mockk:mockk:1.13.10")
         androidTestImplementation("io.mockk:mockk-android:1.13.10")
