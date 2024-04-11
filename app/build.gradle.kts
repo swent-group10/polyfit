@@ -107,6 +107,7 @@ android {
         implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
         implementation("androidx.activity:activity-compose:1.8.2")
         implementation(platform("androidx.compose:compose-bom:2024.04.00"))
+        implementation("androidx.compose.runtime:runtime-livedata:1.1.0")
         implementation("androidx.compose.ui:ui")
         implementation("androidx.compose.ui:ui-graphics")
         implementation("androidx.compose.ui:ui-tooling-preview")
@@ -175,6 +176,8 @@ android {
         implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
         testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.0")
         testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.9.0")
+        testImplementation("org.robolectric:robolectric:4.8")
+
         // Hilts
         implementation("com.google.dagger:hilt-android:2.51")
         annotationProcessor("com.google.dagger:hilt-compiler:2.51")

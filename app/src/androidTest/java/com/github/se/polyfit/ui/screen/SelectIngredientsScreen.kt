@@ -31,6 +31,10 @@ class AddIngredientPopupBox(semanticsProvider: SemanticsNodeInteractionsProvider
         semanticsProvider = semanticsProvider,
         viewBuilderAction = { hasTestTag("AddIngredientScaffold") }) {
 
+  private val ingredientsList: KNode = child { hasTestTag("IngredientsList") }
+  private val ingredient: KNode = ingredientsList.child { hasTestTag("Ingredient") }
+  val ingredientButton: KNode = ingredient.child { hasTestTag("GradientButton") }
+
   private val bottomBar: KNode = child { hasTestTag("BottomBar") }
   private val addIngredientBox: KNode = bottomBar.child { hasTestTag("AddIngredientBox") }
   val addIngredientButton: KNode = addIngredientBox.child { hasTestTag("AddIngredientButton") }
