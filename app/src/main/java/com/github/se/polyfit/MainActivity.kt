@@ -10,9 +10,9 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.navigation.Route
+import com.github.se.polyfit.ui.navigation.globalNavigation
 import com.github.se.polyfit.ui.screen.SignScreen
 import com.github.se.polyfit.ui.theme.PolyfitTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -39,11 +39,7 @@ class MainActivity : ComponentActivity() {
         val navigation = Navigation(navController)
         NavHost(navController = navController, startDestination = Route.Register) {
           composable(Route.Register) { SignScreen(navigation::navigateToHome) }
-          composable(Route.Overview) {
-            GenericScreen(
-                navController = navController,
-            )
-          }
+          globalNavigation(navController)
         }
       }
     }

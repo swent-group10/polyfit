@@ -1,6 +1,7 @@
 package com.github.se.polyfit.ui.screen
 
 import androidx.compose.ui.test.SemanticsNodeInteractionsProvider
+import com.github.se.polyfit.ui.utils.OverviewTags
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.github.kakaocup.compose.node.element.KNode
 
@@ -16,32 +17,31 @@ class OverviewScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
         semanticsProvider = semanticsProvider,
         viewBuilderAction = { hasTestTag("OverviewScreen") }) {
   val lazyColumn: KNode = child { hasTestTag("OverviewScreenLazyColumn") }
-  val welcomeMessage: KNode = lazyColumn.child { hasTestTag("WelcomeMessage") }
-  val calorieCard: KNode = lazyColumn.child { hasTestTag("CalorieCard") }
+  val welcomeMessage: KNode = lazyColumn.child { hasTestTag(OverviewTags.overviewWelcome) }
+  val calorieCard: KNode = lazyColumn.child { hasTestTag(OverviewTags.overviewMain) }
   val secondCard: KNode = lazyColumn.child { hasTestTag("SecondCard") }
-  val thirdCard: KNode = lazyColumn.child { hasTestTag("ThirdCard") }
   val genericImage: KNode = secondCard.child { hasTestTag("GenericPicture") }
 }
 
 class CalorieCard(semanticsProvider: SemanticsNodeInteractionsProvider) :
     ComposeScreen<CalorieCard>(
-        semanticsProvider = semanticsProvider, viewBuilderAction = { hasTestTag("CalorieCard") }) {
-  val title: KNode = child { hasTestTag("CalorieCardTitle") }
-  val mealTracking: KNode = child { hasTestTag("MealTracking") }
-  val photoButton: KNode = child { hasTestTag("PhotoButton") }
-  val editButton: KNode = child { hasTestTag("EditButton") }
-  val historyButton: KNode = child { hasTestTag("HistoryButton") }
+        semanticsProvider = semanticsProvider,
+        viewBuilderAction = { hasTestTag(OverviewTags.overviewMain) }) {
+  val column: KNode = child { hasTestTag("MealColumn") }
+  val title: KNode = column.child { hasTestTag(OverviewTags.overviewGoal) }
+  val mealTracking: KNode = child { hasTestTag(OverviewTags.overviewTrack) }
+  val photoButton: KNode = child { hasTestTag(OverviewTags.overviewPictureBtn) }
+  val editButton: KNode = child { hasTestTag(OverviewTags.overviewManualBtn) }
+  val historyButton: KNode = child { hasTestTag(OverviewTags.overviewDetailsBtn) }
 
-  val calorieAmount: KNode = child { hasTestTag("CalorieAmount") }
+  val calorieAmount: KNode = child { hasTestTag(OverviewTags.overviewCalorie) }
   val calNumber: KNode = calorieAmount.child { hasTestTag("Number") }
-  val calSlash: KNode = calorieAmount.child { hasTestTag("Slash") }
   val calGoal: KNode = calorieAmount.child { hasTestTag("Goal") }
 
   val caloriePerMeal: KNode = child { hasTestTag("CaloriePerMeal") }
-  val breakfast: KNode = caloriePerMeal.child { hasTestTag("Breakfast") }
-  val lunch: KNode = caloriePerMeal.child { hasTestTag("Lunch") }
-  val dinner: KNode = caloriePerMeal.child { hasTestTag("Dinner") }
-  val snacks: KNode = caloriePerMeal.child { hasTestTag("Snacks") }
+  val breakfast: KNode = caloriePerMeal.child { hasTestTag(OverviewTags.overviewBreakfast) }
+  val lunch: KNode = caloriePerMeal.child { hasTestTag(OverviewTags.overviewLunch) }
+  val dinner: KNode = caloriePerMeal.child { hasTestTag(OverviewTags.overviewDinner) }
 }
 
 class PictureDialogBox(semanticsProvider: SemanticsNodeInteractionsProvider) :

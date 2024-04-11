@@ -11,15 +11,15 @@ data class BottomNavItem(
 )
 
 object NavItemTags {
-  const val overviewItem = "overviewItem"
-  const val overviewIcon = "overviewIcon"
-  const val overviewName = "Overview"
+  const val home = "homeNav"
+  const val homeIcon = "homeIcon"
+  const val homeLabel = "homeLabel"
 
-  const val mapItem = "mapItem"
-  const val mapIcon = "mapIcon"
-  const val mapName = "Map"
+  const val search = "searchNav"
+  const val searchIcon = "searchIcon"
+  const val searchLabel = "searchLabel"
 
-  const val settingsItem = "settingsItem"
+  const val settings = "settingsNav"
   const val settingsIcon = "settingsIcon"
-  const val settingsName = "Settings"
+  const val settingsLabel = "settingsLabel"
 }

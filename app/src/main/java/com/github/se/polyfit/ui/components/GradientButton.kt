@@ -73,12 +73,12 @@ fun GradientButton(
 
   val buttonModifier =
       if (round) {
-        Modifier.size(48.dp)
+        modifier.size(48.dp)
       } else {
-        Modifier
+        modifier
       }
 
-  Box(contentAlignment = Alignment.Center, modifier = modifier.padding(4.dp)) {
+  Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(4.dp)) {
     Canvas(modifier = Modifier.matchParentSize()) {
       drawRoundRect(
           brush = gradient, cornerRadius = CornerRadius(20.dp.toPx()), style = Stroke(2.dp.toPx()))
