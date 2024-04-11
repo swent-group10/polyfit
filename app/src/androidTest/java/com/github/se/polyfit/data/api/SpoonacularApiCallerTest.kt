@@ -1,15 +1,10 @@
-
-import androidx.test.ext.junit.runners.AndroidJUnit4
-package com.github.se.polyfit.data
+package com.github.se.polyfit.data.api
 
 import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.github.se.polyfit.data.api.APIResponse
-import com.github.se.polyfit.data.api.ImageAnalysisResponseAPI
-import com.github.se.polyfit.data.api.RecipeNutritionResponseAPI
-import com.github.se.polyfit.data.api.SpoonacularApiCaller
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import java.io.File
