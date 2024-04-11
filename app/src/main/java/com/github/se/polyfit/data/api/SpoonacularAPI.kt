@@ -46,7 +46,6 @@ object SpoonacularApiCaller {
         Request.Builder()
             .url(API_URL + IMAGE_ANALYSIS_ENDPOINT)
             .post(body)
-            .addHeader("content-type", "multipart/form-data; boundary=---011000010111000001101001")
             .addHeader("X-RapidAPI-Key", BuildConfig.X_RapidAPI_Key)
             .addHeader("X-RapidAPI-Host", BuildConfig.X_RapidAPI_Host)
             .build()
