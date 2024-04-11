@@ -24,7 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import com.github.se.polyfit.ui.screen.Ingredient
+import com.github.se.polyfit.model.ingredient.Ingredient
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -59,7 +59,7 @@ fun IngredientList(
               horizontalArrangement = Arrangement.Start, verticalArrangement = Arrangement.Top) {
                 ingredients.forEach { ingredient ->
                   GradientButton(
-                      text = "${ingredient.name} ${ingredient.quantity}${ingredient.unit}",
+                      text = "${ingredient.name} ${ingredient.amount}${ingredient.unit}",
                       onClick = {
                         Log.v("Expand Ingredients", "Clicked")
                       }, // TODO: Expand to see more information
