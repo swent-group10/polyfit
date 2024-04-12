@@ -48,6 +48,15 @@ data class Meal(
     return result
   }
 
+  fun calculateTotalCalories(): Double {
+    val mealNutrients = nutritionalInformation.nutrients
+
+    val totalCaluries =
+        mealNutrients.filter { it.nutrientType == "calories" }.map { it.amount }.sum()
+
+    return totalCaluries
+  }
+
   fun addIngredient(ingredient: Ingredient) {
     ingredients.add(ingredient)
     updateMeal()
