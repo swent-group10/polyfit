@@ -10,7 +10,7 @@ import com.github.se.polyfit.model.meal.Meal
 class MealViewModel(
     private val userId: String,
     firebaseID: String = "",
-    initialMeal: Meal? = null,
+    var initialMeal: Meal? = null,
     private val mealRepo: MealFirebaseRepository = MealFirebaseRepository(userId)
 ) : ViewModel() {
   // after friday use hilt dependency injection to make code cleaner, for now i guess this is ok
@@ -25,13 +25,16 @@ class MealViewModel(
         }
       }
     } else if (initialMeal != null) {
-      _meal.value = initialMeal.copy()
+      _meal.value = initialMeal!!.copy()
     } else {
       _meal.value = Meal.default()
     }
+
+    _meal.observeForever { initialMeal = it }
   }
 
   fun setMealData(meal: Meal) {
+    // add random line of code
     _meal.value = meal
   }
 
