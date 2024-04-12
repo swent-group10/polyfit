@@ -30,7 +30,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.getString
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.github.se.polyfit.R
@@ -46,7 +45,9 @@ fun LoginScreen(goTo: () -> Unit) {
 
   val signInLauncher =
       rememberLauncherForActivityResult(contract = FirebaseAuthUIActivityResultContract()) { res ->
-        authenticationCloud.onSignInResult(res) { if (it) goTo() else Log.d("LoginScreen", "Sign in failed") }
+        authenticationCloud.onSignInResult(res) {
+          if (it) goTo() else Log.d("LoginScreen", "Sign in failed")
+        }
       }
 
   // Set the signInLauncher in the Authentication class
@@ -58,16 +59,14 @@ fun LoginScreen(goTo: () -> Unit) {
   }
 
   Surface(
-      modifier = Modifier
-        .fillMaxSize()
-        .testTag("LoginScreen"),
+      modifier = Modifier.fillMaxSize().testTag("LoginScreen"),
       color = MaterialTheme.colorScheme.background) {
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally) {
               Spacer(Modifier.weight(0.2f))
 
-              Title(Modifier.testTag("LoginTitle"), 50.sp)
+              Title(Modifier.testTag("LoginTitle"), "Polyfit")
 
               Spacer(Modifier.weight(0.6f))
 
@@ -79,7 +78,9 @@ fun LoginScreen(goTo: () -> Unit) {
               Spacer(Modifier.weight(0.03f))
 
               Text(
-                  getConditionString(context = context), textAlign = TextAlign.Center, modifier = Modifier.testTag("LoginTerms"))
+                  getConditionString(context = context),
+                  textAlign = TextAlign.Center,
+                  modifier = Modifier.testTag("LoginTerms"))
 
               Spacer(Modifier.weight(0.2f))
             }
@@ -87,14 +88,16 @@ fun LoginScreen(goTo: () -> Unit) {
 }
 
 @Composable
-fun getConditionString(context: Context): AnnotatedString{
+fun getConditionString(context: Context): AnnotatedString {
   return buildAnnotatedString {
     append(getString(context, R.string.condition1))
     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-      append(getString(context, R.string.condition2)) }
+      append(getString(context, R.string.condition2))
+    }
     append(getString(context, R.string.condition3))
     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-      append(getString(context, R.string.condition4)) }
+      append(getString(context, R.string.condition4))
+    }
   }
 }
 
@@ -108,9 +111,7 @@ fun SignInButton(onClick: () -> Unit) {
           ButtonDefaults.buttonColors(
               contentColor = MaterialTheme.colorScheme.onPrimary, containerColor = PrimaryPurple),
       modifier = Modifier.testTag("LoginButton")) {
-        val imageModifierGoogle = Modifier
-          .size(24.dp)
-          .absoluteOffset(x = (-13).dp, y = 0.dp)
+        val imageModifierGoogle = Modifier.size(24.dp).absoluteOffset(x = (-13).dp, y = 0.dp)
 
         Image(
             painter = painterResource(id = R.drawable.google_logo),
