@@ -13,7 +13,7 @@ class UserTest {
     assertEquals("1", user.id)
     assertEquals("Test User", user.displayName)
     assertEquals("Test", user.familyName)
-    assertEquals("User", user.getGivenName)
+    assertEquals("User", user.givenName)
     assertEquals("test@example.com", user.email)
     assertNull(user.photoURL)
   }
@@ -21,32 +21,32 @@ class UserTest {
   @Test
   fun `currentUser is null by default`() {
     User.resetCurrentUser()
-    assertNull(User.currentUser)
+    assertNull(User.getCurrentUser())
   }
 
   @Test
   fun `currentUser can be set`() {
     val user = User("10000", "Test User", "Test", "User", "test@example.com", null)
-    User.currentUser = user
-    assertEquals(user, User.currentUser)
+    User.setCurrentUser(user)
+    assertEquals(user, User.getCurrentUser())
   }
 
   @Test
   fun `resetCurrentUser sets currentUser to null`() {
     val user = User("10000", "Test User", "Test", "User", "test@example.com", null)
-    User.currentUser = user
+    User.setCurrentUser(user)
     User.resetCurrentUser()
-    assertNull(User.currentUser)
+    assertNull(User.getCurrentUser())
   }
 
   @Test
   fun `User creation with null values`() {
-    val user = User(null, null, null, null, null, null)
-    assertNull(user.id)
+    val user = User("1", null, null, null, "test@gmail.com", null)
+
     assertNull(user.displayName)
     assertNull(user.familyName)
-    assertNull(user.getGivenName)
-    assertNull(user.email)
+    assertNull(user.givenName)
+
     assertNull(user.photoURL)
   }
 
@@ -56,7 +56,7 @@ class UserTest {
     assertEquals("", user.id)
     assertEquals("", user.displayName)
     assertEquals("", user.familyName)
-    assertEquals("", user.getGivenName)
+    assertEquals("", user.givenName)
     assertEquals("", user.email)
     assertNull(user.photoURL)
   }
@@ -68,7 +68,7 @@ class UserTest {
     assertEquals(longString, user.id)
     assertEquals(longString, user.displayName)
     assertEquals(longString, user.familyName)
-    assertEquals(longString, user.getGivenName)
+    assertEquals(longString, user.givenName)
     assertEquals(longString, user.email)
     assertNull(user.photoURL)
   }
@@ -80,7 +80,7 @@ class UserTest {
     assertEquals(specialString, user.id)
     assertEquals(specialString, user.displayName)
     assertEquals(specialString, user.familyName)
-    assertEquals(specialString, user.getGivenName)
+    assertEquals(specialString, user.givenName)
     assertEquals(specialString, user.email)
     assertNull(user.photoURL)
   }

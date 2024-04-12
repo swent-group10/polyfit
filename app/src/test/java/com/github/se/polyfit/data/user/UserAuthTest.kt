@@ -61,11 +61,11 @@ class UserAuthTest {
     authCloud.onSignInResult(mockResult) {}
 
     // Verify that User.currentUser is set with the correct values
-    assertEquals("1", User.currentUser?.id)
-    assertEquals("Test User", User.currentUser?.displayName)
-    assertEquals("Test", User.currentUser?.familyName)
-    assertEquals("User", User.currentUser?.getGivenName)
-    assertEquals("test@example.com", User.currentUser?.email)
-    assertNull(User.currentUser?.photoURL)
+    User.getCurrentUser()?.let { assertEquals("1", it.id) }
+    assertEquals("Test User", User.getCurrentUser()?.displayName)
+    assertEquals("Test", User.getCurrentUser()?.familyName)
+    assertEquals("User", User.getCurrentUser()?.givenName)
+    assertEquals("test@example.com", User.getCurrentUser()?.email)
+    assertNull(User.getCurrentUser()?.photoURL)
   }
 }

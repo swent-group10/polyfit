@@ -47,14 +47,17 @@ class AuthenticationCloud @Inject constructor(private val context: Context) : Au
       Log.i("LoginScreen", "User signed in")
       // to get google acount infos
       val account = GoogleSignIn.getLastSignedInAccount(context)
-      User.currentUser =
+
+      User.setCurrentUser(
           User(
-              account?.id ?: "",
-              account?.displayName ?: "",
-              account?.familyName ?: "",
-              account?.givenName ?: "",
-              account?.email ?: "",
-              account?.photoUrl)
+              account?.id!!,
+              account.displayName ?: "",
+              account.familyName ?: "",
+              account.givenName ?: "",
+              account.email!!,
+              account.photoUrl
+          ))
+
       callback(true)
     } else {
       Log.e("LoginScreen", "Error in result: ${result.resultCode}")
