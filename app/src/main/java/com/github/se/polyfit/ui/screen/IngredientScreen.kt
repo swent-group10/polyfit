@@ -125,3 +125,8 @@ private fun TopBar(navigateBack: () -> Unit) {
       },
       modifier = Modifier.testTag("TopBar"))
 }
+
+// @Composable
+// fun IngredientScreenPreview() {
+//  IngredientScreen(Navigation(rememberNavController()), listOf(), listOf())
+// }

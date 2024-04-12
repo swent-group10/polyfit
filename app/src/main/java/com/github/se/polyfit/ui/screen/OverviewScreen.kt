@@ -102,7 +102,7 @@ fun MealTrackerCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween) {
                   Text(
-                      meal.toCapitalizedString(),
+                      meal.toLowerCaseString(),
                       fontSize = MaterialTheme.typography.bodyLarge.fontSize,
                       color = MaterialTheme.colorScheme.secondary)
                   Text(
@@ -190,7 +190,7 @@ fun OverviewScreen(paddingValues: PaddingValues) {
   // State to hold the URI, the image and the bitmap
   var imageUri by remember { mutableStateOf<Uri?>(null) }
   val iconExample = BitmapFactory.decodeResource(context.resources, R.drawable.picture_example)
-  var imageBitmap by remember { mutableStateOf<Bitmap?>(iconExample) }
+  var imageBitmap by remember { mutableStateOf(iconExample) }
 
   // Launcher for starting the camera activity
   val startCamera =
@@ -210,11 +210,11 @@ fun OverviewScreen(paddingValues: PaddingValues) {
           try {
             startCamera.launch(takePictureIntent)
           } catch (e: Exception) {
-            Log.e("HomeScreen", "Error launching camera intent: $e")
+            Log.e("OverviewScreen", "Error launching camera intent: $e")
             // Handle the exception if the camera intent cannot be launched
           }
         } else {
-          Log.e("HomeScreen", "Permission denied")
+          Log.e("OverviewScreen", "Permission denied")
           // Permission is denied. Handle the denial appropriately.
         }
       }
@@ -254,7 +254,7 @@ fun OverviewScreen(paddingValues: PaddingValues) {
         modifier = Modifier.testTag("OverviewScreenLazyColumn")) {
           item {
             Text(
-                text = "Welcome Back, User432!",
+                text = context.getString(R.string.welcome_message),
                 fontSize = MaterialTheme.typography.titleLarge.fontSize,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,

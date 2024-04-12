@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.github.se.polyfit.R
 
+// TODO : make the button functions into a List
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PictureDialog(

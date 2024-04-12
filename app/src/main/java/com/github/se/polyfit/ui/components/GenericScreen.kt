@@ -30,7 +30,11 @@ fun GenericScreen(navController: NavHostController, content: @Composable (Paddin
 
 @Composable
 fun showToastMessage(context: Context): () -> Unit {
-  val toast = Toast.makeText(context, context.getString(R.string.toast_message), Toast.LENGTH_SHORT)
+  val toast =
+      Toast.makeText(
+          context,
+          context.getString(R.string.toast_message_feature_unavailable),
+          Toast.LENGTH_SHORT)
 
   return { toast.show() }
 }
