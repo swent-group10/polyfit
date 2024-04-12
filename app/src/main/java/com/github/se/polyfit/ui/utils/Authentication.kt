@@ -55,8 +55,7 @@ class AuthenticationCloud @Inject constructor(private val context: Context) : Au
               account.familyName ?: "",
               account.givenName ?: "",
               account.email!!,
-              account.photoUrl
-          ))
+              account.photoUrl))
 
       callback(true)
     } else {
