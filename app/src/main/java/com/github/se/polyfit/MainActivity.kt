@@ -36,8 +36,7 @@ class MainActivity : ComponentActivity() {
         WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 
     // TO DO: technical debt, next deadline find better way to pass arguments from overview screen
-    // to
-    // add meal screen
+    // to add meal screen
     var mealViewModel = MealViewModel("testUserID")
     setContent {
       PolyfitTheme {

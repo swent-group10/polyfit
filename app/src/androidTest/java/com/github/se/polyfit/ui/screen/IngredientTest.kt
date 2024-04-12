@@ -73,7 +73,6 @@ class IngredientTest : TestCase() {
             nutritionalInformation = NutritionalInformation(mutableListOf()),
         )
     every { mockMealViewModel.meal.value } returns testMeal
-    every { mockMealViewModel.meal.value } returns testMeal
 
     composeTestRule.setContent {
       IngredientScreen(mockMealViewModel, navigateBack, navigateForward)

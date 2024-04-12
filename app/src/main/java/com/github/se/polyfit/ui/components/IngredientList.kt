@@ -45,8 +45,6 @@ fun IngredientList(
     it: PaddingValues,
     mealViewModel: MealViewModel,
 ) {
-  //    var ingredients =
-
   var ingredients = remember { mealViewModel.meal.value?.ingredients ?: emptyList() }
 
   // TODO: Implement potential ingredients
@@ -59,7 +57,6 @@ fun IngredientList(
     mutableIntStateOf(initialSuggestions.coerceAtMost(potentialIngredients.size))
   }
 
-  //    val
   val lifecycleOwner = LocalLifecycleOwner.current
   mealViewModel.meal.observe(lifecycleOwner) { ingredients = it.ingredients }
 
