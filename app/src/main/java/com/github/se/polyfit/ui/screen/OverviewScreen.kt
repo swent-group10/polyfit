@@ -50,13 +50,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavHostController
 import com.github.se.polyfit.R
+import com.github.se.polyfit.data.api.SpoonacularApiCaller
 import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.ui.components.GradientBox
 import com.github.se.polyfit.ui.components.GradientButton
 import com.github.se.polyfit.ui.components.PictureDialog
 import com.github.se.polyfit.ui.components.showToastMessage
+import com.github.se.polyfit.ui.navigation.Route
 import com.github.se.polyfit.ui.utils.OverviewTags
+import com.github.se.polyfit.viewmodel.meal.MealViewModel
 
 data class Meal(val name: String, val calories: Int)
 
@@ -183,7 +187,11 @@ private fun callCamera(
 }
 
 @Composable
-fun OverviewScreen(paddingValues: PaddingValues) {
+fun OverviewScreen(
+    paddingValues: PaddingValues,
+    navController: NavHostController,
+    mealViewModel: MealViewModel
+) {
 
   val context = LocalContext.current
 
@@ -198,6 +206,12 @@ fun OverviewScreen(paddingValues: PaddingValues) {
         ->
         val bitmap = result.data?.extras?.get("data") as? Bitmap
         imageBitmap = bitmap
+
+        // observe the live data and log the result on changes
+        SpoonacularApiCaller().getMealsFromImage(imageBitmap!!).observeForever {
+          mealViewModel.setMealData(it)
+          navController.navigate(Route.AddMeal)
+        }
       }
 
   // Launcher for requesting the camera permission

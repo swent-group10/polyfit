@@ -16,6 +16,7 @@ import com.github.se.polyfit.ui.navigation.Route
 import com.github.se.polyfit.ui.navigation.globalNavigation
 import com.github.se.polyfit.ui.screen.LoginScreen
 import com.github.se.polyfit.ui.theme.PolyfitTheme
+import com.github.se.polyfit.viewmodel.meal.MealViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
 
@@ -34,20 +35,22 @@ class MainActivity : ComponentActivity() {
     controller.systemBarsBehavior =
         WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 
+    // TO DO: technical debt, next deadline find better way to pass arguments from overview screen
+    // to add meal screen
+    var mealViewModel = MealViewModel("testUserID")
     setContent {
       PolyfitTheme {
         val navController = rememberNavController()
         val navigation = Navigation(navController)
         NavHost(navController = navController, startDestination = Route.Register) {
-          globalNavigation(navController)
-
+          globalNavigation(navController, mealViewModel)
           composable(Route.Register) { LoginScreen(navigation::navigateToHome) }
 
           composable(Route.AddMeal) {
-            AddMealFlow(
-                navigation::goBack,
-                navigation::navigateToHome,
-                userID = "testUserID") // TODO: real userID
+            // make sure the create is clear
+
+            // check reall created
+            AddMealFlow(navigation::goBack, navigation::navigateToHome, "testUserID", mealViewModel)
           }
         }
       }
