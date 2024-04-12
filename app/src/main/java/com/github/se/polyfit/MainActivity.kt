@@ -35,7 +35,8 @@ class MainActivity : ComponentActivity() {
     controller.systemBarsBehavior =
         WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 
-    // TODO: technical debt, next deadline find better way to pass arguments from overview screen to
+    // TO DO: technical debt, next deadline find better way to pass arguments from overview screen
+    // to
     // add meal screen
     var mealViewModel = MealViewModel("testUserID")
     setContent {
@@ -54,7 +55,7 @@ class MainActivity : ComponentActivity() {
                 navigation::goBack,
                 navigation::navigateToHome,
                 userID = "testUserID",
-                mealViewModel) // TODO: real userID
+                mealViewModel) // TO DO: real userID
           }
         }
       }

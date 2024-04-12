@@ -211,8 +211,6 @@ fun OverviewScreen(
         val bitmap = result.data?.extras?.get("data") as? Bitmap
         imageBitmap = bitmap
 
-        // Call the API to get the image analysis
-
         // observe the live data and log the result on changes
 
         val spoonacularApiCaller = SpoonacularApiCaller()
@@ -323,8 +321,6 @@ fun OverviewScreen(
                   //
 
                   imageBitmap?.let {
-                    val api = SpoonacularApiCaller()
-
                     Image(
                         bitmap = it.asImageBitmap(),
                         contentDescription = "Captured image",

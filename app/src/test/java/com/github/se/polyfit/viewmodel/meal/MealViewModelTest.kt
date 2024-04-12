@@ -75,6 +75,25 @@ class MealViewModelTest {
   }
 
   @Test
+  fun `setMealData sets meal`() {
+    val meal =
+        Meal(
+            MealOccasion.BREAKFAST,
+            "testMeal",
+            1,
+            20.0,
+            NutritionalInformation(mutableListOf()),
+            mutableListOf(),
+            "testID")
+    mealViewModel = MealViewModel(userID, mealRepo = mealFirebaseRepository)
+
+    mealViewModel.setMealData(meal)
+
+    val updatedMeal = mealViewModel.meal.value!!
+    assertEquals(meal, updatedMeal)
+  }
+
+  @Test
   fun `addIngredient adds ingredient to meal`() {
     val ingredient =
         Ingredient(
