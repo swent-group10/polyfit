@@ -45,6 +45,7 @@ data class Meal(
     result = 31 * result + nutritionalInformation.hashCode()
     result = 31 * result + ingredients.hashCode()
     result = 31 * result + firebaseId.hashCode()
+
     return result
   }
 
