@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Polyfit</string>
+    <string name="condition1">"By clicking continue, you agree to our\n"</string>
+    <string name="condition2">"Terms of Service"</string>
+    <string name="condition3">" and "</string>
+    <string name="condition4">"Privacy Policy"</string>
+    <string name="signGoogle">"Sign in with Google"</string>
 </resources>
