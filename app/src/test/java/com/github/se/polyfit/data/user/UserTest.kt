@@ -4,8 +4,19 @@ import com.github.se.polyfit.model.data.User
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
+import org.junit.After
+import org.junit.Before
 
 class UserTest {
+  @Before
+  fun setup() {
+    User.resetCurrentUser()
+  }
+
+  @After
+  fun tearDown() {
+    User.resetCurrentUser()
+  }
 
   @Test
   fun `User creation with valid data`() {
@@ -111,10 +122,12 @@ class UserTest {
     val user = User("1", "Test User", "Test", "User", "test@example.com", null)
     val user2 = User("2", "Test User2", "Test2", "User2", "test2@example.com", null)
     User.setCurrentUser(user)
+    println(User.getCurrentUser())
     assertEquals(user, User.getCurrentUser())
     User.resetCurrentUser()
     assertNull(User.getCurrentUser())
     User.setCurrentUser(user2)
+    println(User.getCurrentUser())
     assertEquals(user2, User.getCurrentUser())
     User.resetCurrentUser()
   }
