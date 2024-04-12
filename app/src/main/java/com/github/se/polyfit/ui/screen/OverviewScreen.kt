@@ -51,13 +51,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavHostController
 import com.github.se.polyfit.R
+import com.github.se.polyfit.data.api.SpoonacularApiCaller
 import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.ui.components.GradientBox
 import com.github.se.polyfit.ui.components.GradientButton
 import com.github.se.polyfit.ui.components.PictureDialog
 import com.github.se.polyfit.ui.components.showToastMessage
+import com.github.se.polyfit.ui.navigation.Route
 import com.github.se.polyfit.ui.utils.OverviewTags
+import com.github.se.polyfit.viewmodel.meal.MealViewModel
 
 data class Meal(val name: String, val calories: Int)
 
@@ -171,6 +175,8 @@ private fun callCamera(
       val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
       try {
         startCamera.launch(takePictureIntent)
+
+        Log.d("HomeScreen", "Camera intent launched successfully")
       } catch (e: Exception) {
         // Handle the exception if the camera intent cannot be launched
         Log.e("HomeScreen", "Error launching camera intent: $e")
@@ -184,7 +190,11 @@ private fun callCamera(
 }
 
 @Composable
-fun OverviewScreen(paddingValues: PaddingValues) {
+fun OverviewScreen(
+    paddingValues: PaddingValues,
+    navController: NavHostController,
+    mealViewModel: MealViewModel
+) {
 
   val context = LocalContext.current
 
@@ -192,6 +202,7 @@ fun OverviewScreen(paddingValues: PaddingValues) {
   var imageUri by remember { mutableStateOf<Uri?>(null) }
   val iconExample = BitmapFactory.decodeResource(context.resources, R.drawable.picture_example)
   var imageBitmap by remember { mutableStateOf<Bitmap?>(iconExample) }
+  var showPictureDialog by remember { mutableStateOf(false) }
 
   // Launcher for starting the camera activity
   val startCamera =
@@ -199,6 +210,24 @@ fun OverviewScreen(paddingValues: PaddingValues) {
         ->
         val bitmap = result.data?.extras?.get("data") as? Bitmap
         imageBitmap = bitmap
+
+        Log.d("OverviewScreen", "Camera result: $result")
+
+        // Call the API to get the image analysis
+
+        // observe the live data and log the result on changes
+
+        val spoonacularApiCaller = SpoonacularApiCaller()
+        val imageAnalysisResponse = spoonacularApiCaller.getMealsFromImage(imageBitmap!!)
+
+        // sinc the image analysis response is a live data, we can observe it and log the result
+        imageAnalysisResponse.observeForever {
+          Log.d("OverviewScreen", "Image analysis response: $it")
+          mealViewModel.setMealData(it)
+          // hides the image picker dialogue
+          showPictureDialog = true
+          navController.navigate(Route.AddMeal)
+        }
       }
 
   // Launcher for requesting the camera permission
@@ -237,8 +266,6 @@ fun OverviewScreen(paddingValues: PaddingValues) {
           }
         }
       }
-
-  var showPictureDialog by remember { mutableStateOf(false) }
 
   if (showPictureDialog) {
     PictureDialog(
@@ -296,6 +323,8 @@ fun OverviewScreen(paddingValues: PaddingValues) {
                   //
 
                   imageBitmap?.let {
+                    val api = SpoonacularApiCaller()
+
                     Image(
                         bitmap = it.asImageBitmap(),
                         contentDescription = "Captured image",

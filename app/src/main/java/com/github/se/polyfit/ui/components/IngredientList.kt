@@ -18,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,10 +34,18 @@ fun IngredientList(
     it: PaddingValues,
     mealViewModel: MealViewModel,
 ) {
-  val ingredients = mealViewModel.meal.value?.ingredients ?: emptyList()
+
+  val ingredientsRemember = remember { mutableStateListOf<Ingredient>() }
 
   // TODO: Implement potential ingredients
   val potentialIngredients = listOf<Ingredient>()
+  // link potential ingredients to the mealViewModel live meal data
+
+  mealViewModel.meal.observeForever {
+    // update potential ingredients
+    it.ingredients.forEach { ingredient: Ingredient -> ingredientsRemember.add(ingredient) }
+  }
+
   val onAddIngredient = { index: Int -> Log.v("Add Ingredient", "Clicked") }
   val initialSuggestions = 3
   val potentialIndex = remember {
@@ -52,7 +61,7 @@ fun IngredientList(
               .testTag("IngredientsList"),
       verticalArrangement = Arrangement.Top,
       horizontalAlignment = Alignment.CenterHorizontally) {
-        if (ingredients.isEmpty() && potentialIngredients.isEmpty()) {
+        if (ingredientsRemember.isEmpty() && potentialIngredients.isEmpty()) {
           Text(
               "No ingredients added.",
               modifier = Modifier.fillMaxSize().padding(16.dp, 0.dp).testTag("NoIngredients"),
@@ -61,7 +70,7 @@ fun IngredientList(
         } else {
           FlowRow(
               horizontalArrangement = Arrangement.Start, verticalArrangement = Arrangement.Top) {
-                ingredients.forEach { ingredient ->
+                ingredientsRemember.forEach { ingredient ->
                   GradientButton(
                       text = "${ingredient.name} ${ingredient.amount}${ingredient.unit}",
                       onClick = {

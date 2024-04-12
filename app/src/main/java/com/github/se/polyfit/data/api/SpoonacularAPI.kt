@@ -11,7 +11,7 @@ import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -117,7 +117,7 @@ class SpoonacularApiCaller {
    * @param scope The coroutine scope to run the API calls in. (e.g. viewModelScope)
    * @return The response from the API
    */
-  fun getMealsFromImage(imageBitmap: Bitmap, scope: CoroutineScope): LiveData<Meal> {
+  fun getMealsFromImage(imageBitmap: Bitmap): LiveData<Meal> {
     // need to convert to File
     var file = File.createTempFile("image", ".jpg")
     imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, FileOutputStream(file))
@@ -126,7 +126,7 @@ class SpoonacularApiCaller {
     val meal = MutableLiveData<Meal>()
     meal.postValue(Meal.default())
 
-    scope.launch {
+    GlobalScope.launch {
       try {
         val apiResponse = imageAnalysis(file)
         if (apiResponse.status == APIResponse.SUCCESS) {
