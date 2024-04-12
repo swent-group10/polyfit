@@ -125,9 +125,12 @@ class SpoonacularApiCaller {
     GlobalScope.launch {
       try {
         val apiResponse = imageAnalysis(file)
+        Log.d("SpoonacularApiCaller", "API Response: $apiResponse")
         if (apiResponse.status == APIResponse.SUCCESS) {
           // chooses from a bunch of recipes
           val recipeInformation = getRecipeNutrition(apiResponse.recipes.first())
+
+          Log.d("SpoonacularApiCaller", "Recipe Information: $recipeInformation")
 
           if (recipeInformation.status == APIResponse.SUCCESS) {
             val newMeal =
@@ -150,6 +153,8 @@ class SpoonacularApiCaller {
           Log.e("SpoonacularApiCaller", "Error during image analysis")
           throw Exception("Error during image analysis")
         }
+
+        Log.d("SpoonacularApiCaller", "Meal: ${meal.value}")
       } catch (e: Exception) {
         Log.e("SpoonacularApiCaller", "Error getting recipe nutrition", e)
       }

@@ -61,7 +61,6 @@ import com.github.se.polyfit.ui.components.showToastMessage
 import com.github.se.polyfit.ui.navigation.Route
 import com.github.se.polyfit.ui.utils.OverviewTags
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
-import kotlin.reflect.typeOf
 
 data class Meal(val name: String, val calories: Int)
 
@@ -205,15 +204,8 @@ fun OverviewScreen(
   val startCamera =
       rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result
         ->
-        Log.i("OverviewScreen", "result of taking picture camera $result")
-        Log.i("OverviewScreen", "result of taking picture camera2 ${result.data}")
-        Log.i("OverviewScreen", "result of taking picture camera3 ${result.data?.extras}")
-        Log.i("OverviewScreen", "result of taking picture camera4 ${result.data?.extras?.get("data")}")
-        Log.i("OverviewScreen", "result of taking picture camera4 ${result.data?.extras?.get("data") as? Bitmap}")
         val bitmap = result.data?.extras?.get("data") as? Bitmap
         imageBitmap = bitmap
-
-        Log.i("OverviewScreen", "type ${bitmap!!::class.java.typeName}")
 
         // observe the live data and log the result on changes
         SpoonacularApiCaller().getMealsFromImage(imageBitmap!!).observeForever {

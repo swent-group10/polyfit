@@ -60,6 +60,12 @@ class IngredientTest {
   }
 
   @Test
+  fun increaesAmount() {
+    val increasedIngredient = Ingredient.increaseAmount(ingredient, 1.0)
+    assert(increasedIngredient.amount == 2.2)
+  }
+
+  @Test
   fun testSerializationDeserializationWithDefaultValues() {
     val ingredientWithDefaultValues =
         Ingredient("eggs", 1, 1.2, MeasurementUnit.G, NutritionalInformation(mutableListOf()))

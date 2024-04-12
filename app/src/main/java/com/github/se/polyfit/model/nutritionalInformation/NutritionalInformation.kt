@@ -9,6 +9,13 @@ class NutritionalInformation {
     nutrients.addAll(nutrientsList.map { it.deepCopy() })
   }
 
+  fun calculateTotalNutrient(nutrientType: String): Double {
+
+    val totalNutrient = nutrients.filter { it.nutrientType == nutrientType }.map { it.amount }.sum()
+
+    return totalNutrient
+  }
+
   fun deepCopy(): NutritionalInformation {
     val newNutritionalInformation = NutritionalInformation(mutableListOf())
     nutrients.forEach { newNutritionalInformation.update(it.copy()) }

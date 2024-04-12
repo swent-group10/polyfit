@@ -16,6 +16,7 @@ class MealViewModel(
   // after friday use hilt dependency injection to make code cleaner, for now i guess this is ok
   private val _meal: MutableLiveData<Meal> = MutableLiveData(null)
   val meal: LiveData<Meal> = _meal
+
   // Todo: If find a way to import Transformations, can use that to prevent duplicating updates
   private val _isComplete: MutableLiveData<Boolean> = MutableLiveData(false)
   val isComplete: LiveData<Boolean> = _isComplete
@@ -37,7 +38,6 @@ class MealViewModel(
   }
 
   fun setMealData(meal: Meal) {
-    // add random line of code
     _meal.value = meal
   }
 
