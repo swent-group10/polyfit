@@ -55,6 +55,7 @@ import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -323,4 +324,56 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
     }
 
   }
+
+  @Ignore("need to check the intent of storage system")
+  @Test
+  fun testEndToEndStockage() {
+
+    val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+
+    // Create a Bitmap from the drawable resource
+    val bitmap = BitmapFactory.decodeResource(appContext.resources, R.drawable.google_logo)
+
+    // Create a mock result for the picture intent
+    val resultData = Intent()
+    resultData.putExtra("data", bitmap)
+    val result = Instrumentation.ActivityResult(Activity.RESULT_OK, resultData)
+
+
+
+    // Now you can use mealViewModel in your tests
+
+    // Tell Espresso to expect an Intent to the camera, but respond with the mock result
+    Intents.init()
+    Intents.intending(IntentMatchers.hasAction(MediaStore.INTENT_ACTION_MEDIA_SEARCH)).respondWith(result)
+
+    ComposeScreen.onComposeScreen<PictureDialogBox>(composeTestRule) {
+      assertDoesNotExist()
+      composeTestRule.onNodeWithTag(OverviewTags.overviewPictureBtn).performClick()
+      assertExists()
+      assertIsDisplayed()
+      secondButton {
+        assertExists()
+        assertIsDisplayed()
+        assertHasClickAction()
+        performClick()
+      }
+    }
+    Intents.release()
+
+    ComposeScreen.onComposeScreen<IngredientsBottomBar>(composeTestRule){
+      assertExists()
+      assertIsDisplayed()
+
+      doneButton {
+        assertExists()
+        assertIsDisplayed()
+        assertHasClickAction()
+        performClick()
+      }
+    }
+
+  }
+
+
 }
