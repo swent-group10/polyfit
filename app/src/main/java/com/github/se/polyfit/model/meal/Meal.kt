@@ -49,6 +49,10 @@ data class Meal(
     return result
   }
 
+  fun calculateTotalNutrient(nutrientType: String): Double {
+    return nutritionalInformation.calculateTotalNutrient(nutrientType)
+  }
+
   fun calculateTotalCalories(): Double {
     val mealNutrients = nutritionalInformation.nutrients
 

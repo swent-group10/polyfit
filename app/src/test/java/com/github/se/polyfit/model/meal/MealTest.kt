@@ -200,4 +200,32 @@ class MealTest {
 
     assertEquals(200.0, meal.calculateTotalCalories(), 0.001)
   }
+
+  @Test
+  fun `Meal calculateTotalNutrient should return total nutrient`() {
+    val meal =
+        Meal(
+            MealOccasion.DINNER,
+            name = "eggs",
+            mealID = 1,
+            mealTemp = 102.2,
+            nutritionalInformation =
+                NutritionalInformation(
+                    mutableListOf(
+                        Nutrient("calcium", 1.0, MeasurementUnit.G),
+                        Nutrient("calories", 100.0, MeasurementUnit.CAL))),
+            ingredients =
+                mutableListOf(
+                    Ingredient(
+                        "milk",
+                        1,
+                        102.0,
+                        MeasurementUnit.MG,
+                        NutritionalInformation(
+                            mutableListOf(
+                                Nutrient("calcium", 1.0, MeasurementUnit.G),
+                                Nutrient("calories", 100.0, MeasurementUnit.CAL))))))
+
+    assertEquals(2.0, meal.calculateTotalNutrient("calcium"), 0.001)
+  }
 }
