@@ -3,18 +3,11 @@ package com.github.se.polyfit.ui.screen
 import android.app.Activity
 import android.app.Instrumentation
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.ImageDecoder
-import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
-import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
@@ -33,11 +26,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import com.github.se.polyfit.R
-import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import com.github.se.polyfit.ui.flow.AddMealFlow
-import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.navigation.Route
 import com.github.se.polyfit.ui.navigation.globalNavigation
 import com.github.se.polyfit.ui.utils.OverviewTags
@@ -59,7 +50,6 @@ import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.net.URI
 
 @RunWith(AndroidJUnit4::class)
 class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport()) {
@@ -67,20 +57,24 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
 
   @get:Rule val mockkRule = MockKRule(this)
 
-  @get:Rule val grantPermissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.CAMERA)
+  @get:Rule
+  val grantPermissionRule: GrantPermissionRule =
+      GrantPermissionRule.grant(android.Manifest.permission.CAMERA)
+
   @Before
   fun setup() {
-    //val mealViewModel = mockk<MealViewModel>()
+    // val mealViewModel = mockk<MealViewModel>()
 
     // Create a mock of MealViewModel
     val mealViewModel = mockk<MealViewModel>(relaxed = true)
 
     // Mock the behavior of the meal property
-    val a : com.github.se.polyfit.model.meal.Meal = com.github.se.polyfit.model.meal.Meal(
-      name = "Old Name",
-      mealID = 123,
-      nutritionalInformation = NutritionalInformation(mutableListOf()),
-      occasion = MealOccasion.BREAKFAST)
+    val a: com.github.se.polyfit.model.meal.Meal =
+        com.github.se.polyfit.model.meal.Meal(
+            name = "Old Name",
+            mealID = 123,
+            nutritionalInformation = NutritionalInformation(mutableListOf()),
+            occasion = MealOccasion.BREAKFAST)
     every { mealViewModel.meal } returns MutableLiveData(a)
 
     // Mock the behavior of the isComplete property
@@ -103,15 +97,14 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
 
     // Now you can use mealViewModel in your tests
 
-
-    //val navigation = mockk<Navigation>()
+    // val navigation = mockk<Navigation>()
 
     mockkStatic(Log::class)
     composeTestRule.setContent {
       val navController = rememberNavController()
       NavHost(navController = navController, startDestination = Route.Overview) {
 
-        //composable(Route.Register) { LoginScreen(navigation::navigateToHome) }
+        // composable(Route.Register) { LoginScreen(navigation::navigateToHome) }
 
         composable(Route.AddMeal) {
           // make sure the create is clear
@@ -122,8 +115,6 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
         globalNavigation(navController, mealViewModel)
       }
     }
-
-
   }
 
   @After
@@ -289,8 +280,6 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
     resultData.putExtra("data", bitmap)
     val result = Instrumentation.ActivityResult(Activity.RESULT_OK, resultData)
 
-
-
     // Now you can use mealViewModel in your tests
 
     // Tell Espresso to expect an Intent to the camera, but respond with the mock result
@@ -311,7 +300,7 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
     }
     Intents.release()
 
-    ComposeScreen.onComposeScreen<IngredientsBottomBar>(composeTestRule){
+    ComposeScreen.onComposeScreen<IngredientsBottomBar>(composeTestRule) {
       assertExists()
       assertIsDisplayed()
 
@@ -322,7 +311,6 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
         performClick()
       }
     }
-
   }
 
   @Ignore("need to check the intent of storage system")
@@ -339,13 +327,12 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
     resultData.putExtra("data", bitmap)
     val result = Instrumentation.ActivityResult(Activity.RESULT_OK, resultData)
 
-
-
     // Now you can use mealViewModel in your tests
 
     // Tell Espresso to expect an Intent to the camera, but respond with the mock result
     Intents.init()
-    Intents.intending(IntentMatchers.hasAction(MediaStore.INTENT_ACTION_MEDIA_SEARCH)).respondWith(result)
+    Intents.intending(IntentMatchers.hasAction(MediaStore.INTENT_ACTION_MEDIA_SEARCH))
+        .respondWith(result)
 
     ComposeScreen.onComposeScreen<PictureDialogBox>(composeTestRule) {
       assertDoesNotExist()
@@ -361,7 +348,7 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
     }
     Intents.release()
 
-    ComposeScreen.onComposeScreen<IngredientsBottomBar>(composeTestRule){
+    ComposeScreen.onComposeScreen<IngredientsBottomBar>(composeTestRule) {
       assertExists()
       assertIsDisplayed()
 
@@ -372,8 +359,5 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
         performClick()
       }
     }
-
   }
-
-
 }
