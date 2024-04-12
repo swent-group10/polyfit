@@ -275,44 +275,6 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
     }
   }
 
-  /*
-    @Ignore
-    @Test
-    fun takePictureTest() {
-      //bullshit this test
-      Intents.init()
-      val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-      val activityResult = Instrumentation.ActivityResult(Activity.RESULT_OK, intent)
-      Intents.intending(hasAction(MediaStore.ACTION_IMAGE_CAPTURE)).respondWith(activityResult)
-
-      ComposeScreen.onComposeScreen<PictureDialogBox>(composeTestRule) {
-        composeTestRule.onNodeWithTag(OverviewTags.overviewPictureBtn).performClick()
-        firstButton.performClick()
-      }
-
-      Intents.intended(hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
-      Intents.release()
-    }
-
-    @Test
-    fun testCameraIntent() {
-      // Mock the intent to always return a success and a predefined image
-      val resultData = Intent()
-      val predefinedUri = "android.resource://your.package.name/" + R.drawable.google_logo
-      resultData.data = Uri.parse(predefinedUri)
-      val result = Instrumentation.ActivityResult(Activity.RESULT_OK, resultData)
-
-      // Tell Espresso to expect an Intent to the camera, but respond with the mock result
-      Intents.intending(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE)).respondWith(result)
-
-      // Now simulate the button click that should trigger the intent
-      ComposeScreen.onComposeScreen<PictureDialogBox>(composeTestRule) {
-        firstButton.performClick()
-      }
-
-      // You can add assertions here to check if the ImageView has the image set from the mock result if your application logic includes setting this image to a view
-    }
-  */
   @Test
   fun testEndToEndCamera() {
 
@@ -348,9 +310,16 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
     }
     Intents.release()
 
-    ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule){
+    ComposeScreen.onComposeScreen<IngredientsBottomBar>(composeTestRule){
       assertExists()
       assertIsDisplayed()
+
+      doneButton {
+        assertExists()
+        assertIsDisplayed()
+        assertHasClickAction()
+        performClick()
+      }
     }
 
   }
