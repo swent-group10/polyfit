@@ -7,13 +7,19 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.screen.OverviewScreen
+import com.github.se.polyfit.viewmodel.meal.MealViewModel
 
-fun NavGraphBuilder.globalNavigation(navController: NavHostController) {
+fun NavGraphBuilder.globalNavigation(
+    navController: NavHostController,
+    mealViewModel: MealViewModel
+) {
   navigation(startDestination = Route.Home, route = Route.Overview) {
     composable(Route.Home) {
       GenericScreen(
           navController = navController,
-          content = { paddingValues -> OverviewScreen(paddingValues) })
+          content = { paddingValues ->
+            OverviewScreen(paddingValues, navController, mealViewModel)
+          })
     }
     composable(Route.Map) {
       GenericScreen(navController = navController, content = { Text("Map Screen") })

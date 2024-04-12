@@ -12,7 +12,6 @@ import java.io.InputStream
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import kotlin.test.assertFailsWith
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.runBlocking
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
@@ -203,7 +202,7 @@ class SpoonacularApiCallerTest {
 
     // Act
     val liveDataMeal = runBlocking {
-      spoonacularApiCaller.getMealsFromImage(BitmapFactory.decodeStream(inputStream), GlobalScope)
+      spoonacularApiCaller.getMealsFromImage(BitmapFactory.decodeStream(inputStream))
     }
     val latch = CountDownLatch(2)
 
@@ -235,7 +234,9 @@ class SpoonacularApiCallerTest {
 
     // Act
     val liveDataMeal = runBlocking {
-      spoonacularApiCaller.getMealsFromImage(BitmapFactory.decodeStream(inputStream), GlobalScope)
+      spoonacularApiCaller.getMealsFromImage(
+          BitmapFactory.decodeStream(inputStream),
+      )
     }
     val latch = CountDownLatch(2)
 
@@ -264,7 +265,9 @@ class SpoonacularApiCallerTest {
 
     // Act
     val liveDataMeal = runBlocking {
-      spoonacularApiCaller.getMealsFromImage(BitmapFactory.decodeStream(inputStream), GlobalScope)
+      spoonacularApiCaller.getMealsFromImage(
+          BitmapFactory.decodeStream(inputStream),
+      )
     }
     val latch = CountDownLatch(2)
 

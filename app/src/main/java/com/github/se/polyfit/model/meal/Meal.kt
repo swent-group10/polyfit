@@ -45,7 +45,21 @@ data class Meal(
     result = 31 * result + nutritionalInformation.hashCode()
     result = 31 * result + ingredients.hashCode()
     result = 31 * result + firebaseId.hashCode()
+
     return result
+  }
+
+  fun calculateTotalNutrient(nutrientType: String): Double {
+    return nutritionalInformation.calculateTotalNutrient(nutrientType)
+  }
+
+  fun calculateTotalCalories(): Double {
+    val mealNutrients = nutritionalInformation.nutrients
+
+    val totalCaluries =
+        mealNutrients.filter { it.nutrientType == "calories" }.map { it.amount }.sum()
+
+    return totalCaluries
   }
 
   fun addIngredient(ingredient: Ingredient) {

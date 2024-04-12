@@ -13,8 +13,6 @@ import com.google.android.gms.tasks.Task
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
@@ -98,5 +96,25 @@ class MealViewModelTest {
     viewModel.addIngredient(ingredient)
 
     assert(viewModel.meal.value?.ingredients?.contains(ingredient) == true)
+  }
+
+  @Test
+  fun `set data meal`() {
+    val initialMeal =
+        Meal(
+            name = "Old Name",
+            mealID = 123,
+            nutritionalInformation = NutritionalInformation(mutableListOf()),
+            occasion = MealOccasion.BREAKFAST)
+
+    viewModel = MealViewModel("user123", initialMeal = initialMeal, mealRepo = mealRepo)
+    val meal =
+        Meal(
+            name = "New Name",
+            mealID = 123,
+            nutritionalInformation = NutritionalInformation(mutableListOf()),
+            occasion = MealOccasion.BREAKFAST)
+    viewModel.setMealData(meal)
+    assert(viewModel.meal.value?.name == "New Name")
   }
 }

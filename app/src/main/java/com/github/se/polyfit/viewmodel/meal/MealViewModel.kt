@@ -10,12 +10,13 @@ import com.github.se.polyfit.model.meal.Meal
 class MealViewModel(
     private val userId: String,
     firebaseID: String = "",
-    initialMeal: Meal? = null,
+    var initialMeal: Meal? = null,
     private val mealRepo: MealFirebaseRepository = MealFirebaseRepository(userId)
 ) : ViewModel() {
   // after friday use hilt dependency injection to make code cleaner, for now i guess this is ok
   private val _meal: MutableLiveData<Meal> = MutableLiveData(null)
   val meal: LiveData<Meal> = _meal
+
   // Todo: If find a way to import Transformations, can use that to prevent duplicating updates
   private val _isComplete: MutableLiveData<Boolean> = MutableLiveData(false)
   val isComplete: LiveData<Boolean> = _isComplete
@@ -32,6 +33,12 @@ class MealViewModel(
       _meal.value = initialMeal?.copy() ?: Meal.default()
       _isComplete.value = _meal.value?.isComplete() ?: false
     }
+
+    _meal.observeForever { initialMeal = it }
+  }
+
+  fun setMealData(meal: Meal) {
+    _meal.value = meal
   }
 
   fun setMealName(name: String) {

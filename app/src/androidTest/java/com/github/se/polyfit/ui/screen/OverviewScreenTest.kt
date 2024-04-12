@@ -20,6 +20,7 @@ import com.kaspersky.kaspresso.kaspresso.Kaspresso
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.mockk.junit4.MockKRule
+import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import org.junit.After
@@ -40,7 +41,7 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
     composeTestRule.setContent {
       val navController = rememberNavController()
       NavHost(navController = navController, startDestination = Route.Overview) {
-        globalNavigation(navController)
+        globalNavigation(navController, mockk())
       }
     }
   }

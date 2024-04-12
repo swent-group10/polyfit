@@ -11,7 +11,7 @@ import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -60,9 +60,7 @@ class SpoonacularApiCaller {
             .build()
 
     return try {
-      Log.e(
-          "SpoonacularApiCaller",
-          "Sending image analysis request to ${API_URL + IMAGE_ANALYSIS_ENDPOINT}")
+
       val response = client.newCall(request).execute()
 
       if (!response.isSuccessful) {
@@ -95,7 +93,6 @@ class SpoonacularApiCaller {
 
     return try {
       val response = client.newCall(request).execute()
-
       if (!response.isSuccessful) {
         Log.e("SpoonacularApiCaller", "Error getting recipe nutrition: $response.code")
         throw Exception("Error getting recipe nutrition: $response.code")
@@ -114,10 +111,9 @@ class SpoonacularApiCaller {
    * Returns a meal from a image. This function is a wrapper around the imageAnalysis and
    *
    * @param imageBitmap The image to analyze
-   * @param scope The coroutine scope to run the API calls in. (e.g. viewModelScope)
    * @return The response from the API
    */
-  fun getMealsFromImage(imageBitmap: Bitmap, scope: CoroutineScope): LiveData<Meal> {
+  fun getMealsFromImage(imageBitmap: Bitmap): LiveData<Meal> {
     // need to convert to File
     var file = File.createTempFile("image", ".jpg")
     imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, FileOutputStream(file))
@@ -126,12 +122,15 @@ class SpoonacularApiCaller {
     val meal = MutableLiveData<Meal>()
     meal.postValue(Meal.default())
 
-    scope.launch {
+    GlobalScope.launch {
       try {
         val apiResponse = imageAnalysis(file)
+        Log.d("SpoonacularApiCaller", "API Response: $apiResponse")
         if (apiResponse.status == APIResponse.SUCCESS) {
           // chooses from a bunch of recipes
           val recipeInformation = getRecipeNutrition(apiResponse.recipes.first())
+
+          Log.d("SpoonacularApiCaller", "Recipe Information: $recipeInformation")
 
           if (recipeInformation.status == APIResponse.SUCCESS) {
             val newMeal =
@@ -148,6 +147,8 @@ class SpoonacularApiCaller {
             meal.postValue(newMeal)
           }
         }
+
+        Log.d("SpoonacularApiCaller", "Meal: ${meal.value}")
       } catch (e: Exception) {
         Log.e("SpoonacularApiCaller", "Error getting recipe nutrition", e)
       }

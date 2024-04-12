@@ -263,4 +263,16 @@ class NutritionalInformationTest {
     val nutrient = nutritionalInformation.getNutrient("nonExistentNutrient")
     assertEquals(null, nutrient)
   }
+
+  @Test
+  fun `get certain total of nutrient`() {
+    val nutrient = nutritionalInformation.calculateTotalNutrient("totalWeight")
+    assertEquals(100.0, nutrient, 0.1)
+  }
+
+  @Test
+  fun `get certain amount of nutrient`() {
+    val nutrient = nutritionalInformation.getNutrient("totalWeight")
+    assertEquals(Nutrient("totalWeight", 100.0, MeasurementUnit.G), nutrient)
+  }
 }
