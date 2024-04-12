@@ -206,6 +206,13 @@ android {
         androidTestImplementation("io.mockk:mockk:1.13.10")
         androidTestImplementation("io.mockk:mockk-android:1.13.10")
         androidTestImplementation("io.mockk:mockk-agent:1.13.10")
+
+        testImplementation("junit:junit:4.13.2")
+        testImplementation("org.mockito:mockito-core:4.2.0")
+        testImplementation ("androidx.arch.core:core-testing:2.1.0")
+
+        androidTestImplementation ("androidx.test.ext:junit:1.1.3")
+        androidTestImplementation ("androidx.test.espresso:espresso-core:3.4.0")
     }
 
 // Allow references to generated code
