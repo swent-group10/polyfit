@@ -49,7 +49,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import com.github.se.polyfit.R
@@ -78,8 +77,8 @@ fun MealTrackerCard(
   GradientBox(outerModifier = Modifier.testTag(OverviewTags.overviewMain)) {
     Column(modifier = Modifier.fillMaxWidth().padding(16.dp).testTag("MealColumn")) {
       Text(
-          "Calories Goal",
-          fontSize = 24.sp,
+          text = context.getString(R.string.main_card_title),
+          fontSize = MaterialTheme.typography.headlineMedium.fontSize,
           fontWeight = FontWeight.Bold,
           modifier = Modifier.testTag(OverviewTags.overviewGoal))
       Spacer(modifier = Modifier.height(8.dp))
@@ -90,13 +89,13 @@ fun MealTrackerCard(
             modifier = Modifier.testTag(OverviewTags.overviewCalorie)) {
               Text(
                   text = "$totalCalories/",
-                  fontSize = 35.sp,
+                  fontSize = MaterialTheme.typography.headlineLarge.fontSize,
                   fontWeight = FontWeight.Bold,
                   color = MaterialTheme.colorScheme.primary,
                   modifier = Modifier.testTag("Number"))
               Text(
                   text = "$caloriesGoal",
-                  fontSize = 26.sp,
+                  fontSize = MaterialTheme.typography.headlineSmall.fontSize,
                   color = MaterialTheme.colorScheme.primary,
                   modifier = Modifier.align(Alignment.Bottom).testTag("Goal"))
             }
@@ -108,19 +107,19 @@ fun MealTrackerCard(
                 horizontalArrangement = Arrangement.SpaceBetween) {
                   Text(
                       meal.toLowerCaseString(),
-                      fontSize = 12.sp,
+                      fontSize = MaterialTheme.typography.bodyLarge.fontSize,
                       color = MaterialTheme.colorScheme.secondary)
                   Text(
                       "${calories.toInt()}",
-                      fontSize = 12.sp,
+                      fontSize = MaterialTheme.typography.bodyLarge.fontSize,
                       color = MaterialTheme.colorScheme.secondary)
                 }
           }
         }
       }
       Text(
-          text = "Tack your meals",
-          fontSize = 25.sp,
+          text = context.getString(R.string.meal_tracking_headline),
+          fontSize = MaterialTheme.typography.headlineSmall.fontSize,
           fontWeight = FontWeight.Bold,
           color = MaterialTheme.colorScheme.secondary,
           modifier = Modifier.testTag(OverviewTags.overviewTrack))
@@ -175,8 +174,6 @@ private fun callCamera(
       val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
       try {
         startCamera.launch(takePictureIntent)
-
-        Log.d("HomeScreen", "Camera intent launched successfully")
       } catch (e: Exception) {
         // Handle the exception if the camera intent cannot be launched
         Log.e("HomeScreen", "Error launching camera intent: $e")
@@ -201,8 +198,7 @@ fun OverviewScreen(
   // State to hold the URI, the image and the bitmap
   var imageUri by remember { mutableStateOf<Uri?>(null) }
   val iconExample = BitmapFactory.decodeResource(context.resources, R.drawable.picture_example)
-  var imageBitmap by remember { mutableStateOf<Bitmap?>(iconExample) }
-  var showPictureDialog by remember { mutableStateOf(false) }
+  var imageBitmap by remember { mutableStateOf(iconExample) }
 
   // Launcher for starting the camera activity
   val startCamera =
@@ -212,15 +208,12 @@ fun OverviewScreen(
         imageBitmap = bitmap
 
         // observe the live data and log the result on changes
-
-        val spoonacularApiCaller = SpoonacularApiCaller()
-        val imageAnalysisResponse = spoonacularApiCaller.getMealsFromImage(imageBitmap!!)
+        val imageAnalysisResponse = SpoonacularApiCaller().getMealsFromImage(imageBitmap!!)
 
         // sinc the image analysis response is a live data, we can observe it and log the result
         imageAnalysisResponse.observeForever {
           mealViewModel.setMealData(it)
           // hides the image picker dialogue
-          showPictureDialog = true
           navController.navigate(Route.AddMeal)
 
           // remove the observer
@@ -238,11 +231,11 @@ fun OverviewScreen(
           try {
             startCamera.launch(takePictureIntent)
           } catch (e: Exception) {
-            Log.e("HomeScreen", "Error launching camera intent: $e")
+            Log.e("OverviewScreen", "Error launching camera intent: $e")
             // Handle the exception if the camera intent cannot be launched
           }
         } else {
-          Log.e("HomeScreen", "Permission denied")
+          Log.e("OverviewScreen", "Permission denied")
           // Permission is denied. Handle the denial appropriately.
         }
       }
@@ -265,13 +258,15 @@ fun OverviewScreen(
         }
       }
 
+  var showPictureDialog by remember { mutableStateOf(false) }
+
   if (showPictureDialog) {
     PictureDialog(
         onDismiss = { showPictureDialog = false },
         onFirstButtonClick = callCamera(context, startCamera, requestPermissionLauncher),
         onSecondButtonClick = { pickImageLauncher.launch("image/*") },
-        firstButtonName = "Take Picture",
-        secondButtonName = "Import Image")
+        firstButtonName = context.getString(R.string.take_picture_dialog),
+        secondButtonName = context.getString(R.string.import_picture_dialog))
   }
 
   Box(modifier = Modifier.padding(paddingValues).fillMaxWidth().testTag("OverviewScreen")) {
@@ -280,7 +275,7 @@ fun OverviewScreen(
         modifier = Modifier.testTag("OverviewScreenLazyColumn")) {
           item {
             Text(
-                text = "Welcome Back, User432!",
+                text = context.getString(R.string.welcome_message),
                 fontSize = MaterialTheme.typography.titleLarge.fontSize,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,
