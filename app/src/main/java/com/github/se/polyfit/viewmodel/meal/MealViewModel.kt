@@ -31,10 +31,6 @@ class MealViewModel(
     }
   }
 
-  fun setLiveMeal(livemeal: LiveData<Meal>) {
-    livemeal.observeForever { _meal.value = it }
-  }
-
   fun setMealData(meal: Meal) {
     _meal.value = meal
   }

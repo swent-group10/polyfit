@@ -114,7 +114,6 @@ class SpoonacularApiCaller {
    * Returns a meal from a image. This function is a wrapper around the imageAnalysis and
    *
    * @param imageBitmap The image to analyze
-   * @param scope The coroutine scope to run the API calls in. (e.g. viewModelScope)
    * @return The response from the API
    */
   fun getMealsFromImage(imageBitmap: Bitmap): LiveData<Meal> {

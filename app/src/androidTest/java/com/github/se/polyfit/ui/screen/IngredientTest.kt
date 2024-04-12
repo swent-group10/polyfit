@@ -6,7 +6,6 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.model.ingredient.Ingredient
@@ -69,6 +68,7 @@ class IngredientTest : TestCase() {
             ingredients = testIngredients,
             nutritionalInformation = NutritionalInformation(mutableListOf()),
         )
+    every { mockMealViewModel.meal.value } returns testMeal
     every { mockMealViewModel.meal.value } returns testMeal
 
     composeTestRule.setContent {

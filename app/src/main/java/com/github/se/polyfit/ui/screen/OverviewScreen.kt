@@ -211,8 +211,6 @@ fun OverviewScreen(
         val bitmap = result.data?.extras?.get("data") as? Bitmap
         imageBitmap = bitmap
 
-        Log.d("OverviewScreen", "Camera result: $result")
-
         // Call the API to get the image analysis
 
         // observe the live data and log the result on changes
@@ -222,11 +220,13 @@ fun OverviewScreen(
 
         // sinc the image analysis response is a live data, we can observe it and log the result
         imageAnalysisResponse.observeForever {
-          Log.d("OverviewScreen", "Image analysis response: $it")
           mealViewModel.setMealData(it)
           // hides the image picker dialogue
           showPictureDialog = true
           navController.navigate(Route.AddMeal)
+
+          // remove the observer
+          imageAnalysisResponse.removeObserver {}
         }
       }
 

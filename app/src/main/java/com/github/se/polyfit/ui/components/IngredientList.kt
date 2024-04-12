@@ -18,11 +18,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.github.se.polyfit.model.ingredient.Ingredient
@@ -34,17 +34,12 @@ fun IngredientList(
     it: PaddingValues,
     mealViewModel: MealViewModel,
 ) {
+  //    var ingredients =
 
-  val ingredientsRemember = remember { mutableStateListOf<Ingredient>() }
+  var ingredients = remember { mealViewModel.meal.value?.ingredients ?: emptyList() }
 
   // TODO: Implement potential ingredients
   val potentialIngredients = listOf<Ingredient>()
-  // link potential ingredients to the mealViewModel live meal data
-
-  mealViewModel.meal.observeForever {
-    // update potential ingredients
-    it.ingredients.forEach { ingredient: Ingredient -> ingredientsRemember.add(ingredient) }
-  }
 
   val onAddIngredient = { index: Int -> Log.v("Add Ingredient", "Clicked") }
   val initialSuggestions = 3
@@ -52,6 +47,10 @@ fun IngredientList(
     // equivalent to min(3, potentialIngredients.size)
     mutableIntStateOf(initialSuggestions.coerceAtMost(potentialIngredients.size))
   }
+
+  //    val
+  val lifecycleOwner = LocalLifecycleOwner.current
+  mealViewModel.meal.observe(lifecycleOwner) { ingredients = it.ingredients }
 
   Column(
       modifier =
@@ -61,7 +60,7 @@ fun IngredientList(
               .testTag("IngredientsList"),
       verticalArrangement = Arrangement.Top,
       horizontalAlignment = Alignment.CenterHorizontally) {
-        if (ingredientsRemember.isEmpty() && potentialIngredients.isEmpty()) {
+        if (ingredients.isEmpty() && potentialIngredients.isEmpty()) {
           Text(
               "No ingredients added.",
               modifier = Modifier.fillMaxSize().padding(16.dp, 0.dp).testTag("NoIngredients"),
@@ -70,7 +69,7 @@ fun IngredientList(
         } else {
           FlowRow(
               horizontalArrangement = Arrangement.Start, verticalArrangement = Arrangement.Top) {
-                ingredientsRemember.forEach { ingredient ->
+                ingredients.forEach { ingredient ->
                   GradientButton(
                       text = "${ingredient.name} ${ingredient.amount}${ingredient.unit}",
                       onClick = {

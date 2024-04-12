@@ -1,7 +1,6 @@
 package com.github.se.polyfit
 
 import android.app.Application
-import android.graphics.Bitmap
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -11,18 +10,15 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.flow.AddMealFlow
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.navigation.Route
+import com.github.se.polyfit.ui.navigation.globalNavigation
 import com.github.se.polyfit.ui.screen.LoginScreen
-import com.github.se.polyfit.ui.screen.OverviewScreen
 import com.github.se.polyfit.ui.theme.PolyfitTheme
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
-
-var image: Bitmap? = null
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -47,14 +43,7 @@ class MainActivity : ComponentActivity() {
         val navController = rememberNavController()
         val navigation = Navigation(navController)
         NavHost(navController = navController, startDestination = Route.Register) {
-          composable(Route.Home) {
-            GenericScreen(
-                navController = navController,
-                content = { paddingValues ->
-                  OverviewScreen(paddingValues, navController, mealViewModel)
-                },
-            )
-          }
+          globalNavigation(navController, mealViewModel)
           composable(Route.Register) { LoginScreen(navigation::navigateToHome) }
 
           composable(Route.AddMeal) {

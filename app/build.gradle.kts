@@ -134,6 +134,8 @@ android {
         debugImplementation("androidx.compose.ui:ui-tooling")
         debugImplementation("androidx.compose.ui:ui-test-manifest")
 
+        androidTestImplementation("androidx.arch.core:core-testing:2.2.0")
+
         // Firebase dependencies
         implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
         implementation("com.google.firebase:firebase-auth:22.3.1")
