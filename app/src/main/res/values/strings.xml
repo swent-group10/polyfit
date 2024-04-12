@@ -9,5 +9,5 @@
     <string name="home_nav_label">Home</string>
     <string name="map_nav_label">Map</string>
     <string name="settings_nav_labal">Settings</string>
-    <string name="toast_message">Not available yet</string>
+    <string name="toast_message_feature_unavailable">Not available yet</string>
 </resources>

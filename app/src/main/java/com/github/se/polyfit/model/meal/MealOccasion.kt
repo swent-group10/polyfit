@@ -9,7 +9,7 @@ enum class MealOccasion {
   SNACK,
   OTHER;
 
-  fun toCapitalizedString(): String {
+  fun toLowerCaseString(): String {
     return this.name.first() + this.name.substring(1).lowercase(Locale.ROOT)
   }
 
