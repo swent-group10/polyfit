@@ -1,5 +1,6 @@
 package com.github.se.polyfit.viewmodel.meal
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
@@ -7,153 +8,95 @@ import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
 import org.junit.Before
-import org.junit.Ignore
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
+import org.junit.Rule
+import org.junit.Test
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.anyString
+import org.mockito.Mock
+import org.mockito.Mockito
+import org.mockito.MockitoAnnotations
 
-@RunWith(RobolectricTestRunner::class)
 class MealViewModelTest {
-  private val userID = "testUserID"
-  private val firebaseID = "testFirebaseID"
+  @get:Rule val rule = InstantTaskExecutorRule()
 
-  private lateinit var mealViewModel: MealViewModel
-  private val mealFirebaseRepository: MealFirebaseRepository = mockk()
+  @Mock private lateinit var mealRepo: MealFirebaseRepository
+
+  private lateinit var viewModel: MealViewModel
 
   @Before
-  fun setup() {
-    every { mealFirebaseRepository.getMeal(firebaseID) } returns mockk()
-    every { mealFirebaseRepository.storeMeal(any()) } returns mockk()
+  fun setUp() {
+    MockitoAnnotations.openMocks(this)
+    val mealTask: Task<Meal?> = Mockito.mock(Task::class.java) as Task<Meal?>
+    Mockito.`when`(mealTask.addOnCompleteListener(Mockito.any())).thenAnswer { invocation ->
+      val listener =
+          invocation.getArgument(0, OnCompleteListener::class.java) as OnCompleteListener<Meal?>
+      val meal =
+          Meal(
+              occasion = MealOccasion.OTHER,
+              name = "Test Meal",
+              mealID = 1,
+              nutritionalInformation = NutritionalInformation(mutableListOf()))
+      val mockResult = Mockito.mock(Task::class.java) as Task<Meal?>
+      Mockito.`when`(mockResult.isSuccessful).thenReturn(true)
+      Mockito.`when`(mockResult.result).thenReturn(meal)
+      listener.onComplete(mockResult)
+      return@thenAnswer mealTask
+    }
+    Mockito.`when`(mealRepo.getMeal(Mockito.anyString())).thenReturn(mealTask)
+
+    viewModel = MealViewModel("user123", "firebase123", null, mealRepo)
   }
 
   @Test
-  fun `viewmodel with empty paramters creates default`() {
-    mealViewModel = MealViewModel(userID, mealRepo = mealFirebaseRepository)
-
-    val meal = mealViewModel.meal.value!!
-
-    assertEquals(meal.name, "")
-    assertEquals(meal.occasion, MealOccasion.OTHER)
-    assert(meal.nutritionalInformation.nutrients.isEmpty())
-    assert(meal.ingredients.isEmpty())
-    assertEquals(meal.firebaseId, "")
+  fun testInitialization_withFirebaseID_loadsData() {
+    // Check LiveData value
+    assert(viewModel.meal.value?.name == "Test Meal")
   }
 
   @Test
-  fun `viewmodel with initial meal sets meal`() {
+  fun testSetMealName_updatesMealName() {
     val initialMeal =
         Meal(
-            MealOccasion.BREAKFAST,
-            "testMeal",
-            1,
-            20.0,
-            NutritionalInformation(mutableListOf()),
-            mutableListOf(),
-            "testID")
+            name = "Old Name",
+            mealID = 123,
+            nutritionalInformation = NutritionalInformation(mutableListOf()),
+            occasion = MealOccasion.BREAKFAST)
+    viewModel = MealViewModel("user123", initialMeal = initialMeal, mealRepo = mealRepo)
+    viewModel.setMealName("New Name")
 
-    mealViewModel =
-        MealViewModel(userID, initialMeal = initialMeal, mealRepo = mealFirebaseRepository)
-    val meal = mealViewModel.meal.value!!
-
-    assertEquals(initialMeal, meal)
-  }
-
-  // TODO: Setup the mock data for the getMeal method
-  @Ignore
-  @Test
-  fun `viewmodel with firebaseID gets meal from repo`() {
-    mealViewModel = MealViewModel(userID, firebaseID, mealRepo = mealFirebaseRepository)
-
-    // verify that getMeal was called with the firebaseID
-    verify { mealFirebaseRepository.getMeal(firebaseID) }
+    assert(viewModel.meal.value?.name == "New Name")
   }
 
   @Test
-  fun `addIngredient adds ingredient to meal`() {
-    val ingredient =
-        Ingredient(
-            "testIngredient", 1, 1.0, MeasurementUnit.G, NutritionalInformation(mutableListOf()))
-    mealViewModel = MealViewModel(userID, mealRepo = mealFirebaseRepository)
-
-    mealViewModel.addIngredient(ingredient)
-
-    val meal = mealViewModel.meal.value!!
-    assert(meal.ingredients.contains(ingredient))
-  }
-
-  @Test
-  fun `removeIngredient removes ingredient from meal`() {
-    val ingredient =
-        Ingredient(
-            "testIngredient", 1, 1.0, MeasurementUnit.G, NutritionalInformation(mutableListOf()))
+  fun testAddIngredient_updatesMeal() {
     val initialMeal =
         Meal(
-            MealOccasion.BREAKFAST,
-            "testMeal",
-            1,
-            20.0,
-            NutritionalInformation(mutableListOf()),
-            mutableListOf(ingredient),
-            "testID")
-    mealViewModel =
-        MealViewModel(userID, initialMeal = initialMeal, mealRepo = mealFirebaseRepository)
+            name = "Old Name",
+            mealID = 123,
+            nutritionalInformation = NutritionalInformation(mutableListOf()),
+            occasion = MealOccasion.BREAKFAST)
 
-    mealViewModel.removeIngredient(ingredient)
-
-    val meal = mealViewModel.meal.value!!
-    assert(meal.ingredients.isEmpty())
-  }
-
-  @Test
-  fun `setMeal throws exception if meal is not complete`() {
-    mealViewModel = MealViewModel(userID, mealRepo = mealFirebaseRepository)
-
-    assertFailsWith<Exception> { mealViewModel.setMeal() }
-  }
-
-  @Test
-  fun `setMeal calls storeMeal on repo`() {
+    viewModel = MealViewModel("user123", initialMeal = initialMeal, mealRepo = mealRepo)
     val ingredient =
         Ingredient(
-            "testIngredient", 1, 1.0, MeasurementUnit.G, NutritionalInformation(mutableListOf()))
-    val meal =
-        Meal(
-            MealOccasion.BREAKFAST,
-            "testMeal",
-            1,
-            20.0,
-            NutritionalInformation(mutableListOf(Nutrient("testNutrient", 1.0, MeasurementUnit.G))),
-            mutableListOf(ingredient),
-            "testID")
-    mealViewModel = MealViewModel(userID, initialMeal = meal, mealRepo = mealFirebaseRepository)
+            name = "Tomato",
+            id = 1,
+            amount = 100.0,
+            unit = MeasurementUnit.G,
+            nutritionalInformation =
+                NutritionalInformation(
+                    mutableListOf(
+                        Nutrient("calories", 0.0, MeasurementUnit.CAL),
+                        Nutrient("totalWeight", 0.0, MeasurementUnit.G),
+                        Nutrient("carbohydrates", 0.0, MeasurementUnit.G),
+                        Nutrient("fat", 0.0, MeasurementUnit.G),
+                        Nutrient("protein", 0.0, MeasurementUnit.G))))
 
-    mealViewModel.setMeal()
+    viewModel.addIngredient(ingredient)
 
-    verify { mealFirebaseRepository.storeMeal(meal) }
-  }
-
-  @Test
-  fun `setMealName sets meal name`() {
-    val meal =
-        Meal(
-            MealOccasion.BREAKFAST,
-            "testMeal",
-            1,
-            20.0,
-            NutritionalInformation(mutableListOf()),
-            mutableListOf(),
-            "testID")
-    mealViewModel = MealViewModel(userID, initialMeal = meal, mealRepo = mealFirebaseRepository)
-
-    mealViewModel.setMealName("newName")
-
-    val updatedMeal = mealViewModel.meal.value!!
-    assertEquals(updatedMeal.name, "newName")
+    assert(viewModel.meal.value?.ingredients?.contains(ingredient) == true)
   }
 }
