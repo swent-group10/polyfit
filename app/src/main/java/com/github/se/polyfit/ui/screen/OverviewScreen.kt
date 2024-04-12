@@ -327,16 +327,3 @@ fun OverviewScreen(
         }
   }
 }
-
-/*
-interface IntentProvider {
-  fun provideImageCaptureIntent(): Intent
-}
-
-class IntentProviderImpl @Inject constructor(private val context: Context) : IntentProvider {
-  override fun provideImageCaptureIntent(): Intent {
-    return Intent(MediaStore.ACTION_IMAGE_CAPTURE).also {
-      // Any additional configurations to the intent can be added here
-    }
-  }
-}*/
