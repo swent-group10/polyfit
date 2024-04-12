@@ -208,16 +208,9 @@ fun OverviewScreen(
         imageBitmap = bitmap
 
         // observe the live data and log the result on changes
-        val imageAnalysisResponse = SpoonacularApiCaller().getMealsFromImage(imageBitmap!!)
-
-        // sinc the image analysis response is a live data, we can observe it and log the result
-        imageAnalysisResponse.observeForever {
+        SpoonacularApiCaller().getMealsFromImage(imageBitmap!!).observeForever {
           mealViewModel.setMealData(it)
-          // hides the image picker dialogue
           navController.navigate(Route.AddMeal)
-
-          // remove the observer
-          imageAnalysisResponse.removeObserver {}
         }
       }
 
