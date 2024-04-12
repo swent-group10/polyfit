@@ -6,6 +6,7 @@ import android.content.Intent
 import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
+import com.github.se.polyfit.model.data.User
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import javax.inject.Inject
@@ -44,6 +45,18 @@ class AuthenticationCloud @Inject constructor(private val context: Context) : Au
     Log.i("LoginScreen", "response: $response")
     if (result.resultCode == Activity.RESULT_OK) {
       Log.i("LoginScreen", "User signed in")
+      // to get google acount infos
+      val account = GoogleSignIn.getLastSignedInAccount(context)
+
+      User.setCurrentUser(
+          User(
+              account?.id!!,
+              account.displayName ?: "",
+              account.familyName ?: "",
+              account.givenName ?: "",
+              account.email!!,
+              account.photoUrl))
+
       callback(true)
     } else {
       Log.e("LoginScreen", "Error in result: ${result.resultCode}")
