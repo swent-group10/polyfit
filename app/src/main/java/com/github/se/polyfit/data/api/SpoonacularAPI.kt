@@ -134,15 +134,15 @@ class SpoonacularApiCaller {
 
           if (recipeInformation.status == APIResponse.SUCCESS) {
             val newMeal =
-              Meal(
-                MealOccasion.LUNCH,
-                apiResponse.category,
-                apiResponse.recipes.first().toLong(),
-                20.0,
-                NutritionalInformation(recipeInformation.nutrients.toMutableList()),
-                recipeInformation.ingredients.toMutableList(),
-                // firebase id not defined yet because no calls to store the information
-                "")
+                Meal(
+                    MealOccasion.LUNCH,
+                    apiResponse.category,
+                    apiResponse.recipes.first().toLong(),
+                    20.0,
+                    NutritionalInformation(recipeInformation.nutrients.toMutableList()),
+                    recipeInformation.ingredients.toMutableList(),
+                    // firebase id not defined yet because no calls to store the information
+                    "")
 
             meal.postValue(newMeal)
           }
