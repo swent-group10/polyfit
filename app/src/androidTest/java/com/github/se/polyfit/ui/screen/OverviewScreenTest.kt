@@ -1,5 +1,10 @@
 package com.github.se.polyfit.ui.screen
 
+import android.app.Activity
+import android.app.Instrumentation
+import android.content.Intent
+import android.net.Uri
+import android.provider.MediaStore
 import android.util.Log
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
@@ -11,7 +16,12 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.rule.GrantPermissionRule
+import com.github.se.polyfit.R
+import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.ui.navigation.Route
 import com.github.se.polyfit.ui.navigation.globalNavigation
 import com.github.se.polyfit.ui.utils.OverviewTags
@@ -34,6 +44,7 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
 
   @get:Rule val mockkRule = MockKRule(this)
 
+  @get:Rule val grantPermissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.CAMERA)
   @Before
   fun setup() {
     mockkStatic(Log::class)
@@ -43,6 +54,7 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
         globalNavigation(navController)
       }
     }
+
   }
 
   @After
@@ -193,5 +205,75 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
         assertHasClickAction()
       }
     }
+  }
+
+  /*
+    @Ignore
+    @Test
+    fun takePictureTest() {
+      //bullshit this test
+      Intents.init()
+      val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+      val activityResult = Instrumentation.ActivityResult(Activity.RESULT_OK, intent)
+      Intents.intending(hasAction(MediaStore.ACTION_IMAGE_CAPTURE)).respondWith(activityResult)
+
+      ComposeScreen.onComposeScreen<PictureDialogBox>(composeTestRule) {
+        composeTestRule.onNodeWithTag(OverviewTags.overviewPictureBtn).performClick()
+        firstButton.performClick()
+      }
+
+      Intents.intended(hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
+      Intents.release()
+    }
+
+    @Test
+    fun testCameraIntent() {
+      // Mock the intent to always return a success and a predefined image
+      val resultData = Intent()
+      val predefinedUri = "android.resource://your.package.name/" + R.drawable.google_logo
+      resultData.data = Uri.parse(predefinedUri)
+      val result = Instrumentation.ActivityResult(Activity.RESULT_OK, resultData)
+
+      // Tell Espresso to expect an Intent to the camera, but respond with the mock result
+      Intents.intending(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE)).respondWith(result)
+
+      // Now simulate the button click that should trigger the intent
+      ComposeScreen.onComposeScreen<PictureDialogBox>(composeTestRule) {
+        firstButton.performClick()
+      }
+
+      // You can add assertions here to check if the ImageView has the image set from the mock result if your application logic includes setting this image to a view
+    }
+  */
+  @Test
+  fun testEndToEndCamera() {
+
+    // Mock the intent to always return a success and a predefined image
+    val resultData = Intent()
+    val predefinedUri = "android.resource://your.package.name/" + R.drawable.google_logo
+    resultData.data = Uri.parse(predefinedUri)
+    val result = Instrumentation.ActivityResult(Activity.RESULT_OK, resultData)
+
+    // Tell Espresso to expect an Intent to the camera, but respond with the mock result
+    Intents.init()
+    Intents.intending(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE)).respondWith(result)
+
+    //grantPermissionRule.
+    ComposeScreen.onComposeScreen<PictureDialogBox>(composeTestRule) {
+      assertDoesNotExist()
+      composeTestRule.onNodeWithTag(OverviewTags.overviewPictureBtn).performClick()
+      assertExists()
+      assertIsDisplayed()
+      firstButton {
+        assertExists()
+        assertIsDisplayed()
+        assertHasClickAction()
+        performClick()
+      }
+    }
+    Intents.release()
+
+    ComposeScreen.onComposeScreen<AddIngredientPopupBox>()
+
   }
 }
