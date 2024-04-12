@@ -29,6 +29,7 @@ class UserTest {
     val user = User("10000", "Test User", "Test", "User", "test@example.com", null)
     User.setCurrentUser(user)
     assertEquals(user, User.getCurrentUser())
+    User.resetCurrentUser()
   }
 
   @Test
@@ -83,5 +84,38 @@ class UserTest {
     assertEquals(specialString, user.givenName)
     assertEquals(specialString, user.email)
     assertNull(user.photoURL)
+  }
+
+  @Test
+  fun `can be set once`() {
+    val user = User("1", "Test User", "Test", "User", "test@example.com", null)
+    val user2 = User("2", "Test User2", "Test2", "User2", "test2@example.com", null)
+
+    User.setCurrentUser(user)
+    println(User.getCurrentUser()) // Expected to print user details
+
+    try {
+      User.setCurrentUser(user2)
+      println(User.getCurrentUser()) // Not expected to run
+    } catch (e: IllegalStateException) {
+      println(e.message) // Expected to handle exception
+    }
+
+    assertEquals(
+        user, User.getCurrentUser()) // Verify that the first user is still the current user
+    User.resetCurrentUser() // Reset the user for cleanup
+  }
+
+  @Test
+  fun `set reset set`() {
+    val user = User("1", "Test User", "Test", "User", "test@example.com", null)
+    val user2 = User("2", "Test User2", "Test2", "User2", "test2@example.com", null)
+    User.setCurrentUser(user)
+    assertEquals(user, User.getCurrentUser())
+    User.resetCurrentUser()
+    assertNull(User.getCurrentUser())
+    User.setCurrentUser(user2)
+    assertEquals(user2, User.getCurrentUser())
+    User.resetCurrentUser()
   }
 }

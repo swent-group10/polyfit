@@ -22,7 +22,10 @@ data class User(
     fun getCurrentUser(): User? = currentUser.get()
 
     fun setCurrentUser(user: User) {
-      currentUser.set(user)
+      val wasSet = currentUser.compareAndSet(null, user)
+      if (!wasSet) {
+        throw IllegalStateException("Cannot set new user as currentUser is already set.")
+      }
     }
   }
 }
