@@ -58,6 +58,7 @@ import com.github.se.polyfit.ui.components.GradientButton
 import com.github.se.polyfit.ui.components.PictureDialog
 import com.github.se.polyfit.ui.components.showToastMessage
 import com.github.se.polyfit.ui.utils.OverviewTags
+import com.google.android.gms.common.internal.StringResourceValueReader
 
 data class Meal(val name: String, val calories: Int)
 
@@ -74,8 +75,8 @@ fun MealTrackerCard(
   GradientBox(outerModifier = Modifier.testTag(OverviewTags.overviewMain)) {
     Column(modifier = Modifier.fillMaxWidth().padding(16.dp).testTag("MealColumn")) {
       Text(
-          "Calories Goal",
-          fontSize = 24.sp,
+          text = context.getString(R.string.main_card_title),
+          fontSize = MaterialTheme.typography.headlineMedium.fontSize,
           fontWeight = FontWeight.Bold,
           modifier = Modifier.testTag(OverviewTags.overviewGoal))
       Spacer(modifier = Modifier.height(8.dp))
@@ -86,13 +87,13 @@ fun MealTrackerCard(
             modifier = Modifier.testTag(OverviewTags.overviewCalorie)) {
               Text(
                   text = "$totalCalories/",
-                  fontSize = 35.sp,
+                  fontSize = MaterialTheme.typography.headlineLarge.fontSize,
                   fontWeight = FontWeight.Bold,
                   color = MaterialTheme.colorScheme.primary,
                   modifier = Modifier.testTag("Number"))
               Text(
                   text = "$caloriesGoal",
-                  fontSize = 26.sp,
+                  fontSize = MaterialTheme.typography.headlineSmall.fontSize,
                   color = MaterialTheme.colorScheme.primary,
                   modifier = Modifier.align(Alignment.Bottom).testTag("Goal"))
             }
@@ -104,19 +105,19 @@ fun MealTrackerCard(
                 horizontalArrangement = Arrangement.SpaceBetween) {
                   Text(
                       meal.toCapitalizedString(),
-                      fontSize = 12.sp,
+                      fontSize = MaterialTheme.typography.bodyLarge.fontSize,
                       color = MaterialTheme.colorScheme.secondary)
                   Text(
                       "${calories.toInt()}",
-                      fontSize = 12.sp,
+                      fontSize = MaterialTheme.typography.bodyLarge.fontSize,
                       color = MaterialTheme.colorScheme.secondary)
                 }
           }
         }
       }
       Text(
-          text = "Tack your meals",
-          fontSize = 25.sp,
+          text = context.getString(R.string.meal_tracking_headline),
+          fontSize = MaterialTheme.typography.headlineSmall.fontSize,
           fontWeight = FontWeight.Bold,
           color = MaterialTheme.colorScheme.secondary,
           modifier = Modifier.testTag(OverviewTags.overviewTrack))
@@ -245,8 +246,8 @@ fun OverviewScreen(paddingValues: PaddingValues) {
         onDismiss = { showPictureDialog = false },
         onFirstButtonClick = callCamera(context, startCamera, requestPermissionLauncher),
         onSecondButtonClick = { pickImageLauncher.launch("image/*") },
-        firstButtonName = "Take Picture",
-        secondButtonName = "Import Image")
+        firstButtonName = context.getString(R.string.take_picture_dialog),
+        secondButtonName = context.getString(R.string.import_picture_dialog))
   }
 
   Box(modifier = Modifier.padding(paddingValues).fillMaxWidth().testTag("OverviewScreen")) {

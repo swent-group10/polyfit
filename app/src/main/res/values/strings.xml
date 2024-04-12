@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Polyfit</string>
+    <string name="main_card_title">Calories Goal</string>
+    <string name="welcome_message">Welcome Back, User432!</string>
+    <string name="meal_tracking_headline">Track your meals</string>
+    <string name="take_picture_dialog">Take Picture</string>
+    <string name="import_picture_dialog">Import Picture</string>
+    <string name="dialog_headline">Choose Option</string>
+    <string name="home_nav_label">Home</string>
+    <string name="map_nav_label">Map</string>
+    <string name="settings_nav_labal">Settings</string>
+    <string name="toast_message">Not available yet</string>
 </resources>

@@ -10,14 +10,17 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.github.se.polyfit.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,6 +31,7 @@ fun PictureDialog(
     firstButtonName: String,
     secondButtonName: String
 ) {
+  val context = LocalContext.current
   AlertDialog(
       onDismissRequest = onDismiss,
       confirmButton = {},
@@ -37,8 +41,8 @@ fun PictureDialog(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.testTag("PictureDialogRow")) {
               Text(
-                  text = "Choose Option",
-                  fontSize = 25.sp,
+                  text = context.getString(R.string.dialog_headline),
+                  fontSize = MaterialTheme.typography.headlineMedium.fontSize,
                   fontWeight = FontWeight.ExtraBold,
                   modifier = Modifier.testTag("PictureDialogTitle"))
             }
