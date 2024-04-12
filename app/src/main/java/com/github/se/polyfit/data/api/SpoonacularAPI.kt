@@ -60,9 +60,7 @@ class SpoonacularApiCaller {
             .build()
 
     return try {
-      Log.e(
-          "SpoonacularApiCaller",
-          "Sending image analysis request to ${API_URL + IMAGE_ANALYSIS_ENDPOINT}")
+
       val response = client.newCall(request).execute()
 
       if (!response.isSuccessful) {
@@ -95,7 +93,6 @@ class SpoonacularApiCaller {
 
     return try {
       val response = client.newCall(request).execute()
-
       if (!response.isSuccessful) {
         Log.e("SpoonacularApiCaller", "Error getting recipe nutrition: $response.code")
         throw Exception("Error getting recipe nutrition: $response.code")
@@ -145,7 +142,13 @@ class SpoonacularApiCaller {
                     "")
 
             meal.postValue(newMeal)
+          } else {
+            Log.e("SpoonacularApiCaller", "Error getting recipe nutrition")
+            throw Exception("Error getting recipe nutrition")
           }
+        } else {
+          Log.e("SpoonacularApiCaller", "Error during image analysis")
+          throw Exception("Error during image analysis")
         }
       } catch (e: Exception) {
         Log.e("SpoonacularApiCaller", "Error getting recipe nutrition", e)
