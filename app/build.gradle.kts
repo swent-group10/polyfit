@@ -127,6 +127,8 @@ android {
         testImplementation("junit:junit:4.13.2")
         implementation("androidx.navigation:navigation-compose:2.7.7")
 
+        testImplementation("androidx.arch.core:core-testing:2.2.0")
+
         androidTestImplementation("androidx.test.ext:junit:1.1.5")
         androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
         androidTestImplementation(platform("androidx.compose:compose-bom:2024.04.00"))
@@ -209,10 +211,10 @@ android {
 
         testImplementation("junit:junit:4.13.2")
         testImplementation("org.mockito:mockito-core:4.2.0")
-        testImplementation ("androidx.arch.core:core-testing:2.1.0")
+        testImplementation("androidx.arch.core:core-testing:2.1.0")
 
-        androidTestImplementation ("androidx.test.ext:junit:1.1.3")
-        androidTestImplementation ("androidx.test.espresso:espresso-core:3.4.0")
+        androidTestImplementation("androidx.test.ext:junit:1.1.3")
+        androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
     }
 
 // Allow references to generated code
