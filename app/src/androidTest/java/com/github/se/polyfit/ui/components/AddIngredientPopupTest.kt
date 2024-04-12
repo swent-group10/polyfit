@@ -8,6 +8,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performKeyPress
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -36,7 +37,9 @@ class AddIngredientPopupTest : TestCase() {
   @Before
   fun setup() {
     mockkStatic(Log::class)
-    composeTestRule.setContent { AddIngredientDialog(onClickCloseDialog = {}) }
+    composeTestRule.setContent {
+      AddIngredientDialog(onAddIngredient = {}, onClickCloseDialog = {})
+    }
   }
 
   @After
@@ -66,9 +69,14 @@ class AddIngredientPopupTest : TestCase() {
 
       // Search bar input
       composeTestRule
-          .onNodeWithText("Find an Ingredient...") // find based on placeholder
+          .onNodeWithText("Enter an Ingredient...") // find based on placeholder
           .assertExists("Placeholder text is not found.")
           .performTextInput("a")
+
+      composeTestRule
+          .onNodeWithTag("SearchIcon")
+          .assertExists("Search icon is not found.")
+          .performClick()
 
       searchResultContainer {
         assertIsDisplayed()
@@ -84,7 +92,7 @@ class AddIngredientPopupTest : TestCase() {
     ComposeScreen.onComposeScreen<AddIngredientSearchBar>(composeTestRule) {
       // Search bar input
       composeTestRule
-          .onNodeWithText("Find an Ingredient...") // find based on placeholder
+          .onNodeWithText("Enter an Ingredient...") // find based on placeholder
           .performTextInput("apple")
 
       composeTestRule
@@ -92,6 +100,11 @@ class AddIngredientPopupTest : TestCase() {
           .performKeyPress(KeyEvent(NativeKeyEvent(0, 66))) // 66 is the keycode for 'Enter' key
 
       verify { Log.v("Search", "Searching for apple") }
+
+      composeTestRule
+          .onNodeWithTag("SearchIcon")
+          .assertExists("Search icon is not found.")
+          .performClick()
 
       singleSearchResult {
         assertIsDisplayed()
@@ -106,92 +119,16 @@ class AddIngredientPopupTest : TestCase() {
     }
   }
 
+  // TODO: after writing data retrieval from database for ingredient, write test for it
+
   @Test
   fun nutritionInfoIsDisplayed() {
     ComposeScreen.onComposeScreen<AddIngredientEditNutritionInfo>(composeTestRule) {
       servingSizeContainer { assertIsDisplayed() }
-      carloiesContainer { assertIsDisplayed() }
+      caloriesContainer { assertIsDisplayed() }
       carbsContainer { assertIsDisplayed() }
       fatContainer { assertIsDisplayed() }
       proteinContainer { assertIsDisplayed() }
-
-      servingSizeLabel {
-        assertIsDisplayed()
-        assertTextContains("Serving Size")
-      }
-      carloiesLabel {
-        assertIsDisplayed()
-        assertTextContains("Calories")
-      }
-      carbsLabel {
-        assertIsDisplayed()
-        assertTextContains("Carbs")
-      }
-      fatLabel {
-        assertIsDisplayed()
-        assertTextContains("Fat")
-      }
-      proteinLabel {
-        assertIsDisplayed()
-        assertTextContains("Protein")
-      }
-
-      servingSizeInput {
-        assertIsDisplayed()
-        assertTextContains("0")
-        performTextClearance()
-        performTextInput("1")
-        assertTextContains("1")
-      }
-      carloiesInput {
-        assertIsDisplayed()
-        assertTextContains("0")
-        performTextClearance()
-        performTextInput("1")
-        assertTextContains("1")
-      }
-      carbsInput {
-        assertIsDisplayed()
-        assertTextContains("0")
-        performTextClearance()
-        performTextInput("1")
-        assertTextContains("1")
-      }
-      fatInput {
-        assertIsDisplayed()
-        assertTextContains("0")
-        performTextClearance()
-        performTextInput("1")
-        assertTextContains("1")
-      }
-      proteinInput {
-        assertIsDisplayed()
-        assertTextContains("0")
-        performTextClearance()
-        performTextInput("1")
-        assertTextContains("1")
-      }
-
-      servingSizeUnit {
-        assertIsDisplayed()
-        assertTextContains("g")
-      }
-      carloiesUnit {
-        assertIsDisplayed()
-        assertTextContains("kcal")
-      }
-      carbsUnit {
-        assertIsDisplayed()
-        assertTextContains("g")
-      }
-      fatUnit {
-        assertIsDisplayed()
-        assertTextContains("g")
-      }
-      proteinUnit {
-        assertIsDisplayed()
-        assertTextContains("g")
-      }
     }
   }
 
@@ -203,6 +140,25 @@ class AddIngredientPopupTest : TestCase() {
         assertTextContains("Add")
         assertHasClickAction()
       }
+    }
+  }
+
+  @Test
+  fun addButtonIsConditionallyDisabled() {
+    ComposeScreen.onComposeScreen<AddIngredientButton>(composeTestRule) {
+      addIngredientButton {
+        assertIsDisplayed()
+        assertTextContains("Add")
+        assertIsNotEnabled()
+      }
+
+      composeTestRule.onNodeWithText("Enter an Ingredient...").performTextInput("apple")
+
+      composeTestRule.onNodeWithTag("NutritionSizeInput Total Weight").performTextInput("1")
+
+      composeTestRule.onNodeWithTag("NutritionSizeInput Calories").performTextInput("1")
+
+      addIngredientButton { assertIsEnabled() }
     }
   }
 }

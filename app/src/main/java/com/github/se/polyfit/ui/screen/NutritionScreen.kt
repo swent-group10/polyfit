@@ -21,29 +21,40 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.ui.components.NutritionalInformation
-import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.theme.PrimaryPink
 import com.github.se.polyfit.ui.theme.PrimaryPurple
+import com.github.se.polyfit.viewmodel.meal.MealViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NutritionScreen(meal: Meal, navigation: Navigation) {
-  Scaffold(topBar = { TopBar(navigation = navigation) }, bottomBar = { BottomBar() }) { innerPadding
-    ->
-    Box(modifier = Modifier.padding(innerPadding)) { NutritionalInformation(meal = meal) }
-  }
+fun NutritionScreen(
+    mealViewModel: MealViewModel,
+    navigateBack: () -> Unit,
+    navigateForward: () -> Unit
+) {
+  val isComplete = mealViewModel.isComplete.observeAsState()
+  Scaffold(
+      topBar = { TopBar(navigateBack = navigateBack) },
+      bottomBar = {
+        BottomBar(
+            setMeal = mealViewModel::setMeal,
+            isComplete = isComplete.value ?: false,
+            navigateForward = navigateForward)
+      }) { innerPadding ->
+        Box(modifier = Modifier.padding(innerPadding)) { NutritionalInformation(mealViewModel) }
+      }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun TopBar(navigation: Navigation) {
+private fun TopBar(navigateBack: () -> Unit) {
   TopAppBar(
       title = {
         Text(
@@ -54,7 +65,7 @@ private fun TopBar(navigation: Navigation) {
       },
       navigationIcon = {
         IconButton(
-            onClick = { navigation.goBack() },
+            onClick = { navigateBack() },
             content = {
               Icon(
                   imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -68,7 +79,7 @@ private fun TopBar(navigation: Navigation) {
 }
 
 @Composable
-private fun BottomBar() {
+private fun BottomBar(setMeal: () -> Unit, isComplete: Boolean, navigateForward: () -> Unit) {
   BottomAppBar(
       modifier = Modifier.height(128.dp).testTag("BottomBar"), containerColor = Color.Transparent) {
         Column(
@@ -86,15 +97,19 @@ private fun BottomBar() {
               }
               Spacer(modifier = Modifier.height(8.dp))
               Button(
-                  onClick = { Log.v("Add to Diary", "Clicked") },
+                  onClick = {
+                    Log.v("Add to Diary", "Clicked")
+                    setMeal()
+                    navigateForward()
+                  },
                   colors =
                       ButtonDefaults.buttonColors(
                           containerColor = PrimaryPurple,
                           contentColor = MaterialTheme.colorScheme.onPrimary),
                   modifier = Modifier.width(250.dp).testTag("AddToDiaryButton"),
-              ) {
-                Text(text = "Add to Diary", style = MaterialTheme.typography.bodyLarge)
-              }
+                  enabled = isComplete) {
+                    Text(text = "Add to Diary", style = MaterialTheme.typography.bodyLarge)
+                  }
             }
       }
 }

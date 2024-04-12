@@ -11,6 +11,14 @@ data class Nutrient(val nutrientType: String, val amount: Double, val unit: Meas
     return "$nutrientType :  $amount $unit"
   }
 
+  fun convertToUnit(newUnit: MeasurementUnit): Nutrient {
+    val convertedAmount = MeasurementUnit.unitConversion(this.unit, newUnit, this.amount)
+    val wasItConverted = (convertedAmount != this.amount)
+    val newUnit = if (wasItConverted) newUnit else this.unit
+
+    return Nutrient(this.nutrientType, convertedAmount, newUnit)
+  }
+
   fun deepCopy(): Nutrient {
     return Nutrient(nutrientType, amount, unit)
   }
@@ -47,6 +55,10 @@ data class Nutrient(val nutrientType: String, val amount: Double, val unit: Meas
     result += 31 * unit.hashCode()
     result += 31 * nutrientType.hashCode()
     return result
+  }
+
+  operator fun times(factor: Double): Nutrient {
+    return Nutrient(nutrientType, amount * factor, unit)
   }
 
   companion object {

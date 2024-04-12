@@ -9,6 +9,13 @@ class NutritionalInformation {
     nutrients.addAll(nutrientsList.map { it.deepCopy() })
   }
 
+  fun calculateTotalNutrient(nutrientType: String): Double {
+
+    val totalNutrient = nutrients.filter { it.nutrientType == nutrientType }.map { it.amount }.sum()
+
+    return totalNutrient
+  }
+
   fun deepCopy(): NutritionalInformation {
     val newNutritionalInformation = NutritionalInformation(mutableListOf())
     nutrients.forEach { newNutritionalInformation.update(it.copy()) }
@@ -69,8 +76,18 @@ class NutritionalInformation {
     return newNutritionalInformation
   }
 
+  // TODO: Prevent negative values
+  operator fun minus(other: NutritionalInformation): NutritionalInformation {
+    val newNutritionalInformation = NutritionalInformation(mutableListOf())
+
+    nutrients.forEach { newNutritionalInformation.update(it) }
+    other.nutrients.forEach { newNutritionalInformation.update(it * -1.0) }
+
+    return newNutritionalInformation
+  }
+
   fun getNutrient(nutrientType: String): Nutrient? {
-    return nutrients.find { it.nutrientType == nutrientType }
+    return nutrients.find { it.nutrientType.lowercase() == nutrientType.lowercase() }
   }
 
   companion object {

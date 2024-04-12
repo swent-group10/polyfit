@@ -29,34 +29,13 @@ class AddIngredientSearchBar(semanticsProvider: SemanticsNodeInteractionsProvide
 class AddIngredientEditNutritionInfo(semanticsProvider: SemanticsNodeInteractionsProvider) :
     ComposeScreen<AddIngredientEditNutritionInfo>(
         semanticsProvider = semanticsProvider,
-        viewBuilderAction = { hasTestTag("AddIngredientContentContainer") }) {
+        viewBuilderAction = { hasTestTag("NutritionInfoContainer") }) {
 
-  val servingSizeContainer: KNode = child { hasTestTag("NutritionInfoContainer Serving Size") }
-  val carloiesContainer: KNode = child { hasTestTag("NutritionInfoContainer Calories") }
-  val carbsContainer: KNode = child { hasTestTag("NutritionInfoContainer Carbs") }
+  val servingSizeContainer: KNode = child { hasTestTag("NutritionInfoContainer Total Weight") }
+  val caloriesContainer: KNode = child { hasTestTag("NutritionInfoContainer Calories") }
+  val carbsContainer: KNode = child { hasTestTag("NutritionInfoContainer Carbohydrates") }
   val fatContainer: KNode = child { hasTestTag("NutritionInfoContainer Fat") }
   val proteinContainer: KNode = child { hasTestTag("NutritionInfoContainer Protein") }
-
-  val servingSizeLabel: KNode =
-      servingSizeContainer.child { hasTestTag("NutritionLabel Serving Size") }
-  val carloiesLabel: KNode = carloiesContainer.child { hasTestTag("NutritionLabel Calories") }
-  val carbsLabel: KNode = carbsContainer.child { hasTestTag("NutritionLabel Carbs") }
-  val fatLabel: KNode = fatContainer.child { hasTestTag("NutritionLabel Fat") }
-  val proteinLabel: KNode = proteinContainer.child { hasTestTag("NutritionLabel Protein") }
-
-  val servingSizeInput: KNode =
-      servingSizeContainer.child { hasTestTag("NutritionSizeInput Serving Size") }
-  val carloiesInput: KNode = carloiesContainer.child { hasTestTag("NutritionSizeInput Calories") }
-  val carbsInput: KNode = carbsContainer.child { hasTestTag("NutritionSizeInput Carbs") }
-  val fatInput: KNode = fatContainer.child { hasTestTag("NutritionSizeInput Fat") }
-  val proteinInput: KNode = proteinContainer.child { hasTestTag("NutritionSizeInput Protein") }
-
-  val servingSizeUnit: KNode =
-      servingSizeContainer.child { hasTestTag("NutritionUnit Serving Size") }
-  val carloiesUnit: KNode = carloiesContainer.child { hasTestTag("NutritionUnit Calories") }
-  val carbsUnit: KNode = carbsContainer.child { hasTestTag("NutritionUnit Carbs") }
-  val fatUnit: KNode = fatContainer.child { hasTestTag("NutritionUnit Fat") }
-  val proteinUnit: KNode = proteinContainer.child { hasTestTag("NutritionUnit Protein") }
 }
 
 class AddIngredientButton(semanticsProvider: SemanticsNodeInteractionsProvider) :

@@ -22,11 +22,19 @@ class NutrientTest {
     val nutrient = Nutrient("fats", 100.0, MeasurementUnit.G)
     val serializedData = Nutrient.serialize(nutrient)
     val expectedData =
-        mapOf("nutrientType" to "fats", "amount" to 100.0, "unit" to MeasurementUnit.G.name)
+        mapOf("nutrientType" to "fats", "amount" to 100.0, "unit" to MeasurementUnit.G.toString())
     Assert.assertEquals(expectedData, serializedData)
 
     val deserializedData = Nutrient.deserialize(serializedData)
     Assert.assertEquals(nutrient, deserializedData)
+  }
+
+  @Test
+  fun `conversion of nutrient to another unit`() {
+    val nutrient = Nutrient("fats", 100.0, MeasurementUnit.G)
+    val convertedNutrient = nutrient.convertToUnit(MeasurementUnit.MG)
+    Assert.assertEquals(100_000.0, convertedNutrient.amount, 0.001)
+    Assert.assertEquals(MeasurementUnit.MG, convertedNutrient.unit)
   }
 
   @Test
@@ -56,7 +64,7 @@ class NutrientTest {
     val nutrient = Nutrient("fats", 100.0, MeasurementUnit.G)
     val serializedData = Nutrient.serialize(nutrient)
     val expectedData =
-        mapOf("nutrientType" to "fats", "amount" to 100.0, "unit" to MeasurementUnit.G.name)
+        mapOf("nutrientType" to "fats", "amount" to 100.0, "unit" to MeasurementUnit.G.toString())
     Assert.assertEquals(expectedData, serializedData)
 
     val deserializedData = Nutrient.deserialize(serializedData)
@@ -94,5 +102,21 @@ class NutrientTest {
   fun `get formatted name shows properly for vitamin`() {
     val nutrient = Nutrient("vitaminb4", 100.0, MeasurementUnit.IU)
     Assert.assertEquals("Vitamin B4", nutrient.getFormattedName())
+  }
+
+  @Test
+  fun `multiply nutrient by a scalar`() {
+    val nutrient = Nutrient("fats", 100.0, MeasurementUnit.G)
+    val result = nutrient * 2.0
+    Assert.assertEquals(200.0, result.amount, 0.001)
+    Assert.assertEquals(MeasurementUnit.G, result.unit)
+  }
+
+  @Test
+  fun `multiply nutrient by negative scalar`() {
+    val nutrient = Nutrient("vitaminb4", 5.2, MeasurementUnit.IU)
+    val result = nutrient * -2.0
+    Assert.assertEquals(-10.4, result.amount, 0.001)
+    Assert.assertEquals(MeasurementUnit.IU, result.unit)
   }
 }

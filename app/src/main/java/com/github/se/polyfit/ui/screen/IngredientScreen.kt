@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -21,7 +20,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -32,52 +30,36 @@ import androidx.compose.ui.unit.sp
 import com.github.se.polyfit.ui.components.AddIngredientDialog
 import com.github.se.polyfit.ui.components.GradientButton
 import com.github.se.polyfit.ui.components.IngredientList
-import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.theme.PrimaryPurple
-
-// TODO: Replace with real data class
-data class Ingredient(
-    val name: String,
-    val quantity: Int,
-    val unit: String,
-    val probability: Float = 1.0f,
-) {}
+import com.github.se.polyfit.viewmodel.meal.MealViewModel
 
 @Composable
 fun IngredientScreen(
-    navigation: Navigation,
-    initialIngredients: List<Ingredient>,
-    initialPotentialIngredients: List<Ingredient>,
-    // TODO:  ingredientsViewModel: IngredientsViewModel = IngredientsViewModel(),
+    mealViewModel: MealViewModel,
+    navigateBack: () -> Unit,
+    navigateForward: () -> Unit
 ) {
 
-  val ingredients = remember { mutableStateListOf(*initialIngredients.toTypedArray()) }
-  val potentialIngredients = remember {
-    mutableStateListOf(*initialPotentialIngredients.toTypedArray())
-  }
   val showAddIngredDialog = remember { mutableStateOf(false) }
 
   Scaffold(
-      topBar = { TopBar(navigation) },
-      bottomBar = { BottomBar(onClickAddIngred = { showAddIngredDialog.value = true }) }) {
-        IngredientList(
-            it,
-            ingredients,
-            potentialIngredients,
-            onAddIngredient = { index ->
-              val item = potentialIngredients.removeAt(index)
-              ingredients.add(item)
-            })
+      topBar = { TopBar(navigateBack) },
+      bottomBar = {
+        BottomBar(
+            onClickAddIngred = { showAddIngredDialog.value = true },
+            navigateForward = navigateForward)
+      }) {
+        IngredientList(it, mealViewModel)
         if (showAddIngredDialog.value) {
-          AddIngredientDialog(onClickCloseDialog = { showAddIngredDialog.value = false })
+          AddIngredientDialog(
+              onClickCloseDialog = { showAddIngredDialog.value = false },
+              onAddIngredient = mealViewModel::addIngredient)
         }
       }
 }
 
 @Composable
-private fun BottomBar(
-    onClickAddIngred: () -> Unit,
-) {
+private fun BottomBar(onClickAddIngred: () -> Unit, navigateForward: () -> Unit) {
   Column(
       modifier =
           Modifier.background(MaterialTheme.colorScheme.background)
@@ -106,7 +88,10 @@ private fun BottomBar(
         modifier = Modifier.fillMaxWidth().testTag("DoneBox"),
         contentAlignment = Alignment.Center) {
           Button(
-              onClick = { Log.v("Finished", "Clicked") }, // TODO: Finish adding ingredients
+              onClick = {
+                navigateForward()
+                Log.v("Finished", "Clicked")
+              },
               modifier = Modifier.width(200.dp).testTag("DoneButton"),
               colors = ButtonDefaults.buttonColors(containerColor = PrimaryPurple)) {
                 Text(text = "Done", fontSize = 24.sp)
@@ -117,7 +102,7 @@ private fun BottomBar(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun TopBar(navigation: Navigation) {
+private fun TopBar(navigateBack: () -> Unit) {
   TopAppBar(
       title = {
         Text(
@@ -128,7 +113,7 @@ private fun TopBar(navigation: Navigation) {
       },
       navigationIcon = {
         IconButton(
-            onClick = { navigation.goBack() },
+            onClick = { navigateBack() },
             content = {
               Icon(
                   imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -141,7 +126,6 @@ private fun TopBar(navigation: Navigation) {
       modifier = Modifier.testTag("TopBar"))
 }
 
-// @Preview
 // @Composable
 // fun IngredientScreenPreview() {
 //  IngredientScreen(Navigation(rememberNavController()), listOf(), listOf())
