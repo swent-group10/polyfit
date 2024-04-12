@@ -16,15 +16,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import com.github.se.polyfit.R
 import com.github.se.polyfit.ui.navigation.Route
 import com.github.se.polyfit.ui.utils.OverviewTags
 
 @Composable
 fun BottomNavigationBar(
-    backStackEntry : NavBackStackEntry?,
+    backStackEntry: NavBackStackEntry?,
     navHome: () -> Unit,
     navSearch: () -> Unit,
     navSettings: () -> Unit,
@@ -47,7 +45,9 @@ fun BottomNavigationBar(
         selected = currentRoute == Route.Home,
         label = {
           if (currentRoute == Route.Home) {
-            Text(text = context.getString(R.string.home_nav_label), modifier = Modifier.testTag(OverviewTags.overviewHomeLabel))
+            Text(
+                text = context.getString(R.string.home_nav_label),
+                modifier = Modifier.testTag(OverviewTags.overviewHomeLabel))
           }
         },
         onClick = navHome)
@@ -61,7 +61,9 @@ fun BottomNavigationBar(
         icon = { Icon(Icons.Default.Search, contentDescription = OverviewTags.overviewMapIcon) },
         label = {
           if (currentRoute == Route.Map)
-              Text(context.getString(R.string.map_nav_label), Modifier.testTag(OverviewTags.overviewMapLabel))
+              Text(
+                  context.getString(R.string.map_nav_label),
+                  Modifier.testTag(OverviewTags.overviewMapLabel))
         },
         selected = currentRoute == Route.Map,
         onClick = navSearch)
@@ -77,7 +79,9 @@ fun BottomNavigationBar(
         },
         label = {
           if (currentRoute == Route.Settings)
-              Text(context.getString(R.string.settings_nav_labal), Modifier.testTag(OverviewTags.overviewSettingsLabel))
+              Text(
+                  context.getString(R.string.settings_nav_labal),
+                  Modifier.testTag(OverviewTags.overviewSettingsLabel))
         },
         selected = currentRoute == Route.Settings,
         onClick = navSettings)
