@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -127,7 +126,6 @@ private fun TopBar(navigateBack: () -> Unit) {
       modifier = Modifier.testTag("TopBar"))
 }
 
-// @Preview
 // @Composable
 // fun IngredientScreenPreview() {
 //  IngredientScreen(Navigation(rememberNavController()), listOf(), listOf())
