@@ -353,7 +353,7 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
       assertIsDisplayed()
 
       doneButton {
-        assertExists()
+        assertExists() //
         assertIsDisplayed()
         assertHasClickAction()
         performClick()
