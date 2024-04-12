@@ -146,12 +146,8 @@ class SpoonacularApiCaller {
 
             meal.postValue(newMeal)
           } else {
-            Log.e("SpoonacularApiCaller", "Error getting recipe nutrition")
-            throw Exception("Error getting recipe nutrition")
           }
         } else {
-          Log.e("SpoonacularApiCaller", "Error during image analysis")
-          throw Exception("Error during image analysis")
         }
 
         Log.d("SpoonacularApiCaller", "Meal: ${meal.value}")
