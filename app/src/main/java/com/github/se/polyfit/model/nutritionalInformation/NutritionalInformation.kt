@@ -59,7 +59,9 @@ class NutritionalInformation {
           }
         }
 
-    nutrients.removeIf { it.amount < 0.0 }
+    val anyRemoved = nutrients.removeIf { it.amount < 0.0 }
+
+    if (anyRemoved) Log.d("NutritionalInformation", "Removed negative nutrient(s)")
   }
 
   fun update(newValues: NutritionalInformation) {

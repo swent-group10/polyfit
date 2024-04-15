@@ -18,6 +18,7 @@ class NutritionalInformationTest {
     mockkStatic(Log::class)
     every { Log.e(any(), any()) } returns 0
     every { Log.e(any(), any(), any()) } returns 0
+    every { Log.d(any(), any()) } returns 0
 
     nutritionalInformation =
         NutritionalInformation(
