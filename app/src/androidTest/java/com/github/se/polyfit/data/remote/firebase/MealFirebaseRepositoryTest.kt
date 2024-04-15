@@ -103,9 +103,7 @@ class MealFirebaseRepositoryTest {
         Tasks.forException(Exception("Failed to store meal"))
     every { mockDocumentReference.id } returns "1"
 
-    assertFailsWith<Exception> {
-      runBlocking { mealFirebaseRepository.storeMeal(mealNoId).await() }
-    }
+    assertFailsWith<Exception> { mealFirebaseRepository.storeMeal(mealNoId).await() }
   }
 
   @Test
