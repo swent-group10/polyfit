@@ -10,6 +10,8 @@ import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
+import kotlin.test.assertFailsWith
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -46,6 +48,11 @@ class MealViewModelTest {
     Mockito.`when`(mealRepo.getMeal(Mockito.anyString())).thenReturn(mealTask)
 
     viewModel = MealViewModel("user123", "firebase123", null, mealRepo)
+  }
+
+  @After
+  fun tearDown() {
+    Mockito.reset(mealRepo)
   }
 
   @Test
@@ -116,5 +123,90 @@ class MealViewModelTest {
             occasion = MealOccasion.BREAKFAST)
     viewModel.setMealData(meal)
     assert(viewModel.meal.value?.name == "New Name")
+  }
+
+  @Test
+  fun `remove ingredient`() {
+    val ingredient =
+        Ingredient(
+            name = "Tomato",
+            id = 1,
+            amount = 100.0,
+            unit = MeasurementUnit.G,
+            nutritionalInformation =
+                NutritionalInformation(
+                    mutableListOf(Nutrient("calories", 0.0, MeasurementUnit.CAL))))
+    val initialMeal =
+        Meal(
+            name = "Meal Name",
+            mealID = 123,
+            nutritionalInformation = ingredient.nutritionalInformation,
+            occasion = MealOccasion.BREAKFAST,
+            ingredients = mutableListOf(ingredient))
+
+    viewModel = MealViewModel("user123", initialMeal = initialMeal, mealRepo = mealRepo)
+
+    viewModel.removeIngredient(ingredient)
+
+    assert(viewModel.meal.value?.ingredients?.contains(ingredient) == false)
+    assert(viewModel.meal.value?.nutritionalInformation?.getNutrient("calories")?.amount == 0.0)
+  }
+
+  @Test
+  fun `set meal with incomplete meal fails`() {
+    val initialMeal =
+        Meal(
+            name = "Meal Name",
+            mealID = 123,
+            nutritionalInformation = NutritionalInformation(mutableListOf()),
+            occasion = MealOccasion.BREAKFAST)
+
+    viewModel = MealViewModel("user123", initialMeal = initialMeal, mealRepo = mealRepo)
+
+    assertFailsWith<Exception> { viewModel.setMeal() }
+  }
+
+  @Test
+  fun `set meal makes call to firebase`() {
+    val initialMeal =
+        Meal(
+            name = "Meal Name",
+            mealID = 123,
+            nutritionalInformation = NutritionalInformation(mutableListOf()),
+            occasion = MealOccasion.BREAKFAST)
+
+    viewModel = MealViewModel("user123", initialMeal = initialMeal, mealRepo = mealRepo)
+
+    val ingredient =
+        Ingredient(
+            name = "Tomato",
+            id = 1,
+            amount = 100.0,
+            unit = MeasurementUnit.G,
+            nutritionalInformation =
+                NutritionalInformation(
+                    mutableListOf(
+                        Nutrient("calories", 10.0, MeasurementUnit.CAL),
+                        Nutrient("totalWeight", 10.0, MeasurementUnit.G),
+                        Nutrient("carbohydrates", 50.0, MeasurementUnit.G),
+                        Nutrient("fat", 20.0, MeasurementUnit.G),
+                        Nutrient("protein", 10.0, MeasurementUnit.G))))
+
+    viewModel.addIngredient(ingredient)
+
+    viewModel.setMeal()
+
+    Mockito.verify(mealRepo).storeMeal(viewModel.meal.value!!)
+  }
+
+  @Test
+  fun `viewmodel with no meal creates default`() {
+    viewModel = MealViewModel("user123", mealRepo = mealRepo)
+    assert(viewModel.meal.value!! == Meal.default())
+  }
+
+  @Test
+  fun `viewmodel with firebaseID loads data`() {
+    Mockito.verify(mealRepo).getMeal("firebase123")
   }
 }
