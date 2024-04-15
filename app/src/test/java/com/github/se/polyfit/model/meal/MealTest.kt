@@ -7,6 +7,7 @@ import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import io.mockk.every
 import io.mockk.mockkStatic
+import java.time.LocalDate
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 import org.junit.Assert.assertEquals
@@ -40,12 +41,18 @@ class MealTest {
   fun `Meal serialize should serialize meal correctly`() {
     val meal =
         Meal(
-            MealOccasion.DINNER, "eggs", 1.toLong(), 102.2, NutritionalInformation(mutableListOf()))
+            MealOccasion.DINNER,
+            "eggs",
+            1.toLong(),
+            102.2,
+            NutritionalInformation(mutableListOf()),
+            createdAt = LocalDate.parse("2021-01-01"))
     val serializedMeal = Meal.serialize(meal)
     assertEquals(1.toLong(), serializedMeal["mealID"])
     assertEquals(MealOccasion.DINNER.name, serializedMeal["occasion"])
     assertEquals("eggs", serializedMeal["name"])
     assertEquals(102.2, serializedMeal["mealTemp"])
+    assertEquals("2021-01-01", serializedMeal["createdAt"])
   }
 
   @Test
@@ -56,7 +63,8 @@ class MealTest {
             "occasion" to "DINNER",
             "name" to "eggs",
             "mealTemp" to "wrongValue",
-            "nutritionalInformation" to listOf<Map<String, Any>>())
+            "nutritionalInformation" to listOf<Map<String, Any>>(),
+            "createdAt" to "notARealDate")
     // Make sure that an exception is thrown
     assertFailsWith<Exception> { Meal.deserialize(data) }
   }
@@ -69,13 +77,15 @@ class MealTest {
             "occasion" to "DINNER",
             "name" to "eggs",
             "mealTemp" to 102.2,
-            "nutritionalInformation" to NutritionalInformation(mutableListOf()).serialize())
+            "nutritionalInformation" to NutritionalInformation(mutableListOf()).serialize(),
+            "createdAt" to "2021-01-01")
     val meal = Meal.deserialize(data)
     assertNotNull(meal)
     assertEquals(1.toLong(), meal.mealID)
     assertEquals(MealOccasion.DINNER, meal.occasion)
     assertEquals("eggs", meal.name)
     assertEquals(102.2, meal.mealTemp, 0.001)
+    assertEquals(LocalDate.parse("2021-01-01"), meal.createdAt)
   }
 
   @Test
@@ -86,7 +96,8 @@ class MealTest {
             "occasion" to "DINNER",
             "name" to "eggs",
             "mealTemp" to 102.2,
-            "nutritionalInformation" to listOf<Map<String, Any>>())
+            "nutritionalInformation" to listOf<Map<String, Any>>(),
+            "createdAt" to "2021-01-01")
 
     val meal = Meal.deserialize(data)
     val deserialized = Meal.deserialize(data)
