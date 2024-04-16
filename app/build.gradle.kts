@@ -156,7 +156,11 @@ android {
         androidTestImplementation("com.kaspersky.android-components:kaspresso:1.4.3")
         androidTestImplementation("com.kaspersky.android-components:kaspresso-allure-support:1.4.3")
         androidTestImplementation("com.kaspersky.android-components:kaspresso-compose-support:1.4.1")
+        androidTestImplementation("io.mockk:mockk:1.13.10")
+        androidTestImplementation("io.mockk:mockk-android:1.13.10")
+        androidTestImplementation("io.mockk:mockk-jvm:1.13.10")
 
+        testImplementation("io.mockk:mockk-jvm:1.13.10")
         testImplementation("junit:junit:4.13.2")
         testImplementation("androidx.arch.core:core-testing:2.2.0")
         testImplementation("org.mockito:mockito-inline:4.2.0")
@@ -164,7 +168,7 @@ android {
         testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.9.0")
         testImplementation("org.robolectric:robolectric:4.8")
         testImplementation("android.arch.persistence.room:testing:1.1.1")
-        testImplementation("org.mockito:mockito-core:4.2.0")
+        testImplementation("org.mockito:mockito-core:5.11.0")
 
         debugImplementation("androidx.compose.ui:ui-tooling")
         debugImplementation("androidx.compose.ui:ui-test-manifest")
