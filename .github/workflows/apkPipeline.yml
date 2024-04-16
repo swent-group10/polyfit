@@ -38,6 +38,13 @@ jobs:
         with:
           name: app-release.apk
           path: app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Install tree
+        run: sudo apt-get install -y tree
+
+      - name: Run tree command
+        run: tree
+        
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
