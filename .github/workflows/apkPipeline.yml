@@ -46,7 +46,7 @@ jobs:
         run: tree
 
       - name: Open file
-        run: cat ./app/polyfit.json
+        run: cat ./app/google-services.json
 
       - name: Create Release
         id: create_release
