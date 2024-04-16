@@ -31,8 +31,16 @@ jobs:
         with:
           distribution: "temurin"
           java-version: "17"
-      - name: Build APK
-        run: ./gradlew assembleDebug
+      - name: Decode Keystore
+        run: echo "${{ secrets.KEYSTORE }}" | base64 --decode > ./app/keystore.jks
+
+      - name: Inject secrets into gradle.properties
+        run: |
+          echo "RELEASE_STORE_PASSWORD=${{ secrets.RELEASE_STORE_PASSWORD }}" >> gradle.properties
+          echo "RELEASE_KEY_ALIAS=${{ secrets.RELEASE_KEY_ALIAS }}" >> gradle.properties
+          echo "RELEASE_KEY_PASSWORD=${{ secrets.RELEASE_KEY_PASSWORD }}" >> gradle.properties
+      - name: Build Release APK
+        run: ./gradlew assembleRelease
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
@@ -46,7 +54,7 @@ jobs:
         run: tree
 
       - name: Open file
-        run: cat ./app/polyfit.json
+        run: cat ./app/google-services.json
 
       - name: Create Release
         id: create_release
