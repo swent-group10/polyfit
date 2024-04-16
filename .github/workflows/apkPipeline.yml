@@ -44,7 +44,10 @@ jobs:
 
       - name: Run tree command
         run: tree
-        
+
+      - name: Open file
+        run: cat ./app/polyfit.json
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
