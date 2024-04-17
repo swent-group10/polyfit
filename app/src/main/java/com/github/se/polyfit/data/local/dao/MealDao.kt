@@ -10,26 +10,40 @@ import com.github.se.polyfit.model.meal.Meal
 
 @Dao
 interface MealDao {
-  @Query("SELECT * FROM MealTable") fun getAll(): List<MealEntity>
+    @Query("SELECT * FROM MealTable")
+    fun getAll(): List<MealEntity>
 
-  fun getAllMeals(): List<Meal> {
-    val meals = getAll()
-    return meals.map { it.toMeal() }
-  }
+    fun getAllMeals(): List<Meal> {
+        val meals = getAll()
+        return meals.map { it.toMeal() }
+    }
 
-  fun getAllIngredients(): List<Ingredient> {
-    val meals = getAll()
+    fun getAllIngredients(): List<Ingredient> {
+        val meals = getAll()
 
-    return meals.flatMap { it.ingredients }
-  }
+        return meals.flatMap { it.ingredients }
+    }
 
-  @Insert(onConflict = OnConflictStrategy.REPLACE) fun insert(meal: MealEntity)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(meal: MealEntity)
 
-  fun insert(meal: Meal) {
-    insert(MealEntity.toMealEntity(meal))
-  }
+    fun insert(meal: Meal) {
+        insert(MealEntity.toMealEntity(meal))
+    }
 
-  @Query("DELETE FROM MealTable WHERE firebaseId = :id") fun deleteByFirebaseID(id: String)
+    @Query("SELECT * FROM MealTable WHERE firebaseId = :id LIMIT 1 ")
+    fun getMealEntityByFirebaseID(id: String): MealEntity?
 
-  @Query("DELETE FROM MealTable") fun deleteAll()
+
+    fun getMealByFirebaseID(id: String): Meal? {
+        val meal = getMealEntityByFirebaseID(id)
+        return meal?.toMeal()
+    }
+
+
+    @Query("DELETE FROM MealTable WHERE firebaseId = :id")
+    fun deleteByFirebaseID(id: String)
+
+    @Query("DELETE FROM MealTable")
+    fun deleteAll()
 }
