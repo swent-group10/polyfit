@@ -10,6 +10,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.github.se.polyfit.ui.components.LineChartScreen
 import com.github.se.polyfit.ui.flow.AddMealFlow
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.navigation.Route
@@ -42,8 +43,9 @@ class MainActivity : ComponentActivity() {
       PolyfitTheme {
         val navController = rememberNavController()
         val navigation = Navigation(navController)
-        NavHost(navController = navController, startDestination = Route.Register) {
+        NavHost(navController = navController, startDestination = Route.Graph) {
           globalNavigation(navController, mealViewModel)
+          composable(Route.Graph) { LineChartScreen() }
           composable(Route.Register) { LoginScreen(navigation::navigateToHome) }
 
           composable(Route.AddMeal) {

@@ -215,6 +215,11 @@ android {
 
         androidTestImplementation("androidx.test.ext:junit:1.1.3")
         androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
+
+
+        //Ycharts
+
+        implementation("co.yml:ycharts:2.1.0")
     }
 
 // Allow references to generated code
