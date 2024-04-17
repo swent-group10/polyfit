@@ -1,72 +1,127 @@
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider
+import com.github.se.polyfit.data.local.dao.MealDao
+import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
+import com.github.se.polyfit.data.repository.ConnectivityChecker
 import com.github.se.polyfit.data.repository.MealRepository
+import com.github.se.polyfit.model.meal.Meal
+import com.github.se.polyfit.model.meal.MealOccasion
+import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
+import com.google.android.gms.tasks.Tasks
+import com.google.firebase.firestore.DocumentReference
+import io.mockk.coEvery
+import io.mockk.every
+import io.mockk.mockk
+import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertNull
+import kotlin.test.Test
+import kotlinx.coroutines.test.runTest
+import org.junit.Before
 
 class MealRepositoryTest {
 
-    private lateinit var mealRepository: MealRepository
+  private lateinit var mealRepository: MealRepository
+  private lateinit var mealFirebaseRepository: MealFirebaseRepository
+  private lateinit var mealDao: MealDao
+  private lateinit var checkConnectivity: ConnectivityChecker
 
-//  @Before
-//  fun setup() {
-//      mealRepository = mockk()
-//    mealRepository = MealRepository(mealRepository)
-//  }
-//
-//  @Test
-//  fun storeMeal_successfullyStoresMeal() = runTest {
-//    val meal =
-//        Meal(
-//            MealOccasion.DINNER,
-//            "name",
-//            1,
-//            12.0,
-//            NutritionalInformation(mutableListOf()),
-//            mutableListOf())
-//    val documentReference = mockk<DocumentReference>()
-//    coEvery { mealRepository.storeMeal(meal) } returns Tasks.forResult(documentReference)
-//
-//    mealRepository.storeMeal(meal)
-//  }
-//
-//  @Test
-//  fun getMeal_returnsExpectedMeal() = runTest {
-//    val expectedMeal =
-//        Meal(
-//            MealOccasion.DINNER,
-//            "name",
-//            1,
-//            12.0,
-//            NutritionalInformation(mutableListOf()),
-//            mutableListOf())
-//
-//    coEvery { mealFirebaseRepository.getMeal("id") } returns Tasks.forResult(expectedMeal)
-//
-//    val actualMeal = mealRepository.getMeal("id")
-//
-//    assertEquals(expectedMeal, actualMeal)
-//  }
-//
-//  @Test
-//  fun getAllMeals_returnsExpectedMeals() = runTest {
-//    val expectedMeals =
-//        listOf(
-//            Meal(
-//                MealOccasion.DINNER,
-//                "name1",
-//                1,
-//                1.2,
-//                NutritionalInformation(mutableListOf()),
-//            ),
-//            Meal(MealOccasion.DINNER, "name2", 2, 1.3, NutritionalInformation(mutableListOf())))
-//    coEvery { mealFirebaseRepository.getAllMeals() } returns Tasks.forResult(expectedMeals)
-//
-//    val actualMeals = mealRepository.getAllMeals()
-//
-//    assertEquals(expectedMeals, actualMeals)
-//  }
-//
-//  @Test
-//  fun deleteMeal_successfullyDeletesMeal() = runTest {
-//    coEvery { mealFirebaseRepository.deleteMeal("id") } returns Tasks.forResult(null)
-//
-//    mealRepository.deleteMeal("id")
-//  }
+  @Before
+  fun setup() {
+    mealFirebaseRepository = mockk()
+    mealDao = mockk()
+    checkConnectivity = mockk()
+    val testContext: Context = ApplicationProvider.getApplicationContext()
+
+    mealRepository =
+        MealRepository(
+            mealFirebaseRepository = mealFirebaseRepository,
+            mealDao = mealDao,
+            checkConnectivity = checkConnectivity,
+            context = testContext)
+  }
+
+  @Test
+  fun storeMeal_whenConnectionAvailableAndDataNotOutdated_storesMealInFirebaseAndLocalDb() =
+      runTest {
+        val meal =
+            Meal(
+                MealOccasion.DINNER,
+                "name",
+                1,
+                12.0,
+                NutritionalInformation(mutableListOf()),
+                mutableListOf())
+        val documentReference = mockk<DocumentReference>()
+        coEvery { mealFirebaseRepository.storeMeal(meal) } returns
+            Tasks.forResult(documentReference)
+        coEvery { mealDao.insert(any<Meal>()) } returns Unit
+        coEvery { checkConnectivity.checkConnection() } returns true
+
+        val result = mealRepository.storeMeal(meal)
+
+        assertEquals(documentReference, result)
+      }
+
+  @Test
+  fun storeMeal_whenConnectionNotAvailable_storesMealInLocalDbOnly() = runTest {
+    val meal =
+        Meal(
+            MealOccasion.DINNER,
+            "name",
+            1,
+            12.0,
+            NutritionalInformation(mutableListOf()),
+            mutableListOf())
+    coEvery { mealDao.insert(any<Meal>()) } returns Unit
+    coEvery { checkConnectivity.checkConnection() } returns false
+
+    val result = mealRepository.storeMeal(meal)
+
+    assertNull(result)
+  }
+
+  @Test
+  fun getMeal() = runTest {
+    every { mealDao.getMealByFirebaseID(any()) } returns Meal.default()
+
+    val result = mealRepository.getMeal("1")
+
+    assertEquals(Meal.default(), result)
+  }
+
+  @Test
+  fun getAllMeals() = runTest {
+    every { mealDao.getAllMeals() } returns listOf(Meal.default(), Meal.default())
+
+    val result = mealRepository.getAllMeals()
+
+    assertEquals(listOf(Meal.default(), Meal.default()), result)
+  }
+
+  @Test
+  fun deleteMeal_whenConnectionAvailableAndDataNotOutdated_deletesMealFromFirebaseAndLocalDb() =
+      runTest {
+        coEvery { mealFirebaseRepository.deleteMeal("1") } returns Tasks.forResult(Unit)
+        coEvery { mealDao.deleteByFirebaseID("1") } returns Unit
+        coEvery { checkConnectivity.checkConnection() } returns true
+
+        mealRepository.deleteMeal("1")
+      }
+
+  @Test
+  fun outdateddata() = runTest {
+    coEvery { checkConnectivity.checkConnection() } returns false
+    coEvery { mealDao.insert(any<Meal>()) } returns Unit
+    val docId = mealRepository.storeMeal(Meal.default())
+
+    assertEquals(null, docId)
+  }
+
+  @Test
+  fun getALlIngredients() = runTest {
+    val ingredientList = listOf(Meal.default().ingredients).flatten()
+    every { mealDao.getAllIngredients() } returns ingredientList
+    val result = mealRepository.getAllIngredients()
+    assertEquals(ingredientList, result)
+  }
 }

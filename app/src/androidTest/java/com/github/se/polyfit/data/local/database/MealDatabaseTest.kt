@@ -12,89 +12,84 @@ import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
+import kotlin.test.assertEquals
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import kotlin.test.assertEquals
 
 @RunWith(AndroidJUnit4::class)
 class MealDatabaseTest {
-    private lateinit var mealDatabase: MealDatabase
-    private lateinit var mealDao: MealDao
+  private lateinit var mealDatabase: MealDatabase
+  private lateinit var mealDao: MealDao
 
-    @Before
-    fun setup() {
-        val context = ApplicationProvider.getApplicationContext<Context>()
+  @Before
+  fun setup() {
+    val context = ApplicationProvider.getApplicationContext<Context>()
 
-        mealDatabase =
-            Room.databaseBuilder(context, MealDatabase::class.java, "meal_database").build()
-        mealDao = mealDatabase.mealDao()
-    }
+    mealDatabase = Room.databaseBuilder(context, MealDatabase::class.java, "meal_database").build()
+    mealDao = mealDatabase.mealDao()
+  }
 
-    @Test
-    fun addMeal() {
-        mealDao.insert(
-            MealEntity(
-                occasion = MealOccasion.BREAKFAST,
-                name = "Oatmeal",
-                mealID = 1,
-                mealTemp = 20.0,
-                nutritionalInformation =
+  @Test
+  fun addMeal() {
+    mealDao.insert(
+        MealEntity(
+            occasion = MealOccasion.BREAKFAST,
+            name = "Oatmeal",
+            mealID = 1,
+            mealTemp = 20.0,
+            nutritionalInformation =
                 NutritionalInformation(
                     mutableListOf(
                         Nutrient("calories", 100.0, MeasurementUnit.UG),
                         Nutrient("protein", 10.0, MeasurementUnit.G),
                         Nutrient("carbs", 20.0, MeasurementUnit.G),
-                        Nutrient("fat", 5.0, MeasurementUnit.ML)
-                    ),
+                        Nutrient("fat", 5.0, MeasurementUnit.ML)),
                 ),
-                ingredients =
+            ingredients =
                 mutableListOf(
                     Ingredient("Oats", 12, 192.2, MeasurementUnit.G),
-                    Ingredient("Milk", 200, 12.0, MeasurementUnit.ML)
-                ),
-                firebaseId = "1"
-            )
-        )
+                    Ingredient("Milk", 200, 12.0, MeasurementUnit.ML)),
+            firebaseId = "1"))
 
-        val meals = mealDao.getAllMeals()
+    val meals = mealDao.getAllMeals()
 
-        assert(meals.size == 1)
-        assertEquals(meals.first()!!.name, "Oatmeal")
+    assert(meals.size == 1)
+    assertEquals(meals.first()!!.name, "Oatmeal")
 
-        val meal2 = Meal.default()
+    val meal2 = Meal.default()
 
-        mealDao.insert(meal2)
+    mealDao.insert(meal2)
 
-        val allMeals = mealDao.getAllMeals()
+    val allMeals = mealDao.getAllMeals()
 
-        assertEquals(allMeals.size, 2)
-    }
+    assertEquals(allMeals.size, 2)
+  }
 
-    @Test
-    fun testOneMealDelete() {
-        mealDao.deleteAll()
+  @Test
+  fun testOneMealDelete() {
+    mealDao.deleteAll()
 
-        mealDao.insert(Meal.default().apply { firebaseId = "aer1" })
-        mealDao.insert(Meal.default())
+    mealDao.insert(Meal.default().apply { firebaseId = "aer1" })
+    mealDao.insert(Meal.default())
 
-        mealDao.deleteByFirebaseID("aer1")
+    mealDao.deleteByFirebaseID("aer1")
 
-        assertEquals(mealDao.getAllMeals().size, 1)
-    }
+    assertEquals(mealDao.getAllMeals().size, 1)
+  }
 
-    @Test
-    fun testEmptyDatabase() {
-        mealDao.deleteAll()
+  @Test
+  fun testEmptyDatabase() {
+    mealDao.deleteAll()
 
-        val meals = mealDao.getAllMeals()
+    val meals = mealDao.getAllMeals()
 
-        assertEquals(listOf(), meals)
-    }
+    assertEquals(listOf(), meals)
+  }
 
-    @After
-    fun closeDB() {
-        mealDatabase.close()
-    }
+  @After
+  fun closeDB() {
+    mealDatabase.close()
+  }
 }
