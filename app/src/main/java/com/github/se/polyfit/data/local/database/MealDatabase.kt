@@ -10,9 +10,11 @@ import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import com.google.common.reflect.TypeToken
 import com.google.gson.Gson
+import java.time.LocalDate
 
 @Database(entities = [MealEntity::class], version = 1)
-@TypeConverters(NutritionalInformationConverter::class, IngredientListConverter::class)
+@TypeConverters(
+    NutritionalInformationConverter::class, IngredientListConverter::class, TimeConverter::class)
 abstract class MealDatabase : RoomDatabase() {
   abstract fun mealDao(): MealDao
 }
@@ -39,5 +41,17 @@ class IngredientListConverter {
   fun toIngredientList(ingredientsString: String): List<Ingredient> {
     val type = object : TypeToken<List<Ingredient>>() {}.type
     return Gson().fromJson(ingredientsString, type)
+  }
+}
+
+class TimeConverter {
+  @TypeConverter
+  fun fromTimestamp(value: Long?): LocalDate? {
+    return value?.let { LocalDate.ofEpochDay(it) }
+  }
+
+  @TypeConverter
+  fun dateToTimestamp(date: LocalDate?): Long? {
+    return date?.toEpochDay()
   }
 }

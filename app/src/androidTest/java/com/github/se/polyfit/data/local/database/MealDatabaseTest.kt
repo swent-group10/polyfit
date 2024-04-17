@@ -12,6 +12,7 @@ import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
+import java.time.LocalDate
 import kotlin.test.assertEquals
 import org.junit.After
 import org.junit.Before
@@ -33,6 +34,7 @@ class MealDatabaseTest {
 
   @Test
   fun addMeal() {
+    val nowTime = LocalDate.now()
     mealDao.insert(
         MealEntity(
             occasion = MealOccasion.BREAKFAST,
@@ -51,12 +53,15 @@ class MealDatabaseTest {
                 mutableListOf(
                     Ingredient("Oats", 12, 192.2, MeasurementUnit.G),
                     Ingredient("Milk", 200, 12.0, MeasurementUnit.ML)),
-            firebaseId = "1"))
+            firebaseId = "1",
+            createdAt = nowTime),
+    )
 
     val meals = mealDao.getAll().map { it.toMeal() }
 
     assert(meals.size == 1)
     assertEquals(meals.first().name, "Oatmeal")
+    assertEquals(meals.first().createdAt, nowTime)
 
     val meal2 = Meal.default()
 
