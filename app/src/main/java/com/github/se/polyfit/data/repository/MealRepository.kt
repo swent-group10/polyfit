@@ -2,7 +2,6 @@ package com.github.se.polyfit.data.repository
 
 import android.content.Context
 import android.net.ConnectivityManager
-import android.util.Log
 import com.github.se.polyfit.data.local.dao.MealDao
 import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
 import com.github.se.polyfit.model.ingredient.Ingredient
@@ -31,11 +30,12 @@ class MealRepository(
    */
   suspend fun storeMeal(meal: Meal): DocumentReference? {
     return withContext(dispatcher) {
-      Log.d("Connection", checkConnectivity.checkConnection().toString())
       if (checkConnectivity.checkConnection()) {
         if (isDataOutdated) {
           updateFirebase()
           isDataOutdated = false
+          mealDao.insert(meal)
+          return@withContext mealFirebaseRepository.storeMeal(meal).await()
         } else {
 
           val documentReference = mealFirebaseRepository.storeMeal(meal).await()
@@ -45,8 +45,8 @@ class MealRepository(
       } else {
         isDataOutdated = true
         mealDao.insert(meal)
+        return@withContext null
       }
-      null
     }
   }
 
@@ -71,8 +71,9 @@ class MealRepository(
     mealDao.deleteByFirebaseID(firebaseID)
   }
 
+  /** Returns a list of unique ingredients */
   suspend fun getAllIngredients(): List<Ingredient> {
-    return mealDao.getAllIngredients()
+    return mealDao.getAllIngredients().distinctBy { it.name }
   }
 
   private suspend fun updateFirebase() {

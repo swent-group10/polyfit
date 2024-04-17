@@ -12,6 +12,7 @@ import com.google.firebase.firestore.DocumentReference
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNull
 import kotlin.test.Test
@@ -123,5 +124,61 @@ class MealRepositoryTest {
     every { mealDao.getAllIngredients() } returns ingredientList
     val result = mealRepository.getAllIngredients()
     assertEquals(ingredientList, result)
+  }
+
+  @Test
+  fun outdatedDataIsWritenToFirebase() = runTest {
+    var counter = 0
+    every { checkConnectivity.checkConnection() } answers
+        {
+          var returnVale = true
+          if (counter == 1) {
+            returnVale = false
+          }
+          counter++
+
+          returnVale
+        }
+
+    val mockDoc = mockk<DocumentReference>()
+    coEvery { mealFirebaseRepository.storeMeal(any()) } returns Tasks.forResult(mockDoc)
+    coEvery { mealDao.getAllMeals() } returns listOf(Meal.default())
+    coEvery { mealDao.insert(any<Meal>()) } returns Unit
+
+    mealRepository.storeMeal(Meal.default())
+    val result = mealRepository.storeMeal(Meal.default())
+    assertNull(result)
+    mealRepository.storeMeal(Meal.default())
+
+    verify { mealFirebaseRepository.storeMeal(any()) }
+  }
+
+  @Test
+  fun deletedMealOutdated() = runTest {
+    var counter = 0
+    every { checkConnectivity.checkConnection() } answers
+        {
+          var returnVale = true
+          if (counter == 1) {
+            returnVale = false
+          }
+          counter++
+
+          returnVale
+        }
+
+    val mockDoc = mockk<DocumentReference>()
+    coEvery { mealFirebaseRepository.deleteMeal(any()) } returns Tasks.forResult(Unit)
+    coEvery { mealFirebaseRepository.storeMeal(any()) } returns Tasks.forResult(mockDoc)
+    coEvery { mealDao.getAllMeals() } returns listOf(Meal.default())
+    coEvery { mealDao.insert(any<Meal>()) } returns Unit
+    coEvery { mealDao.deleteByFirebaseID(any()) } returns Unit
+
+    mealRepository.storeMeal(Meal.default())
+    val result = mealRepository.storeMeal(Meal.default())
+    assertNull(result)
+    mealRepository.deleteMeal("1")
+
+    verify { mealFirebaseRepository.deleteMeal("1") }
   }
 }
