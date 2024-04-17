@@ -29,14 +29,6 @@ interface MealDao {
     insert(MealEntity.toMealEntity(meal))
   }
 
-  @Query("SELECT * FROM MealTable WHERE firebaseId = :id LIMIT 1 ")
-  fun getMealEntityByFirebaseID(id: String): MealEntity?
-
-  fun getMealByFirebaseID(id: String): Meal? {
-    val meal = getMealEntityByFirebaseID(id)
-    return meal?.toMeal()
-  }
-
   @Query("DELETE FROM MealTable WHERE firebaseId = :id") fun deleteByFirebaseID(id: String)
 
   @Query("DELETE FROM MealTable") fun deleteAll()

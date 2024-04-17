@@ -6,6 +6,7 @@ import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
+import java.time.LocalDate
 
 @Entity(tableName = "MealTable")
 data class MealEntity(
@@ -16,11 +17,20 @@ data class MealEntity(
     val mealTemp: Double,
     val nutritionalInformation: NutritionalInformation,
     val ingredients: MutableList<Ingredient>,
-    val firebaseId: String
+    val firebaseId: String,
+    val createdAt: LocalDate
 ) {
 
   fun toMeal(): Meal {
-    return Meal(occasion, name, mealID, mealTemp, nutritionalInformation, ingredients, firebaseId)
+    return Meal(
+        occasion,
+        name,
+        mealID,
+        mealTemp,
+        nutritionalInformation,
+        ingredients,
+        firebaseId,
+        createdAt)
   }
 
   companion object {
@@ -32,7 +42,8 @@ data class MealEntity(
           mealTemp = meal.mealTemp,
           nutritionalInformation = meal.nutritionalInformation,
           ingredients = meal.ingredients,
-          firebaseId = meal.firebaseId)
+          firebaseId = meal.firebaseId,
+          createdAt = meal.createdAt)
     }
   }
 }
