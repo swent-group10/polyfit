@@ -18,22 +18,21 @@ fun AddMealFlow(
     mealViewModel: MealViewModel
 ) {
 
-    val navController = rememberNavController()
-    val navigation = Navigation(navController)
+  val navController = rememberNavController()
+  val navigation = Navigation(navController)
 
-    NavHost(navController = navController, startDestination = Route.Ingredients) {
-        composable(Route.Ingredients) {
-            IngredientScreen(
-                mealViewModel = mealViewModel,
-                navigateBack = { goBack() },
-                navigateForward = navigation::navigateToNutrition
-            )
-        }
-        composable(Route.Nutrition) {
-            NutritionScreen(
-                mealViewModel = mealViewModel,
-                navigateBack = { navigation.goBack() },
-                navigateForward = { navigateToHome() })
-        }
+  NavHost(navController = navController, startDestination = Route.Ingredients) {
+    composable(Route.Ingredients) {
+      IngredientScreen(
+          mealViewModel = mealViewModel,
+          navigateBack = { goBack() },
+          navigateForward = navigation::navigateToNutrition)
     }
+    composable(Route.Nutrition) {
+      NutritionScreen(
+          mealViewModel = mealViewModel,
+          navigateBack = { navigation.goBack() },
+          navigateForward = { navigateToHome() })
+    }
+  }
 }

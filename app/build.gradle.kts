@@ -211,3 +211,6 @@ tasks.register("jacocoTestReport", JacocoReport::class) {
         include("outputs/code_coverage/debugAndroidTest/connected/*/coverage.ec")
     })
 }
+dependencies {
+    implementation("androidx.test:core-ktx:1.5.0")
+}

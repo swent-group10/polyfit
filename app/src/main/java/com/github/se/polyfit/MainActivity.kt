@@ -10,6 +10,10 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.room.Room
+import com.github.se.polyfit.data.local.database.MealDatabase
+import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
+import com.github.se.polyfit.data.repository.MealRepository
 import com.github.se.polyfit.ui.flow.AddMealFlow
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.navigation.Route
@@ -22,48 +26,52 @@ import dagger.hilt.android.HiltAndroidApp
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
 
-        // hides the system bar
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+    // hides the system bar
+    WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        val controller = WindowInsetsControllerCompat(window, window.decorView)
-        controller.hide(WindowInsetsCompat.Type.systemBars())
+    val controller = WindowInsetsControllerCompat(window, window.decorView)
+    controller.hide(WindowInsetsCompat.Type.systemBars())
 
-        // Set the behavior to show transient bars by swipe
-        controller.systemBarsBehavior =
-            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+    // Set the behavior to show transient bars by swipe
+    controller.systemBarsBehavior =
+        WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 
-        // TO DO: technical debt, next deadline find better way to pass arguments from overview screen
-        // to add meal screen
-        var mealViewModel = MealViewModel(
-            "testUserID", context = this.applicationContext
-        )
-        setContent {
-            PolyfitTheme {
-                val navController = rememberNavController()
-                val navigation = Navigation(navController)
-                NavHost(navController = navController, startDestination = Route.Register) {
-                    globalNavigation(navController, mealViewModel)
-                    composable(Route.Register) { LoginScreen(navigation::navigateToHome) }
+    // TO DO: technical debt, next deadline find better way to pass arguments from overview screen
+    // to add meal screen
+    val context = this.applicationContext
 
-                    composable(Route.AddMeal) {
-                        // make sure the create is clear
+    val mealRepo =
+        MealRepository(
+            context = this.applicationContext,
+            mealDao =
+                Room.databaseBuilder(context, MealDatabase::class.java, "meal_database")
+                    .build()
+                    .mealDao(),
+            mealFirebaseRepository = MealFirebaseRepository("testUserID"))
 
-                        // check reall created
-                        AddMealFlow(
-                            navigation::goBack,
-                            navigation::navigateToHome,
-                            "testUserID",
-                            mealViewModel
-                        )
-                    }
-                }
-            }
+    var mealViewModel =
+        MealViewModel("testUserID", context = this.applicationContext, mealRepo = mealRepo)
+    setContent {
+      PolyfitTheme {
+        val navController = rememberNavController()
+        val navigation = Navigation(navController)
+        NavHost(navController = navController, startDestination = Route.Register) {
+          globalNavigation(navController, mealViewModel)
+          composable(Route.Register) { LoginScreen(navigation::navigateToHome) }
+
+          composable(Route.AddMeal) {
+            // make sure the create is clear
+
+            // check reall created
+            AddMealFlow(navigation::goBack, navigation::navigateToHome, "testUserID", mealViewModel)
+          }
         }
+      }
     }
+  }
 }
 
-@HiltAndroidApp
-class ExampleApplication : Application()
+@HiltAndroidApp class ExampleApplication : Application()
