@@ -3,6 +3,7 @@ package com.github.se.polyfit.model.meal
 import android.util.Log
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
+import java.time.LocalDate
 
 // modeled after the log meal api
 data class Meal(
@@ -14,7 +15,8 @@ data class Meal(
     val mealTemp: Double = 20.0,
     val nutritionalInformation: NutritionalInformation,
     val ingredients: MutableList<Ingredient> = mutableListOf(),
-    var firebaseId: String = ""
+    var firebaseId: String = "",
+    val createdAt: LocalDate = LocalDate.now(),
 ) {
   init {
     require(mealID >= 0)
@@ -33,6 +35,7 @@ data class Meal(
     if (nutritionalInformation != other.nutritionalInformation) return false
     if (ingredients != other.ingredients) return false
     if (firebaseId != other.firebaseId) return false
+    if (createdAt != other.createdAt) return false
 
     return true
   }
@@ -45,6 +48,7 @@ data class Meal(
     result = 31 * result + nutritionalInformation.hashCode()
     result = 31 * result + ingredients.hashCode()
     result = 31 * result + firebaseId.hashCode()
+    result = 31 * result + createdAt.hashCode()
 
     return result
   }
@@ -74,7 +78,6 @@ data class Meal(
   }
 
   private fun updateMeal() {
-
     var newNutritionalInformation = NutritionalInformation(mutableListOf())
 
     for (ingredient in ingredients) {
@@ -98,6 +101,7 @@ data class Meal(
         this["nutritionalInformation"] =
             NutritionalInformation.serialize(data.nutritionalInformation)
         this["ingredients"] = data.ingredients.map { Ingredient.serialize(it) }
+        this["createdAt"] = data.createdAt.toString()
       }
     }
 
@@ -113,8 +117,16 @@ data class Meal(
         val nutritionalInformationData =
             NutritionalInformation.deserialize(
                 data["nutritionalInformation"] as List<Map<String, Any>>)
+        val createdAt = LocalDate.parse(data["createdAt"] as String)
 
-        val newMeal = Meal(occasion, name, mealID, mealTemp, nutritionalInformationData)
+        val newMeal =
+            Meal(
+                occasion = occasion,
+                name = name,
+                mealID = mealID,
+                mealTemp = mealTemp,
+                nutritionalInformation = nutritionalInformationData,
+                createdAt = createdAt)
 
         val ingredientsData = data["ingredients"] as? List<Map<String, Any>>
         if (ingredientsData != null) {
@@ -137,7 +149,8 @@ data class Meal(
           20.0,
           NutritionalInformation(mutableListOf()),
           mutableListOf(),
-          "")
+          "",
+          LocalDate.now())
     }
   }
 }
