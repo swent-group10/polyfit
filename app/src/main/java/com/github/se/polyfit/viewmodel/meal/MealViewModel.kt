@@ -84,6 +84,7 @@ class MealViewModel(
                   currentMeal.nutritionalInformation.minus(ingredient.nutritionalInformation))
       _meal.value = updatedMeal
     }
+
     _isComplete.value = _meal.value?.isComplete() ?: false
   }
 }
