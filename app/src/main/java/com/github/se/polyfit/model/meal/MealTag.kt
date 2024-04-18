@@ -5,26 +5,26 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 
 enum class MealTagColor(val color: Color) {
+  YELLOW(Color(0xFFFAEDCB)),
+  GREEN(Color(0xFFC9E4DE)),
+  TURQUOISE(Color(0xFFA8D1D1)),
   BLUE(Color(0xFFC6DEF1)),
+  PURPLE(Color(0xFFDBCDF0)),
+  PINK(Color(0xFFF2C6DE)),
   ORANGE(Color(0xFFFFD6A5)),
-  PINK(Color(0xFFFAD1FA)),
   RED(Color(0xFFFFADAD)),
+  LIGHTGREEN(Color(0xFFE4F1EE)),
+  WATERMELON(Color(0xFFFFCBCB)),
+  LAVENDER(Color(0xFFBDB2FF)),
   BRIGHTORANGE(Color(0xFFFEC868)),
+  BABYPINK(Color(0xFFFAD1FA)),
+  SOFTPEACH(Color(0xFFFEDCD2)),
   LIGHTBLUE(Color(0xFFB5EAD7)),
   MINTGREEN(Color(0xFFA2D5AB)),
-  LAVENDER(Color(0xFFC5A3FF)),
   PEACH(Color(0xFFFFDAC1)),
-  BEIGE(Color(0xFFE2CFC4)),
+  ICEBLUE(Color(0xFFDAF4F0)),
   CORAL(Color(0xFFFFB7A5)),
   TEAL(Color(0xFFAFDBD2)),
-  SKYBLUE(Color(0xFFAFCBFF)),
-  SOFTYELLOW(Color(0xFFFEF9A7)),
-  POWDERBLUE(Color(0xFFB6CCFE)),
-  LIGHTLAVENDER(Color(0xFFECD4FF)),
-  SOFTGREEN(Color(0xFFB9F8D3)),
-  ROSE(Color(0xFFFFABD8)),
-  IVORY(Color(0xFFFFFFF0)),
-  LIGHTCORAL(Color(0xFFF88379)),
   UNDEFINED(Color.Unspecified); // Add more colors as needed
 
   companion object {
