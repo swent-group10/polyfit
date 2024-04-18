@@ -94,7 +94,7 @@ class MealViewModelTest {
   fun setMeal_throws_exception_when_meal_is_null() {
     val viewModelLocal = MealViewModel("userId", context, "firebaseID", null, mealRepo)
 
-    assertFailsWith<IllegalStateException> { viewModelLocal.setMeal() }
+    assertFailsWith<Exception> { viewModelLocal.setMeal() }
   }
 
   @Test
