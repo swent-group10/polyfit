@@ -1,7 +1,6 @@
 package com.github.se.polyfit.model.meal
 
 import android.util.Log
-import androidx.compose.ui.graphics.Color
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
@@ -48,7 +47,7 @@ class MealTest {
             102.2,
             NutritionalInformation(mutableListOf()),
             createdAt = LocalDate.parse("2021-01-01"),
-            tags = mutableListOf(MealTag("name of tag", Color.Blue)))
+            tags = mutableListOf(MealTag("name of tag", MealTagColor.BLUE)))
     val serializedMeal = Meal.serialize(meal)
     assertEquals(1.toLong(), serializedMeal["mealID"])
     assertEquals(MealOccasion.DINNER.name, serializedMeal["occasion"])
@@ -57,7 +56,7 @@ class MealTest {
     assertEquals("2021-01-01", serializedMeal["createdAt"])
 
     assertEquals("name of tag", (serializedMeal["tags"] as List<Map<String, Any>>)[0]["tagName"])
-    assertEquals("-16776961", (serializedMeal["tags"] as List<Map<String, Any>>)[0]["tagColor"])
+    assertEquals("-3744015", (serializedMeal["tags"] as List<Map<String, Any>>)[0]["tagColor"])
   }
 
   @Test
@@ -84,7 +83,7 @@ class MealTest {
             "mealTemp" to 102.2,
             "nutritionalInformation" to NutritionalInformation(mutableListOf()).serialize(),
             "createdAt" to "2021-01-01",
-            "tags" to mutableListOf(MealTag("name of tag", Color.Blue).serialize()))
+            "tags" to mutableListOf(MealTag("name of tag", MealTagColor.BLUE).serialize()))
     val meal = Meal.deserialize(data)
     assertNotNull(meal)
     assertEquals(1.toLong(), meal.mealID)
@@ -93,7 +92,7 @@ class MealTest {
     assertEquals(102.2, meal.mealTemp, 0.001)
     assertEquals(LocalDate.parse("2021-01-01"), meal.createdAt)
     assertEquals("name of tag", meal.tags[0].tagName)
-    assertEquals(Color.Blue, meal.tags[0].tagColor)
+    assertEquals(MealTagColor.BLUE, meal.tags[0].tagColor)
   }
 
   @Test

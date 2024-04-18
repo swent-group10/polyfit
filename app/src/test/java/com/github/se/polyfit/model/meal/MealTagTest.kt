@@ -1,7 +1,6 @@
 package com.github.se.polyfit.model.meal
 
 import android.util.Log
-import androidx.compose.ui.graphics.Color
 import io.mockk.every
 import io.mockk.mockkStatic
 import org.junit.Assert.*
@@ -18,9 +17,9 @@ class MealTagTest {
 
   @Test
   fun testEquality() {
-    val tag1 = MealTag("Breakfast", Color.Red)
-    val tag2 = MealTag("Breakfast", Color.Red)
-    val tag3 = MealTag("Lunch", Color.Blue)
+    val tag1 = MealTag("Breakfast", MealTagColor.PINK)
+    val tag2 = MealTag("Breakfast", MealTagColor.PINK)
+    val tag3 = MealTag("Lunch", MealTagColor.BLUE)
 
     assertEquals(tag1, tag2)
     assertNotEquals(tag1, tag3)
@@ -28,59 +27,53 @@ class MealTagTest {
 
   @Test
   fun testHashCode() {
-    val tag = MealTag("Dinner", Color.Green)
-    val expectedHashCode = 31 * "Dinner".hashCode() + Color.Green.hashCode()
+    val tag = MealTag("Dinner", MealTagColor.PINK)
+    val expectedHashCode = 31 * "Dinner".hashCode() + MealTagColor.PINK.hashCode()
     assertEquals(expectedHashCode, tag.hashCode())
   }
 
   @Test
   fun testSetTagName() {
-    val tag = MealTag("OldName", Color.Green)
+    val tag = MealTag("OldName", MealTagColor.PINK)
     tag.tagName = "NewName"
     assertEquals("NewName", tag.tagName)
   }
 
   @Test
   fun testSetTagColor() {
-    val tag = MealTag("Dinner", Color.Green)
-    tag.tagColor = Color.Yellow
-    assertEquals(Color.Yellow, tag.tagColor)
+    val tag = MealTag("Dinner", MealTagColor.PINK)
+    tag.tagColor = MealTagColor.ORANGE
+    assertEquals(MealTagColor.ORANGE, tag.tagColor)
   }
 
   @Test
   fun testIsComplete() {
-    val tag = MealTag("Dinner", Color.Green)
+    val tag = MealTag("Dinner", MealTagColor.PINK)
     assertTrue(tag.isComplete())
   }
 
   @Test
   fun testIsCompleteNegative() {
-    val tag = MealTag("", Color.Unspecified)
+    val tag = MealTag("", MealTagColor.UNDEFINED)
     assertFalse(tag.isComplete())
   }
 
   @Test
   fun testSerialize() {
-    val tag1 = MealTag("Snack", Color.Blue)
-    val tag2 = MealTag("Snack", Color(-16776961))
-    val tag3 = MealTag("Snack", Color(0, 0, 255, 255))
-    val tag4 = MealTag("Snack", Color(0xFF0000FF))
+    val tag = MealTag("Snack", MealTagColor.BLUE)
 
-    val expectedMap = mapOf("tagName" to "Snack", "tagColor" to "-16776961")
+    val expectedMap = mapOf("tagName" to "Snack", "tagColor" to "-3744015")
 
-    assertEquals(expectedMap, tag1.serialize())
-    assertEquals(expectedMap, tag2.serialize())
-    assertEquals(expectedMap, tag3.serialize())
-    assertEquals(expectedMap, tag4.serialize())
+    assertEquals(expectedMap, tag.serialize())
   }
 
   @Test
   fun testDeserialize() {
-    val map = mapOf<String, Any>("tagName" to "Snack", "tagColor" to "-16776961")
+    val map = mapOf<String, Any>("tagName" to "Snack", "tagColor" to "-3744015")
     val tag = MealTag.deserialize(map)
 
     assertEquals("Snack", tag.tagName)
-    assertEquals(Color.Blue, tag.tagColor)
+    assertEquals(MealTagColor.BLUE, tag.tagColor)
   }
 
   @Test(expected = IllegalArgumentException::class)
