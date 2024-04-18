@@ -22,40 +22,48 @@ import dagger.hilt.android.HiltAndroidApp
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-    // hides the system bar
-    WindowCompat.setDecorFitsSystemWindows(window, false)
+        // hides the system bar
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
-    val controller = WindowInsetsControllerCompat(window, window.decorView)
-    controller.hide(WindowInsetsCompat.Type.systemBars())
+        val controller = WindowInsetsControllerCompat(window, window.decorView)
+        controller.hide(WindowInsetsCompat.Type.systemBars())
 
-    // Set the behavior to show transient bars by swipe
-    controller.systemBarsBehavior =
-        WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        // Set the behavior to show transient bars by swipe
+        controller.systemBarsBehavior =
+            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 
-    // TO DO: technical debt, next deadline find better way to pass arguments from overview screen
-    // to add meal screen
-    var mealViewModel = MealViewModel("testUserID")
-    setContent {
-      PolyfitTheme {
-        val navController = rememberNavController()
-        val navigation = Navigation(navController)
-        NavHost(navController = navController, startDestination = Route.Register) {
-          globalNavigation(navController, mealViewModel)
-          composable(Route.Register) { LoginScreen(navigation::navigateToHome) }
+        // TO DO: technical debt, next deadline find better way to pass arguments from overview screen
+        // to add meal screen
+        var mealViewModel = MealViewModel(
+            "testUserID", context = this.applicationContext
+        )
+        setContent {
+            PolyfitTheme {
+                val navController = rememberNavController()
+                val navigation = Navigation(navController)
+                NavHost(navController = navController, startDestination = Route.Register) {
+                    globalNavigation(navController, mealViewModel)
+                    composable(Route.Register) { LoginScreen(navigation::navigateToHome) }
 
-          composable(Route.AddMeal) {
-            // make sure the create is clear
+                    composable(Route.AddMeal) {
+                        // make sure the create is clear
 
-            // check reall created
-            AddMealFlow(navigation::goBack, navigation::navigateToHome, "testUserID", mealViewModel)
-          }
+                        // check reall created
+                        AddMealFlow(
+                            navigation::goBack,
+                            navigation::navigateToHome,
+                            "testUserID",
+                            mealViewModel
+                        )
+                    }
+                }
+            }
         }
-      }
     }
-  }
 }
 
-@HiltAndroidApp class ExampleApplication : Application()
+@HiltAndroidApp
+class ExampleApplication : Application()
