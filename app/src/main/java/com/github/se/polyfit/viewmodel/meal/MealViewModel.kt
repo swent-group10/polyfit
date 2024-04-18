@@ -51,6 +51,7 @@ class MealViewModel(
     _isComplete.value = _meal.value?.isComplete() ?: false
   }
 
+  /** Store the meal in the meal repository */
   fun setMeal() {
     if (_meal.value == null) {
       throw IllegalStateException("Meal is null")
