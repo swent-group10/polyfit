@@ -34,6 +34,9 @@ jobs:
       - name: Decode Keystore
         run: echo "${{ secrets.KEYSTORE }}" | base64 --decode > ./app/keystore.jks
 
+      - name: tree
+        run: tree
+
       - name: Inject secrets into gradle.properties
         run: |
           echo "RELEASE_STORE_PASSWORD=${{ secrets.RELEASE_STORE_PASSWORD }}" >> gradle.properties
