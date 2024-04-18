@@ -218,8 +218,10 @@ android {
 
 
         //Ycharts
-
         implementation("co.yml:ycharts:2.1.0")
+
+        //MainViewModel
+        implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
     }
 
 // Allow references to generated code
