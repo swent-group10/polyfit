@@ -41,19 +41,19 @@ class MainActivity : ComponentActivity() {
 
     // TO DO: technical debt, next deadline find better way to pass arguments from overview screen
     // to add meal screen
-    val context = this.applicationContext
-
-    val mealRepo =
-        MealRepository(
-            context = this.applicationContext,
-            mealDao =
-                Room.databaseBuilder(context, MealDatabase::class.java, "meal_database")
-                    .build()
-                    .mealDao(),
-            mealFirebaseRepository = MealFirebaseRepository("testUserID"))
 
     var mealViewModel =
-        MealViewModel("testUserID", context = this.applicationContext, mealRepo = mealRepo)
+        MealViewModel(
+            "testUserID",
+            context = this.applicationContext,
+            mealRepo =
+                MealRepository(
+                    this.applicationContext,
+                    MealFirebaseRepository("testUserID"),
+                    Room.databaseBuilder(
+                            this.applicationContext, MealDatabase::class.java, "meal_database")
+                        .build()
+                        .mealDao()))
     setContent {
       PolyfitTheme {
         val navController = rememberNavController()

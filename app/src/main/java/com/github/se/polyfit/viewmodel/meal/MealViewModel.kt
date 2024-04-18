@@ -87,4 +87,9 @@ class MealViewModel(
 
     _isComplete.value = _meal.value?.isComplete() ?: false
   }
+
+  fun clearMeal() {
+    _meal.value = Meal.default()
+    _isComplete.value = false
+  }
 }

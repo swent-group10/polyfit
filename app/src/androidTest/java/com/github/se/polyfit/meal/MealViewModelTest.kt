@@ -132,18 +132,21 @@ class MealViewModelTest {
         viewModel.meal.value?.isComplete())
   }
 
-  //    @Test
-  //    fun mealViewModel_emptyFirebaseID() {
-  //        val viewModelLocal = MealViewModel("userId", context, "", Meal.default(), mealRepo)
-  //        val latch = CountDownLatch(1)
-  //
-  //        viewModelLocal.meal.observeForever {
-  //            if (it.firebaseId != null && it.firebaseId.isNotEmpty()) {
-  //                latch.countDown()
-  //            }
-  //        }
-  //        latch.await(2, TimeUnit.SECONDS) // wait for 2 seconds
-  //
-  //        assertEquals("", viewModelLocal.meal.value?.firebaseId)
-  //    }
+  @Test
+  fun clearMeal() {
+    val viewModelLocal = MealViewModel("userId", context, "firebaseID", Meal.default(), mealRepo)
+    viewModelLocal.clearMeal()
+
+    val latch = CountDownLatch(1)
+
+    viewModelLocal.meal.observeForever {
+      if (it.firebaseId == "") {
+        latch.countDown()
+      }
+    }
+
+    latch.await(2, TimeUnit.SECONDS) // wait for 2 seconds
+
+    assertEquals(Meal.default().mealID, viewModelLocal.meal.value?.mealID)
+  }
 }
