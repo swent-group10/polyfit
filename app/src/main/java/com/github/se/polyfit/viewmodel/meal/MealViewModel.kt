@@ -7,6 +7,9 @@ import androidx.lifecycle.viewModelScope
 import com.github.se.polyfit.data.repository.MealRepository
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
+import com.github.se.polyfit.model.meal.MealOccasion
+import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
+import java.time.LocalDate
 import kotlinx.coroutines.launch
 
 class MealViewModel(
@@ -44,6 +47,30 @@ class MealViewModel(
 
   fun setMealData(meal: Meal) {
     _meal.value = meal
+  }
+
+  /** Allows for setting individual meal data fields instead of setting the whole meal */
+  fun setMealData(
+      mealOccasion: MealOccasion = _meal.value?.occasion ?: Meal.default().occasion,
+      name: String = _meal.value?.name ?: Meal.default().name,
+      mealID: Long = _meal.value?.mealID ?: Meal.default().mealID,
+      mealTemp: Double = _meal.value?.mealTemp ?: Meal.default().mealTemp,
+      ingredients: MutableList<Ingredient> = _meal.value?.ingredients ?: Meal.default().ingredients,
+      nutritionalInformation: NutritionalInformation =
+          _meal.value?.nutritionalInformation ?: Meal.default().nutritionalInformation,
+      firebaseID: String = _meal.value?.firebaseId ?: Meal.default().firebaseId,
+      createdAt: LocalDate = _meal.value?.createdAt ?: Meal.default().createdAt
+  ) {
+    _meal.value =
+        Meal(
+            mealOccasion,
+            name,
+            mealID,
+            mealTemp,
+            nutritionalInformation,
+            ingredients,
+            firebaseID,
+            createdAt)
   }
 
   fun setMealName(name: String) {
