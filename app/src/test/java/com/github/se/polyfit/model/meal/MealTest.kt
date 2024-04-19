@@ -46,13 +46,17 @@ class MealTest {
             1.toLong(),
             102.2,
             NutritionalInformation(mutableListOf()),
-            createdAt = LocalDate.parse("2021-01-01"))
+            createdAt = LocalDate.parse("2021-01-01"),
+            tags = mutableListOf(MealTag("name of tag", MealTagColor.BLUE)))
     val serializedMeal = Meal.serialize(meal)
     assertEquals(1.toLong(), serializedMeal["mealID"])
     assertEquals(MealOccasion.DINNER.name, serializedMeal["occasion"])
     assertEquals("eggs", serializedMeal["name"])
     assertEquals(102.2, serializedMeal["mealTemp"])
     assertEquals("2021-01-01", serializedMeal["createdAt"])
+
+    assertEquals("name of tag", (serializedMeal["tags"] as List<Map<String, Any>>)[0]["tagName"])
+    assertEquals("-3744015", (serializedMeal["tags"] as List<Map<String, Any>>)[0]["tagColor"])
   }
 
   @Test
@@ -78,7 +82,8 @@ class MealTest {
             "name" to "eggs",
             "mealTemp" to 102.2,
             "nutritionalInformation" to NutritionalInformation(mutableListOf()).serialize(),
-            "createdAt" to "2021-01-01")
+            "createdAt" to "2021-01-01",
+            "tags" to mutableListOf(MealTag("name of tag", MealTagColor.BLUE).serialize()))
     val meal = Meal.deserialize(data)
     assertNotNull(meal)
     assertEquals(1.toLong(), meal.mealID)
@@ -86,6 +91,8 @@ class MealTest {
     assertEquals("eggs", meal.name)
     assertEquals(102.2, meal.mealTemp, 0.001)
     assertEquals(LocalDate.parse("2021-01-01"), meal.createdAt)
+    assertEquals("name of tag", meal.tags[0].tagName)
+    assertEquals(MealTagColor.BLUE, meal.tags[0].tagColor)
   }
 
   @Test
@@ -97,7 +104,8 @@ class MealTest {
             "name" to "eggs",
             "mealTemp" to 102.2,
             "nutritionalInformation" to listOf<Map<String, Any>>(),
-            "createdAt" to "2021-01-01")
+            "createdAt" to "2021-01-01",
+            "tags" to listOf<Map<String, Any>>())
 
     val meal = Meal.deserialize(data)
     val deserialized = Meal.deserialize(data)

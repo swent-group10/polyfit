@@ -7,6 +7,7 @@ import androidx.room.TypeConverters
 import com.github.se.polyfit.data.local.dao.MealDao
 import com.github.se.polyfit.data.local.entity.MealEntity
 import com.github.se.polyfit.model.ingredient.Ingredient
+import com.github.se.polyfit.model.meal.MealTag
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import com.google.common.reflect.TypeToken
 import com.google.gson.Gson
@@ -14,7 +15,10 @@ import java.time.LocalDate
 
 @Database(entities = [MealEntity::class], version = 1)
 @TypeConverters(
-    NutritionalInformationConverter::class, IngredientListConverter::class, TimeConverter::class)
+    NutritionalInformationConverter::class,
+    IngredientListConverter::class,
+    TimeConverter::class,
+    TagListConverter::class)
 abstract class MealDatabase : RoomDatabase() {
   abstract fun mealDao(): MealDao
 }
@@ -53,5 +57,18 @@ class TimeConverter {
   @TypeConverter
   fun dateToTimestamp(date: LocalDate?): Long? {
     return date?.toEpochDay()
+  }
+}
+
+class TagListConverter {
+  @TypeConverter
+  fun fromTagList(tags: List<MealTag>): String {
+    return Gson().toJson(tags)
+  }
+
+  @TypeConverter
+  fun toTagList(tagsString: String): List<MealTag> {
+    val type = object : TypeToken<List<MealTag>>() {}.type
+    return Gson().fromJson(tagsString, type)
   }
 }

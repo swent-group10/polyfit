@@ -5,6 +5,7 @@ import androidx.room.PrimaryKey
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
+import com.github.se.polyfit.model.meal.MealTag
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import java.time.LocalDate
 
@@ -18,7 +19,8 @@ data class MealEntity(
     val nutritionalInformation: NutritionalInformation,
     val ingredients: MutableList<Ingredient>,
     val firebaseId: String,
-    val createdAt: LocalDate
+    val createdAt: LocalDate,
+    val tags: MutableList<MealTag>
 ) {
 
   fun toMeal(): Meal {
@@ -30,7 +32,8 @@ data class MealEntity(
         nutritionalInformation,
         ingredients,
         firebaseId,
-        createdAt)
+        createdAt,
+        tags)
   }
 
   companion object {
@@ -43,7 +46,8 @@ data class MealEntity(
           nutritionalInformation = meal.nutritionalInformation,
           ingredients = meal.ingredients,
           firebaseId = meal.firebaseId,
-          createdAt = meal.createdAt)
+          createdAt = meal.createdAt,
+          tags = meal.tags)
     }
   }
 }
