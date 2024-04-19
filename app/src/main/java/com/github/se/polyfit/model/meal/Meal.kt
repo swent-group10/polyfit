@@ -17,6 +17,7 @@ data class Meal(
     val ingredients: MutableList<Ingredient> = mutableListOf(),
     var firebaseId: String = "",
     val createdAt: LocalDate = LocalDate.now(),
+    val tags: MutableList<MealTag> = mutableListOf()
 ) {
   init {
     require(mealID >= 0)
@@ -36,6 +37,7 @@ data class Meal(
     if (ingredients != other.ingredients) return false
     if (firebaseId != other.firebaseId) return false
     if (createdAt != other.createdAt) return false
+    if (tags != other.tags) return false
 
     return true
   }
@@ -49,6 +51,7 @@ data class Meal(
     result = 31 * result + ingredients.hashCode()
     result = 31 * result + firebaseId.hashCode()
     result = 31 * result + createdAt.hashCode()
+    result = 31 * result + tags.hashCode()
 
     return result
   }
@@ -102,6 +105,7 @@ data class Meal(
             NutritionalInformation.serialize(data.nutritionalInformation)
         this["ingredients"] = data.ingredients.map { Ingredient.serialize(it) }
         this["createdAt"] = data.createdAt.toString()
+        this["tags"] = data.tags.map { MealTag.serialize(it) }
       }
     }
 
@@ -109,15 +113,16 @@ data class Meal(
       return try {
         val mealID = data["mealID"] as Long
         val occasion = data["occasion"].let { MealOccasion.valueOf(it as String) }
-
         val mealTemp = data["mealTemp"] as Double
-
         val name = data["name"] as String
 
         val nutritionalInformationData =
             NutritionalInformation.deserialize(
                 data["nutritionalInformation"] as List<Map<String, Any>>)
+
         val createdAt = LocalDate.parse(data["createdAt"] as String)
+        val tags =
+            (data["tags"] as List<Map<String, Any>>).map { MealTag.deserialize(it) }.toMutableList()
 
         val newMeal =
             Meal(
@@ -126,7 +131,8 @@ data class Meal(
                 mealID = mealID,
                 mealTemp = mealTemp,
                 nutritionalInformation = nutritionalInformationData,
-                createdAt = createdAt)
+                createdAt = createdAt,
+                tags = tags)
 
         val ingredientsData = data["ingredients"] as? List<Map<String, Any>>
         if (ingredientsData != null) {
@@ -150,7 +156,8 @@ data class Meal(
           NutritionalInformation(mutableListOf()),
           mutableListOf(),
           "",
-          LocalDate.now())
+          LocalDate.now(),
+          mutableListOf())
     }
   }
 }

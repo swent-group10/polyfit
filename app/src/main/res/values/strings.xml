@@ -10,4 +10,9 @@
     <string name="map_nav_label">Map</string>
     <string name="settings_nav_labal">Settings</string>
     <string name="toast_message_feature_unavailable">Not available yet</string>
+    <string name="condition1">"By clicking continue, you agree to our\n"</string>
+    <string name="condition2">"Terms of Service"</string>
+    <string name="condition3">" and "</string>
+    <string name="condition4">"Privacy Policy"</string>
+    <string name="signGoogle">"Sign in with Google"</string>
 </resources>
