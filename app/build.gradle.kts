@@ -130,6 +130,7 @@ android {
         implementation("com.google.code.gson:gson:2.10.1")
         implementation("androidx.room:room-runtime:2.6.1")
         implementation("com.squareup.okhttp3:okhttp:4.12.0")
+        implementation("androidx.test:core-ktx:1.5.0")
 
         kapt("androidx.room:room-compiler:2.6.1")
         kapt("android.arch.persistence.room:compiler:1.1.1")
@@ -210,7 +211,4 @@ tasks.register("jacocoTestReport", JacocoReport::class) {
         include("outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec")
         include("outputs/code_coverage/debugAndroidTest/connected/*/coverage.ec")
     })
-}
-dependencies {
-    implementation("androidx.test:core-ktx:1.5.0")
 }
