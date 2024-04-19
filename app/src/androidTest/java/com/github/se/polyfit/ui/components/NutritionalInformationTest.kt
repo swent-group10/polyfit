@@ -89,12 +89,7 @@ class NutritionalInformationTest : TestCase() {
   private fun setup(meal: Meal) {
     composeTestRule.setContent {
       NutritionalInformation(
-          mealViewModel =
-              MealViewModel(
-                  "testUserID",
-                  initialMeal = meal,
-                  context = context,
-                  mealRepo = mockk(relaxed = true)))
+          mealViewModel = MealViewModel(initialMeal = meal, mealRepo = mockk(relaxed = true)))
     }
   }
 

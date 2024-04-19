@@ -13,8 +13,6 @@ import java.time.LocalDate
 import kotlinx.coroutines.launch
 
 class MealViewModel(
-    private val userId: String,
-    private val context: android.content.Context,
     val mealRepo: MealRepository,
     var initialMeal: Meal? = null,
     firebaseID: String = "",
@@ -42,6 +40,15 @@ class MealViewModel(
       }
 
       _meal.observeForever { initialMeal = it }
+    }
+  }
+
+  fun setNewMealObserver(liveMeal: LiveData<Meal>) {
+    _meal.removeObserver {}
+
+    liveMeal.observeForever {
+      _meal.value = it
+      _isComplete.value = it.isComplete()
     }
   }
 

@@ -44,8 +44,6 @@ class MainActivity : ComponentActivity() {
 
     var mealViewModel =
         MealViewModel(
-            "testUserID",
-            this.applicationContext,
             MealRepository(
                 this.applicationContext,
                 MealFirebaseRepository("testUserID"),

@@ -2,6 +2,7 @@ package com.github.se.polyfit.meal
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.github.se.polyfit.data.repository.MealRepository
 import com.github.se.polyfit.model.ingredient.Ingredient
@@ -34,7 +35,7 @@ class MealViewModelTest {
 
   @Before
   fun setup() {
-    viewModel = MealViewModel("userId", context, mealRepo, Meal.default(), "firebaseID")
+    viewModel = MealViewModel(mealRepo, Meal.default(), "firebaseID")
   }
 
   @Test
@@ -52,7 +53,7 @@ class MealViewModelTest {
   @Test
   fun setMeal_incomplete_meal_throws_exception() {
     val incompleteMeal = Meal.default().apply { name = "" }
-    val viewModelLocal = MealViewModel("userId", context, mealRepo, incompleteMeal, "firebaseID")
+    val viewModelLocal = MealViewModel(mealRepo, incompleteMeal, "firebaseID")
 
     assertFailsWith<Exception> { viewModelLocal.setMeal() }
   }
@@ -102,7 +103,7 @@ class MealViewModelTest {
 
   @Test
   fun setMealData_only_some_fields() {
-    val viewModelLocal = MealViewModel("userId", context, mealRepo, Meal.default(), "firebaseID")
+    val viewModelLocal = MealViewModel(mealRepo, Meal.default(), "firebaseID")
     viewModelLocal.setMealData(mealOccasion = MealOccasion.SNACK, name = "New Name")
 
     var updatedMeal = viewModelLocal.meal.getOrAwait()
@@ -114,6 +115,16 @@ class MealViewModelTest {
     viewModelLocal.setMealData(createdAt = timeNow)
     updatedMeal = viewModelLocal.meal.getOrAwait()
     assertEquals(timeNow, updatedMeal.createdAt)
+  }
+
+  @Test
+  fun setNewMealObserver() {
+    val newMeal = MutableLiveData(Meal.default())
+    viewModel.setNewMealObserver(newMeal)
+
+    val updatedMeal = viewModel.meal.getOrAwait()
+
+    assertEquals(newMeal.value, updatedMeal)
   }
 }
 

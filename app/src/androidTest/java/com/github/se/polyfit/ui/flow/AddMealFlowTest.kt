@@ -39,7 +39,7 @@ class AddMealFlowTest {
               navigation::goBack,
               navigation::navigateToHome,
               "testUserID",
-              MealViewModel("testUserID", context = mockk(), mealRepo = mockk()))
+              MealViewModel(mealRepo = mockk()))
         }
       }
       navigation.navigateToAddMeal()
