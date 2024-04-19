@@ -59,8 +59,17 @@ android {
         buildConfigField("String", "X_RapidAPI_Host", "\"${properties["X_RapidAPI_Host"]}\"")
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = project.properties["RELEASE_STORE_FILE"]?.let { file(it) }
+            storePassword = project.properties["RELEASE_STORE_PASSWORD"] as String?
+            keyAlias = project.properties["RELEASE_KEY_ALIAS"] as String?
+            keyPassword = project.properties["RELEASE_KEY_PASSWORD"] as String?
+        }
+    }
     buildTypes {
-        release {
+        getByName("release") {
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
