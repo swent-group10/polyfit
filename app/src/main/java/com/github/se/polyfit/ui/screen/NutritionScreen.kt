@@ -39,15 +39,13 @@ fun NutritionScreen(
     navigateBack: () -> Unit,
     navigateForward: () -> Unit
 ) {
-  val meal = mealViewModel.meal.observeAsState().value
-  val isComplete = meal?.isComplete() ?: false
-
+  val isComplete = mealViewModel.isComplete.observeAsState()
   Scaffold(
       topBar = { TopBar(navigateBack = navigateBack) },
       bottomBar = {
         BottomBar(
             setMeal = mealViewModel::setMeal,
-            isComplete = isComplete,
+            isComplete = isComplete.value ?: false,
             navigateForward = navigateForward)
       }) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) { NutritionalInformation(mealViewModel) }

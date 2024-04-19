@@ -65,6 +65,7 @@ class NutritionalInfoTest : TestCase() {
     mockkStatic(Log::class)
 
     every { mockMealViewModel.meal.value } returns meal
+    every { mockMealViewModel.isComplete.value } returns true
     val navigateBack = { mockNav.goBack() }
     val navigateForward = { mockNav.navigateToHome() }
 

@@ -32,6 +32,15 @@ data class Ingredient(
       return map
     }
 
+    fun increaseAmount(ingredient: Ingredient, amount: Double): Ingredient {
+      return Ingredient(
+          ingredient.name,
+          ingredient.id,
+          ingredient.amount + amount,
+          ingredient.unit,
+          ingredient.nutritionalInformation)
+    }
+
     fun deserialize(data: Map<String, Any>): Ingredient {
       return try {
         val name = data["name"] as String

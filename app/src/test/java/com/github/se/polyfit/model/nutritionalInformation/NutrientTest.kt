@@ -30,6 +30,14 @@ class NutrientTest {
   }
 
   @Test
+  fun `conversion of nutrient to another unit`() {
+    val nutrient = Nutrient("fats", 100.0, MeasurementUnit.G)
+    val convertedNutrient = nutrient.convertToUnit(MeasurementUnit.MG)
+    Assert.assertEquals(100_000.0, convertedNutrient.amount, 0.001)
+    Assert.assertEquals(MeasurementUnit.MG, convertedNutrient.unit)
+  }
+
+  @Test
   fun additionOfSameUnitNutrients() {
     val nutrient1 = Nutrient("fats", 100.0, MeasurementUnit.G)
     val nutrient2 = Nutrient("fats", 200.0, MeasurementUnit.G)

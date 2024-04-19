@@ -2,17 +2,21 @@ package com.github.se.polyfit.ui.screen
 
 import android.util.Log
 import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
+import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
@@ -48,6 +52,7 @@ class IngredientTest : TestCase() {
   fun setup() {
     mockkStatic(Log::class)
     every { mockMealViewModel.addIngredient(any()) } just Runs
+    every { mockMealViewModel.removeIngredient(any()) } just Runs
   }
 
   @After
@@ -57,7 +62,7 @@ class IngredientTest : TestCase() {
 
   private fun launchIngredientScreenWithTestData(
       testIngredients: MutableList<Ingredient>,
-      testPotentials: List<Ingredient>
+      testPotentials: List<Ingredient> // Leaving this, waiting to decide if we will use this feat
   ) {
     val navigateBack = { mockNav.goBack() }
     val navigateForward = { mockNav.navigateToNutrition() }
@@ -78,7 +83,18 @@ class IngredientTest : TestCase() {
 
   private val manyIngredients =
       mutableListOf(
-          Ingredient("Olive Oil", 5, 5.0, MeasurementUnit.ML),
+          Ingredient(
+              "Olive Oil",
+              5,
+              5.0,
+              MeasurementUnit.ML,
+              NutritionalInformation(
+                  mutableListOf(
+                      Nutrient("Calories", 100.0, MeasurementUnit.CAL),
+                      Nutrient("Fat", 10.0, MeasurementUnit.G),
+                      Nutrient("Protein", 0.0, MeasurementUnit.G),
+                      Nutrient("Carbs", 0.0, MeasurementUnit.G),
+                  ))),
           Ingredient("Beef Tenderloin", 50, 50.0, MeasurementUnit.G),
           Ingredient("White Asparagus", 10, 10.0, MeasurementUnit.G),
           Ingredient("Corn", 4, 4.0, MeasurementUnit.G),
@@ -179,9 +195,11 @@ class IngredientTest : TestCase() {
 
       composeTestRule.onNodeWithText("Enter an Ingredient...").performTextInput("apple")
 
+      composeTestRule.onNodeWithTag("NutritionSizeInput Calories").performTextInput("1")
+
       composeTestRule.onNodeWithTag("NutritionSizeInput Total Weight").performTextInput("1")
 
-      composeTestRule.onNodeWithTag("NutritionSizeInput Calories").performTextInput("1")
+      composeTestRule.onNodeWithTag("NutritionSizeInput Total Weight").performImeAction()
 
       finishAddIngredientButton {
         assertIsDisplayed()
@@ -248,7 +266,7 @@ class IngredientTest : TestCase() {
   }
 
   @Test
-  fun expandIngredient() {
+  fun expandIngredientExpandAndCollapse() {
     launchIngredientScreenWithTestData(manyIngredients, mutableListOf())
 
     ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
@@ -259,8 +277,49 @@ class IngredientTest : TestCase() {
         performClick()
       }
 
-      // TODO: @April Update with proper test
       verify { Log.v("Expand Ingredients", "Clicked") }
+
+      composeTestRule.onNodeWithTag("ExpandedIngredient").assertIsDisplayed()
+
+      composeTestRule.onNodeWithTag("ExpandedIngredientName").assertTextContains("Olive Oil")
+
+      composeTestRule.onNodeWithTag("NutritionInfoContainer").assertIsDisplayed()
+
+      composeTestRule.onNodeWithTag("TopRightIconInGradientBox").assertIsDisplayed().performClick()
+
+      composeTestRule.onNodeWithTag("ExpandedIngredient").assertDoesNotExist()
+
+      ingredientButton {
+        assertIsDisplayed()
+        assertTextContains("Olive Oil 5.0ML")
+      }
+    }
+  }
+
+  @Test
+  fun deleteIngredient() {
+    launchIngredientScreenWithTestData(manyIngredients, mutableListOf())
+
+    ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
+      ingredientButton {
+        assertIsDisplayed()
+        assertTextContains("Olive Oil 5.0ML")
+        assertHasClickAction()
+        performClick()
+      }
+
+      composeTestRule.onNodeWithTag("ExpandedIngredient").assertIsDisplayed()
+
+      composeTestRule.onNodeWithTag("ExpandedIngredientName").assertTextContains("Olive Oil")
+
+      composeTestRule.onNodeWithTag("NutritionInfoContainer").assertIsDisplayed()
+
+      composeTestRule.onNodeWithTag("DeleteIngredientButton").assertIsDisplayed().performClick()
+
+      verify {
+        mockMealViewModel.removeIngredient(
+            match { it.name == "Olive Oil" && it.amount == 5.0 && it.unit == MeasurementUnit.ML })
+      }
     }
   }
 
