@@ -45,15 +45,14 @@ class MainActivity : ComponentActivity() {
     var mealViewModel =
         MealViewModel(
             "testUserID",
-            context = this.applicationContext,
-            mealRepo =
-                MealRepository(
-                    this.applicationContext,
-                    MealFirebaseRepository("testUserID"),
-                    Room.databaseBuilder(
-                            this.applicationContext, MealDatabase::class.java, "meal_database")
-                        .build()
-                        .mealDao()))
+            this.applicationContext,
+            MealRepository(
+                this.applicationContext,
+                MealFirebaseRepository("testUserID"),
+                Room.databaseBuilder(
+                        this.applicationContext, MealDatabase::class.java, "meal_database")
+                    .build()
+                    .mealDao()))
     setContent {
       PolyfitTheme {
         val navController = rememberNavController()

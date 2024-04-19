@@ -15,9 +15,9 @@ import kotlinx.coroutines.launch
 class MealViewModel(
     private val userId: String,
     private val context: android.content.Context,
-    firebaseID: String = "",
+    val mealRepo: MealRepository,
     var initialMeal: Meal? = null,
-    val mealRepo: MealRepository
+    firebaseID: String = "",
 ) : ViewModel() {
   // after friday use hilt dependency injection to make code cleaner, for now i guess this is ok
   private val _meal: MutableLiveData<Meal> = MutableLiveData(null)
@@ -71,6 +71,8 @@ class MealViewModel(
             ingredients,
             firebaseID,
             createdAt)
+
+    _isComplete.value = _meal.value?.isComplete() ?: false
   }
 
   fun setMealName(name: String) {

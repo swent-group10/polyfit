@@ -11,6 +11,7 @@ import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
 import io.mockk.mockk
+import java.time.LocalDate
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
@@ -33,7 +34,7 @@ class MealViewModelTest {
 
   @Before
   fun setup() {
-    viewModel = MealViewModel("userId", context, "firebaseID", Meal.default(), mealRepo)
+    viewModel = MealViewModel("userId", context, mealRepo, Meal.default(), "firebaseID")
   }
 
   @Test
@@ -51,7 +52,7 @@ class MealViewModelTest {
   @Test
   fun setMeal_incomplete_meal_throws_exception() {
     val incompleteMeal = Meal.default().apply { name = "" }
-    val viewModelLocal = MealViewModel("userId", context, "firebaseID", incompleteMeal, mealRepo)
+    val viewModelLocal = MealViewModel("userId", context, mealRepo, incompleteMeal, "firebaseID")
 
     assertFailsWith<Exception> { viewModelLocal.setMeal() }
   }
@@ -101,12 +102,18 @@ class MealViewModelTest {
 
   @Test
   fun setMealData_only_some_fields() {
-    viewModel.setMealData(mealOccasion = MealOccasion.SNACK, name = "New Name")
+    val viewModelLocal = MealViewModel("userId", context, mealRepo, Meal.default(), "firebaseID")
+    viewModelLocal.setMealData(mealOccasion = MealOccasion.SNACK, name = "New Name")
 
-    val updatedMeal = viewModel.meal.getOrAwait()
+    var updatedMeal = viewModelLocal.meal.getOrAwait()
 
     assertEquals(MealOccasion.SNACK, updatedMeal.occasion)
     assertEquals("New Name", updatedMeal.name)
+
+    val timeNow = LocalDate.now()
+    viewModelLocal.setMealData(createdAt = timeNow)
+    updatedMeal = viewModelLocal.meal.getOrAwait()
+    assertEquals(timeNow, updatedMeal.createdAt)
   }
 }
 
