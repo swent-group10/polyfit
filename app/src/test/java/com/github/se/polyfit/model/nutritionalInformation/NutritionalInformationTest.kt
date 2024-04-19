@@ -18,6 +18,7 @@ class NutritionalInformationTest {
     mockkStatic(Log::class)
     every { Log.e(any(), any()) } returns 0
     every { Log.e(any(), any(), any()) } returns 0
+    every { Log.d(any(), any()) } returns 0
 
     nutritionalInformation =
         NutritionalInformation(
@@ -167,6 +168,24 @@ class NutritionalInformationTest {
   }
 
   @Test
+  fun `minus function should remove a Nutrient if it goes negative`() {
+    val nutritionalInformation1 =
+        NutritionalInformation(
+            mutableListOf(
+                Nutrient("totalWeight", 100.0, MeasurementUnit.G),
+                Nutrient("calories", 200.0, MeasurementUnit.CAL)))
+    val nutritionalInformation2 =
+        NutritionalInformation(
+            mutableListOf(
+                Nutrient("totalWeight", 50.0, MeasurementUnit.G),
+                Nutrient("calories", 200.1, MeasurementUnit.CAL)))
+
+    val result = nutritionalInformation1 - nutritionalInformation2
+    assert(result.nutrients.size == 1)
+    assert(result.nutrients[0].nutrientType == "totalWeight")
+  }
+
+  @Test
   fun `update function should correctly update nutritional information`() {
     val nutritionalInformation1 =
         NutritionalInformation(
@@ -182,6 +201,28 @@ class NutritionalInformationTest {
     assertEquals(
         Nutrient("totalWeight", 150.0, MeasurementUnit.G),
         nutritionalInformation1.nutrients.filter { it.nutrientType == "totalWeight" }[0])
+  }
+
+  @Test
+  fun `update shouldn't add a nutrient if the amount is less than 0`() {
+    val nutritionalInformation1 = NutritionalInformation(mutableListOf())
+    val nutritionalInformation2 =
+        NutritionalInformation(mutableListOf(Nutrient("totalWeight", -10.0, MeasurementUnit.G)))
+
+    nutritionalInformation1.update(nutritionalInformation2)
+    assert(nutritionalInformation1.nutrients.isEmpty())
+  }
+
+  @Test
+  fun `update should subtract from existing nutrient if amount is less than 0`() {
+    val nutritionalInformation1 =
+        NutritionalInformation(mutableListOf(Nutrient("totalWeight", 10.0, MeasurementUnit.G)))
+    val nutritionalInformation2 =
+        NutritionalInformation(mutableListOf(Nutrient("totalWeight", -5.0, MeasurementUnit.G)))
+
+    nutritionalInformation1.update(nutritionalInformation2)
+    assert(nutritionalInformation1.nutrients.size == 1)
+    assert(nutritionalInformation1.nutrients[0].amount == 5.0)
   }
 
   @Test
@@ -262,5 +303,17 @@ class NutritionalInformationTest {
   fun `getNutrient returns null if nutrient does not exist`() {
     val nutrient = nutritionalInformation.getNutrient("nonExistentNutrient")
     assertEquals(null, nutrient)
+  }
+
+  @Test
+  fun `get certain total of nutrient`() {
+    val nutrient = nutritionalInformation.calculateTotalNutrient("totalWeight")
+    assertEquals(100.0, nutrient, 0.1)
+  }
+
+  @Test
+  fun `get certain amount of nutrient`() {
+    val nutrient = nutritionalInformation.getNutrient("totalWeight")
+    assertEquals(Nutrient("totalWeight", 100.0, MeasurementUnit.G), nutrient)
   }
 }

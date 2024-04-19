@@ -9,6 +9,7 @@ import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.model.ingredient.Ingredient
@@ -61,7 +62,7 @@ class IngredientTest : TestCase() {
 
   private fun launchIngredientScreenWithTestData(
       testIngredients: MutableList<Ingredient>,
-      testPotentials: List<Ingredient>
+      testPotentials: List<Ingredient> // Leaving this, waiting to decide if we will use this feat
   ) {
     val navigateBack = { mockNav.goBack() }
     val navigateForward = { mockNav.navigateToNutrition() }
@@ -194,9 +195,11 @@ class IngredientTest : TestCase() {
 
       composeTestRule.onNodeWithText("Enter an Ingredient...").performTextInput("apple")
 
+      composeTestRule.onNodeWithTag("NutritionSizeInput Calories").performTextInput("1")
+
       composeTestRule.onNodeWithTag("NutritionSizeInput Total Weight").performTextInput("1")
 
-      composeTestRule.onNodeWithTag("NutritionSizeInput Calories").performTextInput("1")
+      composeTestRule.onNodeWithTag("NutritionSizeInput Total Weight").performImeAction()
 
       finishAddIngredientButton {
         assertIsDisplayed()

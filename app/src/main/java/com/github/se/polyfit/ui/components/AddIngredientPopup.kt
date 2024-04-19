@@ -52,8 +52,8 @@ fun AddIngredientDialog(
 
   val nutritionFields = remember {
     mutableStateListOf<Nutrient>(
-        Nutrient("totalWeight", 0.0, MeasurementUnit.G),
         Nutrient("calories", 0.0, MeasurementUnit.CAL),
+        Nutrient("totalWeight", 0.0, MeasurementUnit.G),
         Nutrient("carbohydrates", 0.0, MeasurementUnit.G),
         Nutrient("fat", 0.0, MeasurementUnit.G),
         Nutrient("protein", 0.0, MeasurementUnit.G))
@@ -70,6 +70,11 @@ fun AddIngredientDialog(
         iconColor = PrimaryPink,
         iconDescriptor = "close",
     ) {
+      val nutritionalInformation =
+          com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation(
+              nutritionFields.toMutableList())
+      val totalWeight = nutritionalInformation.getNutrient("totalWeight")
+
       Column(
           modifier =
               Modifier.fillMaxWidth()
@@ -89,16 +94,14 @@ fun AddIngredientDialog(
                       Ingredient(
                           name = searchText,
                           id = 0, // TODO: might need changing on how we handle the id
-                          amount = nutritionFields[0].amount,
-                          unit = nutritionFields[0].unit,
-                          nutritionalInformation =
-                              com.github.se.polyfit.model.nutritionalInformation
-                                  .NutritionalInformation(nutritionFields.toMutableList())))
+                          amount = totalWeight!!.amount,
+                          unit = totalWeight.unit,
+                          nutritionalInformation = nutritionalInformation))
                   onClickCloseDialog()
                 },
                 modifier = Modifier.padding(top = 16.dp).align(Alignment.CenterHorizontally),
                 text = "Add",
-                isEnabled = searchText.isNotBlank() && nutritionFields[0].amount > 0.0)
+                isEnabled = searchText.isNotBlank() && totalWeight!!.amount > 0.0)
           }
     }
   }

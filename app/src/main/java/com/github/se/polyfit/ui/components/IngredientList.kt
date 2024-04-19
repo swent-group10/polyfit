@@ -23,18 +23,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.github.se.polyfit.model.ingredient.Ingredient
+import com.github.se.polyfit.ui.theme.DeleteIconRed
 import com.github.se.polyfit.ui.theme.PrimaryPink
 import com.github.se.polyfit.ui.theme.PrimaryPurple
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
@@ -45,17 +45,20 @@ fun IngredientList(
     it: PaddingValues,
     mealViewModel: MealViewModel,
 ) {
-  val meal by mealViewModel.meal.observeAsState()
-  val ingredients = meal?.ingredients ?: emptyList()
+  var ingredients = remember { mealViewModel.meal.value?.ingredients ?: emptyList() }
 
   // TODO: Implement potential ingredients
   val potentialIngredients = listOf<Ingredient>()
+
   val onAddIngredient = { index: Int -> Log.v("Add Ingredient", "Clicked") }
   val initialSuggestions = 3
   val potentialIndex = remember {
     // equivalent to min(3, potentialIngredients.size)
     mutableIntStateOf(initialSuggestions.coerceAtMost(potentialIngredients.size))
   }
+
+  val lifecycleOwner = LocalLifecycleOwner.current
+  mealViewModel.meal.observe(lifecycleOwner) { ingredients = it.ingredients }
 
   Column(
       modifier =
@@ -158,7 +161,7 @@ fun ExpandedIngredient(
                   Icon(
                       imageVector = Icons.Default.Delete,
                       contentDescription = "Delete ${ingredient.name}",
-                      tint = Color(0xFFFF7575))
+                      tint = DeleteIconRed)
                 }
           }
 

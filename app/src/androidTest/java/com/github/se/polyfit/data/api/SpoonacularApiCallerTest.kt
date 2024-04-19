@@ -12,7 +12,6 @@ import java.io.InputStream
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import kotlin.test.assertFailsWith
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.runBlocking
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
@@ -96,7 +95,7 @@ class SpoonacularApiCallerTest {
           }
         }
       }
-  lateinit var inputStream: InputStream
+  private lateinit var inputStream: InputStream
 
   @Before
   fun setUp() {
@@ -118,10 +117,9 @@ class SpoonacularApiCallerTest {
 
     val response = spoonacularApiCaller.imageAnalysis(file)
 
-    assert(response != null)
     assert(response.status == APIResponse.SUCCESS)
     assert(response.category == "cheesecake")
-    assert(response.nutrition.filter { it.unit == MeasurementUnit.CAL }.first().amount == 293.0)
+    assert(response.nutrition.first { it.unit == MeasurementUnit.CAL }.amount == 293.0)
     val fatNutrient = response.nutrition.find { it.nutrientType == "fat" }
     assert(fatNutrient != null)
     assert(fatNutrient!!.amount == 17.0) // Check the value of fat
@@ -133,9 +131,7 @@ class SpoonacularApiCallerTest {
     // empty server queue
     mockWebServer.dispatcher = faultyDispatcher
 
-    assertFailsWith<Exception> {
-      val response = spoonacularApiCaller.imageAnalysis(file)
-    }
+    assertFailsWith<Exception> { spoonacularApiCaller.imageAnalysis(file) }
   }
 
   @Test
@@ -143,12 +139,10 @@ class SpoonacularApiCallerTest {
 
     val response = spoonacularApiCaller.getRecipeNutrition(1) // Add your test recipeId here
 
-    assert(response != null)
-    assert(response.nutrients.filter { it.unit == MeasurementUnit.KCAL }.first().amount == 899.16)
-    assert(
-        response.nutrients.filter { it.nutrientType == "Carbohydrates" }.first().amount == 111.24)
-    assert(response.nutrients.filter { it.nutrientType == "Fat" }.first().amount == 45.33)
-    assert(response.nutrients.filter { it.nutrientType == "Protein" }.first().amount == 11.64)
+    assert(response.nutrients.first { it.unit == MeasurementUnit.KCAL }.amount == 899.16)
+    assert(response.nutrients.first { it.nutrientType == "Carbohydrates" }.amount == 111.24)
+    assert(response.nutrients.first { it.nutrientType == "Fat" }.amount == 45.33)
+    assert(response.nutrients.first { it.nutrientType == "Protein" }.amount == 11.64)
   }
 
   @Test
@@ -156,7 +150,7 @@ class SpoonacularApiCallerTest {
     mockWebServer.dispatcher = faultyDispatcher
 
     assertFailsWith<Exception> {
-      val response = spoonacularApiCaller.getRecipeNutrition(1) // Add your test recipeId here
+      spoonacularApiCaller.getRecipeNutrition(1) // Add your test recipeId here
     }
   }
 
@@ -164,10 +158,9 @@ class SpoonacularApiCallerTest {
   fun testImageAnalysisFromJson() {
     val response = ImageAnalysisResponseAPI.fromJsonObject(jsonImageAnalysis)
 
-    assert(response != null)
     assert(response.status == APIResponse.SUCCESS)
     assert(response.category == "cheesecake")
-    assert(response.nutrition.filter { it.unit == MeasurementUnit.CAL }.first().amount == 293.0)
+    assert(response.nutrition.first { it.unit == MeasurementUnit.CAL }.amount == 293.0)
     val fatNutrient = response.nutrition.find { it.nutrientType == "fat" }
     assert(fatNutrient != null)
     assert(fatNutrient!!.amount == 17.0) // Check the value of fat
@@ -178,19 +171,16 @@ class SpoonacularApiCallerTest {
   fun testRecipeNutritionFromJson() {
     val response = RecipeNutritionResponseAPI.fromJsonObject(jsonRecipeNutrition)
 
-    assert(response != null)
     assert(
         response.nutrients
-            .filter {
+            .first {
               Log.e("SpoonacularApiCallerTest", "testRecipeNutritionFromJson: it.unit = ${it.unit}")
               it.unit == MeasurementUnit.KCAL
             }
-            .first()
             .amount == 899.16)
-    assert(
-        response.nutrients.filter { it.nutrientType == "Carbohydrates" }.first().amount == 111.24)
-    assert(response.nutrients.filter { it.nutrientType == "Fat" }.first().amount == 45.33)
-    assert(response.nutrients.filter { it.nutrientType == "Protein" }.first().amount == 11.64)
+    assert(response.nutrients.first { it.nutrientType == "Carbohydrates" }.amount == 111.24)
+    assert(response.nutrients.first { it.nutrientType == "Fat" }.amount == 45.33)
+    assert(response.nutrients.first { it.nutrientType == "Protein" }.amount == 11.64)
   }
 
   @Test
@@ -203,7 +193,7 @@ class SpoonacularApiCallerTest {
 
     // Act
     val liveDataMeal = runBlocking {
-      spoonacularApiCaller.getMealsFromImage(BitmapFactory.decodeStream(inputStream), GlobalScope)
+      spoonacularApiCaller.getMealsFromImage(BitmapFactory.decodeStream(inputStream))
     }
     val latch = CountDownLatch(2)
 
@@ -235,7 +225,9 @@ class SpoonacularApiCallerTest {
 
     // Act
     val liveDataMeal = runBlocking {
-      spoonacularApiCaller.getMealsFromImage(BitmapFactory.decodeStream(inputStream), GlobalScope)
+      spoonacularApiCaller.getMealsFromImage(
+          BitmapFactory.decodeStream(inputStream),
+      )
     }
     val latch = CountDownLatch(2)
 
@@ -264,7 +256,9 @@ class SpoonacularApiCallerTest {
 
     // Act
     val liveDataMeal = runBlocking {
-      spoonacularApiCaller.getMealsFromImage(BitmapFactory.decodeStream(inputStream), GlobalScope)
+      spoonacularApiCaller.getMealsFromImage(
+          BitmapFactory.decodeStream(inputStream),
+      )
     }
     val latch = CountDownLatch(2)
 
