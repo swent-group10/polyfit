@@ -13,6 +13,7 @@ import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import java.time.LocalDate
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import org.junit.After
 import org.junit.Before
@@ -82,6 +83,49 @@ class MealDatabaseTest {
     mealDao.deleteByFirebaseID("aer1")
 
     assertEquals(mealDao.getAllMeals().size, 1)
+  }
+
+  @Test
+  fun getMealByFirebaseID() {
+    mealDao.deleteAll()
+    val meal = Meal.default().apply { firebaseId = "aer1" }
+    mealDao.insert(meal)
+
+    val mealFromDB = mealDao.getMealByFirebaseID("aer1")
+
+    assertEquals(meal, mealFromDB)
+  }
+
+  @Test
+  fun getAllIngredients() {
+    val ingredientList =
+        mutableListOf(
+            Ingredient("Oats", 12, 192.2, MeasurementUnit.G),
+            Ingredient("Milk", 200, 12.0, MeasurementUnit.ML))
+    mealDao.deleteAll()
+    val meal =
+        Meal(
+            name = "Oatmeal",
+            occasion = MealOccasion.BREAKFAST,
+            mealID = 1,
+            mealTemp = 20.0,
+            nutritionalInformation =
+                NutritionalInformation(
+                    mutableListOf(
+                        Nutrient("calories", 100.0, MeasurementUnit.UG),
+                        Nutrient("protein", 10.0, MeasurementUnit.G),
+                        Nutrient("carbs", 20.0, MeasurementUnit.G),
+                        Nutrient("fat", 5.0, MeasurementUnit.ML)),
+                ),
+            ingredients = ingredientList,
+            firebaseId = "1",
+            createdAt = LocalDate.now())
+    mealDao.insert(MealEntity.toMealEntity(meal))
+
+    val ingredients = mealDao.getAllIngredients()
+
+    assertEquals(ingredients.size, 2)
+    assertContains(ingredients, ingredientList.first())
   }
 
   @After
