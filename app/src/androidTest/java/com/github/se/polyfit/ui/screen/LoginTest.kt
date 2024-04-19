@@ -1,14 +1,17 @@
 package com.github.se.polyfit.ui.screen
 
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.lifecycle.Lifecycle
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.matcher.IntentMatchers.toPackage
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.MainActivity
+import com.github.se.polyfit.ui.components.AddIngredientDialog
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.kakaocup.compose.node.element.ComposeScreen
+import okhttp3.internal.wait
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -35,8 +38,9 @@ class LoginTest : TestCase() {
     ComposeScreen.onComposeScreen<LoginScreen>(composeTestRule) {
       // Test the UI elements
       loginTitle {
-        //                assertIsDisplayed()
-        //        assertTextEquals("PolyFit")
+        assertExists()
+        assertIsDisplayed()
+        assertTextContains("PolyFit", substring = true, ignoreCase = false)
       }
       loginButton {
         assertIsDisplayed()
@@ -59,12 +63,14 @@ class LoginTest : TestCase() {
     ComposeScreen.onComposeScreen<LoginScreen>(composeTestRule) {
       // Test the UI elements
       loginButton {
+        assertExists()
         assertIsDisplayed()
         assertHasClickAction()
         performClick()
       }
-      // TODO check we are on another page
-      intended(toPackage("com.google.android.gms"))
+      loginButton{
+        assertDoesNotExist()
+      }
     }
   }
 }

@@ -66,7 +66,7 @@ fun LoginScreen(goTo: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally) {
               Spacer(Modifier.weight(0.2f))
 
-              Title(Modifier.testTag("LoginTitle"), "Polyfit")
+              Title("PolyFit")
 
               Spacer(Modifier.weight(0.6f))
 
