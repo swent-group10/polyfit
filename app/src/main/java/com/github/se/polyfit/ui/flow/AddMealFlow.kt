@@ -15,7 +15,7 @@ fun AddMealFlow(
     goBack: () -> Unit,
     navigateToHome: () -> Unit,
     userID: String,
-    mealViewModel: MealViewModel = MealViewModel(userID)
+    mealViewModel: MealViewModel
 ) {
 
   val navController = rememberNavController()

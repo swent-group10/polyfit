@@ -3,15 +3,19 @@ package com.github.se.polyfit.viewmodel.meal
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
+import androidx.lifecycle.viewModelScope
+import com.github.se.polyfit.data.repository.MealRepository
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
+import com.github.se.polyfit.model.meal.MealOccasion
+import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
+import java.time.LocalDate
+import kotlinx.coroutines.launch
 
 class MealViewModel(
-    private val userId: String,
-    firebaseID: String = "",
+    val mealRepo: MealRepository,
     var initialMeal: Meal? = null,
-    private val mealRepo: MealFirebaseRepository = MealFirebaseRepository(userId)
+    firebaseID: String = "",
 ) : ViewModel() {
   // after friday use hilt dependency injection to make code cleaner, for now i guess this is ok
   private val _meal: MutableLiveData<Meal> = MutableLiveData(null)
@@ -22,23 +26,61 @@ class MealViewModel(
   val isComplete: LiveData<Boolean> = _isComplete
 
   init {
-    if (firebaseID.isNotEmpty()) {
-      mealRepo.getMeal(firebaseID).addOnCompleteListener {
-        if (it.isSuccessful) {
-          _meal.value = it.result
-          _isComplete.value = it.result?.isComplete() ?: false
+    viewModelScope.launch {
+      if (firebaseID.isNotEmpty()) {
+        mealRepo.getMeal(firebaseID).let {
+          if (it != null) {
+            _meal.value = it
+            _isComplete.value = it.isComplete()
+          }
         }
+      } else {
+        _meal.value = initialMeal?.copy() ?: Meal.default()
+        _isComplete.value = _meal.value?.isComplete() ?: false
       }
-    } else {
-      _meal.value = initialMeal?.copy() ?: Meal.default()
-      _isComplete.value = _meal.value?.isComplete() ?: false
-    }
 
-    _meal.observeForever { initialMeal = it }
+      _meal.observeForever { initialMeal = it }
+    }
+  }
+
+  fun setNewMealObserver(liveMeal: LiveData<Meal>) {
+    _meal.removeObserver {}
+
+    liveMeal.observeForever {
+      _meal.value = it
+      _isComplete.value = it.isComplete()
+    }
   }
 
   fun setMealData(meal: Meal) {
     _meal.value = meal
+    _isComplete.value = meal.isComplete()
+  }
+
+  /** Allows for setting individual meal data fields instead of setting the whole meal */
+  fun setMealData(
+      mealOccasion: MealOccasion = _meal.value?.occasion ?: Meal.default().occasion,
+      name: String = _meal.value?.name ?: Meal.default().name,
+      mealID: Long = _meal.value?.mealID ?: Meal.default().mealID,
+      mealTemp: Double = _meal.value?.mealTemp ?: Meal.default().mealTemp,
+      ingredients: MutableList<Ingredient> = _meal.value?.ingredients ?: Meal.default().ingredients,
+      nutritionalInformation: NutritionalInformation =
+          _meal.value?.nutritionalInformation ?: Meal.default().nutritionalInformation,
+      firebaseID: String = _meal.value?.firebaseId ?: Meal.default().firebaseId,
+      createdAt: LocalDate = _meal.value?.createdAt ?: Meal.default().createdAt
+  ) {
+    _meal.value =
+        Meal(
+            mealOccasion,
+            name,
+            mealID,
+            mealTemp,
+            nutritionalInformation,
+            ingredients,
+            firebaseID,
+            createdAt)
+
+    _isComplete.value = _meal.value?.isComplete() ?: false
   }
 
   fun setMealName(name: String) {
@@ -46,6 +88,7 @@ class MealViewModel(
     _isComplete.value = _meal.value?.isComplete() ?: false
   }
 
+  /** Store the meal in the meal repository */
   fun setMeal() {
     if (_meal.value == null) {
       throw IllegalStateException("Meal is null")
@@ -55,11 +98,7 @@ class MealViewModel(
       throw Exception("Meal is incomplete")
     }
 
-    try {
-      mealRepo.storeMeal(_meal.value!!)
-    } catch (e: Exception) {
-      throw e
-    }
+    viewModelScope.launch { mealRepo.storeMeal(_meal.value!!) }
   }
 
   fun addIngredient(ingredient: Ingredient) {
@@ -82,6 +121,12 @@ class MealViewModel(
                   currentMeal.nutritionalInformation.minus(ingredient.nutritionalInformation))
       _meal.value = updatedMeal
     }
+
     _isComplete.value = _meal.value?.isComplete() ?: false
+  }
+
+  fun clearMeal() {
+    _meal.value = Meal.default()
+    _isComplete.value = false
   }
 }

@@ -16,8 +16,8 @@ import kotlinx.coroutines.withContext
 class MealRepository(
     private val context: Context,
     private val mealFirebaseRepository: MealFirebaseRepository,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.Default,
     private val mealDao: MealDao,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.Default,
     private val checkConnectivity: ConnectivityChecker = ConnectivityChecker(context)
 ) {
   private var isDataOutdated = false
