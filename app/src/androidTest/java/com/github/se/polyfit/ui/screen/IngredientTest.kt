@@ -62,7 +62,7 @@ class IngredientTest : TestCase() {
 
   private fun launchIngredientScreenWithTestData(
       testIngredients: MutableList<Ingredient>,
-      testPotentials: List<Ingredient>
+      testPotentials: List<Ingredient> // Leaving this, waiting to decide if we will use this feat
   ) {
     val navigateBack = { mockNav.goBack() }
     val navigateForward = { mockNav.navigateToNutrition() }
