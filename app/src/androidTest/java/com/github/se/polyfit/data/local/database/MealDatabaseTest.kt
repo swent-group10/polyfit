@@ -55,8 +55,8 @@ class MealDatabaseTest {
                     Ingredient("Oats", 12, 192.2, MeasurementUnit.G),
                     Ingredient("Milk", 200, 12.0, MeasurementUnit.ML)),
             firebaseId = "1",
-            createdAt = nowTime),
-    )
+            createdAt = nowTime,
+            tags = mutableListOf()))
 
     val meals = mealDao.getAll().map { it.toMeal() }
 
