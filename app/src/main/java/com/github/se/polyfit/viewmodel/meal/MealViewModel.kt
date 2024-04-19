@@ -54,6 +54,7 @@ class MealViewModel(
 
   fun setMealData(meal: Meal) {
     _meal.value = meal
+    _isComplete.value = meal.isComplete()
   }
 
   /** Allows for setting individual meal data fields instead of setting the whole meal */
