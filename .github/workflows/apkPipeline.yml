@@ -23,7 +23,7 @@ jobs:
       - name: Create Google Map key
         env:
           GOOGLE_MAP: ${{ secrets.GOOGLE_MAP }}
-        run: echo "$GOOGLE_MAP" | base64 --decode > .app/src/main/res/values/secret.xml
+        run: echo "$GOOGLE_MAP" | base64 --decode > ./app/src/main/res/values/secret.xml
       - name: Set up Spoonacular API keys
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
