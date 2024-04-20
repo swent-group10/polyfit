@@ -1,4 +1,4 @@
-package com.github.se.polyfit.ui.components
+package com.github.se.polyfit.ui.components.scaffold
 /*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.navigation.NavController
