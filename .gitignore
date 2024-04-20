@@ -226,4 +226,4 @@ fabric.properties
 .vscode/
 
 # This is a secret api key. Do not share it with anyone. Nor put it on github
-#/app/src/main/res/values/secret.xml
+/app/src/main/res/values/secret.xml
