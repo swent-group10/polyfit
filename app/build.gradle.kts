@@ -139,6 +139,10 @@ android {
         implementation("com.google.code.gson:gson:2.10.1")
         implementation("androidx.room:room-runtime:2.6.1")
         implementation("com.squareup.okhttp3:okhttp:4.12.0")
+        implementation("com.google.android.gms:play-services-maps:18.2.0")
+        implementation("androidx.appcompat:appcompat:1.6.1")
+        implementation("com.google.maps.android:maps-compose:4.3.3")
+
 
         kapt("androidx.room:room-compiler:2.6.1")
         kapt("android.arch.persistence.room:compiler:1.1.1")

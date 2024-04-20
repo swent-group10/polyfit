@@ -16,6 +16,8 @@
         android:required="false" />
 
     <uses-permission android:name="ANDROID.PERMISSION.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
 
     <application
@@ -30,6 +32,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Polyfit"
         tools:targetApi="31">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/api_google_map"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"
