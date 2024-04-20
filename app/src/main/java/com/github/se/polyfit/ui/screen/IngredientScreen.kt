@@ -41,8 +41,13 @@ fun IngredientScreen(
 
   val showAddIngredDialog = remember { mutableStateOf(false) }
 
+  fun goBackAndReset() {
+    navigateBack()
+    mealViewModel.reset()
+  }
+
   Scaffold(
-      topBar = { TopBar(navigateBack) },
+      topBar = { TopBar(::goBackAndReset) },
       bottomBar = {
         BottomBar(
             onClickAddIngred = { showAddIngredDialog.value = true },

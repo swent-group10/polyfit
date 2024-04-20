@@ -14,6 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.ui.components.GenericScreen
+import com.github.se.polyfit.ui.flow.AddMealFlow
 import com.github.se.polyfit.ui.navigation.Route
 import com.github.se.polyfit.ui.utils.OverviewTags
 import com.kaspersky.components.composesupport.config.withComposeSupport
@@ -48,6 +49,10 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
           GenericScreen(
               navController = navController,
               content = { paddingValues -> OverviewScreen(paddingValues, navController, mockk()) })
+        }
+
+        composable(Route.AddMeal) {
+          AddMealFlow(goBack = {}, navigateToHome = {}, userID = "Test", mockk(relaxed = true))
         }
       }
     }
@@ -199,6 +204,25 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
         assertExists()
         assertIsDisplayed()
         assertHasClickAction()
+      }
+    }
+  }
+
+  @Test
+  fun editButtonClicked() {
+    ComposeScreen.onComposeScreen<CalorieCard>(composeTestRule) {
+      composeTestRule
+          .onNodeWithTag(OverviewTags.overviewManualBtn)
+          .onChild()
+          .assertExists()
+          .assertIsDisplayed()
+          .assertHasClickAction()
+          .performClick()
+    }
+    ComposeScreen.onComposeScreen<IngredientsTopBar>(composeTestRule) {
+      ingredientTitle {
+        assertExists()
+        assertIsDisplayed()
       }
     }
   }
