@@ -1,4 +1,4 @@
-package com.github.se.polyfit.ui.components
+package com.github.se.polyfit.ui.components.dialog
 
 import android.util.Log
 import androidx.compose.foundation.clickable
@@ -34,6 +34,10 @@ import androidx.compose.ui.window.Dialog
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
+import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
+import com.github.se.polyfit.ui.components.GradientBox
+import com.github.se.polyfit.ui.components.button.PrimaryPurpleButton
+import com.github.se.polyfit.ui.components.ingredients.IngredientNutritionEditFields
 import com.github.se.polyfit.ui.theme.PrimaryPink
 import com.github.se.polyfit.ui.theme.SecondaryGrey
 
@@ -70,9 +74,7 @@ fun AddIngredientDialog(
         iconColor = PrimaryPink,
         iconDescriptor = "close",
     ) {
-      val nutritionalInformation =
-          com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation(
-              nutritionFields.toMutableList())
+      val nutritionalInformation = NutritionalInformation(nutritionFields.toMutableList())
       val totalWeight = nutritionalInformation.getNutrient("totalWeight")
 
       Column(
