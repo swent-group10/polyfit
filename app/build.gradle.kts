@@ -112,45 +112,59 @@ android {
 
 
     dependencies {
-        implementation("androidx.core:core:1.12.0")
+        // AndroidX
+        implementation("androidx.core:core:1.13.0")
         implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
-        implementation("androidx.activity:activity-compose:1.8.2")
-        implementation(platform("androidx.compose:compose-bom:2024.04.00"))
-        implementation("androidx.compose.runtime:runtime-livedata:1.6.5")
+        implementation("androidx.activity:activity-compose:1.9.0")
+        implementation("androidx.room:room-runtime:2.6.1")
+
+        // Compose
+        implementation(platform("androidx.compose:compose-bom:2024.04.01"))
+        implementation("androidx.compose.runtime:runtime-livedata:1.6.6")
         implementation("androidx.compose.ui:ui")
         implementation("androidx.compose.ui:ui-graphics")
         implementation("androidx.compose.ui:ui-tooling-preview")
         implementation("androidx.compose.material3:material3:1.2.1")
         implementation("androidx.navigation:navigation-compose:2.7.7")
+
+        // Google
         implementation("com.google.android.play:core-ktx:1.8.1")
-        implementation("org.json:json:20210307")
+        implementation("com.google.dagger:hilt-android:2.51")
+        implementation("com.google.firebase:firebase-auth:22.3.1")
+        implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
+        implementation("com.google.firebase:firebase-analytics")
+        implementation("com.google.firebase:firebase-database-ktx:20.3.1")
+        implementation("com.google.firebase:firebase-firestore:24.11.1")
+        implementation("com.google.firebase:firebase-database")
+        implementation("com.firebaseui:firebase-ui-auth:8.0.2")
+
+        // Kotlin
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0")
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
         implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
-        implementation("com.google.dagger:hilt-android:2.51")
-        implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
-        implementation("com.google.firebase:firebase-auth:22.3.1")
-        implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
-        implementation("com.google.firebase:firebase-analytics")
-        implementation("com.google.firebase:firebase-database-ktx:20.3.1")
-        implementation("com.google.firebase:firebase-firestore:24.11.0")
-        implementation("com.firebaseui:firebase-ui-auth:8.0.2")
-        implementation("com.google.firebase:firebase-database")
+
+        // Other
+        implementation("org.json:json:20210307")
         implementation("com.google.code.gson:gson:2.10.1")
-        implementation("androidx.room:room-runtime:2.6.1")
         implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
+        // Kapt
         kapt("androidx.room:room-compiler:2.6.1")
         kapt("android.arch.persistence.room:compiler:1.1.1")
         kapt("com.google.dagger:hilt-android-compiler:2.51")
         kapt("com.google.dagger:hilt-compiler:2.51")
         kaptTest("com.google.dagger:hilt-compiler:2.51")
         kaptAndroidTest("com.google.dagger:hilt-compiler:2.51")
+        kapt("androidx.hilt:hilt-compiler:1.2.0")
 
+        // Hilt
+        implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
+        // Android Test
         androidTestImplementation("com.squareup.okhttp3:okhttp:4.12.0")
         androidTestImplementation("androidx.arch.core:core-testing:2.2.0")
         androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-        androidTestImplementation(platform("androidx.compose:compose-bom:2024.04.00"))
+        androidTestImplementation(platform("androidx.compose:compose-bom:2024.04.01"))
         androidTestImplementation("androidx.compose.ui:ui-test-junit4")
         androidTestImplementation("androidx.test.espresso:espresso-intents:3.5.1")
         androidTestImplementation("org.mockito:mockito-android:5.11.0")
@@ -169,6 +183,7 @@ android {
         androidTestImplementation("io.mockk:mockk-android:1.13.10")
         androidTestImplementation("io.mockk:mockk-jvm:1.13.10")
 
+        // Test
         testImplementation("io.mockk:mockk-jvm:1.13.10")
         testImplementation("junit:junit:4.13.2")
         testImplementation("androidx.arch.core:core-testing:2.2.0")
@@ -179,6 +194,7 @@ android {
         testImplementation("android.arch.persistence.room:testing:1.1.1")
         testImplementation("org.mockito:mockito-core:5.11.0")
 
+        // Debug
         debugImplementation("androidx.compose.ui:ui-tooling")
         debugImplementation("androidx.compose.ui:ui-test-manifest")
     }

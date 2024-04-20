@@ -2,6 +2,7 @@ package com.github.se.polyfit.viewmodel.meal
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
+import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
@@ -29,16 +30,17 @@ class MealViewModelTest {
   @Before
   fun setUp() {
     MockitoAnnotations.openMocks(this)
+    val meal =
+        Meal(
+            occasion = MealOccasion.OTHER,
+            name = "Test Meal",
+            mealID = 1,
+            nutritionalInformation = NutritionalInformation(mutableListOf()))
     val mealTask: Task<Meal?> = Mockito.mock(Task::class.java) as Task<Meal?>
     Mockito.`when`(mealTask.addOnCompleteListener(Mockito.any())).thenAnswer { invocation ->
       val listener =
           invocation.getArgument(0, OnCompleteListener::class.java) as OnCompleteListener<Meal?>
-      val meal =
-          Meal(
-              occasion = MealOccasion.OTHER,
-              name = "Test Meal",
-              mealID = 1,
-              nutritionalInformation = NutritionalInformation(mutableListOf()))
+
       val mockResult = Mockito.mock(Task::class.java) as Task<Meal?>
       Mockito.`when`(mockResult.isSuccessful).thenReturn(true)
       Mockito.`when`(mockResult.result).thenReturn(meal)
@@ -47,7 +49,9 @@ class MealViewModelTest {
     }
     Mockito.`when`(mealRepo.getMeal(Mockito.anyString())).thenReturn(mealTask)
 
-    viewModel = MealViewModel("user123", "firebase123", null, mealRepo)
+    viewModel = MealViewModel(User(id = "user123"), mealRepo)
+    viewModel.setMealData(meal)
+    viewModel.setFirebaseID("firebase123")
   }
 
   @After
@@ -69,7 +73,8 @@ class MealViewModelTest {
             mealID = 123,
             nutritionalInformation = NutritionalInformation(mutableListOf()),
             occasion = MealOccasion.BREAKFAST)
-    viewModel = MealViewModel("user123", initialMeal = initialMeal, mealRepo = mealRepo)
+    viewModel = MealViewModel(User(id = "user123"), mealRepo)
+    viewModel.setMealData(initialMeal)
     viewModel.setMealName("New Name")
 
     assert(viewModel.meal.value?.name == "New Name")
@@ -84,7 +89,8 @@ class MealViewModelTest {
             nutritionalInformation = NutritionalInformation(mutableListOf()),
             occasion = MealOccasion.BREAKFAST)
 
-    viewModel = MealViewModel("user123", initialMeal = initialMeal, mealRepo = mealRepo)
+    viewModel = MealViewModel(User(id = "user123"), mealRepo)
+    viewModel.setMealData(initialMeal)
     val ingredient =
         Ingredient(
             name = "Tomato",
@@ -114,7 +120,8 @@ class MealViewModelTest {
             nutritionalInformation = NutritionalInformation(mutableListOf()),
             occasion = MealOccasion.BREAKFAST)
 
-    viewModel = MealViewModel("user123", initialMeal = initialMeal, mealRepo = mealRepo)
+    viewModel = MealViewModel(User(id = "user123"), mealRepo)
+    viewModel.setMealData(initialMeal)
     val meal =
         Meal(
             name = "New Name",
@@ -144,8 +151,8 @@ class MealViewModelTest {
             occasion = MealOccasion.BREAKFAST,
             ingredients = mutableListOf(ingredient))
 
-    viewModel = MealViewModel("user123", initialMeal = initialMeal, mealRepo = mealRepo)
-
+    viewModel = MealViewModel(User(id = "user123"), mealRepo)
+    viewModel.setMealData(initialMeal)
     viewModel.removeIngredient(ingredient)
 
     assert(viewModel.meal.value?.ingredients?.contains(ingredient) == false)
@@ -161,8 +168,8 @@ class MealViewModelTest {
             nutritionalInformation = NutritionalInformation(mutableListOf()),
             occasion = MealOccasion.BREAKFAST)
 
-    viewModel = MealViewModel("user123", initialMeal = initialMeal, mealRepo = mealRepo)
-
+    viewModel = MealViewModel(User(id = "user123"), mealRepo)
+    viewModel.setMealData(initialMeal)
     assertFailsWith<Exception> { viewModel.setMeal() }
   }
 
@@ -175,8 +182,8 @@ class MealViewModelTest {
             nutritionalInformation = NutritionalInformation(mutableListOf()),
             occasion = MealOccasion.BREAKFAST)
 
-    viewModel = MealViewModel("user123", initialMeal = initialMeal, mealRepo = mealRepo)
-
+    viewModel = MealViewModel(User(id = "user123"), mealRepo)
+    viewModel.setMealData(initialMeal)
     val ingredient =
         Ingredient(
             name = "Tomato",
@@ -201,12 +208,7 @@ class MealViewModelTest {
 
   @Test
   fun `viewmodel with no meal creates default`() {
-    viewModel = MealViewModel("user123", mealRepo = mealRepo)
+    viewModel = MealViewModel(User(id = "user123"), mealRepo)
     assert(viewModel.meal.value!! == Meal.default())
-  }
-
-  @Test
-  fun `viewmodel with firebaseID loads data`() {
-    Mockito.verify(mealRepo).getMeal("firebase123")
   }
 }

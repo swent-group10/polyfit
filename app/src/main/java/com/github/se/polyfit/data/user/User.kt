@@ -4,12 +4,12 @@ import android.net.Uri
 import java.util.concurrent.atomic.AtomicReference
 
 data class User(
-    val id: String,
-    val displayName: String?,
-    val familyName: String?,
-    val givenName: String?,
-    val email: String,
-    val photoURL: Uri?
+    var id: String = "",
+    var displayName: String? = null,
+    var familyName: String? = null,
+    var givenName: String? = null,
+    var email: String = "",
+    var photoURL: Uri? = null
 ) {
   companion object {
 
