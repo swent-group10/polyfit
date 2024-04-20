@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.se.polyfit.ui.components.AddIngredientDialog
 import com.github.se.polyfit.ui.components.GradientButton
 import com.github.se.polyfit.ui.components.IngredientList
@@ -35,7 +36,7 @@ import com.github.se.polyfit.viewmodel.meal.MealViewModel
 
 @Composable
 fun IngredientScreen(
-    mealViewModel: MealViewModel,
+    mealViewModel: MealViewModel = hiltViewModel(),
     navigateBack: () -> Unit,
     navigateForward: () -> Unit
 ) {

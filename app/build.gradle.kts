@@ -12,6 +12,7 @@ plugins {
     id("com.ncorti.ktfmt.gradle") version "0.16.0"
     id("jacoco")
     id("kotlin-kapt")
+    id("kotlin-android")
 
 
 }
@@ -147,6 +148,8 @@ android {
         implementation("org.json:json:20210307")
         implementation("com.google.code.gson:gson:2.10.1")
         implementation("com.squareup.okhttp3:okhttp:4.12.0")
+        implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
 
         // Kapt
         kapt("androidx.room:room-compiler:2.6.1")
@@ -182,6 +185,11 @@ android {
         androidTestImplementation("io.mockk:mockk:1.13.10")
         androidTestImplementation("io.mockk:mockk-android:1.13.10")
         androidTestImplementation("io.mockk:mockk-jvm:1.13.10")
+        androidTestImplementation("com.google.dagger:hilt-android-testing:2.51")
+        kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.51")
+        androidTestImplementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+        androidTestImplementation("com.google.dagger:hilt-android-testing:2.51")
+        kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.51")
 
         // Test
         testImplementation("io.mockk:mockk-jvm:1.13.10")

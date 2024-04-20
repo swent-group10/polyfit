@@ -12,4 +12,5 @@ plugins {
     id("com.google.dagger.hilt.android") version "2.51" apply false
     id("com.ncorti.ktfmt.gradle") version "0.16.0"
     
+
 }

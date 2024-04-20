@@ -10,14 +10,16 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.navigation.Route
-import com.github.se.polyfit.ui.navigation.globalNavigation
 import com.github.se.polyfit.ui.utils.OverviewTags
 import com.kaspersky.components.composesupport.config.withComposeSupport
 import com.kaspersky.kaspresso.kaspresso.Kaspresso
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
+import dagger.hilt.android.testing.HiltAndroidTest
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.mockk.junit4.MockKRule
 import io.mockk.mockk
@@ -30,6 +32,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
+@HiltAndroidTest
 class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport()) {
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -40,8 +43,12 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
     mockkStatic(Log::class)
     composeTestRule.setContent {
       val navController = rememberNavController()
-      NavHost(navController = navController, startDestination = Route.Overview) {
-        globalNavigation(navController, mockk())
+      NavHost(navController = navController, startDestination = Route.Home) {
+        composable(Route.Home) {
+          GenericScreen(
+              navController = navController,
+              content = { paddingValues -> OverviewScreen(paddingValues, navController, mockk()) })
+        }
       }
     }
   }

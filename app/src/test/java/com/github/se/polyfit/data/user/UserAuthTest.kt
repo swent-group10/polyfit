@@ -11,16 +11,17 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkAll
+import javax.inject.Inject
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNull
 
 class UserAuthTest {
 
   private lateinit var mockAccount: GoogleSignInAccount
   private lateinit var authCloud: AuthenticationCloud
+  private val user: User = User()
 
   @BeforeTest
   fun setup() {
@@ -42,7 +43,7 @@ class UserAuthTest {
     every { GoogleSignIn.getLastSignedInAccount(any()) } returns mockAccount
 
     // Initialize AuthenticationCloud
-    authCloud = AuthenticationCloud(mockk(relaxed = true))
+    authCloud = AuthenticationCloud(mockk(relaxed = true), user)
   }
 
   @AfterTest
@@ -50,6 +51,7 @@ class UserAuthTest {
     unmockkAll()
   }
 
+  @Inject
   @Test
   fun `User currentUser is set correctly`() {
     // Create a mock FirebaseAuthUIAuthenticationResult
@@ -61,11 +63,11 @@ class UserAuthTest {
     authCloud.onSignInResult(mockResult) {}
 
     // Verify that User.currentUser is set with the correct values
-    User.getCurrentUser()?.let { assertEquals("1", it.id) }
-    assertEquals("Test User", User.getCurrentUser()?.displayName)
-    assertEquals("Test", User.getCurrentUser()?.familyName)
-    assertEquals("User", User.getCurrentUser()?.givenName)
-    assertEquals("test@example.com", User.getCurrentUser()?.email)
-    assertNull(User.getCurrentUser()?.photoURL)
+    assertEquals("1", user.id)
+    assertEquals("Test User", user.displayName)
+    assertEquals("Test", user.familyName)
+    assertEquals("User", user.givenName)
+    assertEquals("test@example.com", user.email)
+    assertEquals(null, user.photoURL)
   }
 }

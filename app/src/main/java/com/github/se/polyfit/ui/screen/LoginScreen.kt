@@ -31,6 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.getString
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.github.se.polyfit.R
 import com.github.se.polyfit.ui.compose.Title
@@ -38,10 +39,9 @@ import com.github.se.polyfit.ui.theme.PrimaryPurple
 import com.github.se.polyfit.ui.utils.AuthenticationCloud
 
 @Composable
-fun LoginScreen(goTo: () -> Unit) {
+fun LoginScreen(goTo: () -> Unit, authenticationCloud: AuthenticationCloud = hiltViewModel()) {
   // Create an instance of the Authentication class
   val context = LocalContext.current
-  val authenticationCloud = AuthenticationCloud(context)
 
   val signInLauncher =
       rememberLauncherForActivityResult(contract = FirebaseAuthUIActivityResultContract()) { res ->
