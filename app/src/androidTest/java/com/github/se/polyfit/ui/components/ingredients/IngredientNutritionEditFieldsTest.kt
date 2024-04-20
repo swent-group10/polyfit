@@ -1,8 +1,6 @@
-package com.github.se.polyfit.ui.components
+package com.github.se.polyfit.ui.components.ingredients
 
 import android.util.Log
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit

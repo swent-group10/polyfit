@@ -1,4 +1,4 @@
-package com.github.se.polyfit.ui.components
+package com.github.se.polyfit.ui.components.ingredients
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
@@ -34,6 +34,8 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.github.se.polyfit.model.ingredient.Ingredient
+import com.github.se.polyfit.ui.components.GradientBox
+import com.github.se.polyfit.ui.components.button.GradientButton
 import com.github.se.polyfit.ui.theme.DeleteIconRed
 import com.github.se.polyfit.ui.theme.PrimaryPink
 import com.github.se.polyfit.ui.theme.PrimaryPurple
