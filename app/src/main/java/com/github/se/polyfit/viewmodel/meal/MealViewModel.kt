@@ -3,18 +3,20 @@ package com.github.se.polyfit.viewmodel.meal
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
-import com.github.se.polyfit.model.data.User
+import androidx.lifecycle.viewModelScope
+import com.github.se.polyfit.data.repository.MealRepository
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
+import com.github.se.polyfit.model.meal.MealOccasion
+import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.LocalDate
 import javax.inject.Inject
+import kotlinx.coroutines.launch
 
 @HiltViewModel
-class MealViewModel
-@Inject
-constructor(private val user: User, private val mealRepo: MealFirebaseRepository) : ViewModel() {
-  // after friday use hilt dependency injection to make code cleaner, for now i guess this is ok
+class MealViewModel @Inject constructor(private val mealRepo: MealRepository) : ViewModel() {
+
   private var initialMeal: Meal? = null
   private var firebaseID: String = ""
 
