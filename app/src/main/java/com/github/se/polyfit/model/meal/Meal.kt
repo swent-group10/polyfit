@@ -7,7 +7,7 @@ import java.time.LocalDate
 
 // modeled after the log meal api
 data class Meal(
-    val occasion: MealOccasion,
+    var occasion: MealOccasion,
     var name: String,
     val mealID: Long,
     // represent the ideal temperature at which should be eaten at,
@@ -16,7 +16,7 @@ data class Meal(
     val nutritionalInformation: NutritionalInformation,
     val ingredients: MutableList<Ingredient> = mutableListOf(),
     var firebaseId: String = "",
-    val createdAt: LocalDate = LocalDate.now(),
+    var createdAt: LocalDate = LocalDate.now(),
     val tags: MutableList<MealTag> = mutableListOf()
 ) {
   init {

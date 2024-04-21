@@ -5,8 +5,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.se.polyfit.ui.components.selector.MealOccasionSelectorScreen
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.navigation.Route
+import com.github.se.polyfit.ui.screen.AdditionalMealInfoBottomBar
+import com.github.se.polyfit.ui.screen.AdditionalMealInfoTopBar
 import com.github.se.polyfit.ui.screen.HomeScreen
 import com.github.se.polyfit.ui.screen.IngredientsBottomBar
 import com.github.se.polyfit.ui.screen.IngredientsList
@@ -41,7 +44,7 @@ class AddMealFlowTest {
   }
 
   @Test
-  fun IngredientScreenIsShown() {
+  fun ingredientScreenIsShown() {
     ComposeScreen.onComposeScreen<IngredientsTopBar>(composeTestRule) {
       ingredientTitle {
         assertIsDisplayed()
@@ -65,12 +68,40 @@ class AddMealFlowTest {
   }
 
   @Test
-  fun NutritionScreenIsShown() {
+  fun additionalMealInfoIsShown() {
     ComposeScreen.onComposeScreen<IngredientsBottomBar>(composeTestRule) {
       doneButton {
         assertIsDisplayed()
         assertHasClickAction()
         assertTextEquals("Done")
+        performClick()
+      }
+    }
+
+    ComposeScreen.onComposeScreen<AdditionalMealInfoTopBar>(composeTestRule) {
+      title { assertIsDisplayed() }
+    }
+  }
+
+  @Test
+  fun nutritionalInformationIsShown() {
+    ComposeScreen.onComposeScreen<IngredientsBottomBar>(composeTestRule) {
+      doneButton {
+        assertIsDisplayed()
+        performClick()
+      }
+    }
+
+    ComposeScreen.onComposeScreen<MealOccasionSelectorScreen>(composeTestRule) {
+      dinnerButton {
+        assertIsDisplayed()
+        performClick()
+      }
+    }
+
+    ComposeScreen.onComposeScreen<AdditionalMealInfoBottomBar>(composeTestRule) {
+      doneButton {
+        assertIsDisplayed()
         performClick()
       }
     }
