@@ -10,6 +10,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performScrollToIndex
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
@@ -89,7 +90,8 @@ class NutritionalInformationTest : TestCase() {
   private fun setup(meal: Meal) {
     composeTestRule.setContent {
       NutritionalInformation(
-          mealViewModel = MealViewModel(initialMeal = meal, mealRepo = mockk(relaxed = true)))
+          mealViewModel =
+              MealViewModel(User(id = "testUserID"), mockk()).apply { setMealData(meal) })
     }
   }
 

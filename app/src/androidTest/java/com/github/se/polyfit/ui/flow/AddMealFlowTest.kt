@@ -5,6 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.navigation.Route
 import com.github.se.polyfit.ui.screen.HomeScreen
@@ -39,7 +40,7 @@ class AddMealFlowTest {
               navigation::goBack,
               navigation::navigateToHome,
               "testUserID",
-              MealViewModel(mealRepo = mockk()))
+              MealViewModel(User(id = "testUserID"), mockk()))
         }
       }
       navigation.navigateToAddMeal()

@@ -50,6 +50,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.github.se.polyfit.R
 import com.github.se.polyfit.data.api.SpoonacularApiCaller
@@ -190,7 +191,7 @@ private fun callCamera(
 fun OverviewScreen(
     paddingValues: PaddingValues,
     navController: NavHostController,
-    mealViewModel: MealViewModel
+    mealViewModel: MealViewModel = hiltViewModel()
 ) {
 
   val context = LocalContext.current
