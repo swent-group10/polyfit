@@ -1,4 +1,4 @@
-package com.github.se.polyfit.ui.components
+package com.github.se.polyfit.ui.components.scaffold
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import com.github.se.polyfit.R
+import com.github.se.polyfit.ui.components.GradientBox
 import com.github.se.polyfit.ui.utils.OverviewTags
 
 @OptIn(ExperimentalMaterial3Api::class)

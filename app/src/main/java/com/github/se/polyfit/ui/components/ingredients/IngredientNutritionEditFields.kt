@@ -1,4 +1,4 @@
-package com.github.se.polyfit.ui.components
+package com.github.se.polyfit.ui.components.ingredients
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer

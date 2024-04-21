@@ -1,4 +1,4 @@
-package com.github.se.polyfit.ui.components
+package com.github.se.polyfit.ui.components.nutrition
 
 import android.content.Context
 import androidx.compose.ui.test.assertCountEquals

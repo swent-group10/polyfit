@@ -1,4 +1,4 @@
-package com.github.se.polyfit.ui.components
+package com.github.se.polyfit.ui.components.button
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
