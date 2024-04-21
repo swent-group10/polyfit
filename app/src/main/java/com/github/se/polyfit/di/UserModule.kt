@@ -16,29 +16,32 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object UserModule {
 
-  @Provides
-  @Singleton
-  fun providesUser(): User {
-    return User(id = "test")
-  }
+    @Provides
+    @Singleton
+    fun providesUser(): User {
+        return User()
+    }
 
-  @Provides
-  @Singleton
-  fun providesMealFirebaseRepository(user: User): MealFirebaseRepository {
-    return MealFirebaseRepository(user.id)
-  }
+    @Provides
+    @Singleton
+    fun providesMealFirebaseRepository(user: User): MealFirebaseRepository {
+        return MealFirebaseRepository(user.id)
+    }
 
-  @Provides
-  @Singleton
-  fun providesMealViewModel(
-      user: User,
-      mealFirebaseRepository: MealFirebaseRepository
-  ): MealViewModel {
-    return MealViewModel(user, mealFirebaseRepository)
-  }
+    @Provides
+    @Singleton
+    fun providesMealViewModel(
+        user: User,
+        mealFirebaseRepository: MealFirebaseRepository
+    ): MealViewModel {
+        return MealViewModel(user, mealFirebaseRepository)
+    }
 
-  @Provides
-  fun provideAuthentication(@ApplicationContext context: Context, user: User): AuthenticationCloud {
-    return AuthenticationCloud(context, user)
-  }
+    @Provides
+    fun provideAuthentication(
+        @ApplicationContext context: Context,
+        user: User
+    ): AuthenticationCloud {
+        return AuthenticationCloud(context, user)
+    }
 }
