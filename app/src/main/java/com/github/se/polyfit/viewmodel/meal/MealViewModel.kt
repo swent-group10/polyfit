@@ -32,6 +32,7 @@ class MealViewModel @Inject constructor(private val mealRepo: MealRepository) : 
   val isComplete: LiveData<Boolean> = _isComplete
 
   init {
+
     viewModelScope.launch {
       if (firebaseID.isNotEmpty()) {
         mealRepo.getMeal(firebaseID).let {
