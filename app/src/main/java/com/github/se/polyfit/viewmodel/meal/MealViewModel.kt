@@ -15,7 +15,7 @@ import javax.inject.Inject
 class MealViewModel @Inject constructor(private val mealRepo: MealFirebaseRepository) :
     ViewModel() {
 
-  private val _meal: MutableLiveData<Meal> = MutableLiveData(null)
+  private val _meal: MutableLiveData<Meal> = MutableLiveData(Meal.default())
   val meal: LiveData<Meal> = _meal // Expose _meal as an immutable LiveData
 
   private val _isComplete: LiveData<Boolean> = _meal.map { it?.isComplete() ?: false }
