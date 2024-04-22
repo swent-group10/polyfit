@@ -13,13 +13,12 @@ class PostTest {
 
   @Test
   fun `getCarbs returns correct nutrient when present`() {
-    val expectedNutrient = Nutrient("carb", 100.0, MeasurementUnit.G)
-    val meal = Meal.default()
-    meal.nutritionalInformation.update(expectedNutrient)
+    val expected = Nutrient("carb", 100.0, MeasurementUnit.G)
+    val meal = Meal.default().apply { nutritionalInformation.update(expected) }
     val post =
         Post("userId", "description", Location(0.0, 0.0, 10.0, "EPFL"), meal, LocalDate.now())
 
-    assertEquals(expectedNutrient, post.getCarbs())
+    assertEquals(expected, post.getCarbs())
   }
 
   @Test
@@ -73,5 +72,74 @@ class PostTest {
         Post("userId", "description", Location(0.0, 0.0, 10.0, "EPFL"), meal, LocalDate.now())
 
     assertEquals(emptyList<Pair<String, Nutrient>>(), post.getIngredientCalories())
+  }
+
+  @Test
+  fun `toString outputs expected format`() {
+    val meal = Meal.default()
+    val post =
+        Post("userId", "description", Location(0.0, 0.0, 10.0, "EPFL"), meal, LocalDate.now())
+    val expectedString =
+        "The post from the user userId with the following description description and the following location Location(longitude=0.0, latitude=0.0, altitude=10.0, name=EPFL) for following meal $meal"
+    assertEquals(expectedString, post.toString())
+  }
+
+  @Test
+  fun `default method returns expected Post object`() {
+    val post = Post.default()
+    val expectedPost =
+        Post(
+            "testId",
+            "Description",
+            Location(0.0, 0.0, 10.0, "EPFL"),
+            Meal.default(),
+            LocalDate.now())
+
+    assertEquals(expectedPost, post)
+  }
+
+  @Test
+  fun `getIngredientWeight returns correct list`() {
+    val meal = Meal.default()
+    val post =
+        Post("userId", "description", Location(0.0, 0.0, 10.0, "EPFL"), meal, LocalDate.now())
+    val expectedList =
+        meal.ingredients.mapNotNull { it.name to Nutrient("totalWeight", it.amount, it.unit) }
+
+    assertEquals(expectedList, post.getIngredientWeight())
+  }
+
+  @Test
+  fun `getProtein returns correct nutrient when present`() {
+    val expected = Nutrient("protein", 100.0, MeasurementUnit.G)
+    val meal = Meal.default().apply { nutritionalInformation.update(expected) }
+    val post =
+        Post("userId", "description", Location(0.0, 0.0, 10.0, "EPFL"), meal, LocalDate.now())
+
+    assertEquals(expected, post.getProtein())
+  }
+
+  @Test
+  fun `getFat returns correct nutrient when present`() {
+    val expected = Nutrient("fat", 100.0, MeasurementUnit.G)
+    val meal = Meal.default().apply { nutritionalInformation.update(expected) }
+    val post =
+        Post("userId", "description", Location(0.0, 0.0, 10.0, "EPFL"), meal, LocalDate.now())
+
+    assertEquals(expected, post.getFat())
+  }
+
+  @Test
+  fun `testLocationToString`() {
+    val location = Location(0.0, 0.0, 10.0, "EPFL")
+    val expectedString = "Location(longitude=0.0, latitude=0.0, altitude=10.0, name=EPFL)"
+    assertEquals(expectedString, location.toString())
+  }
+
+  @Test
+  fun `test default location`() {
+    val location = Location.default()
+    val expectedLocation = Location(0.0, 0.0, 0.0, "default")
+    assertEquals(expectedLocation, location)
   }
 }

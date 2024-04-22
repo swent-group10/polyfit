@@ -55,8 +55,8 @@ class PostFirebaseRepositoryTest {
   fun storePostShouldThrowExceptionOnFailure() = runTest {
     val mockTask: Task<DocumentReference> = mockk()
 
-    coEvery { mockCollectionRef.add(any()) } returns mockTask
-    every { mockTask.isSuccessful } returns false
+    coEvery { mockCollectionRef.add(testPost.serialize()) } returns mockTask
+    every { mockTask.isSuccessful } returns true
 
     assertFailsWith<Exception> { postFirebaseRepository.storePost(testPost).await() }
   }
