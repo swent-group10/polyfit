@@ -4,19 +4,18 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.github.se.polyfit.model.post.Post
-import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestore
 
 class PostFirebaseRepository(db: FirebaseFirestore = FirebaseFirestore.getInstance()) {
   private val postCollection = db.collection("posts")
 
-  fun storePost(post: Post): Task<Unit> {
-    return postCollection.add(post.serialize()).continueWithTask {
-      if (it.isSuccessful) {
-        it.result.get()
-      } else {}
-    }
-  }
+  //  fun storePost(post: Post): Task<Unit> {
+  //    return postCollection.add(post.serialize()).continueWithTask {
+  //      if (it.isSuccessful) {
+  //        it.result.get()
+  //      } else {}
+  //    }
+  //  }
 
   fun addSnapshotListener() {}
 
