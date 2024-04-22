@@ -10,12 +10,10 @@ import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.kakaocup.compose.node.element.ComposeScreen
-import io.mockk.Runs
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit4.MockKRule
-import io.mockk.just
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import io.mockk.verify
@@ -36,10 +34,6 @@ class AdditionalMealInfoTest : TestCase() {
 
   fun setup(meal: Meal = Meal.default()) {
     mockkStatic(Log::class)
-    every { mockMealViewModel.addTag(any()) } just Runs
-    every { mockMealViewModel.removeTag(any()) } just Runs
-    every { mockMealViewModel.setMealOccasion(any()) } just Runs
-    every { mockMealViewModel.setMealCreatedAt(any()) } just Runs
     every { mockMealViewModel.meal } returns MutableLiveData(meal)
 
     composeTestRule.setContent {

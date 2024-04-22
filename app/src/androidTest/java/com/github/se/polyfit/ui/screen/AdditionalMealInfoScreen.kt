@@ -31,3 +31,8 @@ class AdditionalMealInfoScreen(semanticsProvider: SemanticsNodeInteractionsProvi
   val mealOccasionSelector: KNode = child { hasTestTag("MealOccasionSelector") }
   val mealTagSelector: KNode = child { hasTestTag("MealTagSelector") }
 }
+
+// This comment
+// needs to be here
+// to properly let
+// JaCoCo upload coverage.
