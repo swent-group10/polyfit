@@ -151,4 +151,6 @@ class MealViewModelTest {
 
     assertFailsWith<Exception> { viewModel.setMeal() }
   }
+
+  @Test fun `test null argument exception for empty meal`() {}
 }

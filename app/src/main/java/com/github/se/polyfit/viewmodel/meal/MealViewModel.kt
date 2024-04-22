@@ -31,10 +31,6 @@ class MealViewModel @Inject constructor(private val mealRepo: MealFirebaseReposi
   }
 
   fun setMeal() {
-    if (_meal.value == null) {
-      throw IllegalStateException("Meal is null")
-    }
-
     if (!_meal.value!!.isComplete()) {
       throw Exception("Meal is incomplete")
     }
