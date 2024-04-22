@@ -1,85 +1,77 @@
-package com.github.se.polyfit.data.post
+package com.github.se.polyfit.model.post
 
-import android.location.Location
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
-import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
-import com.github.se.polyfit.model.post.Post
+import java.time.LocalDate
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class PostTest {
-  private val expectedNutrient = Nutrient("carb", 100.0, MeasurementUnit.G)
-  private val meal: Meal =
-      Meal(
-          occasion = MealOccasion.OTHER,
-          name = "Test Meal",
-          mealID = 1,
-          nutritionalInformation = NutritionalInformation(mutableListOf(expectedNutrient)))
-  private val post = Post("userId", "description", Location("location"), meal)
 
   @Test
-  fun `getCarbs returns correct nutrient`() {
+  fun `getCarbs returns correct nutrient when present`() {
+    val expectedNutrient = Nutrient("carb", 100.0, MeasurementUnit.G)
+    val meal = Meal.default()
+    meal.nutritionalInformation.update(expectedNutrient)
+    val post =
+        Post("userId", "description", Location(0.0, 0.0, 10.0, "EPFL"), meal, LocalDate.now())
 
     assertEquals(expectedNutrient, post.getCarbs())
   }
 
   @Test
-  fun `getFat returns correct nutrient`() {
+  fun `getCarbs returns null when nutrient not present`() {
     val meal = Meal.default()
-    val post = Post("userId", "description", Location("location"), meal)
-    val expectedNutrient = Nutrient("fat", 100.0, MeasurementUnit.G)
+    val post =
+        Post("userId", "description", Location(0.0, 0.0, 10.0, "EPFL"), meal, LocalDate.now())
 
-    meal.nutritionalInformation.update(expectedNutrient)
-    assertEquals(expectedNutrient, post.getFat())
+    assertEquals(null, post.getCarbs())
   }
 
   @Test
-  fun `getProtein returns correct nutrient`() {
+  fun `serialize returns correct map`() {
     val meal = Meal.default()
-    val post = Post("userId", "description", Location("location"), meal)
-    val expectedNutrient = Nutrient("protein", 100.0, MeasurementUnit.G)
-    meal.nutritionalInformation.update(expectedNutrient)
+    val post =
+        Post("userId", "description", Location(0.0, 0.0, 10.0, "EPFL"), meal, LocalDate.now())
+    val expectedMap =
+        mapOf(
+            "userId" to "userId",
+            "description" to "description",
+            "location" to Location(0.0, 0.0, 10.0, "EPFL"),
+            "meal" to meal.serialize(),
+            "createdAt" to LocalDate.now())
 
-    assertEquals(expectedNutrient, post.getProtein())
+    assertEquals(expectedMap, post.serialize())
   }
 
   @Test
-  fun `getIngredientCalories returns correct list of pairs`() {
-    val meal = Meal.default()
-    val post = Post("userId", "description", Location("location"), meal)
+  fun `getIngredientCalories returns correct list when nutrients present`() {
     val nutrient = Nutrient("calories", 100.0, MeasurementUnit.KCAL)
-    meal.ingredients.add(
+    val meal = Meal.default()
+    val ingredient =
         Ingredient(
-            "ingredient1",
+            "meal",
             100,
-            100.3,
-            MeasurementUnit.G,
-            NutritionalInformation(mutableListOf(nutrient))))
+            100.0,
+            MeasurementUnit.KCAL,
+            NutritionalInformation(mutableListOf(nutrient)))
+    meal.ingredients.add(ingredient)
+    val post =
+        Post("userId", "description", Location(0.0, 0.0, 10.0, "EPFL"), meal, LocalDate.now())
+    val expectedList = listOf(Pair("meal", nutrient))
 
-    val expectedValue = listOf(Pair("ingredient1", nutrient))
-    assertEquals(expectedValue, post.getIngredientCalories())
+    assertEquals(expectedList, post.getIngredientCalories())
   }
 
   @Test
-  fun `getIngredientWeight returns correct list of pairs`() {
+  fun `getIngredientCalories returns empty list when nutrients not present`() {
     val meal = Meal.default()
-    val post = Post("userId", "description", Location("location"), meal)
-    val expectedList =
-        listOf(Pair("ingredient1", Nutrient("totalWeight", 100.3, MeasurementUnit.G)))
+    val post =
+        Post("userId", "description", Location(0.0, 0.0, 10.0, "EPFL"), meal, LocalDate.now())
 
-    meal.ingredients.add(
-        Ingredient(
-            "ingredient1",
-            100,
-            100.3,
-            MeasurementUnit.G,
-            NutritionalInformation(
-                mutableListOf(Nutrient("calories", 100.0, MeasurementUnit.KCAL)))))
-
-    assertEquals(expectedList, post.getIngredientWeight())
+    assertEquals(emptyList<Pair<String, Nutrient>>(), post.getIngredientCalories())
   }
 }
