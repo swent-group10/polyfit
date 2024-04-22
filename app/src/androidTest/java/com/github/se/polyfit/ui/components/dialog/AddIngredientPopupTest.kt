@@ -1,4 +1,4 @@
-package com.github.se.polyfit.ui.components
+package com.github.se.polyfit.ui.components.dialog
 
 import android.util.Log
 import androidx.compose.ui.input.key.KeyEvent
