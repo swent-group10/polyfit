@@ -1,49 +1,26 @@
 package com.github.se.polyfit.viewmodel.meal
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.map
 import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
-import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class MealViewModel
-@Inject
-constructor(private val user: User, private val mealRepo: MealFirebaseRepository) : ViewModel() {
-  // after friday use hilt dependency injection to make code cleaner, for now i guess this is ok
-  private var initialMeal: Meal? = null
-  private var firebaseID: String = ""
-
-  fun setFirebaseID(id: String) {
-    firebaseID = id
-  }
+class MealViewModel @Inject constructor(private val mealRepo: MealFirebaseRepository) :
+    ViewModel() {
 
   private val _meal: MutableLiveData<Meal> = MutableLiveData(null)
-  val meal: LiveData<Meal> = _meal
+  val meal: LiveData<Meal> = _meal // Expose _meal as an immutable LiveData
 
-  // Todo: If find a way to import Transformations, can use that to prevent duplicating updates
-  private val _isComplete: MutableLiveData<Boolean> = MutableLiveData(false)
+  private val _isComplete: LiveData<Boolean> = _meal.map { it?.isComplete() ?: false }
+
   val isComplete: LiveData<Boolean> = _isComplete
-
-  init {
-    if (firebaseID.isNotEmpty()) {
-      mealRepo.getMeal(firebaseID).addOnCompleteListener {
-        if (it.isSuccessful) {
-          _meal.value = it.result
-          _isComplete.value = it.result?.isComplete() ?: false
-        }
-      }
-    } else {
-      _meal.value = initialMeal?.copy() ?: Meal.default()
-      _isComplete.value = _meal.value?.isComplete() ?: false
-    }
-
-    _meal.observeForever { initialMeal = it }
-  }
 
   fun setMealData(meal: Meal) {
     _meal.value = meal
@@ -51,7 +28,6 @@ constructor(private val user: User, private val mealRepo: MealFirebaseRepository
 
   fun setMealName(name: String) {
     _meal.value!!.name = name
-    _isComplete.value = _meal.value?.isComplete() ?: false
   }
 
   fun setMeal() {
@@ -64,9 +40,14 @@ constructor(private val user: User, private val mealRepo: MealFirebaseRepository
     }
 
     try {
-      mealRepo.storeMeal(_meal.value!!)
+      mealRepo.storeMeal(_meal.value!!).continueWith {
+        if (it.isSuccessful && _meal.value != null) {
+          _meal.value!!.firebaseId = it.result.toString()
+        }
+      }
     } catch (e: Exception) {
-      throw e
+      Log.e("Error storing meal", e.message.toString())
+      throw Exception("Error storing meal : ${e.message} ")
     }
   }
 
@@ -77,7 +58,6 @@ constructor(private val user: User, private val mealRepo: MealFirebaseRepository
       updatedMeal.addIngredient(ingredient)
       _meal.value = updatedMeal // Emit the new instance as the current state
     }
-    _isComplete.value = _meal.value?.isComplete() ?: false
   }
 
   fun removeIngredient(ingredient: Ingredient) {
@@ -90,6 +70,5 @@ constructor(private val user: User, private val mealRepo: MealFirebaseRepository
                   currentMeal.nutritionalInformation.minus(ingredient.nutritionalInformation))
       _meal.value = updatedMeal
     }
-    _isComplete.value = _meal.value?.isComplete() ?: false
   }
 }

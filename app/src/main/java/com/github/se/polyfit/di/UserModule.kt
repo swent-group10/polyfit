@@ -16,32 +16,29 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object UserModule {
 
-    @Provides
-    @Singleton
-    fun providesUser(): User {
-        return User()
-    }
+  @Provides
+  @Singleton
+  fun providesUser(): User {
+    // this is just a safegaured, the user should be signed in before this is called
+    // if for some reason the user is not signed in, without this, it could cause and error
+    // firestoredatabase needs a user id to be initialized
+    return User(id = "testUserID")
+  }
 
-    @Provides
-    @Singleton
-    fun providesMealFirebaseRepository(user: User): MealFirebaseRepository {
-        return MealFirebaseRepository(user.id)
-    }
+  @Provides
+  @Singleton
+  fun providesMealFirebaseRepository(user: User): MealFirebaseRepository {
+    return MealFirebaseRepository(user.id)
+  }
 
-    @Provides
-    @Singleton
-    fun providesMealViewModel(
-        user: User,
-        mealFirebaseRepository: MealFirebaseRepository
-    ): MealViewModel {
-        return MealViewModel(user, mealFirebaseRepository)
-    }
+  @Provides
+  @Singleton
+  fun providesMealViewModel(mealFirebaseRepository: MealFirebaseRepository): MealViewModel {
+    return MealViewModel(mealFirebaseRepository)
+  }
 
-    @Provides
-    fun provideAuthentication(
-        @ApplicationContext context: Context,
-        user: User
-    ): AuthenticationCloud {
-        return AuthenticationCloud(context, user)
-    }
+  @Provides
+  fun provideAuthentication(@ApplicationContext context: Context, user: User): AuthenticationCloud {
+    return AuthenticationCloud(context, user)
+  }
 }
