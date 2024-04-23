@@ -17,6 +17,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.github.se.polyfit.model.meal.MealTag
+import com.github.se.polyfit.ui.components.MAX_TAGS
 import com.github.se.polyfit.ui.components.MealTagList
 import com.github.se.polyfit.ui.components.dialog.MealTagDialog
 import com.github.se.polyfit.ui.theme.PurpleGrey40
@@ -51,6 +52,11 @@ fun MealTagSelector(
         style = MaterialTheme.typography.titleLarge,
         color = PurpleGrey40,
         modifier = Modifier.padding(16.dp, 0.dp).testTag("Title"))
+    Text(
+        text = "(max ${MAX_TAGS})",
+        style = MaterialTheme.typography.titleSmall,
+        color = PurpleGrey40,
+        modifier = Modifier.padding(16.dp, 0.dp).testTag("MaxTags"))
 
     Box(
         modifier = Modifier.fillMaxWidth().testTag("MealTagBox"),

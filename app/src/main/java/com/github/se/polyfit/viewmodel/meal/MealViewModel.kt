@@ -6,6 +6,9 @@ import androidx.lifecycle.ViewModel
 import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
+import com.github.se.polyfit.model.meal.MealOccasion
+import com.github.se.polyfit.model.meal.MealTag
+import java.time.LocalDate
 
 class MealViewModel(
     private val userId: String,
@@ -46,6 +49,14 @@ class MealViewModel(
     _isComplete.value = _meal.value?.isComplete() ?: false
   }
 
+  fun setMealCreatedAt(createdAt: LocalDate) {
+    _meal.value = _meal.value?.copy(createdAt = createdAt)
+  }
+
+  fun setMealOccasion(occasion: MealOccasion) {
+    _meal.value = _meal.value?.copy(occasion = occasion)
+  }
+
   fun setMeal() {
     if (_meal.value == null) {
       throw IllegalStateException("Meal is null")
@@ -83,5 +94,13 @@ class MealViewModel(
       _meal.value = updatedMeal
     }
     _isComplete.value = _meal.value?.isComplete() ?: false
+  }
+
+  fun addTag(tag: MealTag) {
+    _meal.value!!.tags.add(tag)
+  }
+
+  fun removeTag(tag: MealTag) {
+    _meal.value!!.tags.remove(tag)
   }
 }
