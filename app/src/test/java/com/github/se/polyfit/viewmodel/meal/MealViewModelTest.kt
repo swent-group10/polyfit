@@ -24,7 +24,7 @@ import org.junit.Rule
 import org.junit.Test
 
 class MealViewModelTest {
-  @get:Rule val rule = InstantTaskExecutorRule()
+  @Rule @JvmField val rule = InstantTaskExecutorRule()
 
   @RelaxedMockK private lateinit var mealRepo: MealFirebaseRepository
 
@@ -152,5 +152,23 @@ class MealViewModelTest {
     assertFailsWith<Exception> { viewModel.setMeal() }
   }
 
-  @Test fun `test null argument exception for empty meal`() {}
+  @Test
+  fun `firebase fails when trying to store meal`() {
+    //        coEvery { mealRepo.storeMeal(any()) } returns throw Exception("Error storing meal")
+    val initialMeal =
+        Meal(
+            name = "Meal Name",
+            mealID = 123,
+            nutritionalInformation =
+                NutritionalInformation(mutableListOf(Nutrient("fat", 10.2, MeasurementUnit.UNIT))),
+            occasion = MealOccasion.BREAKFAST,
+            firebaseId = "firebase123",
+            ingredients = mutableListOf(Ingredient.default()))
+
+    viewModel.setMealData(initialMeal)
+
+    every { mealRepo.storeMeal(any()) } throws Exception("Error storing meal")
+
+    assertFailsWith<Exception> { viewModel.setMeal() }
+  }
 }

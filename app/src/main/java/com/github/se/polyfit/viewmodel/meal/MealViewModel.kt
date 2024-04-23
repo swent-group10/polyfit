@@ -1,6 +1,5 @@
 package com.github.se.polyfit.viewmodel.meal
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -35,15 +34,15 @@ class MealViewModel @Inject constructor(private val mealRepo: MealFirebaseReposi
       throw Exception("Meal is incomplete")
     }
 
-    try {
-      mealRepo.storeMeal(_meal.value!!).continueWith {
-        if (it.isSuccessful && _meal.value != null) {
-          _meal.value!!.firebaseId = it.result.toString()
-        }
+    //    try {
+    mealRepo.storeMeal(_meal.value!!).continueWith {
+      if (it.isSuccessful && _meal.value != null) {
+        _meal.value!!.firebaseId = it.result.toString()
       }
-    } catch (e: Exception) {
-      Log.e("Error storing meal", e.message.toString())
-      throw Exception("Error storing meal : ${e.message} ")
+      //      }
+      //    } catch (e: Exception) {
+      //      Log.e("Error storing meal", e.message.toString())
+      //      throw Exception("Error storing meal : ${e.message} ")
     }
   }
 

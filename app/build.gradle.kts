@@ -202,6 +202,7 @@ android {
         testImplementation("org.robolectric:robolectric:4.8")
         testImplementation("android.arch.persistence.room:testing:1.1.1")
         testImplementation("org.mockito:mockito-core:5.11.0")
+        testImplementation("androidx.arch.core:core-testing:2.2.0")
 
         // Debug
         debugImplementation("androidx.compose.ui:ui-tooling")
