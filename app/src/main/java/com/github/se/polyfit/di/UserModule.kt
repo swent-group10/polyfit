@@ -23,7 +23,10 @@ object UserModule {
   @Provides
   @Singleton
   fun providesUser(): User {
-    return User(id = "test")
+    // this is just a safegaured, the user should be signed in before this is called
+    // if for some reason the user is not signed in, without this, it could cause and error
+    // firestoredatabase needs a user id to be initialized
+    return User(id = "testUserID")
   }
 
   @Provides
@@ -34,8 +37,8 @@ object UserModule {
 
   @Provides
   @Singleton
-  fun providesMealViewModel(mealRepo: MealRepository): MealViewModel {
-    return MealViewModel(mealRepo)
+  fun providesMealViewModel(mealFirebaseRepository: MealFirebaseRepository): MealViewModel {
+    return MealViewModel(mealFirebaseRepository)
   }
 
   @Provides

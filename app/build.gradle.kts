@@ -148,7 +148,8 @@ android {
         implementation("org.json:json:20210307")
         implementation("com.google.code.gson:gson:2.10.1")
         implementation("com.squareup.okhttp3:okhttp:4.12.0")
-        implementation("androidx.test:core-ktx:1.5.0")
+        implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+        implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
 
 
         // Kapt
@@ -201,6 +202,7 @@ android {
         testImplementation("org.robolectric:robolectric:4.8")
         testImplementation("android.arch.persistence.room:testing:1.1.1")
         testImplementation("org.mockito:mockito-core:5.11.0")
+        testImplementation("androidx.arch.core:core-testing:2.2.0")
 
         // Debug
         debugImplementation("androidx.compose.ui:ui-tooling")

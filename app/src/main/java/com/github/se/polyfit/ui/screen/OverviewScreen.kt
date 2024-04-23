@@ -62,6 +62,7 @@ import com.github.se.polyfit.ui.components.showToastMessage
 import com.github.se.polyfit.ui.navigation.Route
 import com.github.se.polyfit.ui.utils.OverviewTags
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
+import kotlinx.coroutines.runBlocking
 
 data class Meal(val name: String, val calories: Int)
 
@@ -209,6 +210,7 @@ fun OverviewScreen(
         imageBitmap = bitmap
 
         // observe the live data and log the result on changes
+        runBlocking {}
         SpoonacularApiCaller().getMealsFromImage(imageBitmap!!).observeForever {
           mealViewModel.setMealData(it)
           navController.navigate(Route.AddMeal)
