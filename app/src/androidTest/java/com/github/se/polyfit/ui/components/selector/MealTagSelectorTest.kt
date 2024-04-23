@@ -7,6 +7,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.model.meal.MealTag
 import com.github.se.polyfit.model.meal.MealTagColor
+import com.github.se.polyfit.ui.components.MAX_TAGS
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import junit.framework.TestCase
 import kotlin.test.Test
@@ -32,6 +33,11 @@ class MealTagSelectorTest : TestCase() {
       mealTagSelectorTitle {
         assertIsDisplayed()
         assertTextEquals("Special Tags")
+      }
+
+      maxTagsSubTitle {
+        assertIsDisplayed()
+        assertTextEquals("(max $MAX_TAGS)")
       }
 
       mealTagItem { assertDoesNotExist() }
@@ -201,6 +207,22 @@ class MealTagSelectorTest : TestCase() {
       removeMealTagButton { performClick() }
 
       mealTagItem { assertDoesNotExist() }
+    }
+  }
+
+  @Test
+  fun removeAddTagAfterMaxTags() {
+    val mealTags =
+        mutableListOf(
+            MealTag("Dairy Free", MealTagColor.BLUE),
+            MealTag("Gluten Free", MealTagColor.GREEN),
+            MealTag("Vegan", MealTagColor.PURPLE),
+            MealTag("Vegetarian", MealTagColor.ORANGE),
+            MealTag("Keto", MealTagColor.RED))
+    setContent(mealTags)
+
+    ComposeScreen.onComposeScreen<MealTagSelectorScreen>(composeTestRule) {
+      addTag { assertDoesNotExist() }
     }
   }
 }

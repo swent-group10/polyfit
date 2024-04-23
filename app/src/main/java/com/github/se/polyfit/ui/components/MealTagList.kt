@@ -23,6 +23,8 @@ import com.github.se.polyfit.model.meal.MealTag
 import com.github.se.polyfit.ui.theme.PurpleGrey40
 import com.github.se.polyfit.ui.theme.SecondaryGrey
 
+const val MAX_TAGS = 5
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun MealTagList(mealTags: MutableList<MealTag>, addNewTag: () -> Unit, editTag: (MealTag) -> Unit) {
@@ -48,17 +50,19 @@ fun MealTagList(mealTags: MutableList<MealTag>, addNewTag: () -> Unit, editTag: 
                 modifier = Modifier.padding(6.dp, 2.dp))
           }
         }
-        Surface(
-            color = SecondaryGrey,
-            contentColor = Color.White,
-            shape = shape,
-            modifier =
-                Modifier.padding(2.dp, 4.dp).clickable(onClick = addNewTag).testTag("AddTag"),
-        ) {
-          Icon(
-              imageVector = Icons.Default.Add,
-              contentDescription = "Add Tag",
-              modifier = Modifier.height(24.dp))
+        if (mealTags.size < MAX_TAGS) {
+          Surface(
+              color = SecondaryGrey,
+              contentColor = Color.White,
+              shape = shape,
+              modifier =
+                  Modifier.padding(2.dp, 4.dp).clickable(onClick = addNewTag).testTag("AddTag"),
+          ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Add Tag",
+                modifier = Modifier.height(24.dp))
+          }
         }
       }
 }
