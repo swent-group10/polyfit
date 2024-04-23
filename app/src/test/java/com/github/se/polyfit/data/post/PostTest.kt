@@ -139,7 +139,7 @@ class PostTest {
   @Test
   fun `test default location`() {
     val location = Location.default()
-    val expectedLocation = Location(0.0, 0.0, 0.0, "default")
+    val expectedLocation = Location(0.0, 0.0, 0.0, "EPFL")
     assertEquals(expectedLocation, location)
   }
 }
