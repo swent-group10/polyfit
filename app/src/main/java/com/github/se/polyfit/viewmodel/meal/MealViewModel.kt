@@ -1,10 +1,12 @@
 package com.github.se.polyfit.viewmodel.meal
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
-import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
+import androidx.lifecycle.viewModelScope
+import com.github.se.polyfit.data.repository.MealRepository
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
@@ -15,8 +17,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class MealViewModel @Inject constructor(private val mealRepo: MealFirebaseRepository) :
-    ViewModel() {
+class MealViewModel @Inject constructor(private val mealRepo: MealRepository) : ViewModel() {
 
   private val _meal: MutableLiveData<Meal> = MutableLiveData(Meal.default())
   val meal: LiveData<Meal> = _meal // Expose _meal as an immutable LiveData
@@ -27,7 +28,6 @@ class MealViewModel @Inject constructor(private val mealRepo: MealFirebaseReposi
 
   fun setMealData(meal: Meal) {
     _meal.value = meal
-    _isComplete.value = meal.isComplete()
   }
 
   /** Allows for setting individual meal data fields instead of setting the whole meal */
@@ -52,12 +52,6 @@ class MealViewModel @Inject constructor(private val mealRepo: MealFirebaseReposi
             ingredients,
             firebaseID,
             createdAt)
-
-    _isComplete.value = _meal.value?.isComplete() ?: false
-  }
-
-  fun setMealName(name: String) {
-    _meal.value!!.name = name
   }
 
   /** Store the meal in the meal repository */
@@ -66,15 +60,13 @@ class MealViewModel @Inject constructor(private val mealRepo: MealFirebaseReposi
       throw Exception("Meal is incomplete")
     }
 
-    //    try {
-    mealRepo.storeMeal(_meal.value!!).continueWith {
-      if (it.isSuccessful && _meal.value != null) {
-        _meal.value!!.firebaseId = it.result.toString()
+    viewModelScope.launch {
+      try {
+        mealRepo.storeMeal(_meal.value!!)
+      } catch (e: Exception) {
+        Log.e("Error storing meal", e.message.toString())
+        throw Exception("Error storing meal : ${e.message} ")
       }
-      //      }
-      //    } catch (e: Exception) {
-      //      Log.e("Error storing meal", e.message.toString())
-      //      throw Exception("Error storing meal : ${e.message} ")
     }
   }
 
@@ -101,6 +93,5 @@ class MealViewModel @Inject constructor(private val mealRepo: MealFirebaseReposi
 
   fun clearMeal() {
     _meal.value = Meal.default()
-    _isComplete.value = false
   }
 }

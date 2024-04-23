@@ -37,8 +37,8 @@ object UserModule {
 
   @Provides
   @Singleton
-  fun providesMealViewModel(mealFirebaseRepository: MealFirebaseRepository): MealViewModel {
-    return MealViewModel(mealFirebaseRepository)
+  fun providesMealViewModel(mealRepo: MealRepository): MealViewModel {
+    return MealViewModel(mealRepo)
   }
 
   @Provides

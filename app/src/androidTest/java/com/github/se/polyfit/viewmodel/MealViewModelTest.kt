@@ -1,7 +1,6 @@
 package com.github.se.polyfit.viewmodel
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.MutableLiveData
 import com.github.se.polyfit.data.local.dao.MealDao
 import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
 import com.github.se.polyfit.data.repository.MealRepository
@@ -50,7 +49,7 @@ class MealViewModelTest {
 
     viewModel = MealViewModel(mealRepo)
     viewModel.setMealData(meal)
-    viewModel.setFirebaseID("firebase123")
+    viewModel.setMealData(firebaseID = "firebase123")
   }
 
   @After
@@ -66,7 +65,7 @@ class MealViewModelTest {
 
   @Test
   fun testSetMealName_updatesMealName() {
-    viewModel.setMealName("New Name")
+    viewModel.setMealData(name = "New Name")
     assert(viewModel.meal.value?.name == "New Name")
   }
 
@@ -189,36 +188,5 @@ class MealViewModelTest {
 
     viewModel.setMealData()
     assert(viewModel.meal.value == meal)
-  }
-
-  @Test
-  fun testSetNewMealObserver() {
-    val newMeal =
-        Meal(
-            name = "New Meal",
-            mealID = 123,
-            nutritionalInformation =
-                NutritionalInformation(
-                    mutableListOf(
-                        Nutrient(
-                            nutrientType = "calories",
-                            amount = 100.0,
-                            unit = MeasurementUnit.CAL))),
-            ingredients =
-                mutableListOf(
-                    Ingredient(
-                        name = "Tomato",
-                        id = 1,
-                        amount = 100.0,
-                        unit = MeasurementUnit.G,
-                        nutritionalInformation =
-                            NutritionalInformation(
-                                mutableListOf(Nutrient("calories", 0.0, MeasurementUnit.CAL))),
-                    )),
-            occasion = MealOccasion.BREAKFAST)
-
-    viewModel.setNewMealObserver(MutableLiveData(newMeal))
-
-    assert(viewModel.meal.value == newMeal)
   }
 }

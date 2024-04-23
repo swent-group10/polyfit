@@ -44,7 +44,7 @@ fun NutritionalInformation(mealViewModel: MealViewModel) {
   val calories = nutritionalInformation.getNutrient("calories")
 
   LazyColumn(modifier = Modifier.padding(16.dp, 0.dp).testTag("NutritionalInformation")) {
-    item { MealName(mealName = meal.name, onNameChange = { mealViewModel.setMealName(it) }) }
+    item { MealName(mealName = meal.name, onNameChange = { mealViewModel.setMealData(name = it) }) }
 
     // At the very least, a meal should always have calories
     if (calories == null) {
