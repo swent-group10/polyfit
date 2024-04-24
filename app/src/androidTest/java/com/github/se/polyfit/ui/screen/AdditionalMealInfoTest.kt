@@ -2,7 +2,6 @@ package com.github.se.polyfit.ui.screen
 
 import android.util.Log
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.lifecycle.MutableLiveData
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
@@ -17,6 +16,7 @@ import io.mockk.junit4.MockKRule
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import io.mockk.verify
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.After
 import org.junit.Rule
 import org.junit.Test
@@ -34,8 +34,7 @@ class AdditionalMealInfoTest : TestCase() {
 
   fun setup(meal: Meal = Meal.default()) {
     mockkStatic(Log::class)
-    every { mockMealViewModel.meal } returns MutableLiveData(meal)
-
+    every { mockMealViewModel.meal } returns MutableStateFlow(meal)
     composeTestRule.setContent {
       AdditionalMealInfoScreen(mockMealViewModel, mockNav::goBack, mockNav::navigateToNutrition)
     }

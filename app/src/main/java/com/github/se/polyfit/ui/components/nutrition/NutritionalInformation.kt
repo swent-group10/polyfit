@@ -1,5 +1,6 @@
 package com.github.se.polyfit.ui.components.nutrition
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,6 +22,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,19 +34,23 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.ui.theme.PrimaryPurple
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
 
 @Composable
 fun NutritionalInformation(mealViewModel: MealViewModel) {
-  val meal = mealViewModel.meal.value!!
+  val meal by mealViewModel.meal.collectAsState(initial = Meal.default())
+  Log.d("NutritionalInformation", "Meal: $meal")
   val nutritionalInformation = meal.nutritionalInformation
   val nutrients = nutritionalInformation.nutrients
   val calories = nutritionalInformation.getNutrient("calories")
 
   LazyColumn(modifier = Modifier.padding(16.dp, 0.dp).testTag("NutritionalInformation")) {
-    item { MealName(mealName = meal.name, onNameChange = { mealViewModel.setMealName(it) }) }
+    item {
+      MealName(mealName = meal.name, onNameChange = { mealViewModel.updateMealData(name = it) })
+    }
 
     // At the very least, a meal should always have calories
     if (calories == null) {

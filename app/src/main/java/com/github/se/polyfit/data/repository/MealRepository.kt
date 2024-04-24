@@ -2,6 +2,7 @@ package com.github.se.polyfit.data.repository
 
 import android.content.Context
 import android.net.ConnectivityManager
+import android.util.Log
 import com.github.se.polyfit.data.local.dao.MealDao
 import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
 import com.github.se.polyfit.model.ingredient.Ingredient
@@ -16,8 +17,8 @@ import kotlinx.coroutines.withContext
 class MealRepository(
     private val context: Context,
     private val mealFirebaseRepository: MealFirebaseRepository,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.Default,
     private val mealDao: MealDao,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.Default,
     private val checkConnectivity: ConnectivityChecker = ConnectivityChecker(context)
 ) {
   private var isDataOutdated = false
@@ -29,23 +30,30 @@ class MealRepository(
    * @return the DocumentReference of the stored meal returns null if not connected to internet
    */
   suspend fun storeMeal(meal: Meal): DocumentReference? {
+    Log.d("MealRepository", "Storing meal: $meal")
     return withContext(dispatcher) {
-      if (checkConnectivity.checkConnection()) {
-        if (isDataOutdated) {
-          updateFirebase()
-          isDataOutdated = false
-          mealDao.insert(meal)
-          return@withContext mealFirebaseRepository.storeMeal(meal).await()
-        } else {
+      try {
 
-          val documentReference = mealFirebaseRepository.storeMeal(meal).await()
+        if (checkConnectivity.checkConnection()) {
+          if (isDataOutdated) {
+            updateFirebase()
+            isDataOutdated = false
+            mealDao.insert(meal)
+            return@withContext mealFirebaseRepository.storeMeal(meal).await()
+          } else {
+
+            val documentReference = mealFirebaseRepository.storeMeal(meal).await()
+            mealDao.insert(meal)
+            return@withContext documentReference
+          }
+        } else {
+          isDataOutdated = true
           mealDao.insert(meal)
-          return@withContext documentReference
+          return@withContext null
         }
-      } else {
-        isDataOutdated = true
-        mealDao.insert(meal)
-        return@withContext null
+      } catch (e: Exception) {
+        Log.e("MealRepository", "Failed to store meal: ${e.message}")
+        throw Exception("Failed to store meal: ${e.message}")
       }
     }
   }
@@ -64,7 +72,14 @@ class MealRepository(
         updateFirebase()
         isDataOutdated = false
       }
-      withContext(dispatcher) { mealFirebaseRepository.deleteMeal(firebaseID).await() }
+      withContext(dispatcher) {
+        try {
+          mealFirebaseRepository.deleteMeal(firebaseID).await()
+        } catch (e: Exception) {
+          Log.e("MealRepository", "Failed to delete meal: ${e.message}")
+          throw Exception("Failed to delete meal: ${e.message}")
+        }
+      }
     } else {
       isDataOutdated = true
     }
@@ -80,19 +95,25 @@ class MealRepository(
     withContext(dispatcher) {
       mealDao.getAllMeals().forEach {
         if (it != null) {
-          mealFirebaseRepository.storeMeal(it)
+          try {
+            mealFirebaseRepository.storeMeal(it)
+          } catch (e: Exception) {
+            Log.e("MealRepository", "Failed to store meal: ${e.message}")
+            throw Exception("Failed to store meal: ${e.message}")
+          }
         }
       }
     }
   }
-}
 
-class ConnectivityChecker(private val context: Context) {
-  fun checkConnection(): Boolean {
-    val connectivityManager =
-        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-    val currentNetwork = connectivityManager.activeNetwork
+  class ConnectivityChecker(private val context: Context) {
+    fun checkConnection(): Boolean {
+      val connectivityManager =
+          context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+      val currentNetwork = connectivityManager.activeNetwork
 
-    return currentNetwork != null
+      Log.d("ConnectivityChecker", "Current network: $currentNetwork")
+      return currentNetwork != null
+    }
   }
 }

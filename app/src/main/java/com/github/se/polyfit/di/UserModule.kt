@@ -1,7 +1,11 @@
 package com.github.se.polyfit.di
 
 import android.content.Context
+import androidx.room.Room
+import com.github.se.polyfit.data.local.dao.MealDao
+import com.github.se.polyfit.data.local.database.MealDatabase
 import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
+import com.github.se.polyfit.data.repository.MealRepository
 import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.ui.utils.AuthenticationCloud
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
@@ -33,8 +37,30 @@ object UserModule {
 
   @Provides
   @Singleton
-  fun providesMealViewModel(mealFirebaseRepository: MealFirebaseRepository): MealViewModel {
-    return MealViewModel(mealFirebaseRepository)
+  fun providesMealViewModel(mealRepo: MealRepository): MealViewModel {
+    return MealViewModel(mealRepo)
+  }
+
+  @Provides
+  @Singleton
+  fun providesLocalDatabase(@ApplicationContext context: Context): MealDatabase {
+    return Room.databaseBuilder(context, MealDatabase::class.java, "meal_database").build()
+  }
+
+  @Provides
+  @Singleton
+  fun providesMealDao(mealDatabase: MealDatabase): MealDao {
+    return mealDatabase.mealDao()
+  }
+
+  @Provides
+  @Singleton
+  fun providesMealRepository(
+      @ApplicationContext context: Context,
+      mealFirebaseRepository: MealFirebaseRepository,
+      mealDao: MealDao,
+  ): MealRepository {
+    return MealRepository(context, mealFirebaseRepository, mealDao)
   }
 
   @Provides
