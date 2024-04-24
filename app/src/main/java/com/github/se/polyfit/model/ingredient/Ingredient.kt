@@ -56,9 +56,6 @@ data class Ingredient(
         throw IllegalArgumentException("Failed to deserialize Ingredient object", e)
       }
     }
-
-    fun default(): Ingredient {
-      return Ingredient("calories", 2, 123.4, MeasurementUnit.G)
-    }
+      return Ingredient("tomato", 2, 123.4, MeasurementUnit.G)
   }
 }

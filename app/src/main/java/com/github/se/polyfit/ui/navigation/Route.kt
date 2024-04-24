@@ -11,7 +11,7 @@ object Route {
   const val AddMeal = "AddMeal"
 
   // Add Meal Routes
-
+  const val AdditionalMealInfo = "AdditionalMealInfo"
   const val Ingredients = "Ingredients"
   const val Nutrition = "Nutrition"
 }

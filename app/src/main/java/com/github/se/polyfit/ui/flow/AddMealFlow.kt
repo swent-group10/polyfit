@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.navigation.Route
+import com.github.se.polyfit.ui.screen.AdditionalMealInfoScreen
 import com.github.se.polyfit.ui.screen.IngredientScreen
 import com.github.se.polyfit.ui.screen.NutritionScreen
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
@@ -27,6 +28,12 @@ fun AddMealFlow(
       IngredientScreen(
           mealViewModel = mealViewModel,
           navigateBack = { goBack() },
+          navigateForward = navigation::navigateToAdditionalMealInfo)
+    }
+    composable(Route.AdditionalMealInfo) {
+      AdditionalMealInfoScreen(
+          mealViewModel = mealViewModel,
+          navigateBack = { navigation.goBack() },
           navigateForward = navigation::navigateToNutrition)
     }
     composable(Route.Nutrition) {

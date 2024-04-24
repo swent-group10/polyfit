@@ -60,6 +60,14 @@ class MealViewModel @Inject constructor(private val mealRepo: MealRepository) : 
             createdAt)
   }
 
+  fun setMealCreatedAt(createdAt: LocalDate) {
+    _meal.value = _meal.value?.copy(createdAt = createdAt)
+  }
+
+  fun setMealOccasion(occasion: MealOccasion) {
+    _meal.value = _meal.value?.copy(occasion = occasion)
+  }
+
   fun setMeal() {
     if (!_meal.value.isComplete()) {
       throw Exception("Meal is incomplete")
