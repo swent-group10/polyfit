@@ -1,87 +1,109 @@
 package com.github.se.polyfit.viewmodel.meal
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
+import androidx.lifecycle.viewModelScope
+import com.github.se.polyfit.data.repository.MealRepository
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
+import com.github.se.polyfit.model.meal.MealOccasion
+import com.github.se.polyfit.model.meal.MealTag
+import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
+import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.LocalDate
+import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
-class MealViewModel(
-    private val userId: String,
-    firebaseID: String = "",
-    var initialMeal: Meal? = null,
-    private val mealRepo: MealFirebaseRepository = MealFirebaseRepository(userId)
-) : ViewModel() {
-  // after friday use hilt dependency injection to make code cleaner, for now i guess this is ok
-  private val _meal: MutableLiveData<Meal> = MutableLiveData(null)
-  val meal: LiveData<Meal> = _meal
+@HiltViewModel
+class MealViewModel @Inject constructor(private val mealRepo: MealRepository) : ViewModel() {
+  private val _meal = MutableStateFlow<Meal>(Meal.default())
+  val meal: StateFlow<Meal>
+    get() = _meal
 
-  // Todo: If find a way to import Transformations, can use that to prevent duplicating updates
-  private val _isComplete: MutableLiveData<Boolean> = MutableLiveData(false)
-  val isComplete: LiveData<Boolean> = _isComplete
+  private val _isComplete = MutableStateFlow<Boolean>(false)
+  val isComplete: StateFlow<Boolean>
+    get() = _isComplete
 
   init {
-    if (firebaseID.isNotEmpty()) {
-      mealRepo.getMeal(firebaseID).addOnCompleteListener {
-        if (it.isSuccessful) {
-          _meal.value = it.result
-          _isComplete.value = it.result?.isComplete() ?: false
-        }
+    viewModelScope.launch {
+      _meal.collect { meal ->
+        _isComplete.value = meal.isComplete()
+        Log.d("MealViewModel", "Meal is complete: ${_isComplete.value}")
       }
-    } else {
-      _meal.value = initialMeal?.copy() ?: Meal.default()
-      _isComplete.value = _meal.value?.isComplete() ?: false
     }
-
-    _meal.observeForever { initialMeal = it }
   }
 
   fun setMealData(meal: Meal) {
     _meal.value = meal
   }
 
-  fun setMealName(name: String) {
-    _meal.value!!.name = name
-    _isComplete.value = _meal.value?.isComplete() ?: false
+  fun updateMealData(
+      mealOccasion: MealOccasion = _meal.value.occasion,
+      name: String = _meal.value.name,
+      mealID: Long = _meal.value.mealID,
+      mealTemp: Double = _meal.value.mealTemp,
+      ingredients: MutableList<Ingredient> = _meal.value.ingredients,
+      nutritionalInformation: NutritionalInformation = _meal.value.nutritionalInformation,
+      firebaseID: String = _meal.value.firebaseId,
+      createdAt: LocalDate = _meal.value.createdAt
+  ) {
+    _meal.value =
+        Meal(
+            mealOccasion,
+            name,
+            mealID,
+            mealTemp,
+            nutritionalInformation,
+            ingredients,
+            firebaseID,
+            createdAt)
+  }
+
+  fun setMealCreatedAt(createdAt: LocalDate) {
+    _meal.value = _meal.value?.copy(createdAt = createdAt)!!
+  }
+
+  fun setMealOccasion(occasion: MealOccasion) {
+    _meal.value = _meal.value?.copy(occasion = occasion)!!
   }
 
   fun setMeal() {
-    if (_meal.value == null) {
-      throw IllegalStateException("Meal is null")
-    }
-
-    if (!_meal.value!!.isComplete()) {
+    if (!_meal.value.isComplete()) {
       throw Exception("Meal is incomplete")
     }
-
-    try {
-      mealRepo.storeMeal(_meal.value!!)
-    } catch (e: Exception) {
-      throw e
+    viewModelScope.launch {
+      try {
+        mealRepo.storeMeal(_meal.value)
+      } catch (e: Exception) {
+        Log.e("Error storing meal", e.message.toString())
+        throw Exception("Error storing meal : ${e.message}")
+      }
     }
   }
 
   fun addIngredient(ingredient: Ingredient) {
-    val currentMeal = _meal.value
-    if (currentMeal != null) {
-      val updatedMeal = currentMeal.copy()
-      updatedMeal.addIngredient(ingredient)
-      _meal.value = updatedMeal // Emit the new instance as the current state
-    }
-    _isComplete.value = _meal.value?.isComplete() ?: false
+    val updatedIngredients = _meal.value.ingredients.toMutableList().apply { add(ingredient) }
+    _meal.value = _meal.value.copy(ingredients = updatedIngredients)
   }
 
   fun removeIngredient(ingredient: Ingredient) {
-    val currentMeal = _meal.value
-    if (currentMeal != null) {
-      val updatedMeal =
-          currentMeal.copy(
-              ingredients = currentMeal.ingredients.toMutableList().apply { remove(ingredient) },
-              nutritionalInformation =
-                  currentMeal.nutritionalInformation.minus(ingredient.nutritionalInformation))
-      _meal.value = updatedMeal
-    }
-    _isComplete.value = _meal.value?.isComplete() ?: false
+    val updatedIngredients =
+        _meal.value.ingredients.toMutableList().apply {
+          remove(ingredient)
+          Log.d("MealViewModel", "Removed ingredient: $ingredient")
+        }
+    Log.d("MealViewModel", "Removed ingredient: $ingredient")
+
+    _meal.value = _meal.value.copy(ingredients = updatedIngredients)
+  }
+
+  fun addTag(tag: MealTag) {
+    _meal.value!!.tags.add(tag)
+  }
+
+  fun removeTag(tag: MealTag) {
+    _meal.value!!.tags.remove(tag)
   }
 }

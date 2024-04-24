@@ -26,7 +26,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class PrimaryPurpleButtonTest : TestCase() {
+class PrimaryButtonTest : TestCase() {
   @get:Rule val composeTestRule = createComposeRule()
 
   @get:Rule val mockkRule = MockKRule(this)
@@ -45,36 +45,36 @@ class PrimaryPurpleButtonTest : TestCase() {
 
   @Test
   fun defaultButton() {
-    composeTestRule.setContent { PrimaryPurpleButton(onClick = {}) }
+    composeTestRule.setContent { PrimaryButton(onClick = {}) }
     ComposeScreen.onComposeScreen<GradientBox>(composeTestRule) {
-      composeTestRule.onNodeWithTag("PrimaryPurpleButton").assertIsDisplayed()
-      composeTestRule.onNodeWithTag("PrimaryPurpleButton").onChild().assertDoesNotExist()
+      composeTestRule.onNodeWithTag("PrimaryButton").assertIsDisplayed()
+      composeTestRule.onNodeWithTag("PrimaryButton").onChild().assertDoesNotExist()
     }
   }
 
   @Test
   fun disabledButton() {
     composeTestRule.setContent {
-      PrimaryPurpleButton(onClick = {}, text = "Disabled Button", isEnabled = false)
+      PrimaryButton(onClick = {}, text = "Disabled Button", isEnabled = false)
     }
     ComposeScreen.onComposeScreen<GradientBox>(composeTestRule) {
-      composeTestRule.onNodeWithTag("PrimaryPurpleButton").assertIsDisplayed()
-      composeTestRule.onNodeWithTag("PrimaryPurpleButton").assertIsNotEnabled()
+      composeTestRule.onNodeWithTag("PrimaryButton").assertIsDisplayed()
+      composeTestRule.onNodeWithTag("PrimaryButton").assertIsNotEnabled()
     }
   }
 
   @Test
   fun customButton() {
     composeTestRule.setContent {
-      PrimaryPurpleButton(
+      PrimaryButton(
           onClick = { Log.v("Button", "Clicked") },
           text = "Hello World",
       )
     }
     ComposeScreen.onComposeScreen<GradientBox>(composeTestRule) {
-      composeTestRule.onNodeWithTag("PrimaryPurpleButton").assertIsDisplayed()
-      composeTestRule.onNodeWithTag("PrimaryPurpleButton").assertHasClickAction()
-      composeTestRule.onNodeWithTag("PrimaryPurpleButton").performClick()
+      composeTestRule.onNodeWithTag("PrimaryButton").assertIsDisplayed()
+      composeTestRule.onNodeWithTag("PrimaryButton").assertHasClickAction()
+      composeTestRule.onNodeWithTag("PrimaryButton").performClick()
       verify { Log.v("Button", "Clicked") }
       composeTestRule.onNodeWithText("Hello World").assertIsDisplayed()
     }

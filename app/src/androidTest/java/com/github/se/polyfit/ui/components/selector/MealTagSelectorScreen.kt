@@ -10,6 +10,7 @@ class MealTagSelectorScreen(semanticsProvider: SemanticsNodeInteractionsProvider
         viewBuilderAction = { hasTestTag("MealTagSelector") }) {
 
   val mealTagSelectorTitle: KNode = child { hasTestTag("Title") }
+  val maxTagsSubTitle: KNode = child { hasTestTag("MaxTags") }
   private val mealTagBox: KNode = child { hasTestTag("MealTagBox") }
   private val mealTagList: KNode = mealTagBox.child { hasTestTag("MealTagList") }
   val mealTagItem: KNode = mealTagList.child { hasTestTag("MealTag") }

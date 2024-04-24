@@ -2,7 +2,6 @@ import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.github.se.polyfit.data.local.dao.MealDao
 import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
-import com.github.se.polyfit.data.repository.ConnectivityChecker
 import com.github.se.polyfit.data.repository.MealRepository
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
@@ -24,7 +23,7 @@ class MealRepositoryTest {
   private lateinit var mealRepository: MealRepository
   private lateinit var mealFirebaseRepository: MealFirebaseRepository
   private lateinit var mealDao: MealDao
-  private lateinit var checkConnectivity: ConnectivityChecker
+  private lateinit var checkConnectivity: MealRepository.ConnectivityChecker
 
   @Before
   fun setup() {
