@@ -43,7 +43,7 @@ class MainActivity : ComponentActivity() {
       PolyfitTheme {
         val navController = rememberNavController()
         val navigation = Navigation(navController)
-        NavHost(navController = navController, startDestination = Route.AddMeal) {
+        NavHost(navController = navController, startDestination = Route.Graph) {
           globalNavigation(navController, mealViewModel)
           composable(Route.Graph) { FullGraphScreen() }
           composable(Route.Register) { LoginScreen(navigation::navigateToHome) }
