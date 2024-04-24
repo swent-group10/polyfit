@@ -13,13 +13,15 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.ui.components.scaffold.SimpleTopBar
 import com.github.se.polyfit.ui.components.selector.DateSelector
@@ -34,9 +36,9 @@ fun AdditionalMealInfoScreen(
     navigateBack: () -> Unit,
     navigateForward: () -> Unit
 ) {
-  val meal = mealViewModel.meal.observeAsState()
-  val occasion = meal.value?.occasion ?: MealOccasion.OTHER
-  val mealTags = meal.value?.tags ?: mutableListOf()
+  val meal by mealViewModel.meal.collectAsState(initial = Meal.default())
+  val occasion = meal.occasion
+  val mealTags = meal.tags
 
   // Date will default to today, and tags are optional
   val isComplete = occasion != MealOccasion.OTHER

@@ -153,13 +153,6 @@ class MealViewModelTest {
   }
 
   @Test
-  fun testClearMeal() {
-    viewModel.clearMeal()
-
-    assert(viewModel.meal.value == Meal.default())
-  }
-
-  @Test
   fun testSetMealData() {
     val meal =
         Meal(
