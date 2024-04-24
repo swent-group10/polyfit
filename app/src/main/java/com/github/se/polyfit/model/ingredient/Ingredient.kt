@@ -58,7 +58,7 @@ data class Ingredient(
     }
 
     fun default(): Ingredient {
-      return Ingredient("calories", 2, 123.4, MeasurementUnit.G)
+      return Ingredient("tomato", 2, 123.4, MeasurementUnit.G)
     }
   }
 }
