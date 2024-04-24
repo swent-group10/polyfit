@@ -3,7 +3,7 @@ package com.github.se.polyfit.ui.components.button
 import androidx.compose.ui.test.SemanticsNodeInteractionsProvider
 import io.github.kakaocup.compose.node.element.ComposeScreen
 
-class PrimaryPurpleButtonScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
-    ComposeScreen<PrimaryPurpleButtonScreen>(
+class PrimaryButtonScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
+    ComposeScreen<PrimaryButtonScreen>(
         semanticsProvider = semanticsProvider,
-        viewBuilderAction = { hasTestTag("PrimaryPurpleButton") }) {}
+        viewBuilderAction = { hasTestTag("PrimaryButton") }) {}

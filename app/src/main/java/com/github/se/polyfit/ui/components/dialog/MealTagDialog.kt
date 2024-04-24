@@ -33,7 +33,7 @@ import com.github.se.polyfit.model.meal.MealTag
 import com.github.se.polyfit.model.meal.MealTagColor
 import com.github.se.polyfit.ui.components.ColorTable
 import com.github.se.polyfit.ui.components.GradientBox
-import com.github.se.polyfit.ui.components.button.PrimaryPurpleButton
+import com.github.se.polyfit.ui.components.button.PrimaryButton
 import com.github.se.polyfit.ui.theme.PrimaryPink
 import com.github.se.polyfit.ui.theme.PrimaryPurple
 import com.github.se.polyfit.ui.theme.PurpleGrey40
@@ -91,7 +91,7 @@ private fun SaveTag(
     onSave: () -> Unit,
 ) {
   Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-    PrimaryPurpleButton(
+    PrimaryButton(
         text = "Save",
         isEnabled = name.isNotBlank() && color != MealTagColor.UNDEFINED,
         onClick = onSave,
