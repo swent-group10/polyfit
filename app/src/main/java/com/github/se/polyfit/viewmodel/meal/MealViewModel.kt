@@ -1,10 +1,7 @@
 package com.github.se.polyfit.viewmodel.meal
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.github.se.polyfit.data.repository.MealRepository
 import com.github.se.polyfit.model.ingredient.Ingredient
@@ -14,33 +11,42 @@ import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
 import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class MealViewModel @Inject constructor(private val mealRepo: MealRepository) : ViewModel() {
+  private val _meal = MutableStateFlow<Meal>(Meal.default())
+  val meal: StateFlow<Meal>
+    get() = _meal
 
-  private val _meal: MutableLiveData<Meal> = MutableLiveData(Meal.default())
-  val meal: LiveData<Meal> = _meal // Expose _meal as an immutable LiveData
+  private val _isComplete = MutableStateFlow<Boolean>(false)
+  val isComplete: StateFlow<Boolean>
+    get() = _isComplete
 
-  private val _isComplete: LiveData<Boolean> = _meal.map { it?.isComplete() ?: false }
-
-  val isComplete: LiveData<Boolean> = _isComplete
+  init {
+    viewModelScope.launch {
+      _meal.collect { meal ->
+        _isComplete.value = meal.isComplete()
+        Log.d("MealViewModel", "Meal is complete: ${_isComplete.value}")
+      }
+    }
+  }
 
   fun setMealData(meal: Meal) {
     _meal.value = meal
   }
 
-  /** Allows for setting individual meal data fields instead of setting the whole meal */
-  fun setMealData(
-      mealOccasion: MealOccasion = _meal.value?.occasion ?: Meal.default().occasion,
-      name: String = _meal.value?.name ?: Meal.default().name,
-      mealID: Long = _meal.value?.mealID ?: Meal.default().mealID,
-      mealTemp: Double = _meal.value?.mealTemp ?: Meal.default().mealTemp,
-      ingredients: MutableList<Ingredient> = _meal.value?.ingredients ?: Meal.default().ingredients,
-      nutritionalInformation: NutritionalInformation =
-          _meal.value?.nutritionalInformation ?: Meal.default().nutritionalInformation,
-      firebaseID: String = _meal.value?.firebaseId ?: Meal.default().firebaseId,
-      createdAt: LocalDate = _meal.value?.createdAt ?: Meal.default().createdAt
+  fun updateMealData(
+      mealOccasion: MealOccasion = _meal.value.occasion,
+      name: String = _meal.value.name,
+      mealID: Long = _meal.value.mealID,
+      mealTemp: Double = _meal.value.mealTemp,
+      ingredients: MutableList<Ingredient> = _meal.value.ingredients,
+      nutritionalInformation: NutritionalInformation = _meal.value.nutritionalInformation,
+      firebaseID: String = _meal.value.firebaseId,
+      createdAt: LocalDate = _meal.value.createdAt
   ) {
     _meal.value =
         Meal(
@@ -54,41 +60,34 @@ class MealViewModel @Inject constructor(private val mealRepo: MealRepository) : 
             createdAt)
   }
 
-  /** Store the meal in the meal repository */
   fun setMeal() {
-    if (!_meal.value!!.isComplete()) {
+    if (!_meal.value.isComplete()) {
       throw Exception("Meal is incomplete")
     }
-
     viewModelScope.launch {
       try {
-        mealRepo.storeMeal(_meal.value!!)
+        mealRepo.storeMeal(_meal.value)
       } catch (e: Exception) {
         Log.e("Error storing meal", e.message.toString())
-        throw Exception("Error storing meal : ${e.message} ")
+        throw Exception("Error storing meal : ${e.message}")
       }
     }
   }
 
   fun addIngredient(ingredient: Ingredient) {
-    val currentMeal = _meal.value
-    if (currentMeal != null) {
-      val updatedMeal = currentMeal.copy()
-      updatedMeal.addIngredient(ingredient)
-      _meal.value = updatedMeal // Emit the new instance as the current state
-    }
+    val updatedIngredients = _meal.value.ingredients.toMutableList().apply { add(ingredient) }
+    _meal.value = _meal.value.copy(ingredients = updatedIngredients)
   }
 
   fun removeIngredient(ingredient: Ingredient) {
-    val currentMeal = _meal.value
-    if (currentMeal != null) {
-      val updatedMeal =
-          currentMeal.copy(
-              ingredients = currentMeal.ingredients.toMutableList().apply { remove(ingredient) },
-              nutritionalInformation =
-                  currentMeal.nutritionalInformation.minus(ingredient.nutritionalInformation))
-      _meal.value = updatedMeal
-    }
+    val updatedIngredients =
+        _meal.value.ingredients.toMutableList().apply {
+          remove(ingredient)
+          Log.d("MealViewModel", "Removed ingredient: $ingredient")
+        }
+    Log.d("MealViewModel", "Removed ingredient: $ingredient")
+
+    _meal.value = _meal.value.copy(ingredients = updatedIngredients)
   }
 
   fun clearMeal() {

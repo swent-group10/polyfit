@@ -213,6 +213,7 @@ fun OverviewScreen(
         runBlocking {}
         SpoonacularApiCaller().getMealsFromImage(imageBitmap!!).observeForever {
           mealViewModel.setMealData(it)
+          mealViewModel.setMeal() // ToDo fix this
           navController.navigate(Route.AddMeal)
         }
       }

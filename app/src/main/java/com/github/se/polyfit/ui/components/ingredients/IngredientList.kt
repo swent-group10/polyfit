@@ -22,6 +22,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -30,10 +31,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.github.se.polyfit.model.ingredient.Ingredient
+import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.ui.components.GradientBox
 import com.github.se.polyfit.ui.components.button.GradientButton
 import com.github.se.polyfit.ui.theme.DeleteIconRed
@@ -47,8 +48,7 @@ fun IngredientList(
     it: PaddingValues,
     mealViewModel: MealViewModel,
 ) {
-  var ingredients = remember { mealViewModel.meal.value?.ingredients ?: emptyList() }
-
+  val ingredients = mealViewModel.meal.collectAsState(initial = Meal.default()).value.ingredients
   // TODO: Implement potential ingredients
   val potentialIngredients = listOf<Ingredient>()
 
@@ -58,9 +58,6 @@ fun IngredientList(
     // equivalent to min(3, potentialIngredients.size)
     mutableIntStateOf(initialSuggestions.coerceAtMost(potentialIngredients.size))
   }
-
-  val lifecycleOwner = LocalLifecycleOwner.current
-  mealViewModel.meal.observe(lifecycleOwner) { ingredients = it.ingredients }
 
   Column(
       modifier =

@@ -30,6 +30,7 @@ class MealRepository(
    * @return the DocumentReference of the stored meal returns null if not connected to internet
    */
   suspend fun storeMeal(meal: Meal): DocumentReference? {
+    Log.d("MealRepository", "Storing meal: $meal")
     return withContext(dispatcher) {
       try {
 
@@ -111,6 +112,7 @@ class MealRepository(
           context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
       val currentNetwork = connectivityManager.activeNetwork
 
+      Log.d("ConnectivityChecker", "Current network: $currentNetwork")
       return currentNetwork != null
     }
   }

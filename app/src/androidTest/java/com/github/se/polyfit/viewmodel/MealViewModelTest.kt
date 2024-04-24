@@ -49,7 +49,7 @@ class MealViewModelTest {
 
     viewModel = MealViewModel(mealRepo)
     viewModel.setMealData(meal)
-    viewModel.setMealData(firebaseID = "firebase123")
+    viewModel.updateMealData(firebaseID = "firebase123")
   }
 
   @After
@@ -65,7 +65,7 @@ class MealViewModelTest {
 
   @Test
   fun testSetMealName_updatesMealName() {
-    viewModel.setMealData(name = "New Name")
+    viewModel.updateMealData(name = "New Name")
     assert(viewModel.meal.value?.name == "New Name")
   }
 
@@ -186,7 +186,7 @@ class MealViewModelTest {
     viewModel.setMealData(meal)
     assert(viewModel.meal.value == meal)
 
-    viewModel.setMealData()
+    viewModel.updateMealData()
     assert(viewModel.meal.value == meal)
   }
 }

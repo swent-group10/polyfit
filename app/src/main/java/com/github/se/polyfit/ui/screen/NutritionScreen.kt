@@ -21,7 +21,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,13 +40,15 @@ fun NutritionScreen(
     navigateBack: () -> Unit,
     navigateForward: () -> Unit
 ) {
-  val isComplete = mealViewModel.isComplete.observeAsState()
+  val isComplete by mealViewModel.isComplete.collectAsState()
+  Log.d("NutritionalInformation", "isComplete: $isComplete")
+
   Scaffold(
       topBar = { TopBar(navigateBack = navigateBack) },
       bottomBar = {
         BottomBar(
             setMeal = mealViewModel::setMeal,
-            isComplete = isComplete.value ?: false,
+            isComplete = isComplete ?: false,
             navigateForward = navigateForward)
       }) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) { NutritionalInformation(mealViewModel) }
