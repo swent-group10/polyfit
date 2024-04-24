@@ -16,6 +16,7 @@ import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.kakaocup.compose.node.element.ComposeScreen
+import io.mockk.mockk
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -83,7 +84,7 @@ class NutritionalInformationTest : TestCase() {
 
   private fun setup(meal: Meal) {
     composeTestRule.setContent {
-      NutritionalInformation(mealViewModel = MealViewModel("testUserID", initialMeal = meal))
+      NutritionalInformation(mealViewModel = MealViewModel(mockk()).apply { setMealData(meal) })
     }
   }
 

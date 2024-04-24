@@ -1,6 +1,7 @@
 package com.github.se.polyfit.ui.flow
 
 import androidx.compose.runtime.Composable
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -16,7 +17,7 @@ fun AddMealFlow(
     goBack: () -> Unit,
     navigateToHome: () -> Unit,
     userID: String,
-    mealViewModel: MealViewModel = MealViewModel(userID)
+    mealViewModel: MealViewModel = hiltViewModel<MealViewModel>()
 ) {
 
   val navController = rememberNavController()
