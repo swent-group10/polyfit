@@ -36,7 +36,7 @@ import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import com.github.se.polyfit.ui.components.GradientBox
-import com.github.se.polyfit.ui.components.button.PrimaryPurpleButton
+import com.github.se.polyfit.ui.components.button.PrimaryButton
 import com.github.se.polyfit.ui.components.ingredients.IngredientNutritionEditFields
 import com.github.se.polyfit.ui.theme.PrimaryPink
 import com.github.se.polyfit.ui.theme.SecondaryGrey
@@ -90,7 +90,7 @@ fun AddIngredientDialog(
 
             IngredientNutritionEditFields(nutritionFields = nutritionFields)
 
-            PrimaryPurpleButton(
+            PrimaryButton(
                 onClick = {
                   onAddIngredient(
                       Ingredient(

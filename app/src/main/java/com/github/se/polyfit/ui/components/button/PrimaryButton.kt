@@ -14,18 +14,21 @@ import androidx.compose.ui.unit.sp
 import com.github.se.polyfit.ui.theme.PrimaryPurple
 
 @Composable
-fun PrimaryPurpleButton(
+fun PrimaryButton(
     onClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     text: String = "",
-    isEnabled: Boolean = true
+    fontSize: Int = 20,
+    isEnabled: Boolean = true,
+    color: Color = PrimaryPurple,
+    buttonShape: RoundedCornerShape = RoundedCornerShape(50.dp)
 ) {
   Button(
       onClick = onClick,
       enabled = isEnabled,
-      modifier = modifier.fillMaxWidth(0.5f).testTag("PrimaryPurpleButton"),
-      shape = RoundedCornerShape(50.dp),
-      colors = ButtonDefaults.buttonColors(containerColor = PrimaryPurple)) {
-        Text(text, color = Color.White, fontSize = 20.sp)
+      modifier = modifier.fillMaxWidth(0.5f).testTag("PrimaryButton"),
+      shape = buttonShape,
+      colors = ButtonDefaults.buttonColors(containerColor = color)) {
+        Text(text, color = Color.White, fontSize = fontSize.sp)
       }
 }
