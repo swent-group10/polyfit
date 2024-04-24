@@ -49,8 +49,7 @@ class AddIngredientPopupBox(semanticsProvider: SemanticsNodeInteractionsProvider
 
   val addIngredientContent: KNode =
       addIngredientDialog.child { hasTestTag("AddIngredientContentContainer") }
-  val finishAddIngredientButton: KNode =
-      addIngredientContent.child { hasTestTag("PrimaryPurpleButton") }
+  val finishAddIngredientButton: KNode = addIngredientContent.child { hasTestTag("PrimaryButton") }
 }
 
 class IngredientsList(semanticsProvider: SemanticsNodeInteractionsProvider) :

@@ -8,10 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -19,13 +16,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.github.se.polyfit.model.meal.MealOccasion
+import com.github.se.polyfit.ui.components.button.PrimaryButton
 import com.github.se.polyfit.ui.components.scaffold.SimpleTopBar
 import com.github.se.polyfit.ui.components.selector.DateSelector
 import com.github.se.polyfit.ui.components.selector.MealOccasionSelector
 import com.github.se.polyfit.ui.components.selector.MealTagSelector
-import com.github.se.polyfit.ui.theme.PrimaryPurple
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
 
 @Composable
@@ -64,16 +60,26 @@ private fun BottomBar(isComplete: Boolean, navigateForward: () -> Unit) {
         Box(
             modifier = Modifier.fillMaxWidth().testTag("DoneBox"),
             contentAlignment = Alignment.Center) {
-              Button(
+              //              Button(
+              //                  onClick = {
+              //                    navigateForward()
+              //                    Log.v("Additional Meal Information", "Done")
+              //                  },
+              //                  enabled = isComplete,
+              //                  modifier = Modifier.width(200.dp).testTag("DoneButton"),
+              //                  colors = ButtonDefaults.buttonColors(containerColor =
+              // PrimaryPurple)) {
+              //                    Text(text = "Done", fontSize = 24.sp)
+              //                  }
+              PrimaryButton(
                   onClick = {
                     navigateForward()
                     Log.v("Additional Meal Information", "Done")
                   },
-                  enabled = isComplete,
                   modifier = Modifier.width(200.dp).testTag("DoneButton"),
-                  colors = ButtonDefaults.buttonColors(containerColor = PrimaryPurple)) {
-                    Text(text = "Done", fontSize = 24.sp)
-                  }
+                  text = "Done",
+                  fontSize = 24,
+                  isEnabled = isComplete)
             }
       }
 }

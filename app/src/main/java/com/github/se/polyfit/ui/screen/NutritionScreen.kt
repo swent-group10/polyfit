@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import com.github.se.polyfit.ui.components.button.PrimaryButton
 import com.github.se.polyfit.ui.components.nutrition.NutritionalInformation
 import com.github.se.polyfit.ui.theme.PrimaryPink
 import com.github.se.polyfit.ui.theme.PrimaryPurple
@@ -85,31 +84,25 @@ private fun BottomBar(setMeal: () -> Unit, isComplete: Boolean, navigateForward:
         Column(
             modifier = Modifier.fillMaxWidth().testTag("ButtonColumn"),
             horizontalAlignment = Alignment.CenterHorizontally) {
-              Button(
+              PrimaryButton(
                   onClick = { Log.v("Add Recipe", "Clicked") },
-                  colors =
-                      ButtonDefaults.buttonColors(
-                          containerColor = PrimaryPink,
-                          contentColor = MaterialTheme.colorScheme.onPrimary),
                   modifier = Modifier.width(250.dp).testTag("AddRecipeButton"),
-              ) {
-                Text(text = "Add Recipe", style = MaterialTheme.typography.bodyLarge)
-              }
+                  text = "Add Recipe",
+                  fontSize = 18,
+                  color = PrimaryPink)
               Spacer(modifier = Modifier.height(8.dp))
-              Button(
+              PrimaryButton(
                   onClick = {
                     Log.v("Add to Diary", "Clicked")
                     setMeal()
                     navigateForward()
                   },
-                  colors =
-                      ButtonDefaults.buttonColors(
-                          containerColor = PrimaryPurple,
-                          contentColor = MaterialTheme.colorScheme.onPrimary),
                   modifier = Modifier.width(250.dp).testTag("AddToDiaryButton"),
-                  enabled = isComplete) {
-                    Text(text = "Add to Diary", style = MaterialTheme.typography.bodyLarge)
-                  }
+                  text = "Add to Diary",
+                  fontSize = 18,
+                  isEnabled = isComplete,
+                  color = PrimaryPurple,
+              )
             }
       }
 }
