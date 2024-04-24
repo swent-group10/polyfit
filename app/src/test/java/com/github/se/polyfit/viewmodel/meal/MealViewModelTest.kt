@@ -6,17 +6,13 @@ import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
+import com.github.se.polyfit.model.meal.MealTag
+import com.github.se.polyfit.model.meal.MealTagColor
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import com.google.android.gms.tasks.Task
-import io.mockk.MockKAnnotations
-import io.mockk.clearMocks
-import io.mockk.every
-import io.mockk.impl.annotations.RelaxedMockK
-import io.mockk.mockk
-import io.mockk.mockkStatic
-import io.mockk.verify
+import java.time.LocalDate
 import kotlin.test.assertFailsWith
 import org.junit.After
 import org.junit.Before
@@ -170,5 +166,82 @@ class MealViewModelTest {
     every { mealRepo.storeMeal(any()) } throws Exception("Error storing meal")
 
     assertFailsWith<Exception> { viewModel.setMeal() }
+  }
+
+  @Test
+  fun `viewmodel with no meal creates default`() {
+    viewModel = MealViewModel("user123", mealRepo = mealRepo)
+    assert(viewModel.meal.value!! == Meal.default())
+  }
+
+  @Test
+  fun `viewmodel with firebaseID loads data`() {
+    Mockito.verify(mealRepo).getMeal("firebase123")
+  }
+
+  @Test
+  fun `add tag updates meal tags`() {
+    val initialMeal =
+        Meal(
+            name = "Meal Name",
+            mealID = 123,
+            nutritionalInformation = NutritionalInformation(mutableListOf()),
+            occasion = MealOccasion.BREAKFAST,
+            tags = mutableListOf())
+    viewModel = MealViewModel("user123", initialMeal = initialMeal, mealRepo = mealRepo)
+    val newTag = MealTag("Healthy", MealTagColor.CORAL)
+
+    viewModel.addTag(newTag)
+
+    assert(viewModel.meal.value?.tags?.contains(newTag) == true)
+  }
+
+  @Test
+  fun `remove tag updates meal tags`() {
+    val initialTag = MealTag("Healthy", MealTagColor.BABYPINK)
+    val initialMeal =
+        Meal(
+            name = "Meal Name",
+            mealID = 123,
+            nutritionalInformation = NutritionalInformation(mutableListOf()),
+            occasion = MealOccasion.BREAKFAST,
+            tags = mutableListOf(initialTag))
+    viewModel = MealViewModel("user123", initialMeal = initialMeal, mealRepo = mealRepo)
+
+    viewModel.removeTag(initialTag)
+
+    assert(viewModel.meal.value?.tags?.contains(initialTag) == false)
+  }
+
+  @Test
+  fun `set meal created at updates date`() {
+    val initialMeal =
+        Meal(
+            name = "Meal Name",
+            mealID = 123,
+            nutritionalInformation = NutritionalInformation(mutableListOf()),
+            occasion = MealOccasion.BREAKFAST)
+    viewModel = MealViewModel("user123", initialMeal = initialMeal, mealRepo = mealRepo)
+    val newDate = LocalDate.now()
+
+    viewModel.setMealCreatedAt(newDate)
+
+    assert(viewModel.meal.value?.createdAt == newDate)
+  }
+
+  @Test
+  fun `set meal occasion updates occasion`() {
+    val initialMeal =
+        Meal(
+            name = "Meal Name",
+            mealID = 123,
+            nutritionalInformation = NutritionalInformation(mutableListOf()),
+            occasion = MealOccasion.BREAKFAST)
+    viewModel = MealViewModel("user123", initialMeal = initialMeal, mealRepo = mealRepo)
+    val newOccasion = MealOccasion.DINNER
+
+    viewModel.setMealOccasion(newOccasion)
+
+    assert(viewModel.meal.value?.occasion == newOccasion)
   }
 }

@@ -9,6 +9,9 @@ import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import com.github.se.polyfit.model.meal.MealOccasion
+import com.github.se.polyfit.model.meal.MealTag
+import java.time.LocalDate
 
 @HiltViewModel
 class MealViewModel @Inject constructor(private val mealRepo: MealFirebaseRepository) :
@@ -27,6 +30,14 @@ class MealViewModel @Inject constructor(private val mealRepo: MealFirebaseReposi
 
   fun setMealName(name: String) {
     _meal.value!!.name = name
+  }
+
+  fun setMealCreatedAt(createdAt: LocalDate) {
+    _meal.value = _meal.value?.copy(createdAt = createdAt)
+  }
+
+  fun setMealOccasion(occasion: MealOccasion) {
+    _meal.value = _meal.value?.copy(occasion = occasion)
   }
 
   fun setMeal() {
@@ -65,5 +76,13 @@ class MealViewModel @Inject constructor(private val mealRepo: MealFirebaseReposi
                   currentMeal.nutritionalInformation.minus(ingredient.nutritionalInformation))
       _meal.value = updatedMeal
     }
+  }
+
+  fun addTag(tag: MealTag) {
+    _meal.value!!.tags.add(tag)
+  }
+
+  fun removeTag(tag: MealTag) {
+    _meal.value!!.tags.remove(tag)
   }
 }
