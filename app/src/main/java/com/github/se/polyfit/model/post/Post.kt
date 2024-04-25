@@ -74,9 +74,9 @@ data class Post(
         val userId = data["userId"] as String
 
         val description = data["description"] as? String ?: ""
-        val location = data["location"] as Location
+        val location = Location.deserialize(data["location"] as MutableMap<String, Any>)
         val meal = Meal.deserialize(data["meal"] as MutableMap<String, Any>)
-        val createdAt = data["createdAt"] as LocalDate
+        val createdAt = deserializeLocalDate(data, "createdAt") ?: LocalDate.now()
 
         val newPost = Post(userId, description, location, meal, createdAt)
 
@@ -84,6 +84,15 @@ data class Post(
       } catch (e: Exception) {
         Log.e("Post", "Failed to deserialize Post object: ${e.message}", e)
         throw IllegalArgumentException("Failed to deserialize Post object", e)
+      }
+    }
+
+    private fun deserializeLocalDate(data: Map<String, Any>, key: String): LocalDate? {
+      return try {
+        val dateString = data[key] as? String
+        dateString?.let { LocalDate.parse(it) }
+      } catch (e: Exception) {
+        throw IllegalArgumentException("Failed to deserialize LocalDate object", e)
       }
     }
 

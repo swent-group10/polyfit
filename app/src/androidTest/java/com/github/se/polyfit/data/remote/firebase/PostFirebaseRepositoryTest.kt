@@ -11,13 +11,16 @@ import com.google.firebase.firestore.FirebaseFirestore
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.runBlocking
 import java.time.LocalDate
 import kotlin.test.assertFailsWith
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import kotlin.test.fail
 
 class PostFirebaseRepositoryTest {
 
@@ -60,4 +63,35 @@ class PostFirebaseRepositoryTest {
 
     assertFailsWith<Exception> { postFirebaseRepository.storePost(testPost).await() }
   }
+
+  @Test
+  fun storeDefaultPostInDatabase() = runBlocking {
+    val post = Post.default()
+    val postFirebaseRepository = PostFirebaseRepository()
+    try {
+      postFirebaseRepository.storePost(post).await()
+      // If we get here, the task was successful
+      assertTrue(true)
+    } catch (exception: Exception) {
+      // If the task fails, the test should fail
+      fail("Failed to store post: ${exception.message}")
+    }
+  }
+
+  @Test
+  fun storePostsInDatabase() = runBlocking {
+    val post = Post("userId", "description", Location(-110.0, 40.0, 10.0, "EPFL"), Meal.default(), LocalDate.now())
+    val postFirebaseRepository = PostFirebaseRepository()
+    try {
+      postFirebaseRepository.storePost(post).await()
+      // If we get here, the task was successful
+      assertTrue(true)
+    } catch (exception: Exception) {
+      // If the task fails, the test should fail
+      fail("Failed to store post: ${exception.message}")
+    }
+  }
+
+
+
 }
