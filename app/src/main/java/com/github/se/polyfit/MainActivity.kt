@@ -14,10 +14,7 @@ import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.flow.AddMealFlow
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.navigation.Route
-
-import com.github.se.polyfit.ui.navigation.globalNavigation
 import com.github.se.polyfit.ui.screen.FullGraphScreen
-
 import com.github.se.polyfit.ui.screen.LoginScreen
 import com.github.se.polyfit.ui.screen.OverviewScreen
 import com.github.se.polyfit.ui.theme.PolyfitTheme
@@ -46,9 +43,12 @@ class MainActivity : ComponentActivity() {
         val navController = rememberNavController()
         val navigation = Navigation(navController)
         NavHost(navController = navController, startDestination = Route.Register) {
-
-          globalNavigation(navController, mealViewModel)
           composable(Route.Graph) { FullGraphScreen() }
+          composable(Route.Home) {
+            GenericScreen(
+                navController = navController,
+                content = { paddingValues -> OverviewScreen(paddingValues, navController) })
+          }
 
           composable(Route.Register) { LoginScreen(navigation::navigateToHome) }
 

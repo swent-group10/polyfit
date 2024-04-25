@@ -15,9 +15,9 @@ class MealFirebaseRepository(
   private val mealCollection = db.collection("users").document(userId).collection("meals")
 
   /**
-   * Stores a meal in the database. If the meal is not already stored in the database, a new document
-   * will be created. If the meal is already stored in the database, the existing document will be
-   * updated.
+   * Stores a meal in the database. If the meal is not already stored in the database, a new
+   * document will be created. If the meal is already stored in the database, the existing document
+   * will be updated.
    *
    * @param meal the meal to store
    * @return a Task that will resolve to the DocumentReference of the stored meal
