@@ -139,6 +139,14 @@ android {
         implementation("com.google.firebase:firebase-database")
         implementation("com.firebaseui:firebase-ui-auth:8.0.2")
 
+        // Full GeoFire library for Realtime Database users
+        implementation("com.firebase:geofire-android:3.2.0")
+
+        // GeoFire utililty functions for Cloud Firestore users who
+        // want to implement their own geo solution, see:
+        // https://firebase.google.com/docs/firestore/solutions/geoqueries
+        implementation("com.firebase:geofire-android-common:3.2.0")
+
         // Kotlin
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0")
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
