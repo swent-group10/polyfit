@@ -20,6 +20,10 @@ data class Ingredient(
     val nutritionalInformation: NutritionalInformation = NutritionalInformation(mutableListOf()),
 ) {
 
+  fun deepCopy(): Ingredient {
+    return Ingredient(name, id, amount, unit, nutritionalInformation.deepCopy())
+  }
+
   companion object {
     fun serialize(ingredient: Ingredient): Map<String, Any> {
       val map = mutableMapOf<String, Any>()

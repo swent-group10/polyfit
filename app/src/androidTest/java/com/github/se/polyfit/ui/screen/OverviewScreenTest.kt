@@ -52,7 +52,7 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
         }
 
         composable(Route.AddMeal) {
-          AddMealFlow(goBack = {}, navigateToHome = {}, userID = "Test", mockk(relaxed = true))
+          AddMealFlow(goBack = {}, navigateToHome = {}, mockk(relaxed = true))
         }
       }
     }
