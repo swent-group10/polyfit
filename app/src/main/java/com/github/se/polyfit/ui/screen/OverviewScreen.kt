@@ -50,17 +50,20 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.github.se.polyfit.R
 import com.github.se.polyfit.data.api.SpoonacularApiCaller
 import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.ui.components.GradientBox
-import com.github.se.polyfit.ui.components.GradientButton
-import com.github.se.polyfit.ui.components.PictureDialog
+import com.github.se.polyfit.ui.components.button.GradientButton
+import com.github.se.polyfit.ui.components.dialog.PictureDialog
 import com.github.se.polyfit.ui.components.showToastMessage
+import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.navigation.Route
 import com.github.se.polyfit.ui.utils.OverviewTags
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
+import kotlinx.coroutines.runBlocking
 
 data class Meal(val name: String, val calories: Int)
 
@@ -68,8 +71,8 @@ data class Meal(val name: String, val calories: Int)
 fun MealTrackerCard(
     caloriesGoal: Int,
     meals: List<Pair<MealOccasion, Double>>,
-    onPhoto: () -> Unit,
-    Button2: @Composable () -> Unit = {},
+    onCreateMealFromPhoto: () -> Unit,
+    onCreateMealWithoutPhoto: () -> Unit,
     Button3: @Composable () -> Unit = {}
 ) {
   val context = LocalContext.current
@@ -128,7 +131,7 @@ fun MealTrackerCard(
           modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
           horizontalArrangement = Arrangement.SpaceAround) {
             GradientButton(
-                onClick = onPhoto,
+                onClick = onCreateMealFromPhoto,
                 modifier = Modifier.testTag(OverviewTags.overviewPictureBtn),
                 active = true,
                 icon = {
@@ -138,7 +141,7 @@ fun MealTrackerCard(
                       tint = MaterialTheme.colorScheme.primary)
                 })
             GradientButton(
-                onClick = { Button2 },
+                onClick = onCreateMealWithoutPhoto,
                 modifier = Modifier.testTag(OverviewTags.overviewManualBtn),
                 active = true,
                 icon = {
@@ -190,10 +193,11 @@ private fun callCamera(
 fun OverviewScreen(
     paddingValues: PaddingValues,
     navController: NavHostController,
-    mealViewModel: MealViewModel
+    mealViewModel: MealViewModel = hiltViewModel()
 ) {
 
   val context = LocalContext.current
+  val navigation = Navigation(navController)
 
   // State to hold the URI, the image and the bitmap
   var imageUri by remember { mutableStateOf<Uri?>(null) }
@@ -208,6 +212,7 @@ fun OverviewScreen(
         imageBitmap = bitmap
 
         // observe the live data and log the result on changes
+        runBlocking {}
         SpoonacularApiCaller().getMealsFromImage(imageBitmap!!).observeForever {
           mealViewModel.setMealData(it)
           navController.navigate(Route.AddMeal)
@@ -282,11 +287,11 @@ fun OverviewScreen(
                         Pair(MealOccasion.BREAKFAST, 300.0),
                         Pair(MealOccasion.LUNCH, 456.0),
                         Pair(MealOccasion.DINNER, 0.0)),
-                onPhoto = {
+                onCreateMealFromPhoto = {
                   showPictureDialog = true
                   Log.d("OverviewScreen", "Photo button clicked")
                 },
-                Button2 = { showToastMessage(context) },
+                onCreateMealWithoutPhoto = navigation::navigateToAddMeal,
                 Button3 = { showToastMessage(context) })
           }
           item {
@@ -305,9 +310,6 @@ fun OverviewScreen(
                                     MaterialTheme.colorScheme.inversePrimary,
                                     MaterialTheme.colorScheme.primary))),
                 colors = CardDefaults.cardColors(Color.Transparent)) {
-
-                  //
-
                   imageBitmap?.let {
                     Image(
                         bitmap = it.asImageBitmap(),

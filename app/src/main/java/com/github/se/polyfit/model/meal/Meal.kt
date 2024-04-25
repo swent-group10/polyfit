@@ -7,7 +7,7 @@ import java.time.LocalDate
 
 // modeled after the log meal api
 data class Meal(
-    val occasion: MealOccasion,
+    var occasion: MealOccasion,
     var name: String,
     val mealID: Long,
     // represent the ideal temperature at which should be eaten at,
@@ -16,12 +16,39 @@ data class Meal(
     val nutritionalInformation: NutritionalInformation,
     val ingredients: MutableList<Ingredient> = mutableListOf(),
     var firebaseId: String = "",
-    val createdAt: LocalDate = LocalDate.now(),
+    var createdAt: LocalDate = LocalDate.now(),
+    val tags: MutableList<MealTag> = mutableListOf()
 ) {
   init {
     require(mealID >= 0)
 
     updateMeal()
+  }
+
+  fun deepCopy(
+      occasion: MealOccasion = this.occasion,
+      name: String = this.name,
+      mealID: Long = this.mealID,
+      mealTemp: Double = this.mealTemp,
+      ingredients: MutableList<Ingredient> = this.ingredients,
+      firebaseId: String = this.firebaseId,
+      createdAt: LocalDate = this.createdAt,
+      tags: MutableList<MealTag> = this.tags
+  ): Meal {
+    val newIngredients = ingredients.map { it.deepCopy() }.toMutableList()
+    val newTags = tags.map { it.copy() }.toMutableList()
+    val newNutritionalInformation = NutritionalInformation(mutableListOf())
+
+    return Meal(
+        occasion = occasion,
+        name = name,
+        mealID = mealID,
+        mealTemp = mealTemp,
+        nutritionalInformation = newNutritionalInformation,
+        ingredients = newIngredients,
+        firebaseId = firebaseId,
+        createdAt = createdAt,
+        tags = newTags)
   }
 
   override fun equals(other: Any?): Boolean {
@@ -36,6 +63,7 @@ data class Meal(
     if (ingredients != other.ingredients) return false
     if (firebaseId != other.firebaseId) return false
     if (createdAt != other.createdAt) return false
+    if (tags != other.tags) return false
 
     return true
   }
@@ -49,6 +77,7 @@ data class Meal(
     result = 31 * result + ingredients.hashCode()
     result = 31 * result + firebaseId.hashCode()
     result = 31 * result + createdAt.hashCode()
+    result = 31 * result + tags.hashCode()
 
     return result
   }
@@ -102,6 +131,7 @@ data class Meal(
             NutritionalInformation.serialize(data.nutritionalInformation)
         this["ingredients"] = data.ingredients.map { Ingredient.serialize(it) }
         this["createdAt"] = data.createdAt.toString()
+        this["tags"] = data.tags.map { MealTag.serialize(it) }
       }
     }
 
@@ -109,15 +139,16 @@ data class Meal(
       return try {
         val mealID = data["mealID"] as Long
         val occasion = data["occasion"].let { MealOccasion.valueOf(it as String) }
-
         val mealTemp = data["mealTemp"] as Double
-
         val name = data["name"] as String
 
         val nutritionalInformationData =
             NutritionalInformation.deserialize(
                 data["nutritionalInformation"] as List<Map<String, Any>>)
+
         val createdAt = LocalDate.parse(data["createdAt"] as String)
+        val tags =
+            (data["tags"] as List<Map<String, Any>>).map { MealTag.deserialize(it) }.toMutableList()
 
         val newMeal =
             Meal(
@@ -126,7 +157,8 @@ data class Meal(
                 mealID = mealID,
                 mealTemp = mealTemp,
                 nutritionalInformation = nutritionalInformationData,
-                createdAt = createdAt)
+                createdAt = createdAt,
+                tags = tags)
 
         val ingredientsData = data["ingredients"] as? List<Map<String, Any>>
         if (ingredientsData != null) {
@@ -150,7 +182,8 @@ data class Meal(
           NutritionalInformation(mutableListOf()),
           mutableListOf(),
           "",
-          LocalDate.now())
+          LocalDate.now(),
+          mutableListOf())
     }
   }
 }

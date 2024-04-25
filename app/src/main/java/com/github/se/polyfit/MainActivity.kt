@@ -10,14 +10,17 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.flow.AddMealFlow
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.navigation.Route
+
 import com.github.se.polyfit.ui.navigation.globalNavigation
 import com.github.se.polyfit.ui.screen.FullGraphScreen
+
 import com.github.se.polyfit.ui.screen.LoginScreen
+import com.github.se.polyfit.ui.screen.OverviewScreen
 import com.github.se.polyfit.ui.theme.PolyfitTheme
-import com.github.se.polyfit.viewmodel.meal.MealViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
 
@@ -36,23 +39,24 @@ class MainActivity : ComponentActivity() {
     controller.systemBarsBehavior =
         WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 
-    // TO DO: technical debt, next deadline find better way to pass arguments from overview screen
+    // TODO: technical debt, next deadline find better way to pass arguments from overview screen
     // to add meal screen
-    var mealViewModel = MealViewModel("testUserID")
     setContent {
       PolyfitTheme {
         val navController = rememberNavController()
         val navigation = Navigation(navController)
         NavHost(navController = navController, startDestination = Route.Register) {
+
           globalNavigation(navController, mealViewModel)
           composable(Route.Graph) { FullGraphScreen() }
+
           composable(Route.Register) { LoginScreen(navigation::navigateToHome) }
 
           composable(Route.AddMeal) {
             // make sure the create is clear
 
             // check reall created
-            AddMealFlow(navigation::goBack, navigation::navigateToHome, "testUserID", mealViewModel)
+            AddMealFlow(navigation::goBack, navigation::navigateToHome)
           }
         }
       }

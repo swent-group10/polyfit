@@ -1,6 +1,7 @@
 package com.github.se.polyfit.ui.screen
 
 import android.util.Log
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -10,6 +11,7 @@ import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.se.polyfit.data.repository.MealRepository
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
@@ -18,15 +20,18 @@ import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
+import com.google.firebase.firestore.DocumentReference
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.kakaocup.compose.node.element.ComposeScreen
+import io.mockk.coEvery
 import io.mockk.confirmVerified
-import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit4.MockKRule
+import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -37,10 +42,15 @@ import org.junit.runner.RunWith
 class NutritionalInfoTest : TestCase() {
   @get:Rule val composeTestRule = createComposeRule()
 
+  @get:Rule val instantExecutorRule = InstantTaskExecutorRule()
+
   @get:Rule val mockkRule = MockKRule(this)
 
   @RelaxedMockK lateinit var mockNav: Navigation
-  @RelaxedMockK lateinit var mockMealViewModel: MealViewModel
+
+  private val mockMealRepo: MealRepository = mockk(relaxed = true)
+
+  private val mockMealViewModel: MealViewModel = MealViewModel(mockMealRepo)
 
   private val meal =
       Meal(
@@ -64,12 +74,14 @@ class NutritionalInfoTest : TestCase() {
   fun setup() {
     mockkStatic(Log::class)
 
-    every { mockMealViewModel.meal.value } returns meal
-    every { mockMealViewModel.isComplete.value } returns true
     val navigateBack = { mockNav.goBack() }
     val navigateForward = { mockNav.navigateToHome() }
+    mockMealViewModel.setMealData(meal)
 
     composeTestRule.setContent { NutritionScreen(mockMealViewModel, navigateBack, navigateForward) }
+
+    val mockkDocRef = mockk<DocumentReference>()
+    coEvery { mockMealRepo.storeMeal(any<Meal>()) } returns mockkDocRef
   }
 
   @After
@@ -78,7 +90,7 @@ class NutritionalInfoTest : TestCase() {
   }
 
   @Test
-  fun topBarDisplayed() {
+  fun topBarDisplayed() = runTest {
     ComposeScreen.onComposeScreen<NutritionalInformationTopBar>(composeTestRule) {
       title {
         assertIsDisplayed()

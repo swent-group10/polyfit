@@ -1,134 +1,132 @@
 package com.github.se.polyfit.data.user
 
+import android.net.Uri
+import android.util.Log
 import com.github.se.polyfit.model.data.User
+import io.mockk.every
+import io.mockk.mockkStatic
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertNull
-import org.junit.After
 import org.junit.Before
 
 class UserTest {
+
   @Before
   fun setup() {
-    User.resetCurrentUser()
-  }
+    mockkStatic(Log::class)
+    every { Log.e(any(), any(), any()) } returns 0
 
-  @After
-  fun tearDown() {
-    User.resetCurrentUser()
+    mockkStatic(Uri::class)
+    every { Uri.parse(any()) } returns Uri.EMPTY
   }
 
   @Test
-  fun `User creation with valid data`() {
-    val user = User("1", "Test User", "Test", "User", "test@example.com", null)
+  fun `User creation with null email`() {
+    val user = User("1", "Test User", "Test", "User", "null", null)
     assertEquals("1", user.id)
     assertEquals("Test User", user.displayName)
     assertEquals("Test", user.familyName)
     assertEquals("User", user.givenName)
-    assertEquals("test@example.com", user.email)
+    assertEquals("null", user.email)
+  }
+
+  @Test
+  fun `User creation with invalid email`() {
+    val user = User("1", "Test User", "Test", "User", "invalid email", null)
+    assertEquals("1", user.id)
+    assertEquals("Test User", user.displayName)
+    assertEquals("Test", user.familyName)
+    assertEquals("User", user.givenName)
+    assertEquals("invalid email", user.email)
     assertNull(user.photoURL)
   }
 
   @Test
-  fun `currentUser is null by default`() {
-    User.resetCurrentUser()
-    assertNull(User.getCurrentUser())
-  }
-
-  @Test
-  fun `currentUser can be set`() {
-    val user = User("10000", "Test User", "Test", "User", "test@example.com", null)
-    User.setCurrentUser(user)
-    assertEquals(user, User.getCurrentUser())
-    User.resetCurrentUser()
-  }
-
-  @Test
-  fun `resetCurrentUser sets currentUser to null`() {
-    val user = User("10000", "Test User", "Test", "User", "test@example.com", null)
-    User.setCurrentUser(user)
-    User.resetCurrentUser()
-    assertNull(User.getCurrentUser())
-  }
-
-  @Test
-  fun `User creation with null values`() {
-    val user = User("1", null, null, null, "test@gmail.com", null)
-
+  fun `User reset`() {
+    val user = User("1", "Test User", "Test", "User", " invalid email", null)
+    user.signOut()
+    assertEquals("", user.id)
     assertNull(user.displayName)
     assertNull(user.familyName)
-    assertNull(user.givenName)
+  }
 
+  @Test
+  fun `User is signed in`() {
+    val user = User("1", "Test User", "Test", "User", " invalid email", null)
+    assertEquals(true, user.isSignedIn())
+  }
+
+  @Test
+  fun `User serialization`() {
+    val user = User("1", "Test User", "Test", "User", " invalid email", null)
+    val map = User.serialize(user)
+    assertEquals("1", map["id"])
+    assertEquals("Test User", map["displayName"])
+    assertEquals("Test", map["familyName"])
+    assertEquals("User", map["givenName"])
+    assertEquals(" invalid email", map["email"])
+    assertEquals("null", map["photoURL"])
+  }
+
+  @Test
+  fun `User serialization function`() {
+    val user = User("1", "Test User", "Test", "User", " invalid email", null)
+    val map = user.serialize()
+    assertEquals("1", map["id"])
+    assertEquals("Test User", map["displayName"])
+    assertEquals("Test", map["familyName"])
+    assertEquals("User", map["givenName"])
+    assertEquals(" invalid email", map["email"])
+    assertEquals("null", map["photoURL"])
+  }
+
+  @Test
+  fun `User deserialization`() {
+    val map =
+        mapOf(
+            "id" to "1",
+            "displayName" to "Test User",
+            "familyName" to "Test",
+            "givenName" to "User",
+            "email" to " invalid email",
+            "photoURL" to "null")
+    val user = User.deserialize(map)
+    assertEquals("1", user.id)
+    assertEquals("Test User", user.displayName)
+    assertEquals("Test", user.familyName)
+    assertEquals("User", user.givenName)
+    assertEquals(" invalid email", user.email)
     assertNull(user.photoURL)
   }
 
   @Test
-  fun `User creation with empty strings`() {
-    val user = User("", "", "", "", "", null)
-    assertEquals("", user.id)
-    assertEquals("", user.displayName)
-    assertEquals("", user.familyName)
-    assertEquals("", user.givenName)
-    assertEquals("", user.email)
+  fun `Update user`() {
+    val user = User("1", "Test User", "Test", "User", " invalid email", null)
+    user.update("2", "Test User 2", "Test 2", "User 2", " invalid email 2", null)
+    assertEquals("2", user.id)
+    assertEquals("Test User 2", user.displayName)
+    assertEquals("Test 2", user.familyName)
+    assertEquals("User 2", user.givenName)
+    assertEquals(" invalid email 2", user.email)
     assertNull(user.photoURL)
+
+    user.update(id = "3")
+    assertEquals("3", user.id)
+    user.update(displayName = "Test User 3")
+    assertEquals("Test User 3", user.displayName)
   }
 
   @Test
-  fun `User creation with long strings`() {
-    val longString = "a".repeat(1000)
-    val user = User(longString, longString, longString, longString, longString, null)
-    assertEquals(longString, user.id)
-    assertEquals(longString, user.displayName)
-    assertEquals(longString, user.familyName)
-    assertEquals(longString, user.givenName)
-    assertEquals(longString, user.email)
-    assertNull(user.photoURL)
-  }
-
-  @Test
-  fun `User creation with special characters`() {
-    val specialString = "!@#$%^&*()_+"
-    val user = User(specialString, specialString, specialString, specialString, specialString, null)
-    assertEquals(specialString, user.id)
-    assertEquals(specialString, user.displayName)
-    assertEquals(specialString, user.familyName)
-    assertEquals(specialString, user.givenName)
-    assertEquals(specialString, user.email)
-    assertNull(user.photoURL)
-  }
-
-  @Test
-  fun `can be set once`() {
-    val user = User("1", "Test User", "Test", "User", "test@example.com", null)
-    val user2 = User("2", "Test User2", "Test2", "User2", "test2@example.com", null)
-
-    User.setCurrentUser(user)
-    println(User.getCurrentUser()) // Expected to print user details
-
-    try {
-      User.setCurrentUser(user2)
-      println(User.getCurrentUser()) // Not expected to run
-    } catch (e: IllegalStateException) {
-      println(e.message) // Expected to handle exception
-    }
-
-    assertEquals(
-        user, User.getCurrentUser()) // Verify that the first user is still the current user
-    User.resetCurrentUser() // Reset the user for cleanup
-  }
-
-  @Test
-  fun `set reset set`() {
-    val user = User("1", "Test User", "Test", "User", "test@example.com", null)
-    val user2 = User("2", "Test User2", "Test2", "User2", "test2@example.com", null)
-    User.setCurrentUser(user)
-    println(User.getCurrentUser())
-    assertEquals(user, User.getCurrentUser())
-    User.resetCurrentUser()
-    assertNull(User.getCurrentUser())
-    User.setCurrentUser(user2)
-    println(User.getCurrentUser())
-    assertEquals(user2, User.getCurrentUser())
-    User.resetCurrentUser()
+  fun `User deserialization with invalid map`() {
+    val map =
+        mapOf(
+            "id" to "null",
+            "familyName" to "Test",
+            "givenName" to "User",
+            "email" to " invalid email",
+            "photoURL" to "null")
+    assertFailsWith<Exception> { User.deserialize(map) }
   }
 }
