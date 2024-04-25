@@ -27,12 +27,7 @@ class MealViewModel @Inject constructor(private val mealRepo: MealRepository) : 
     get() = _isComplete
 
   init {
-    viewModelScope.launch {
-      _meal.collect { meal ->
-        _isComplete.value = meal.isComplete()
-        Log.d("MealViewModel", "Meal is complete: ${_isComplete.value}")
-      }
-    }
+    viewModelScope.launch { _meal.collect { meal -> _isComplete.value = meal.isComplete() } }
   }
 
   fun setMealData(meal: Meal) {
@@ -89,12 +84,7 @@ class MealViewModel @Inject constructor(private val mealRepo: MealRepository) : 
   }
 
   fun removeIngredient(ingredient: Ingredient) {
-    val updatedIngredients =
-        _meal.value.ingredients.toMutableList().apply {
-          remove(ingredient)
-          Log.d("MealViewModel", "Removed ingredient: $ingredient")
-        }
-    Log.d("MealViewModel", "Removed ingredient: $ingredient")
+    val updatedIngredients = _meal.value.ingredients.toMutableList().apply { remove(ingredient) }
 
     _meal.value = _meal.value.copy(ingredients = updatedIngredients)
   }
