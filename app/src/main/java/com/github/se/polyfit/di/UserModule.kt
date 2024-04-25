@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.github.se.polyfit.data.local.dao.MealDao
 import com.github.se.polyfit.data.local.database.MealDatabase
 import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
+import com.github.se.polyfit.data.remote.firebase.PostFirebaseRepository
 import com.github.se.polyfit.data.repository.MealRepository
 import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.ui.utils.AuthenticationCloud
@@ -61,6 +62,12 @@ object UserModule {
       mealDao: MealDao,
   ): MealRepository {
     return MealRepository(context, mealFirebaseRepository, mealDao)
+  }
+
+  @Provides
+  @Singleton
+  fun providePostFirebaseRepository(): PostFirebaseRepository {
+    return PostFirebaseRepository()
   }
 
   @Provides

@@ -4,13 +4,21 @@ import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import java.time.LocalDate
 
+interface UnmodifiablePost {
+  val userId: String
+  val description: String
+  val location: Location
+  val meal: Meal
+  val createdAt: LocalDate
+}
+
 data class Post(
-    val userId: String,
-    val description: String,
-    val location: Location,
-    val meal: Meal,
-    val createdAt: LocalDate
-) {
+    override var userId: String,
+    override var description: String,
+    override var location: Location,
+    override var meal: Meal,
+    override var createdAt: LocalDate
+) : UnmodifiablePost {
   override fun toString(): String {
     return "The post from the user ${userId} with the following description ${description}" +
         " and the following location ${location}" +
@@ -70,8 +78,3 @@ data class Post(
     }
   }
 }
-
-/**
- * Location data class allows to store only the necessary information about the location without all
- * the other required information like in the android.location.Location class
- */
