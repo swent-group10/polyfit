@@ -54,7 +54,7 @@ class MainActivity : ComponentActivity() {
             // make sure the create is clear
 
             // check reall created
-            AddMealFlow(navigation::goBack, navigation::navigateToHome, "testUserID")
+            AddMealFlow(navigation::goBack, navigation::navigateToHome)
           }
         }
       }
