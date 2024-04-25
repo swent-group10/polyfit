@@ -1,6 +1,5 @@
 package com.github.se.polyfit.ui.components.nutrition
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,15 +33,13 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.ui.theme.PrimaryPurple
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
 
 @Composable
 fun NutritionalInformation(mealViewModel: MealViewModel) {
-  val meal by mealViewModel.meal.collectAsState(initial = Meal.default())
-  Log.d("NutritionalInformation", "Meal: $meal")
+  val meal by mealViewModel.meal.collectAsState()
   val nutritionalInformation = meal.nutritionalInformation
   val nutrients = nutritionalInformation.nutrients
   val calories = nutritionalInformation.getNutrient("calories")

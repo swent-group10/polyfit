@@ -105,8 +105,8 @@ class MealViewModelTest {
     viewModel.addIngredient(ingredient)
     viewModel.removeIngredient(ingredient)
 
-    assert(viewModel.meal.value?.ingredients?.contains(ingredient) == false)
-    assert(viewModel.meal.value?.nutritionalInformation?.getNutrient("calories")?.amount == 0.0)
+    assert(!viewModel.meal.value.ingredients.contains(ingredient))
+    assert(viewModel.meal.value.nutritionalInformation.getNutrient("calories") == null)
   }
 
   @Test
@@ -158,13 +158,7 @@ class MealViewModelTest {
         Meal(
             name = "Meal Name",
             mealID = 123,
-            nutritionalInformation =
-                NutritionalInformation(
-                    mutableListOf(
-                        Nutrient(
-                            nutrientType = "calories",
-                            amount = 100.0,
-                            unit = MeasurementUnit.CAL))),
+            nutritionalInformation = NutritionalInformation(mutableListOf()),
             ingredients =
                 mutableListOf(
                     Ingredient(
@@ -174,7 +168,7 @@ class MealViewModelTest {
                         unit = MeasurementUnit.G,
                         nutritionalInformation =
                             NutritionalInformation(
-                                mutableListOf(Nutrient("calories", 0.0, MeasurementUnit.CAL))))),
+                                mutableListOf(Nutrient("calories", 100.0, MeasurementUnit.CAL))))),
             occasion = MealOccasion.BREAKFAST)
     viewModel.setMealData(meal)
     assert(viewModel.meal.value == meal)

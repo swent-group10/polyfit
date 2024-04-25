@@ -16,7 +16,6 @@ import com.github.se.polyfit.viewmodel.meal.MealViewModel
 fun AddMealFlow(
     goBack: () -> Unit,
     navigateToHome: () -> Unit,
-    userID: String,
     mealViewModel: MealViewModel = hiltViewModel<MealViewModel>()
 ) {
 

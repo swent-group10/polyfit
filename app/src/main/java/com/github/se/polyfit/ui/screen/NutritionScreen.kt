@@ -32,7 +32,6 @@ import com.github.se.polyfit.ui.theme.PrimaryPink
 import com.github.se.polyfit.ui.theme.PrimaryPurple
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NutritionScreen(
     mealViewModel: MealViewModel,
@@ -40,14 +39,12 @@ fun NutritionScreen(
     navigateForward: () -> Unit
 ) {
   val isComplete by mealViewModel.isComplete.collectAsState()
-  Log.d("NutritionalInformation", "isComplete: $isComplete")
-
   Scaffold(
       topBar = { TopBar(navigateBack = navigateBack) },
       bottomBar = {
         BottomBar(
             setMeal = mealViewModel::setMeal,
-            isComplete = isComplete ?: false,
+            isComplete = isComplete,
             navigateForward = navigateForward)
       }) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) { NutritionalInformation(mealViewModel) }
