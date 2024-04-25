@@ -40,7 +40,6 @@ fun NutritionScreen(
     navigateForward: () -> Unit
 ) {
   val isComplete by mealViewModel.isComplete.collectAsState()
-  Log.d("NutritionalInformation", "isComplete: $isComplete")
 
   Scaffold(
       topBar = { TopBar(navigateBack = navigateBack) },
