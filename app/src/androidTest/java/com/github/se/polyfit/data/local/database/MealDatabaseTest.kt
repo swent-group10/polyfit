@@ -132,68 +132,11 @@ class MealDatabaseTest {
   @Test
   fun testGetAllMealsFromACertainDate() {
     mealDao.deleteAll()
-    val meal =
-        Meal(
-            name = "Oatmeal",
-            occasion = MealOccasion.BREAKFAST,
-            mealID = 1,
-            mealTemp = 20.0,
-            nutritionalInformation =
-                NutritionalInformation(
-                    mutableListOf(
-                        Nutrient("calories", 100.0, MeasurementUnit.UG),
-                        Nutrient("protein", 10.0, MeasurementUnit.G),
-                        Nutrient("carbs", 20.0, MeasurementUnit.G),
-                        Nutrient("fat", 5.0, MeasurementUnit.ML)),
-                ),
-            ingredients =
-                mutableListOf(
-                    Ingredient("Oats", 12, 192.2, MeasurementUnit.G),
-                    Ingredient("Milk", 200, 12.0, MeasurementUnit.ML)),
-            firebaseId = "1",
-            createdAt = LocalDate.now())
 
-    val meal2 =
-        Meal(
-            name = "Chocolate",
-            occasion = MealOccasion.BREAKFAST,
-            mealID = 1,
-            mealTemp = 20.0,
-            nutritionalInformation =
-                NutritionalInformation(
-                    mutableListOf(
-                        Nutrient("calories", 100.0, MeasurementUnit.UG),
-                        Nutrient("protein", 10.0, MeasurementUnit.G),
-                        Nutrient("carbs", 20.0, MeasurementUnit.G),
-                        Nutrient("fat", 5.0, MeasurementUnit.ML)),
-                ),
-            ingredients =
-                mutableListOf(
-                    Ingredient("Oats", 12, 192.2, MeasurementUnit.G),
-                    Ingredient("Milk", 200, 12.0, MeasurementUnit.ML)),
-            firebaseId = "2",
-            createdAt = LocalDate.now())
+    val meal = createMeal("Oatmeal", "1", LocalDate.now())
+    val meal2 = createMeal("Chocolate", "2", LocalDate.now())
+    val meal3 = createMeal("Lobster", "3", LocalDate.now().minusWeeks(1))
 
-    val meal3 =
-        Meal(
-            name = "Lobster",
-            occasion = MealOccasion.BREAKFAST,
-            mealID = 1,
-            mealTemp = 20.0,
-            nutritionalInformation =
-                NutritionalInformation(
-                    mutableListOf(
-                        Nutrient("calories", 100.0, MeasurementUnit.UG),
-                        Nutrient("protein", 10.0, MeasurementUnit.G),
-                        Nutrient("carbs", 20.0, MeasurementUnit.G),
-                        Nutrient("fat", 5.0, MeasurementUnit.ML)),
-                ),
-            ingredients =
-                mutableListOf(
-                    Ingredient("Oats", 12, 192.2, MeasurementUnit.G),
-                    Ingredient("Milk", 200, 12.0, MeasurementUnit.ML)),
-            firebaseId = "3",
-            createdAt = LocalDate.now().minusWeeks(1))
     mealDao.insert(meal)
     mealDao.insert(meal2)
     mealDao.insert(meal3)
@@ -208,6 +151,27 @@ class MealDatabaseTest {
     val newMeals = mealDao.getMealsCreatedOnOrAfterDate(LocalDate.now().minusMonths(1))
 
     assert(newMeals.contains(meal3))
+  }
+
+  private fun createMeal(name: String, firebaseId: String, createdAt: LocalDate): Meal {
+    return Meal(
+        name = name,
+        occasion = MealOccasion.BREAKFAST,
+        mealID = 1,
+        mealTemp = 20.0,
+        nutritionalInformation =
+            NutritionalInformation(
+                mutableListOf(
+                    Nutrient("calories", 100.0, MeasurementUnit.UG),
+                    Nutrient("protein", 10.0, MeasurementUnit.G),
+                    Nutrient("carbs", 20.0, MeasurementUnit.G),
+                    Nutrient("fat", 5.0, MeasurementUnit.ML))),
+        ingredients =
+            mutableListOf(
+                Ingredient("Oats", 12, 192.2, MeasurementUnit.G),
+                Ingredient("Milk", 200, 12.0, MeasurementUnit.ML)),
+        firebaseId = firebaseId,
+        createdAt = createdAt)
   }
 
   @After
