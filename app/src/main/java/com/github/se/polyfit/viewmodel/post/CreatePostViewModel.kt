@@ -13,61 +13,59 @@ import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
-class CreatePostViewModel @Inject constructor(
+class CreatePostViewModel
+@Inject
+constructor(
     private val mealRepository: MealRepository,
     private val postFirebaseRepository: PostFirebaseRepository,
 ) : ViewModel() {
-    private val _post = Post.default()
+  private val _post = Post.default()
 
-    val post: UnmodifiablePost
-        get() = _post
+  val post: UnmodifiablePost
+    get() = _post
 
+  suspend fun getRecentMeals() = mealRepository.getAllMeals().sortedBy { it.createdAt }
 
-    suspend fun getRecentMeals() = mealRepository.getAllMeals().sortedBy { it.createdAt }
+  fun setPostDescription(description: String) {
+    _post.description = description
+  }
 
-    fun setPostDescription(description: String) {
-        _post.description = description
+  fun setPostData(
+      userId: String = _post.userId,
+      description: String = _post.description,
+      location: Location = _post.location,
+      meal: Meal = _post.meal,
+      createdAt: LocalDate = _post.createdAt
+  ) {
+    _post.userId = userId
+    _post.description = description
+    _post.location = location
+    _post.meal = meal
+    _post.createdAt = createdAt
+  }
+
+  fun setPostLocation(location: Location) {
+    _post.location = location
+  }
+
+  fun getCarbs(): Double {
+    return _post.getCarbs()?.amount ?: 0.0
+  }
+
+  fun getFat(): Double {
+    return _post.getFat()?.amount ?: 0.0
+  }
+
+  fun getProtein(): Double {
+    return _post.getProtein()?.amount ?: 0.0
+  }
+
+  fun setPost() {
+    try {
+      postFirebaseRepository.storePost(_post)
+    } catch (e: Exception) {
+      Log.e("CreatePostViewModel", "Failed to store post in the database : ${e.message}", e)
+      throw Exception("Failed to store post in the database : ${e.message}")
     }
-
-    fun setPostData(
-        userId: String = _post.userId,
-        description: String = _post.description,
-        location: Location = _post.location,
-        meal: Meal = _post.meal,
-        createdAt: LocalDate = _post.createdAt
-    ) {
-        _post.userId = userId
-        _post.description = description
-        _post.location = location
-        _post.meal = meal
-        _post.createdAt = createdAt
-    }
-
-    fun setPostLocation(location: Location) {
-        _post.location = location
-    }
-
-    fun getCarbs(): Double {
-        return _post.getCarbs()?.amount ?: 0.0
-    }
-
-    fun getFat(): Double {
-        return _post.getFat()?.amount ?: 0.0
-    }
-
-    fun getProtein(): Double {
-        return _post.getProtein()?.amount ?: 0.0
-    }
-
-    fun setPost() {
-        try {
-            postFirebaseRepository.storePost(_post)
-
-        } catch (e: Exception) {
-            Log.e("CreatePostViewModel", "Failed to store post in the database : ${e.message}", e)
-            throw Exception("Failed to store post in the database : ${e.message}")
-        }
-    }
-
-
+  }
 }
