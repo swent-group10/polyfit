@@ -24,7 +24,7 @@ constructor(
   val post: UnmodifiablePost
     get() = _post
 
-  suspend fun getRecentMeals() = mealRepository.getAllMeals().sortedBy { it.createdAt }
+  suspend fun getRecentMeals() = mealRepository.getAllMeals().sortedBy { it.createdAt }.take(5)
 
   fun setPostDescription(description: String) {
     _post.description = description
