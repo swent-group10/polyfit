@@ -25,6 +25,32 @@ data class Meal(
     updateMeal()
   }
 
+  fun deepCopy(
+      occasion: MealOccasion = this.occasion,
+      name: String = this.name,
+      mealID: Long = this.mealID,
+      mealTemp: Double = this.mealTemp,
+      ingredients: MutableList<Ingredient> = this.ingredients,
+      firebaseId: String = this.firebaseId,
+      createdAt: LocalDate = this.createdAt,
+      tags: MutableList<MealTag> = this.tags
+  ): Meal {
+    val newIngredients = ingredients.map { it.deepCopy() }.toMutableList()
+    val newTags = tags.map { it.copy() }.toMutableList()
+    val newNutritionalInformation = NutritionalInformation(mutableListOf())
+
+    return Meal(
+        occasion = occasion,
+        name = name,
+        mealID = mealID,
+        mealTemp = mealTemp,
+        nutritionalInformation = newNutritionalInformation,
+        ingredients = newIngredients,
+        firebaseId = firebaseId,
+        createdAt = createdAt,
+        tags = newTags)
+  }
+
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
     if (other !is Meal) return false
