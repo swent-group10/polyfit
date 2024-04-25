@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -21,7 +22,9 @@ fun DropDownMenu(
     onItemSelect: (String) -> Unit
 ) {
   ExposedDropdownMenuBox(
-      expanded = isExpanded.value, onExpandedChange = { isExpanded.value = it }) {
+      expanded = isExpanded.value,
+      onExpandedChange = { isExpanded.value = it },
+      modifier = Modifier.testTag("GraphDataSortingMenu")) {
         OutlinedTextField(
             value = text.value,
             onValueChange = {},
@@ -29,11 +32,13 @@ fun DropDownMenu(
             trailingIcon = {
               ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded.value)
             },
-            modifier = Modifier.menuAnchor().fillMaxWidth(0.5f),
+            modifier = Modifier.menuAnchor().fillMaxWidth(0.5f).testTag("DropdownMenuTextField"),
             textStyle = MaterialTheme.typography.labelSmall)
 
         ExposedDropdownMenu(
-            expanded = isExpanded.value, onDismissRequest = { isExpanded.value = false }) {
+            expanded = isExpanded.value,
+            onDismissRequest = { isExpanded.value = false },
+            modifier = Modifier.testTag("DropdownTab")) {
               items.forEach { t ->
                 DropdownMenuItem(
                     text = { Text(t) },
