@@ -6,6 +6,7 @@ import com.github.se.polyfit.data.local.dao.MealDao
 import com.github.se.polyfit.data.local.database.MealDatabase
 import com.github.se.polyfit.data.processor.LocalDataProcessor
 import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
+import com.github.se.polyfit.data.remote.firebase.PostFirebaseRepository
 import com.github.se.polyfit.data.repository.MealRepository
 import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.ui.utils.AuthenticationCloud
@@ -71,6 +72,13 @@ object UserModule {
   }
 
   @Provides
+  @Singleton
+  fun providePostFirebaseRepository(): PostFirebaseRepository {
+    return PostFirebaseRepository()
+  }
+
+  @Provides
+  @Singleton
   fun provideAuthentication(@ApplicationContext context: Context, user: User): AuthenticationCloud {
     return AuthenticationCloud(context, user)
   }
