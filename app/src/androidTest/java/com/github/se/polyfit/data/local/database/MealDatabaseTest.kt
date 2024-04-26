@@ -36,6 +36,7 @@ class MealDatabaseTest {
 
   @Test
   fun addMeal() {
+    mealDao.deleteAll()
     val nowTime = LocalDate.now()
     mealDao.insert(
         MealEntity(

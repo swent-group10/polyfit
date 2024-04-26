@@ -41,6 +41,9 @@ interface MealDao {
   @Query("SELECT * FROM MEALTABLE WHERE createdAt >= :date ")
   fun getMealsCreatedOnOrAfterDate(date: LocalDate): List<Meal>
 
+  @Query("SELECT * FROM MEALTABLE WHERE createdAt <= :date ")
+  fun getMealsCreatedOnDate(date: LocalDate): List<Meal>
+
   @Query("DELETE FROM MealTable WHERE firebaseId = :id") fun deleteByFirebaseID(id: String)
 
   @Query("DELETE FROM MealTable") fun deleteAll()

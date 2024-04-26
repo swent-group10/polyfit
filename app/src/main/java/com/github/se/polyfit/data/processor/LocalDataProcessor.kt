@@ -8,28 +8,28 @@ import javax.inject.Inject
 data class DailyCalorieSummary(val date: LocalDate, val totalCalories: Double)
 
 class LocalDataProcessor @Inject constructor(private val mealDao: MealDao) {
-
   private fun calculateCalories(sinceDate: LocalDate): List<DailyCalorieSummary> {
     return mealDao
         .getMealsCreatedOnOrAfterDate(sinceDate)
         .groupBy { it.createdAt }
         .map { (date, meals) ->
-          val totalCalories = meals.sumOf { it.calculateTotalCalories() }
-          DailyCalorieSummary(date, totalCalories)
+          DailyCalorieSummary(date, meals.sumOf { it.calculateTotalCalories() })
         }
   }
 
   fun getCaloriesPerMealOccasionToday(): Map<MealOccasion, Double> {
-    val occasionMap = MealOccasion.entries.toList().associateWith { 0.0 }.toMutableMap()
+    return getCaloriesPerMealOnSpecificDay(LocalDate.now())
+  }
 
-    mealDao
-        .getMealsCreatedOnOrAfterDate(LocalDate.now())
-        .groupBy { it.occasion }
-        .forEach { (occasion, meals) ->
-          occasionMap[occasion] = meals.sumOf { it.calculateTotalCalories() }
+  fun getCaloriesPerMealOnSpecificDay(day: LocalDate): Map<MealOccasion, Double> {
+    val mealsOnDay = mealDao.getMealsCreatedOnOrAfterDate(day)
+    return MealOccasion.entries
+        .toList()
+        .associateWith { 0.0 }
+        .toMutableMap()
+        .mapValues { (occasion, _) ->
+          mealsOnDay.filter { it.occasion == occasion }.sumOf { it.calculateTotalCalories() }
         }
-
-    return occasionMap
   }
 
   fun getCaloriesLastMonth(): List<DailyCalorieSummary> =
