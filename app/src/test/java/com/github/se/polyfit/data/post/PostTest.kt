@@ -104,7 +104,7 @@ class PostTest {
     val post =
         Post("userId", "description", Location(0.0, 0.0, 10.0, "EPFL"), meal, LocalDate.now())
     val expectedList =
-        meal.ingredients.mapNotNull { it.name to Nutrient("totalWeight", it.amount, it.unit) }
+        meal.ingredients.map { it.name to Nutrient("totalWeight", it.amount, it.unit) }
 
     assertEquals(expectedList, post.getIngredientWeight())
   }
@@ -130,7 +130,7 @@ class PostTest {
   }
 
   @Test
-  fun `testLocationToString`() {
+  fun testLocationToString() {
     val location = Location(0.0, 0.0, 10.0, "EPFL")
     val expectedString = "Location(longitude=0.0, latitude=0.0, altitude=10.0, name=EPFL)"
     assertEquals(expectedString, location.toString())
@@ -140,6 +140,15 @@ class PostTest {
   fun `test default location`() {
     val location = Location.default()
     val expectedLocation = Location(0.0, 0.0, 0.0, "EPFL")
+    assertEquals(expectedLocation, location)
+  }
+
+  @Test
+  fun `deserialize location`() {
+    val location =
+        Location.deserialize(
+            mapOf("longitude" to 0.0, "latitude" to 0.0, "altitude" to 10.0, "name" to "EPFL"))
+    val expectedLocation = Location(0.0, 0.0, 10.0, "EPFL")
     assertEquals(expectedLocation, location)
   }
 }

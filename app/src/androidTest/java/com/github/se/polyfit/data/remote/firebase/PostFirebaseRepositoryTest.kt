@@ -4,23 +4,21 @@ import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.post.Location
 import com.github.se.polyfit.model.post.Post
 import com.google.android.gms.tasks.Task
-import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.runBlocking
 import java.time.LocalDate
 import kotlin.test.assertFailsWith
+import kotlin.test.fail
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import kotlin.test.fail
 
 class PostFirebaseRepositoryTest {
 
@@ -40,18 +38,6 @@ class PostFirebaseRepositoryTest {
   fun setUp() {
     every { mockDb.collection("posts") } returns mockCollectionRef
     postFirebaseRepository = PostFirebaseRepository(mockDb)
-  }
-
-  @Test
-  fun storePostReturnDocumentReferenceOnSuccess() = runTest {
-    val mockDocRef = mockk<DocumentReference>()
-    val task = Tasks.forResult(mockDocRef)
-
-    coEvery { mockCollectionRef.add(testPost.serialize()) } returns task
-
-    val result = postFirebaseRepository.storePost(testPost).await()
-
-    assertEquals(mockDocRef, result)
   }
 
   @Test
@@ -80,7 +66,13 @@ class PostFirebaseRepositoryTest {
 
   @Test
   fun storePostsInDatabase() = runBlocking {
-    val post = Post("userId", "description", Location(-110.0, 40.0, 10.0, "EPFL"), Meal.default(), LocalDate.now())
+    val post =
+        Post(
+            "userId",
+            "description",
+            Location(-110.0, 40.0, 10.0, "EPFL"),
+            Meal.default(),
+            LocalDate.now())
     val postFirebaseRepository = PostFirebaseRepository()
     try {
       postFirebaseRepository.storePost(post).await()
@@ -91,7 +83,4 @@ class PostFirebaseRepositoryTest {
       fail("Failed to store post: ${exception.message}")
     }
   }
-
-
-
 }

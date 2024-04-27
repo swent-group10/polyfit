@@ -69,13 +69,13 @@ data class Post(
       }
     }
 
-    fun deserialize(data: MutableMap<String, Any>): Post? {
+    fun deserialize(data: Map<String, Any?>): Post? {
       return try {
         val userId = data["userId"] as String
 
         val description = data["description"] as? String ?: ""
-        val location = Location.deserialize(data["location"] as MutableMap<String, Any>)
-        val meal = Meal.deserialize(data["meal"] as MutableMap<String, Any>)
+        val location = Location.deserialize(data["location"] as Map<String, Any>)
+        val meal = Meal.deserialize(data["meal"] as Map<String, Any>)
         val createdAt = deserializeLocalDate(data, "createdAt") ?: LocalDate.now()
 
         val newPost = Post(userId, description, location, meal, createdAt)
@@ -87,7 +87,7 @@ data class Post(
       }
     }
 
-    private fun deserializeLocalDate(data: Map<String, Any>, key: String): LocalDate? {
+    private fun deserializeLocalDate(data: Map<String, Any?>, key: String): LocalDate? {
       return try {
         val dateString = data[key] as? String
         dateString?.let { LocalDate.parse(it) }
