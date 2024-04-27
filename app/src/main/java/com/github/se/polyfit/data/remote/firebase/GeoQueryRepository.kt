@@ -42,6 +42,7 @@ class GeoQueryRepository(
         object : GeoQueryEventListener {
           val nearbyKeys = mutableListOf<String>()
 
+
           override fun onKeyEntered(key: String, location: GeoLocation) {
             Log.d("GeoQuery", "Key entered: $key")
             nearbyKeys.add(key)
