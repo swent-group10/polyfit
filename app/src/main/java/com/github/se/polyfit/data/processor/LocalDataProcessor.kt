@@ -8,7 +8,7 @@ import javax.inject.Inject
 data class DailyCalorieSummary(val date: LocalDate, val totalCalories: Double)
 
 class LocalDataProcessor @Inject constructor(private val mealDao: MealDao) {
-  private fun calculateCalories(sinceDate: LocalDate): List<DailyCalorieSummary> {
+  private fun calculateCaloriesSince(sinceDate: LocalDate): List<DailyCalorieSummary> {
     return mealDao
         .getMealsCreatedOnOrAfterDate(sinceDate)
         .groupBy { it.createdAt }
@@ -33,8 +33,8 @@ class LocalDataProcessor @Inject constructor(private val mealDao: MealDao) {
   }
 
   fun getCaloriesLastMonth(): List<DailyCalorieSummary> =
-      calculateCalories(LocalDate.now().minusMonths(1))
+      calculateCaloriesSince(LocalDate.now().minusMonths(1))
 
   fun getCaloriesLastWeek(): List<DailyCalorieSummary> =
-      calculateCalories(LocalDate.now().minusWeeks(1))
+      calculateCaloriesSince(LocalDate.now().minusWeeks(1))
 }
