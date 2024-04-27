@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.github.se.polyfit.data.local.dao.MealDao
 import com.github.se.polyfit.data.local.database.MealDatabase
+import com.github.se.polyfit.data.processor.LocalDataProcessor
 import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
 import com.github.se.polyfit.data.remote.firebase.PostFirebaseRepository
 import com.github.se.polyfit.data.repository.MealRepository
@@ -64,17 +65,21 @@ object UserModule {
         return MealRepository(context, mealFirebaseRepository, mealDao)
     }
 
-    @Provides
-    @Singleton
-    fun providePostFirebaseRepository(): PostFirebaseRepository {
-        return PostFirebaseRepository()
-    }
+  @Provides
+  @Singleton
+  fun providesLocalDataProcessor(mealDao: MealDao): LocalDataProcessor {
+    return LocalDataProcessor(mealDao)
+  }
 
-    @Provides
-    fun provideAuthentication(
-        @ApplicationContext context: Context,
-        user: User
-    ): AuthenticationCloud {
-        return AuthenticationCloud(context, user)
-    }
+  @Provides
+  @Singleton
+  fun providePostFirebaseRepository(): PostFirebaseRepository {
+    return PostFirebaseRepository()
+  }
+
+  @Provides
+  @Singleton
+  fun provideAuthentication(@ApplicationContext context: Context, user: User): AuthenticationCloud {
+    return AuthenticationCloud(context, user)
+  }
 }

@@ -13,6 +13,7 @@ import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import java.time.LocalDate
+import junit.framework.TestCase.assertFalse
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import org.junit.After
@@ -35,6 +36,7 @@ class MealDatabaseTest {
 
   @Test
   fun addMeal() {
+    mealDao.deleteAll()
     val nowTime = LocalDate.now()
     mealDao.insert(
         MealEntity(
@@ -126,6 +128,51 @@ class MealDatabaseTest {
 
     assertEquals(ingredients.size, 2)
     assertContains(ingredients, ingredientList.first())
+  }
+
+  @Test
+  fun testGetAllMealsFromACertainDate() {
+    mealDao.deleteAll()
+
+    val meal = createMeal("Oatmeal", "1", LocalDate.now())
+    val meal2 = createMeal("Chocolate", "2", LocalDate.now())
+    val meal3 = createMeal("Lobster", "3", LocalDate.now().minusWeeks(1))
+
+    mealDao.insert(meal)
+    mealDao.insert(meal2)
+    mealDao.insert(meal3)
+
+    val meals = mealDao.getMealsCreatedOnOrAfterDate(LocalDate.now())
+
+    assert(meals.size == 2)
+    assert(meals.contains(meal))
+    assert(meals.contains(meal2))
+    assertFalse(meals.contains(meal3))
+
+    val newMeals = mealDao.getMealsCreatedOnOrAfterDate(LocalDate.now().minusMonths(1))
+
+    assert(newMeals.contains(meal3))
+  }
+
+  private fun createMeal(name: String, firebaseId: String, createdAt: LocalDate): Meal {
+    return Meal(
+        name = name,
+        occasion = MealOccasion.BREAKFAST,
+        mealID = 1,
+        mealTemp = 20.0,
+        nutritionalInformation =
+            NutritionalInformation(
+                mutableListOf(
+                    Nutrient("calories", 100.0, MeasurementUnit.UG),
+                    Nutrient("protein", 10.0, MeasurementUnit.G),
+                    Nutrient("carbs", 20.0, MeasurementUnit.G),
+                    Nutrient("fat", 5.0, MeasurementUnit.ML))),
+        ingredients =
+            mutableListOf(
+                Ingredient("Oats", 12, 192.2, MeasurementUnit.G),
+                Ingredient("Milk", 200, 12.0, MeasurementUnit.ML)),
+        firebaseId = firebaseId,
+        createdAt = createdAt)
   }
 
   @After
