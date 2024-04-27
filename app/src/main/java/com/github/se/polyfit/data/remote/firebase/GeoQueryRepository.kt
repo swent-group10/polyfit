@@ -9,8 +9,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 
 class GeoQueryRepository(
-    rtdb: FirebaseDatabase =
-        FirebaseDatabase.getInstance(BuildConfig.RTDB_URL)
+    rtdb: FirebaseDatabase = FirebaseDatabase.getInstance(BuildConfig.RTDB_URL)
 ) {
   private val geoFireRef = rtdb.getReference("posts_location")
 
@@ -41,7 +40,6 @@ class GeoQueryRepository(
     query.addGeoQueryEventListener(
         object : GeoQueryEventListener {
           val nearbyKeys = mutableListOf<String>()
-
 
           override fun onKeyEntered(key: String, location: GeoLocation) {
             Log.d("GeoQuery", "Key entered: $key")
