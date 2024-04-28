@@ -22,20 +22,20 @@ class DailyRecapViewModel @Inject constructor(private val mealRepository: MealRe
   private val _isFetching: MutableStateFlow<Boolean> = MutableStateFlow(false)
   val isFetching: StateFlow<Boolean> = _isFetching
 
-  private suspend fun getMealsOnDate(date: LocalDate) {
-    _isFetching.value = true
-
-    val newMeals = mealRepository.getMealsOnDate(date).filter { it.isComplete() }
-    withContext(Dispatchers.Main) { _meals.value = newMeals } // FYI: UI updates only on Main Thread
-
-    _isFetching.value = false
-  }
-
   init {
-    setDate(LocalDate.now())
+    getMealsOnDate(LocalDate.now())
   }
 
-  fun setDate(date: LocalDate) {
-    viewModelScope.launch { getMealsOnDate(date) }
+  fun getMealsOnDate(date: LocalDate) {
+    viewModelScope.launch {
+      _isFetching.value = true
+
+      val newMeals = mealRepository.getMealsOnDate(date).filter { it.isComplete() }
+      withContext(Dispatchers.Main) {
+        _meals.value = newMeals
+      } // FYI: UI updates only on Main Thread
+
+      _isFetching.value = false
+    }
   }
 }

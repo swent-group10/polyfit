@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -37,7 +38,7 @@ fun MealList(
   val totalCalories = filteredMeals.sumOf { it.calculateTotalCalories() }.toString()
 
   Surface(
-      modifier = modifier.fillMaxWidth().padding(8.dp, 0.dp),
+      modifier = modifier.fillMaxWidth().padding(8.dp, 0.dp).testTag("MealList"),
       border = BorderStroke(1.dp, BorderPurple),
       shape = RoundedCornerShape(4.dp),
       color = Color.White) {
@@ -49,12 +50,14 @@ fun MealList(
                     occasion.toLowerCaseString(),
                     style = MaterialTheme.typography.titleLarge,
                     color = PurpleGrey40,
-                    fontWeight = FontWeight.Bold)
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.testTag("OccasionTitle"))
                 Text(
                     totalCalories,
                     style = MaterialTheme.typography.titleLarge,
                     color = PurpleGrey40,
-                    fontWeight = FontWeight.Bold)
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.testTag("TotalCalories"))
               }
           HorizontalDivider(color = PrimaryPink)
           filteredMeals.forEach { meal ->
@@ -70,17 +73,26 @@ fun MealList(
 @Composable
 private fun MealCard(meal: Meal, editMeal: () -> Unit) {
   /* TODO: Add meal flow will need to be adapted, Modifier.clickable { editMeal() } */
-  Surface(color = Color.White) {
+  Surface(color = Color.White, modifier = Modifier.testTag("MealCard")) {
     Column {
       Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-        Text(meal.name, style = MaterialTheme.typography.bodyLarge, color = PurpleGrey40)
+        Text(
+            meal.name,
+            style = MaterialTheme.typography.bodyLarge,
+            color = PurpleGrey40,
+            modifier = Modifier.testTag("MealName"))
         Text(
             "${meal.calculateTotalCalories()} ${MeasurementUnit.KCAL.name.lowercase()}",
             style = MaterialTheme.typography.bodyMedium,
             color = PurpleGrey40,
-        )
+            modifier = Modifier.testTag("MealCalories"))
       }
-      MealTagList(mealTags = meal.tags, addNewTag = {}, editTag = {}, displayOnly = true)
+      MealTagList(
+          mealTags = meal.tags,
+          addNewTag = {},
+          editTag = {},
+          displayOnly = true,
+          modifier = Modifier.testTag("MealTagList"))
     }
   }
 }

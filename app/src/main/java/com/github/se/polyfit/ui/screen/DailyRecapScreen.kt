@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -18,22 +19,25 @@ import com.github.se.polyfit.ui.components.list.MealList
 import com.github.se.polyfit.ui.components.scaffold.SimpleTopBar
 import com.github.se.polyfit.ui.components.selector.DateSelector
 import com.github.se.polyfit.viewmodel.dailyRecap.DailyRecapViewModel
+import com.github.se.polyfit.viewmodel.meal.MealViewModel
 
 @Composable
 fun DailyRecapScreen(
     navigateBack: () -> Unit,
     navigateTo: () -> Unit,
-    dailyRecapViewModel: DailyRecapViewModel = hiltViewModel()
+    dailyRecapViewModel: DailyRecapViewModel = hiltViewModel(),
+    mealViewModel: MealViewModel = hiltViewModel() // TODO: Remove when stop reusing mealviewmodel
 ) {
   val meals by dailyRecapViewModel.meals.collectAsState()
   val isFetching by dailyRecapViewModel.isFetching.collectAsState()
   val occasions = MealOccasion.entries.filter { it != MealOccasion.OTHER }
 
   Scaffold(topBar = { SimpleTopBar("Overview", navigateBack) }) {
-    Column(modifier = Modifier.padding(it)) {
-      DateSelector(onConfirm = dailyRecapViewModel::setDate, title = "Date")
+    Column(modifier = Modifier.padding(it).testTag("DailyRecapScreen")) {
+      DateSelector(onConfirm = dailyRecapViewModel::getMealsOnDate, title = "Date")
       if (isFetching) {
-        CircularProgressIndicator(modifier = Modifier.fillMaxSize().padding(16.dp))
+        CircularProgressIndicator(
+            modifier = Modifier.fillMaxSize().padding(16.dp).testTag("Spinner"))
       }
       if (!isFetching) {
         LazyColumn {
@@ -43,7 +47,8 @@ fun DailyRecapScreen(
                 meals = meals,
                 occasion = occasion,
                 navigateTo = navigateTo,
-                modifier = Modifier.padding(0.dp, 8.dp))
+                modifier = Modifier.padding(0.dp, 8.dp),
+                mealViewModel = mealViewModel)
           }
         }
       }
@@ -56,32 +61,3 @@ fun DailyRecapScreen(
 fun DailyRecapScreenPreview() {
   DailyRecapScreen(navigateBack = {}, navigateTo = {})
 }
-
-//  val tags =
-//      mutableListOf(
-//          MealTag("This is a long tag name", MealTagColor.BABYPINK),
-//          MealTag("And yet another long", MealTagColor.LAVENDER),
-//          MealTag("And yet another long long", MealTagColor.BRIGHTORANGE))
-//  val ingredient = Ingredient.default()
-//  ingredient.nutritionalInformation.nutrients.add(Nutrient("calories", 10.0,
-// MeasurementUnit.KCAL))
-//  val meal1 = Meal.default()
-//  meal1.name = "Burger"
-//  meal1.occasion = MealOccasion.BREAKFAST
-//  meal1.addIngredient(ingredient)
-//  meal1.tags.addAll(tags)
-//  val meal2 = Meal.default()
-//  meal2.name = "Pie"
-//  meal2.occasion = MealOccasion.BREAKFAST
-//  meal2.addIngredient(ingredient)
-//
-//  val meal3 = Meal.default()
-//  meal3.name = "Pizza"
-//  meal3.occasion = MealOccasion.DINNER
-//  meal3.addIngredient(ingredient)
-//
-//  val meal4 = Meal.default()
-//  meal4.name = "Pasta"
-//  meal4.occasion = MealOccasion.SNACK
-//  meal4.addIngredient(ingredient)
-//  val meals = mutableListOf(meal1, meal2, meal3, meal4)
