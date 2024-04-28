@@ -7,7 +7,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.model.meal.MealTag
 import com.github.se.polyfit.model.meal.MealTagColor
-import com.github.se.polyfit.ui.components.MAX_TAGS
+import com.github.se.polyfit.ui.components.list.MAX_TAGS
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import junit.framework.TestCase
 import kotlin.test.Test

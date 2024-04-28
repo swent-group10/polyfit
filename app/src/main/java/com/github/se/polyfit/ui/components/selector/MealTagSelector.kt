@@ -17,9 +17,10 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.github.se.polyfit.model.meal.MealTag
-import com.github.se.polyfit.ui.components.MAX_TAGS
-import com.github.se.polyfit.ui.components.MealTagList
+import com.github.se.polyfit.model.meal.MealTagColor
 import com.github.se.polyfit.ui.components.dialog.MealTagDialog
+import com.github.se.polyfit.ui.components.list.MAX_TAGS
+import com.github.se.polyfit.ui.components.list.MealTagList
 import com.github.se.polyfit.ui.theme.PurpleGrey40
 
 @Composable
@@ -53,7 +54,7 @@ fun MealTagSelector(
         color = PurpleGrey40,
         modifier = Modifier.padding(16.dp, 0.dp).testTag("Title"))
     Text(
-        text = "(max ${MAX_TAGS})",
+        text = "(max $MAX_TAGS)",
         style = MaterialTheme.typography.titleSmall,
         color = PurpleGrey40,
         modifier = Modifier.padding(16.dp, 0.dp).testTag("MaxTags"))
@@ -61,7 +62,11 @@ fun MealTagSelector(
     Box(
         modifier = Modifier.fillMaxWidth().testTag("MealTagBox"),
         contentAlignment = Alignment.Center) {
-          MealTagList(mealTags, ::addNewTag, ::editTag)
+          MealTagList(
+              mealTags,
+              ::addNewTag,
+              ::editTag,
+              modifier = Modifier.fillMaxWidth().padding(16.dp, 8.dp))
           if (showTagDialog) {
             MealTagDialog(currentTag, ::closeDialog, addMealTag, removeMealTag)
           }
@@ -72,5 +77,11 @@ fun MealTagSelector(
 @Preview
 @Composable
 fun MealTagSelectorPreview() {
-  MealTagSelector(mutableListOf(), {}, {})
+  MealTagSelector(
+      mutableListOf(
+          MealTag("This is a long tag name", MealTagColor.BABYPINK),
+          MealTag("And yet another long", MealTagColor.LAVENDER),
+          MealTag("And yet another long long", MealTagColor.BRIGHTORANGE)),
+      {},
+      {})
 }
