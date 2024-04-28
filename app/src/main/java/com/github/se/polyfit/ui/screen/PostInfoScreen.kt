@@ -28,20 +28,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.github.se.polyfit.R
-import com.github.se.polyfit.model.ingredient.Ingredient
-import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
-import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import com.github.se.polyfit.model.post.Post
 
 @Composable
 fun PostInfoScreen(posts: List<Post>, index: Int = 0) {
 
-  if(posts.isEmpty()) {
+  if (posts.isEmpty()) {
     NoPost()
     return
   }
@@ -55,17 +51,14 @@ fun PostInfoScreen(posts: List<Post>, index: Int = 0) {
 
 @Composable
 private fun PostCard(post: Post) {
-  val modifierPostCard = Modifier
-    .fillMaxWidth()
-    .width(330.dp)
-    .padding(8.dp)
-    .shadow(8.dp, shape = CardDefaults.shape)
-    .background(Color.Yellow)
+  val modifierPostCard =
+      Modifier.fillMaxWidth()
+          .width(330.dp)
+          .padding(8.dp)
+          .shadow(8.dp, shape = CardDefaults.shape)
+          .background(Color.Yellow)
 
-  Card(
-      modifier = modifierPostCard
-      )
-  {
+  Card(modifier = modifierPostCard) {
     val modifier = Modifier.padding(8.dp, 3.dp)
     ImageCard(modifier)
 
@@ -85,50 +78,39 @@ private fun ImageCard(modifier: Modifier = Modifier) {
 @Composable
 private fun TextPostInfo(modifier: Modifier = Modifier, post: Post) {
 
-  Row(
-    horizontalArrangement = Arrangement.SpaceBetween,
-    modifier = Modifier
-      .fillMaxWidth()) {
+  Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+    TextPost(
+        text = ContextCompat.getString(LocalContext.current, R.string.description),
+        modifier = modifier.testTag("DescriptionTitle"),
+        bold = true)
 
     TextPost(
-      text = ContextCompat.getString(LocalContext.current, R.string.description),
-      modifier = modifier.testTag("DescriptionTitle"),
+        text = post.createdAt.dayOfMonth.toString() + " " + post.createdAt.month.toString(),
+        modifier = modifier.testTag("Date"),
+        bold = false)
+  }
+
+  TextPost(text = post.description, modifier = modifier.testTag("Description"), bold = false)
+
+  TextPost(
+      text = ContextCompat.getString(LocalContext.current, R.string.nutrient),
+      modifier = modifier.testTag("NutrientTitle"),
       bold = true)
 
-    TextPost(
-      text = post.createdAt.dayOfMonth.toString() + " " +
-          post.createdAt.month.toString(),
-      modifier = modifier.testTag("Date"),
-      bold = false)
-  }
-
-  TextPost(
-    text = post.description,
-    modifier = modifier.testTag("Description"),
-    bold = false)
-
-  TextPost(
-    text = ContextCompat.getString(LocalContext.current, R.string.nutrient),
-    modifier = modifier.testTag("NutrientTitle"),
-    bold = true)
-
-  post.meal.ingredients.forEach {
-    it.nutritionalInformation.nutrients.forEach { NutrientInfo(it) }
-  }
+  post.meal.ingredients.forEach { it.nutritionalInformation.nutrients.forEach { NutrientInfo(it) } }
 }
 
 @Composable
-private fun TextPost(text : String, modifier: Modifier = Modifier, bold: Boolean = false) {
+private fun TextPost(text: String, modifier: Modifier = Modifier, bold: Boolean = false) {
   val style = MaterialTheme.typography.bodyMedium
   val fontWeight = if (bold) FontWeight.Bold else FontWeight.Normal
 
   Text(
-    text,
-    modifier = modifier,
-    color = MaterialTheme.colorScheme.onSurface,
-    style = style,
-    fontWeight = fontWeight
-  )
+      text,
+      modifier = modifier,
+      color = MaterialTheme.colorScheme.onSurface,
+      style = style,
+      fontWeight = fontWeight)
 }
 
 @Composable
@@ -138,26 +120,24 @@ private fun NutrientInfo(
 ) {
   Row(
       horizontalArrangement = Arrangement.SpaceBetween,
-      modifier = Modifier
-        .fillMaxWidth()
-        .padding(8.dp, 2.dp)) {
+      modifier = Modifier.fillMaxWidth().padding(8.dp, 2.dp)) {
         Text(nutrient.getFormattedName(), style = style)
         Text(nutrient.getFormattedAmount(), style = style)
       }
 }
 
 @Composable
-fun NoPost(){
+fun NoPost() {
   Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
     Text(
-      text = ContextCompat.getString(LocalContext.current, R.string.noPostAvailable),
-      textAlign = TextAlign.Center,
-      style = MaterialTheme.typography.bodyLarge,
-      modifier = Modifier.testTag("NoPostText")
-      )
+        text = ContextCompat.getString(LocalContext.current, R.string.noPostAvailable),
+        textAlign = TextAlign.Center,
+        style = MaterialTheme.typography.bodyLarge,
+        modifier = Modifier.testTag("NoPostText"))
   }
 }
 
+/*
 @Preview
 @Composable
 fun CarouselPreview() {
@@ -187,3 +167,4 @@ fun NoPostPreview() {
   val posts = listOf<Post>()
   PostInfoScreen(posts)
 }
+*/

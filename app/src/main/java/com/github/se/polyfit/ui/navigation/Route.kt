@@ -14,4 +14,5 @@ object Route {
   const val AdditionalMealInfo = "AdditionalMealInfo"
   const val Ingredients = "Ingredients"
   const val Nutrition = "Nutrition"
+  const val PostInfo = "PostInfo"
 }
