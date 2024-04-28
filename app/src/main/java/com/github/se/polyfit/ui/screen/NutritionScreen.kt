@@ -39,13 +39,19 @@ fun NutritionScreen(
     navigateForward: () -> Unit
 ) {
   val isComplete by mealViewModel.isComplete.collectAsState()
+
+  fun setMeal() {
+    try {
+      mealViewModel.setMeal()
+      mealViewModel.reset()
+    } catch (e: Exception) {
+      Log.e("NutritionScreen", "Failed to set meal: ${e.message}")
+    }
+  }
   Scaffold(
       topBar = { TopBar(navigateBack = navigateBack) },
       bottomBar = {
-        BottomBar(
-            setMeal = mealViewModel::setMeal,
-            isComplete = isComplete,
-            navigateForward = navigateForward)
+        BottomBar(setMeal = ::setMeal, isComplete = isComplete, navigateForward = navigateForward)
       }) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) { NutritionalInformation(mealViewModel) }
       }
@@ -94,8 +100,8 @@ private fun BottomBar(setMeal: () -> Unit, isComplete: Boolean, navigateForward:
               PrimaryButton(
                   onClick = {
                     Log.v("Add to Diary", "Clicked")
-                    setMeal()
                     navigateForward()
+                    setMeal()
                   },
                   modifier = Modifier.width(250.dp).testTag("AddToDiaryButton"),
                   text = "Add to Diary",

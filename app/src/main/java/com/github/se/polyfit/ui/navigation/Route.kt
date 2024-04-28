@@ -8,6 +8,7 @@ object Route {
   const val Map = "Map"
   const val Settings = "Settings"
 
+  const val DailyRecap = "DailyRecap"
   const val AddMeal = "AddMeal"
 
   // Add Meal Routes

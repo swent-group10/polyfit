@@ -12,6 +12,7 @@ fun NavGraphBuilder.globalNavigation(
     navController: NavHostController,
 ) {
   navigation(startDestination = Route.Home, route = Route.Overview) {
+    // TODO: As per Benjo's recommendation, we shouldn't be passing the navController
     composable(Route.Home) {
       GenericScreen(
           navController = navController,
