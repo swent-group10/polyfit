@@ -1,13 +1,14 @@
 package com.github.se.polyfit.ui.viewModel
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import co.yml.charts.common.model.Point
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
+import com.github.se.polyfit.ui.utils.Date
+import com.github.se.polyfit.ui.utils.GraphData
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 enum class SortPoints {
   KCAL,
@@ -29,88 +30,60 @@ enum class SortDirection {
   DESCENDING
 }
 
-class GraphViewModel : ViewModel() {
-  private val _sortPoints = MutableStateFlow(SortPoints.KCAL)
+@HiltViewModel
+class GraphViewModel @Inject constructor() : ViewModel() {
+    private val _sortedPoints = MutableLiveData(SortPoints.KCAL)
 
-  private val _sortDirection = MutableStateFlow(SortDirection.ASCENDING)
+    private val _sortDirection = MutableLiveData(SortDirection.ASCENDING)
 
-  private val _searchText = MutableStateFlow("")
-  val searchText = _searchText.asStateFlow()
+    private val _searchText = MutableLiveData("")
+    val searchText : LiveData<String> = _searchText
 
-  private val _isSearching = MutableStateFlow(false)
-  val isSearching = _isSearching.asStateFlow()
+    private val _graphData = MutableLiveData(mockData)
+    val graphData = updateGraphData()
 
-  private val _graphData = MutableStateFlow(mockData)
-  val graphData =
-      combine(searchText, _graphData, _sortPoints, _sortDirection) {
-              text,
-              data,
-              attribute,
-              direction ->
-            var filteredData =
-                if (text.isBlank()) data else data.filter { it.doesMatchSearchQuery(text) }
-            filteredData =
-                when (attribute) {
-                  SortPoints.KCAL ->
-                      if (direction == SortDirection.ASCENDING) filteredData.sortedBy { it.kCal }
-                      else filteredData.sortedByDescending { it.kCal }
-                  SortPoints.WEIGHT ->
-                      if (direction == SortDirection.ASCENDING) filteredData.sortedBy { it.weight }
-                      else filteredData.sortedByDescending { it.weight }
-                }
-            filteredData
-          }
-          .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), _graphData.value)
-  /*
-  val graphData = searchText
-      .combine(_graphData){ text, data ->
-          if(text.isBlank()){
-              data
-          }else{
-              data.filter {
-                  it.doesMatchSearchQuery(text)
-              }
-          }
-      }
-      .stateIn(
-          viewModelScope,
-          SharingStarted.WhileSubscribed(5000),
-          _graphData.value
-      )
+    fun onSearchTextChanges(text: String) {
+        _searchText.value = text
+    }
 
-   */
+    fun updateSort(attribute: SortPoints) {
+        _sortedPoints.value = attribute
+    }
 
-  fun onSearchTextChanges(text: String) {
-    _searchText.value = text
-  }
+    private fun updateGraphData() : LiveData<List<GraphData>> {
+        val result = MediatorLiveData<List<GraphData>>()
+        result.addSource(_searchText) { result.value = filterAndSortData() }
+        result.addSource(_graphData) { result.value = filterAndSortData() }
+        result.addSource(_sortedPoints) { result.value = filterAndSortData() }
+        result.addSource(_sortDirection) { result.value = filterAndSortData() }
+        return result
+    }
 
-  fun updateSort(attribute: SortPoints) {
-    _sortPoints.value = attribute
-  }
+    private fun filterAndSortData(): List<GraphData> {
+        val text = _searchText.value ?: ""
+        val data = _graphData.value ?: emptyList()
+        val attribute = _sortedPoints.value ?: SortPoints.KCAL
+        val direction = _sortDirection.value ?: SortDirection.ASCENDING
+
+        var filteredData =
+            if (text.isBlank()) data else data.filter { it.doesMatchSearchQuery(text) }
+        filteredData =
+            when (attribute) {
+                SortPoints.KCAL ->
+                    if (direction == SortDirection.ASCENDING) filteredData.sortedBy { it.kCal }
+                    else filteredData.sortedByDescending { it.kCal }
+                SortPoints.WEIGHT ->
+                    if (direction == SortDirection.ASCENDING) filteredData.sortedBy { it.weight }
+                    else filteredData.sortedByDescending { it.weight }
+            }
+        return filteredData
+    }
 }
 
-data class GraphData(val kCal: Double, val day: Int, val month: String, val weight: Double) {
-  fun doesMatchSearchQuery(query: String): Boolean {
-    val matchingCombinations =
-        listOf(
-            "$kCal",
-            "$day",
-            month,
-            "$weight",
-            "$day$month",
-            "$day $month",
-            "$kCal $day",
-            "$kCal $month",
-            "$kCal $day $month",
-            "$weight $day",
-            "$weight $month",
-            "$weight $day $month")
 
-    return matchingCombinations.any { it.contains(query, ignoreCase = true) }
-  }
-}
+// Will be modified further when Data is linked
 
-val mockData =
+private val mockData =
     listOf(
         GraphData(kCal = 1000.0, day = 11, month = "Mar.", weight = 45.0),
         GraphData(kCal = 870.2, day = 12, month = "Mar.", weight = 330.0),
@@ -119,6 +92,20 @@ val mockData =
         GraphData(kCal = 1000.0, day = 15, month = "Mar.", weight = 35.0),
         GraphData(kCal = 2399.3, day = 16, month = "Mar.", weight = 78.0),
         GraphData(kCal = 2438.0, day = 17, month = "Mar.", weight = 80.2))
+private val mockDates =
+    listOf(
+        Date(11, 3, 2024),
+        Date(12, 3, 2024),
+        Date(13, 3, 2024),
+        Date(14, 3, 2024),
+        Date(15, 3, 2024),
+        Date(16, 3, 2024),
+        Date(17, 3, 2024)
+    )
+
+fun DateList(): List<Date>{
+    return mockDates
+}
 
 fun DataToPoints(): List<Point> {
   val data = mockData

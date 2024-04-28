@@ -3,10 +3,10 @@ package com.github.se.polyfit.ui.components
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import co.yml.charts.axis.AxisData
 import co.yml.charts.common.extensions.formatToSinglePrecision
+import co.yml.charts.common.model.Point
 import co.yml.charts.ui.linechart.model.GridLines
 import co.yml.charts.ui.linechart.model.IntersectionPoint
 import co.yml.charts.ui.linechart.model.Line
@@ -17,20 +17,20 @@ import co.yml.charts.ui.linechart.model.LineType
 import co.yml.charts.ui.linechart.model.SelectionHighlightPoint
 import co.yml.charts.ui.linechart.model.SelectionHighlightPopUp
 import co.yml.charts.ui.linechart.model.ShadowUnderLine
-import com.github.se.polyfit.ui.viewModel.DataToPoints
+import com.github.se.polyfit.ui.utils.Date
 
 @Composable
-@Preview
-fun lineChartData(): LineChartData {
+fun lineChartData(pointList: List<Point>, dateList : List<Date>): LineChartData {
   val steps = 10
-  val points = DataToPoints()
   val xAxisData =
       AxisData.Builder()
-          .axisStepSize(60.dp)
+          .axisLabelAngle(15f)
+          .axisLabelDescription { "Date" }
+          .axisStepSize(120.dp)
           .shouldDrawAxisLineTillEnd(false)
           .backgroundColor(MaterialTheme.colorScheme.background)
-          .steps(points.size - 1)
-          .labelData { i -> i.toString() }
+          .steps(pointList.size - 1)
+          .labelData { i -> dateList[i].toString() }
           .labelAndAxisLinePadding(15.dp)
           .axisLineColor(MaterialTheme.colorScheme.inversePrimary)
           .build()
@@ -42,8 +42,8 @@ fun lineChartData(): LineChartData {
           .labelAndAxisLinePadding(30.dp)
           .axisLineColor(MaterialTheme.colorScheme.inversePrimary)
           .labelData { i ->
-            val yMin = points.minOf { it.y }
-            val yMax = points.maxOf { it.y }
+            val yMin = pointList.minOf { it.y }
+            val yMax = pointList.maxOf { it.y }
             val yScale = (yMax - yMin) / steps
             ((i * yScale) + yMin).formatToSinglePrecision()
           }
@@ -55,7 +55,7 @@ fun lineChartData(): LineChartData {
               lines =
                   listOf(
                       Line(
-                          dataPoints = points,
+                          dataPoints = pointList,
                           lineStyle =
                               LineStyle(
                                   color = MaterialTheme.colorScheme.onBackground,

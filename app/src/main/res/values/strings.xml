@@ -15,4 +15,5 @@
     <string name="condition3">" and "</string>
     <string name="condition4">"Privacy Policy"</string>
     <string name="signGoogle">"Sign in with Google"</string>
+    <string name="graphScreenTitle">Calories Per Day</string>
 </resources>

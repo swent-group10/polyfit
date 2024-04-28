@@ -1,5 +1,7 @@
 package com.github.se.polyfit.ui.components.scaffold
 
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -22,7 +24,7 @@ fun SimpleTopBar(title: String, navigateBack: () -> Unit) {
       title = {
         Text(
             title,
-            modifier = Modifier.testTag("${titleCase(title)} Title"),
+            modifier = Modifier.testTag("${titleCase(title)} Title").fillMaxWidth(),
             color = MaterialTheme.colorScheme.secondary,
             fontSize = MaterialTheme.typography.headlineMedium.fontSize)
       },
