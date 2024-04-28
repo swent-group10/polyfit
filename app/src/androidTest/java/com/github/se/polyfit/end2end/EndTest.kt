@@ -3,7 +3,6 @@ package com.github.se.polyfit.end2end
 import android.app.Activity
 import android.app.Application
 import android.app.Instrumentation
-import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.provider.MediaStore
@@ -12,51 +11,35 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
-import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
-import androidx.room.Room
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import com.github.se.polyfit.R
-import com.github.se.polyfit.data.local.dao.MealDao
-import com.github.se.polyfit.data.local.database.MealDatabase
-import com.github.se.polyfit.data.processor.LocalDataProcessor
-import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
-import com.github.se.polyfit.data.remote.firebase.PostFirebaseRepository
-import com.github.se.polyfit.data.repository.MealRepository
 import com.github.se.polyfit.di.UserModule
-import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.flow.AddMealFlow
 import com.github.se.polyfit.ui.navigation.Route
-import com.github.se.polyfit.ui.navigation.globalNavigation
 import com.github.se.polyfit.ui.screen.IngredientsBottomBar
 import com.github.se.polyfit.ui.screen.OverviewScreen
 import com.github.se.polyfit.ui.screen.PictureDialogBox
-import com.github.se.polyfit.ui.utils.AuthenticationCloud
 import com.github.se.polyfit.ui.utils.OverviewTags
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
 import com.kaspersky.components.composesupport.config.withComposeSupport
 import com.kaspersky.kaspresso.kaspresso.Kaspresso
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.testing.CustomTestApplication
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
-import dagger.hilt.components.SingletonComponent
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.mockk.Runs
 import io.mockk.every
@@ -71,8 +54,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import javax.inject.Singleton
-
 
 @UninstallModules(UserModule::class)
 @HiltAndroidTest
@@ -110,7 +91,7 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
     every { mealViewModel.setMealData(any()) } just Runs
 
     // Mock the behavior of the setMealName method
-    //every { mealViewModel.setMealName(any()) } just Runs
+    // every { mealViewModel.setMealName(any()) } just Runs
 
     // Mock the behavior of the setMeal method
     every { mealViewModel.setMeal() } just Runs
@@ -192,13 +173,15 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
 }
 
 fun NavGraphBuilder.globalNavigationTest(
-  navController: NavHostController,
+    navController: NavHostController,
 ) {
   navigation(startDestination = Route.Home, route = Route.Overview) {
     composable(Route.Home) {
       GenericScreen(
-        navController = navController,
-        content = { paddingValues -> OverviewScreen(paddingValues, navController, MealViewModel(mockk())) })
+          navController = navController,
+          content = { paddingValues ->
+            OverviewScreen(paddingValues, navController, MealViewModel(mockk()))
+          })
     }
     composable(Route.Map) {
       GenericScreen(navController = navController, content = { Text("Map Screen") })

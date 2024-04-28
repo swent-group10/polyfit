@@ -44,19 +44,18 @@ import io.mockk.junit4.MockKRule
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
+import javax.inject.Singleton
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import javax.inject.Singleton
 
 @UninstallModules(UserModule::class)
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
 class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport()) {
   @get:Rule val composeTestRule = createComposeRule()
-
 
   @get:Rule val mockkRule = MockKRule(this)
 
@@ -69,7 +68,9 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
         composable(Route.Home) {
           GenericScreen(
               navController = navController,
-              content = { paddingValues -> OverviewScreen(paddingValues, navController, MealViewModel(mockk())) })
+              content = { paddingValues ->
+                OverviewScreen(paddingValues, navController, MealViewModel(mockk()))
+              })
         }
 
         composable(Route.AddMeal) {
@@ -230,7 +231,6 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
   }
 }
 
-
 // All the moduel from UserModule.kt except the providesMealViewModel
 
 @Module
@@ -252,8 +252,6 @@ object UserModule {
     return MealFirebaseRepository(user.id)
   }
 
-
-
   @Provides
   @Singleton
   fun providesLocalDatabase(@ApplicationContext context: Context): MealDatabase {
@@ -269,9 +267,9 @@ object UserModule {
   @Provides
   @Singleton
   fun providesMealRepository(
-    @ApplicationContext context: Context,
-    mealFirebaseRepository: MealFirebaseRepository,
-    mealDao: MealDao,
+      @ApplicationContext context: Context,
+      mealFirebaseRepository: MealFirebaseRepository,
+      mealDao: MealDao,
   ): MealRepository {
     return MealRepository(context, mealFirebaseRepository, mealDao)
   }

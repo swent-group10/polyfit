@@ -10,6 +10,5 @@ import io.mockk.mockk
 @Module
 @InstallIn(SingletonComponent::class)
 object TestViewModelModule {
-  @Provides
-  fun provideMealViewModel(): MealViewModel = mockk(relaxed = true)
+  @Provides fun provideMealViewModel(): MealViewModel = mockk(relaxed = true)
 }
