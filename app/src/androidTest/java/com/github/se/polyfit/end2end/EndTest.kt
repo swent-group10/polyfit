@@ -39,6 +39,7 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -69,16 +70,16 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
             mealID = 123,
             nutritionalInformation = NutritionalInformation(mutableListOf()),
             occasion = MealOccasion.BREAKFAST)
-    every { mealViewModel.meal } returns MutableLiveData(a)
+    every { mealViewModel.meal } returns MutableStateFlow(a)
 
     // Mock the behavior of the isComplete property
-    every { mealViewModel.isComplete } returns MutableLiveData(true)
+    every { mealViewModel.isComplete } returns MutableStateFlow(true)
 
     // Mock the behavior of the setMealData method
     every { mealViewModel.setMealData(any()) } just Runs
 
     // Mock the behavior of the setMealName method
-    every { mealViewModel.setMealName(any()) } just Runs
+    //every { mealViewModel.setMealName(any()) } just Runs
 
     // Mock the behavior of the setMeal method
     every { mealViewModel.setMeal() } just Runs
@@ -100,9 +101,9 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
           // make sure the create is clear
 
           // check reall created
-          AddMealFlow({}, {}, "testUserID", mealViewModel)
+          AddMealFlow({}, {}, mealViewModel)
         }
-        globalNavigation(navController, mealViewModel)
+        globalNavigation(navController)
       }
     }
   }

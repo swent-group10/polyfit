@@ -7,6 +7,7 @@ import androidx.room.Query
 import com.github.se.polyfit.data.local.entity.MealEntity
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
+import java.time.LocalDate
 
 @Dao
 interface MealDao {
@@ -28,6 +29,20 @@ interface MealDao {
   fun insert(meal: Meal) {
     insert(MealEntity.toMealEntity(meal))
   }
+
+  @Query("SELECT * FROM MealTable WHERE firebaseId = :id LIMIT 1 ")
+  fun getMealEntityByFirebaseID(id: String): MealEntity?
+
+  fun getMealByFirebaseID(id: String): Meal? {
+    val meal = getMealEntityByFirebaseID(id)
+    return meal?.toMeal()
+  }
+
+  @Query("SELECT * FROM MEALTABLE WHERE createdAt >= :date ")
+  fun getMealsCreatedOnOrAfterDate(date: LocalDate): List<Meal>
+
+  @Query("SELECT * FROM MEALTABLE WHERE createdAt == :date ")
+  fun getMealsCreatedOnDate(date: LocalDate): List<Meal>
 
   @Query("DELETE FROM MealTable WHERE firebaseId = :id") fun deleteByFirebaseID(id: String)
 

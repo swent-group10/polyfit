@@ -10,9 +10,12 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.rule.GrantPermissionRule
+import com.github.se.polyfit.di.UserModule
+import com.github.se.polyfit.ui.components.GenericScreen
+import com.github.se.polyfit.ui.flow.AddMealFlow
 import com.github.se.polyfit.ui.navigation.Route
 import com.github.se.polyfit.ui.navigation.globalNavigation
 import com.github.se.polyfit.ui.utils.OverviewTags
@@ -20,6 +23,9 @@ import com.github.se.polyfit.viewmodel.meal.MealViewModel
 import com.kaspersky.components.composesupport.config.withComposeSupport
 import com.kaspersky.kaspresso.kaspresso.Kaspresso
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
+import dagger.hilt.android.testing.UninstallModules
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.mockk.junit4.MockKRule
 import io.mockk.mockk
@@ -30,27 +36,31 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import javax.inject.Inject
 
+@HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
 class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport()) {
   @get:Rule val composeTestRule = createComposeRule()
 
-  @get:Rule val mockkRule = MockKRule(this)
 
-  @get:Rule
-  val grantPermissionRule: GrantPermissionRule =
-      GrantPermissionRule.grant(android.Manifest.permission.CAMERA)
+  @get:Rule val mockkRule = MockKRule(this)
 
   @Before
   fun setup() {
-    // Create a mock of MealViewModel
-    val mealViewModel = mockk<MealViewModel>(relaxed = true)
-
     mockkStatic(Log::class)
     composeTestRule.setContent {
       val navController = rememberNavController()
-      NavHost(navController = navController, startDestination = Route.Overview) {
-        globalNavigation(navController, mealViewModel)
+      NavHost(navController = navController, startDestination = Route.Home) {
+        composable(Route.Home) {
+          GenericScreen(
+              navController = navController,
+              content = { paddingValues -> OverviewScreen(paddingValues, navController) })
+        }
+
+        composable(Route.AddMeal) {
+          AddMealFlow(goBack = {}, navigateToHome = {}, mockk(relaxed = true))
+        }
       }
     }
   }
@@ -68,7 +78,7 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
         .onNodeWithTag(OverviewTags.overviewTitle)
         .assertExists()
         .assertIsDisplayed()
-        .assertTextEquals("PolyFit")
+        .assertTextEquals("Polyfit")
   }
 
   @Test

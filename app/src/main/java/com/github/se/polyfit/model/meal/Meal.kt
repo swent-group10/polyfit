@@ -7,7 +7,7 @@ import java.time.LocalDate
 
 // modeled after the log meal api
 data class Meal(
-    val occasion: MealOccasion,
+    var occasion: MealOccasion,
     var name: String,
     val mealID: Long,
     // represent the ideal temperature at which should be eaten at,
@@ -16,13 +16,39 @@ data class Meal(
     val nutritionalInformation: NutritionalInformation,
     val ingredients: MutableList<Ingredient> = mutableListOf(),
     var firebaseId: String = "",
-    val createdAt: LocalDate = LocalDate.now(),
+    var createdAt: LocalDate = LocalDate.now(),
     val tags: MutableList<MealTag> = mutableListOf()
 ) {
   init {
     require(mealID >= 0)
 
     updateMeal()
+  }
+
+  fun deepCopy(
+      occasion: MealOccasion = this.occasion,
+      name: String = this.name,
+      mealID: Long = this.mealID,
+      mealTemp: Double = this.mealTemp,
+      ingredients: MutableList<Ingredient> = this.ingredients,
+      firebaseId: String = this.firebaseId,
+      createdAt: LocalDate = this.createdAt,
+      tags: MutableList<MealTag> = this.tags
+  ): Meal {
+    val newIngredients = ingredients.map { it.deepCopy() }.toMutableList()
+    val newTags = tags.map { it.copy() }.toMutableList()
+    val newNutritionalInformation = NutritionalInformation(mutableListOf())
+
+    return Meal(
+        occasion = occasion,
+        name = name,
+        mealID = mealID,
+        mealTemp = mealTemp,
+        nutritionalInformation = newNutritionalInformation,
+        ingredients = newIngredients,
+        firebaseId = firebaseId,
+        createdAt = createdAt,
+        tags = newTags)
   }
 
   override fun equals(other: Any?): Boolean {

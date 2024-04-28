@@ -135,7 +135,7 @@ class SpoonacularApiCaller {
           if (recipeInformation.status == APIResponse.SUCCESS) {
             val newMeal =
                 Meal(
-                    MealOccasion.LUNCH,
+                    MealOccasion.OTHER, // New Meal should default to no occasion
                     apiResponse.category,
                     apiResponse.recipes.first().toLong(),
                     20.0,
