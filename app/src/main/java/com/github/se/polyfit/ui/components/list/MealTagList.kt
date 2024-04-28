@@ -1,10 +1,9 @@
-package com.github.se.polyfit.ui.components
+package com.github.se.polyfit.ui.components.list
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,11 +26,18 @@ const val MAX_TAGS = 5
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun MealTagList(mealTags: MutableList<MealTag>, addNewTag: () -> Unit, editTag: (MealTag) -> Unit) {
+fun MealTagList(
+    mealTags: MutableList<MealTag>,
+    addNewTag: () -> Unit,
+    editTag: (MealTag) -> Unit,
+    modifier: Modifier = Modifier,
+    displayOnly: Boolean = false,
+) {
+
   FlowRow(
       horizontalArrangement = Arrangement.Start,
       verticalArrangement = Arrangement.Top,
-      modifier = Modifier.fillMaxWidth().padding(16.dp, 8.dp).testTag("MealTagList")) {
+      modifier = modifier.testTag("MealTagList")) {
         val shape = RoundedCornerShape(2.dp)
 
         for (tag in mealTags) {
@@ -40,9 +46,7 @@ fun MealTagList(mealTags: MutableList<MealTag>, addNewTag: () -> Unit, editTag: 
               contentColor = PurpleGrey40,
               shape = shape,
               modifier =
-                  Modifier.padding(2.dp, 4.dp)
-                      .clickable(onClick = { editTag(tag) })
-                      .testTag("MealTag"),
+                  Modifier.padding(2.dp).clickable(onClick = { editTag(tag) }).testTag("MealTag"),
           ) {
             Text(
                 text = tag.tagName,
@@ -50,13 +54,12 @@ fun MealTagList(mealTags: MutableList<MealTag>, addNewTag: () -> Unit, editTag: 
                 modifier = Modifier.padding(6.dp, 2.dp))
           }
         }
-        if (mealTags.size < MAX_TAGS) {
+        if (!displayOnly && mealTags.size < MAX_TAGS) {
           Surface(
               color = SecondaryGrey,
               contentColor = Color.White,
               shape = shape,
-              modifier =
-                  Modifier.padding(2.dp, 4.dp).clickable(onClick = addNewTag).testTag("AddTag"),
+              modifier = Modifier.padding(2.dp).clickable(onClick = addNewTag).testTag("AddTag"),
           ) {
             Icon(
                 imageVector = Icons.Default.Add,
