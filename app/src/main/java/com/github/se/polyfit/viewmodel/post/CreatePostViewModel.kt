@@ -11,8 +11,6 @@ import com.github.se.polyfit.model.post.UnmodifiablePost
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
 import javax.inject.Inject
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 @HiltViewModel
 class CreatePostViewModel
@@ -62,11 +60,11 @@ constructor(
     return _post.getProtein()?.amount ?: 0.0
   }
 
-  fun setPost() {
+  suspend fun setPost() {
     try {
       // Store the post in the database
       // Needs to extends beyond the lifespam of the viewModel
-      GlobalScope.launch { postFirebaseRepository.storePost(_post) }
+      postFirebaseRepository.storePost(_post)
     } catch (e: Exception) {
       Log.e("CreatePostViewModel", "Failed to store post in the database : ${e.message}", e)
       throw Exception("Failed to store post in the database : ${e.message}")
