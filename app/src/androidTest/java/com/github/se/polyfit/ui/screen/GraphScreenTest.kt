@@ -143,6 +143,9 @@ class GraphScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withCompos
     val size = nodes.fetchSemanticsNodes().size
     for (i in 0 until size) {
       nodes[i].assertExists().assertIsDisplayed()
+      if (i == 3) {
+        composeTestRule.onNodeWithTag("ElementsList").performScrollToIndex(size - 1)
+      }
     }
   }
 
@@ -160,6 +163,9 @@ class GraphScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withCompos
     val size = nodes.fetchSemanticsNodes().size
     for (i in 0 until size) {
       nodes[i].assertExists().assertIsDisplayed()
+      if (i == 3) {
+        composeTestRule.onNodeWithTag("ElementsList").performScrollToIndex(size - 1)
+      }
     }
   }
 
@@ -177,6 +183,9 @@ class GraphScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withCompos
     val size = nodes.fetchSemanticsNodes().size
     for (i in 0 until size) {
       nodes[i].assertExists().assertIsDisplayed()
+      if (i == 3) {
+        composeTestRule.onNodeWithTag("ElementsList").performScrollToIndex(size - 1)
+      }
     }
   }
 
@@ -194,6 +203,9 @@ class GraphScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withCompos
     val size = nodes.fetchSemanticsNodes().size
     for (i in 0 until size) {
       nodes[i].assertExists().assertIsDisplayed()
+      if (i == 3) {
+        composeTestRule.onNodeWithTag("ElementsList").performScrollToIndex(size - 1)
+      }
     }
   }
 
