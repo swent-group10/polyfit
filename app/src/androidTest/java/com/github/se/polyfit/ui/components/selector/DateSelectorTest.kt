@@ -19,8 +19,8 @@ class DateSelectorTest : TestCase() {
 
   @get:Rule val mockkRule = MockKRule(this)
 
-  fun setContent(onConfirm: (LocalDate) -> Unit = {}) {
-    composeTestRule.setContent { DateSelector(onConfirm = onConfirm) }
+  fun setContent(onConfirm: (LocalDate) -> Unit = {}, title: String = "Add to Date") {
+    composeTestRule.setContent { DateSelector(onConfirm = onConfirm, title = title) }
   }
 
   @Test
@@ -58,6 +58,14 @@ class DateSelectorTest : TestCase() {
 
       composeTestRule.onNodeWithTag("DatePickerDialog").assertExists()
       composeTestRule.onNodeWithTag("DatePicker").assertExists()
+    }
+  }
+
+  @Test
+  fun noTitleIfEmpty() {
+    setContent(title = "")
+    ComposeScreen.onComposeScreen<DateSelectorScreen>(composeTestRule) {
+      dateSelectorTitle { assertDoesNotExist() }
     }
   }
 }
