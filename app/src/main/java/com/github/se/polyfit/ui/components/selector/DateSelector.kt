@@ -30,7 +30,11 @@ import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DateSelector(onConfirm: (LocalDate) -> Unit, modifier: Modifier = Modifier) {
+fun DateSelector(
+    onConfirm: (LocalDate) -> Unit,
+    modifier: Modifier = Modifier,
+    title: String = ""
+) {
   var showDatePicker by remember { mutableStateOf(false) }
 
   // I'm *pretty sure* this should select the right time and zone, but if test flakes this is why
@@ -46,11 +50,13 @@ fun DateSelector(onConfirm: (LocalDate) -> Unit, modifier: Modifier = Modifier) 
   }
 
   Column(modifier = modifier.testTag("DateSelector")) {
-    Text(
-        text = "Add to Date",
-        style = MaterialTheme.typography.titleLarge,
-        color = PurpleGrey40,
-        modifier = Modifier.padding(16.dp, 0.dp).testTag("Title"))
+    if (title.isNotEmpty()) {
+      Text(
+          text = title,
+          style = MaterialTheme.typography.titleLarge,
+          color = PurpleGrey40,
+          modifier = Modifier.padding(16.dp, 0.dp).testTag("Title"))
+    }
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier.fillMaxWidth().testTag("DateBox")) {
