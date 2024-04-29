@@ -18,7 +18,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.flow.MutableStateFlow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,9 +27,9 @@ fun DropDownMenu(
     text: MutableState<String>,
     onItemSelect: (String) -> Unit
 ) {
-    val charSize = MaterialTheme.typography.titleMedium.fontSize.value.toInt()
-    var estimatedWidth by remember{ mutableStateOf(100)}
-    ExposedDropdownMenuBox(
+  val charSize = MaterialTheme.typography.titleMedium.fontSize.value.toInt()
+  var estimatedWidth by remember { mutableStateOf(100) }
+  ExposedDropdownMenuBox(
       expanded = isExpanded.value,
       onExpandedChange = { isExpanded.value = it },
       modifier = Modifier.testTag("GraphDataSortingMenu").widthIn(max = estimatedWidth.dp)) {
@@ -50,14 +49,13 @@ fun DropDownMenu(
             onDismissRequest = { isExpanded.value = false },
             modifier = Modifier.testTag("DropdownTab")) {
               items.forEach { t ->
-
                 DropdownMenuItem(
                     text = { Text(t, maxLines = 1) },
                     onClick = {
                       text.value = t
                       isExpanded.value = false
                       onItemSelect(t)
-                      val length = t.length +2
+                      val length = t.length + 2
                       estimatedWidth = (length * charSize).coerceIn(110, 200)
                     })
               }

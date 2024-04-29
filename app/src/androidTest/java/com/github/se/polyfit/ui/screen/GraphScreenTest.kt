@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.ui.navigation.Route
+import com.github.se.polyfit.ui.viewModel.GraphViewModel
 import com.kaspersky.components.composesupport.config.withComposeSupport
 import com.kaspersky.kaspresso.kaspresso.Kaspresso
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
@@ -29,7 +30,7 @@ class GraphScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withCompos
     composeTestRule.setContent {
       val navController = rememberNavController()
       NavHost(navController = navController, startDestination = Route.Graph) {
-        composable(Route.Graph) { FullGraphScreen() }
+        composable(Route.Graph) { FullGraphScreen(GraphViewModel()) }
       }
     }
   }
@@ -37,6 +38,16 @@ class GraphScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withCompos
   @After
   fun tearDown() {
     unmockkStatic(Log::class)
+  }
+
+  @Test
+  fun topBarDisplayed() {
+    composeTestRule.onNodeWithTag("Calories Per Day Title").assertExists().assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag("BackButton")
+        .assertExists()
+        .assertIsDisplayed()
+        .assertHasClickAction()
   }
 
   @Test

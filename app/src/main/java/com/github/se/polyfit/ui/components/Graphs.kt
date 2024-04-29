@@ -17,10 +17,10 @@ import co.yml.charts.ui.linechart.model.LineType
 import co.yml.charts.ui.linechart.model.SelectionHighlightPoint
 import co.yml.charts.ui.linechart.model.SelectionHighlightPopUp
 import co.yml.charts.ui.linechart.model.ShadowUnderLine
-import com.github.se.polyfit.ui.utils.Date
+import java.time.LocalDate
 
 @Composable
-fun lineChartData(pointList: List<Point>, dateList : List<Date>): LineChartData {
+fun lineChartData(pointList: List<Point>, dateList: List<LocalDate>): LineChartData {
   val steps = 10
   val xAxisData =
       AxisData.Builder()

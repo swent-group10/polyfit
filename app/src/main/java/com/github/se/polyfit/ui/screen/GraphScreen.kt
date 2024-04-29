@@ -41,8 +41,8 @@ import com.github.se.polyfit.ui.viewModel.SortPoints
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FullGraphScreen() {
-  val viewModel = hiltViewModel<GraphViewModel>()
+fun FullGraphScreen(viewModel: GraphViewModel = hiltViewModel<GraphViewModel>()) {
+
   val isTestEnvironment = System.getProperty("isTestEnvironment") == "true"
   val isExpanded = remember { mutableStateOf(false) }
 
@@ -53,9 +53,9 @@ fun FullGraphScreen() {
   // val isSearching by viewModel.isSearching.collectAsState()
   Scaffold(
       topBar = {
-          //This will be given a return function later
-          SimpleTopBar(LocalContext.current.getString(R.string.graphScreenTitle), {})
-      }) {padding ->
+        // This will be given a return function later
+        SimpleTopBar(LocalContext.current.getString(R.string.graphScreenTitle), {})
+      }) { padding ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxSize().testTag("GraphScreenColumn").padding(padding)) {
@@ -78,12 +78,12 @@ fun FullGraphScreen() {
                   modifier = Modifier.fillMaxWidth().padding(5.dp),
                   horizontalArrangement = Arrangement.SpaceBetween) {
                     searchText?.let {
-                        OutlinedTextField(
-                            value = it,
-                            onValueChange = viewModel::onSearchTextChanges,
-                            modifier = Modifier.fillMaxWidth(0.35f).testTag("GraphScreenSearchBar"),
-                            placeholder = { Text(text = "Search") },
-                            shape = MaterialTheme.shapes.large)
+                      OutlinedTextField(
+                          value = it,
+                          onValueChange = viewModel::onSearchTextChanges,
+                          modifier = Modifier.fillMaxWidth(0.35f).testTag("GraphScreenSearchBar"),
+                          placeholder = { Text(text = "Search") },
+                          shape = MaterialTheme.shapes.large)
                     }
                     DropDownMenu(
                         isExpanded,
@@ -97,28 +97,29 @@ fun FullGraphScreen() {
               Spacer(modifier = Modifier.height(5.dp))
               HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.inversePrimary)
               LazyColumn(modifier = Modifier.fillMaxWidth().weight(1f).testTag("ElementsList")) {
-                  graphData?.let {
-                      items(it) { data ->
-                          Spacer(modifier = Modifier.height(5.dp))
-                          Row(
-                              modifier = Modifier.fillMaxWidth(),
-                              horizontalArrangement = Arrangement.SpaceBetween) {
-                              Column(
-                                  horizontalAlignment = Alignment.Start,
-                                  modifier = Modifier.padding(start = 4.dp)) {
-                                  Text(text = "${data.kCal} kCal", modifier = Modifier.testTag("kcal"))
-                                  Text(
-                                      text = "${data.weight} lbs",
-                                      modifier = Modifier.testTag("weight"))
+                graphData?.let {
+                  items(it) { data ->
+                    Spacer(modifier = Modifier.height(5.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween) {
+                          Column(
+                              horizontalAlignment = Alignment.Start,
+                              modifier = Modifier.padding(start = 4.dp)) {
+                                Text(
+                                    text = "${data.kCal} kCal", modifier = Modifier.testTag("kcal"))
+                                Text(
+                                    text = "${data.weight} lbs",
+                                    modifier = Modifier.testTag("weight"))
                               }
-                              Text(
-                                  modifier = Modifier.padding(end = 4.dp).testTag("Date"),
-                                  text = "${data.day} ${data.month}")
-                          }
-                          HorizontalDivider(
-                              thickness = 1.dp, color = MaterialTheme.colorScheme.inversePrimary)
-                      }
+                          Text(
+                              modifier = Modifier.padding(end = 4.dp).testTag("Date"),
+                              text = "${data.day} ${data.month}")
+                        }
+                    HorizontalDivider(
+                        thickness = 1.dp, color = MaterialTheme.colorScheme.inversePrimary)
                   }
+                }
               }
             }
       }

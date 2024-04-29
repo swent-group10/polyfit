@@ -33,7 +33,7 @@ object UserModule {
 
   @Provides
   @Singleton
-  fun providesGraphViewModel() : GraphViewModel{
+  fun providesGraphViewModel(): GraphViewModel {
     return GraphViewModel()
   }
 
