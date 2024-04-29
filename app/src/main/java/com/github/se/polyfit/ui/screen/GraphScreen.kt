@@ -101,7 +101,7 @@ fun FullGraphScreen(viewModel: GraphViewModel = hiltViewModel<GraphViewModel>())
                   items(it) { data ->
                     Spacer(modifier = Modifier.height(5.dp))
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth().testTag("ElementsRow"),
                         horizontalArrangement = Arrangement.SpaceBetween) {
                           Column(
                               horizontalAlignment = Alignment.Start,
