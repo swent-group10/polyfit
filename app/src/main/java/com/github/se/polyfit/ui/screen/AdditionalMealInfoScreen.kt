@@ -44,7 +44,7 @@ fun AdditionalMealInfoScreen(
       bottomBar = { BottomBar(isComplete, navigateForward) }) {
         Column(
             modifier = Modifier.padding(it).fillMaxWidth().testTag("AdditionalMealInfoContainer")) {
-              DateSelector(onConfirm = mealViewModel::setMealCreatedAt)
+              DateSelector(onConfirm = mealViewModel::setMealCreatedAt, title = "Add to Date")
               MealOccasionSelector(occasion, mealViewModel::setMealOccasion)
               MealTagSelector(
                   mealTags = mealTags,
