@@ -58,6 +58,7 @@ android {
         properties.load(FileReader(project.rootProject.file("local.properties")))
         buildConfigField("String", "X_RapidAPI_Key", "\"${properties["X_RapidAPI_Key"]}\"")
         buildConfigField("String", "X_RapidAPI_Host", "\"${properties["X_RapidAPI_Host"]}\"")
+        buildConfigField("String", "RTDB_URL", "\"${properties["RTDB_URL"]}\"")
     }
 
     signingConfigs {
