@@ -1,5 +1,6 @@
 package com.github.se.polyfit.model.post
 
+import android.graphics.Bitmap
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import java.time.LocalDate
@@ -17,7 +18,8 @@ data class Post(
     override var description: String,
     override var location: Location,
     override var meal: Meal,
-    override var createdAt: LocalDate
+    override var createdAt: LocalDate,
+    var listOfImages: List<Bitmap> = emptyList()
 ) : UnmodifiablePost {
   override fun toString(): String {
     return "The post from the user ${userId} with the following description ${description}" +

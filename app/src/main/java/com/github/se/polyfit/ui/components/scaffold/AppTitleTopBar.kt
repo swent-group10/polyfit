@@ -19,7 +19,7 @@ import com.github.se.polyfit.ui.utils.OverviewTags
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppTitle(
-    titleText: String = LocalContext.current.getString(R.string.app_name_maj),
+    titleText: String = LocalContext.current.getString(R.string.app_name),
     alignment: Alignment = Alignment.TopCenter
 ) {
   TopAppBar(

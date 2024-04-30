@@ -60,7 +60,7 @@ constructor(
     return _post.getProtein()?.amount ?: 0.0
   }
 
-  fun setPost() {
+  suspend fun setPost() {
     try {
       postFirebaseRepository.storePost(_post)
     } catch (e: Exception) {

@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Polyfit</string>
-    <string name="app_name_maj">PolyFit</string>
     <string name="main_card_title">Calories Goal</string>
     <string name="welcome_message">Welcome Back, User432!</string>
     <string name="meal_tracking_headline">Track your meals</string>

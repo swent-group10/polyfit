@@ -138,6 +138,7 @@ android {
         implementation("com.google.firebase:firebase-firestore:24.11.1")
         implementation("com.google.firebase:firebase-database")
         implementation("com.firebaseui:firebase-ui-auth:8.0.2")
+        implementation("com.google.firebase:firebase-storage:20.3.0")
 
         // Kotlin
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0")
