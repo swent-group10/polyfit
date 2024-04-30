@@ -2,6 +2,7 @@ package com.github.se.polyfit.data.remote.firebase
 
 import android.graphics.Bitmap
 import android.util.Log
+import com.firebase.geofire.GeoFire
 import com.github.se.polyfit.model.post.Post
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.DocumentReference
@@ -19,6 +20,8 @@ class PostFirebaseRepository(
     rtdb: FirebaseDatabase = FirebaseDatabase.getInstance(BuildConfig.RTDB_URL)
 ) {
   private val postCollection = db.collection("posts")
+  private val geoFireRef = rtdb.getReference("posts_location")
+  private val geoFire = GeoFire(geoFireRef)
 
   suspend fun storePost(post: Post): List<StorageReference> {
     try {
@@ -27,6 +30,7 @@ class PostFirebaseRepository(
       if (post.listOfImages.isNotEmpty()) {
         listTaskSnapshot = post.listOfImages.map { uploadImage(it, documentRef) }
       }
+      geoLocation =
       geoFire.setLocation(postId, geoLocation) { _, error ->
         if (error != null) {
           Log.e("PostFirebaseRepository", "Failed to store post location: $error")
