@@ -142,4 +142,13 @@ class PostTest {
     val expectedLocation = Location(0.0, 0.0, 0.0, "EPFL")
     assertEquals(expectedLocation, location)
   }
+
+  @Test
+  fun `deserialize location`() {
+    val location =
+        Location.deserialize(
+            mapOf("longitude" to 0.0, "latitude" to 0.0, "altitude" to 10.0, "name" to "EPFL"))
+    val expectedLocation = Location(0.0, 0.0, 10.0, "EPFL")
+    assertEquals(expectedLocation, location)
+  }
 }
