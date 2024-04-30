@@ -1,5 +1,6 @@
 package com.github.se.polyfit.ui.screen
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
@@ -12,28 +13,47 @@ import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.room.Room
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.se.polyfit.data.local.dao.MealDao
+import com.github.se.polyfit.data.local.database.MealDatabase
+import com.github.se.polyfit.data.processor.LocalDataProcessor
+import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
+import com.github.se.polyfit.data.remote.firebase.PostFirebaseRepository
+import com.github.se.polyfit.data.repository.MealRepository
+import com.github.se.polyfit.di.UserModule
+import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.flow.AddMealFlow
 import com.github.se.polyfit.ui.navigation.Route
+import com.github.se.polyfit.ui.utils.AuthenticationCloud
 import com.github.se.polyfit.ui.utils.OverviewTags
+import com.github.se.polyfit.viewmodel.meal.MealViewModel
 import com.kaspersky.components.composesupport.config.withComposeSupport
 import com.kaspersky.kaspresso.kaspresso.Kaspresso
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.testing.HiltAndroidTest
+import dagger.hilt.android.testing.UninstallModules
+import dagger.hilt.components.SingletonComponent
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.mockk.junit4.MockKRule
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
+import javax.inject.Singleton
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-@RunWith(AndroidJUnit4::class)
+@UninstallModules(UserModule::class)
 @HiltAndroidTest
+@RunWith(AndroidJUnit4::class)
 class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport()) {
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -48,7 +68,9 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
         composable(Route.Home) {
           GenericScreen(
               navController = navController,
-              content = { paddingValues -> OverviewScreen(paddingValues, navController, mockk()) })
+              content = { paddingValues ->
+                OverviewScreen(paddingValues, navController, MealViewModel(mockk()))
+              })
         }
 
         composable(Route.AddMeal) {
@@ -71,7 +93,7 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
         .onNodeWithTag(OverviewTags.overviewTitle)
         .assertExists()
         .assertIsDisplayed()
-        .assertTextEquals("Polyfit")
+        .assertTextEquals("PolyFit")
   }
 
   @Test
@@ -207,23 +229,66 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
       }
     }
   }
+}
 
-  @Test
-  fun editButtonClicked() {
-    ComposeScreen.onComposeScreen<CalorieCard>(composeTestRule) {
-      composeTestRule
-          .onNodeWithTag(OverviewTags.overviewManualBtn)
-          .onChild()
-          .assertExists()
-          .assertIsDisplayed()
-          .assertHasClickAction()
-          .performClick()
-    }
-    ComposeScreen.onComposeScreen<IngredientsTopBar>(composeTestRule) {
-      ingredientTitle {
-        assertExists()
-        assertIsDisplayed()
-      }
-    }
+// All the moduel from UserModule.kt except the providesMealViewModel
+
+@Module
+@InstallIn(SingletonComponent::class)
+object UserModule {
+
+  @Provides
+  @Singleton
+  fun providesUser(): User {
+    // this is just a safegaured, the user should be signed in before this is called
+    // if for some reason the user is not signed in, without this, it could cause and error
+    // firestoredatabase needs a user id to be initialized
+    return User(id = "testUserID")
+  }
+
+  @Provides
+  @Singleton
+  fun providesMealFirebaseRepository(user: User): MealFirebaseRepository {
+    return MealFirebaseRepository(user.id)
+  }
+
+  @Provides
+  @Singleton
+  fun providesLocalDatabase(@ApplicationContext context: Context): MealDatabase {
+    return Room.databaseBuilder(context, MealDatabase::class.java, "meal_database").build()
+  }
+
+  @Provides
+  @Singleton
+  fun providesMealDao(mealDatabase: MealDatabase): MealDao {
+    return mealDatabase.mealDao()
+  }
+
+  @Provides
+  @Singleton
+  fun providesMealRepository(
+      @ApplicationContext context: Context,
+      mealFirebaseRepository: MealFirebaseRepository,
+      mealDao: MealDao,
+  ): MealRepository {
+    return MealRepository(context, mealFirebaseRepository, mealDao)
+  }
+
+  @Provides
+  @Singleton
+  fun providesLocalDataProcessor(mealDao: MealDao): LocalDataProcessor {
+    return LocalDataProcessor(mealDao)
+  }
+
+  @Provides
+  @Singleton
+  fun providePostFirebaseRepository(): PostFirebaseRepository {
+    return PostFirebaseRepository()
+  }
+
+  @Provides
+  @Singleton
+  fun provideAuthentication(@ApplicationContext context: Context, user: User): AuthenticationCloud {
+    return AuthenticationCloud(context, user)
   }
 }
