@@ -3,6 +3,7 @@ package com.github.se.polyfit.data.remote.firebase
 import android.graphics.Bitmap
 import android.util.Log
 import com.firebase.geofire.GeoFire
+import com.firebase.geofire.GeoLocation
 import com.github.se.polyfit.model.post.Post
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.DocumentReference
@@ -30,13 +31,14 @@ class PostFirebaseRepository(
       if (post.listOfImages.isNotEmpty()) {
         listTaskSnapshot = post.listOfImages.map { uploadImage(it, documentRef) }
       }
-      geoLocation =
-      geoFire.setLocation(postId, geoLocation) { _, error ->
+      val geoLocation = GeoLocation(post.location.latitude, post.location.longitude)
+      geoFire.setLocation(documentRef.toString(), geoLocation) { _, error ->
         if (error != null) {
-          Log.e("PostFirebaseRepository", "Failed to store post location: $error")
-          completionSource.setException(Exception("Failed to store post location: $error"))
+          Log.e("PostFirebaseRepository", "Failed to store post in the database", error)
+          throw Exception("Error storing post in the database : ${error.message}", error)
+
         } else {
-          completionSource.setResult(null)
+          
         }
       }
       return listTaskSnapshot
