@@ -14,7 +14,8 @@ import kotlinx.coroutines.tasks.await
 
 class PostFirebaseRepository(
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance(),
-    private val pictureDb: FirebaseStorage = FirebaseStorage.getInstance()
+    private val pictureDb: FirebaseStorage = FirebaseStorage.getInstance(),
+    rtdb: FirebaseDatabase = FirebaseDatabase.getInstance(BuildConfig.RTDB_URL)
 ) {
   private val postCollection = db.collection("posts")
 
@@ -24,6 +25,14 @@ class PostFirebaseRepository(
       var listTaskSnapshot: List<StorageReference> = listOf()
       if (post.listOfImages.isNotEmpty()) {
         listTaskSnapshot = post.listOfImages.map { uploadImage(it, documentRef) }
+      }
+      geoFire.setLocation(postId, geoLocation) { _, error ->
+        if (error != null) {
+          Log.e("PostFirebaseRepository", "Failed to store post location: $error")
+          completionSource.setException(Exception("Failed to store post location: $error"))
+        } else {
+          completionSource.setResult(null)
+        }
       }
       return listTaskSnapshot
     } catch (e: Exception) {
