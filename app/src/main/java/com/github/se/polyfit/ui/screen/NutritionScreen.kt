@@ -1,6 +1,5 @@
 package com.github.se.polyfit.ui.screen
 
-import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,104 +32,77 @@ import com.github.se.polyfit.ui.theme.PrimaryPink
 import com.github.se.polyfit.ui.theme.PrimaryPurple
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
 
-@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun NutritionScreen(
     mealViewModel: MealViewModel,
     navigateBack: () -> Unit,
     navigateForward: () -> Unit
 ) {
-    val isComplete by mealViewModel.isComplete.collectAsState(initial = false)
-    Log.d(
-        "NutritionScreen",
-        "isComplete: $isComplete"
-    )
-    Log.d(
-        "NutritionScreen",
-        "mealViewModel: ${mealViewModel.meal.value}"
-
-    )
-
-    Scaffold(
-        topBar = { TopBar(navigateBack = navigateBack) },
-        bottomBar = {
-            BottomBar(
-                setMeal = mealViewModel::setMeal,
-                isComplete = isComplete,
-                navigateForward = navigateForward
-            )
-        }) { innerPadding ->
+  val isComplete by mealViewModel.isComplete.collectAsState()
+  Scaffold(
+      topBar = { TopBar(navigateBack = navigateBack) },
+      bottomBar = {
+        BottomBar(
+            setMeal = mealViewModel::setMeal,
+            isComplete = isComplete,
+            navigateForward = navigateForward)
+      }) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) { NutritionalInformation(mealViewModel) }
-    }
+      }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TopBar(navigateBack: () -> Unit) {
-    TopAppBar(
-        title = {
-            Text(
-                "Nutrition Facts",
-                modifier = Modifier.testTag("Title"),
-                color = MaterialTheme.colorScheme.secondary,
-                style = MaterialTheme.typography.headlineMedium
-            )
-        },
-        navigationIcon = {
-            IconButton(
-                onClick = { navigateBack() },
-                content = {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back",
-                        modifier = Modifier.testTag("BackButton"),
-                        tint = PrimaryPurple
-                    )
-                },
-                modifier = Modifier.testTag("BackButton")
-            )
-        },
-        modifier = Modifier.testTag("TopBar")
-    )
+  TopAppBar(
+      title = {
+        Text(
+            "Nutrition Facts",
+            modifier = Modifier.testTag("Title"),
+            color = MaterialTheme.colorScheme.secondary,
+            style = MaterialTheme.typography.headlineMedium)
+      },
+      navigationIcon = {
+        IconButton(
+            onClick = { navigateBack() },
+            content = {
+              Icon(
+                  imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                  contentDescription = "Back",
+                  modifier = Modifier.testTag("BackButton"),
+                  tint = PrimaryPurple)
+            },
+            modifier = Modifier.testTag("BackButton"))
+      },
+      modifier = Modifier.testTag("TopBar"))
 }
 
 @Composable
 private fun BottomBar(setMeal: () -> Unit, isComplete: Boolean, navigateForward: () -> Unit) {
-    BottomAppBar(
-        modifier = Modifier
-            .height(128.dp)
-            .testTag("BottomBar"), containerColor = Color.Transparent
-    ) {
+  BottomAppBar(
+      modifier = Modifier.height(128.dp).testTag("BottomBar"), containerColor = Color.Transparent) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .testTag("ButtonColumn"),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            PrimaryButton(
-                onClick = { Log.v("Add Recipe", "Clicked") },
-                modifier = Modifier
-                    .width(250.dp)
-                    .testTag("AddRecipeButton"),
-                text = "Add Recipe",
-                fontSize = 18,
-                color = PrimaryPink
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            PrimaryButton(
-                onClick = {
+            modifier = Modifier.fillMaxWidth().testTag("ButtonColumn"),
+            horizontalAlignment = Alignment.CenterHorizontally) {
+              PrimaryButton(
+                  onClick = { Log.v("Add Recipe", "Clicked") },
+                  modifier = Modifier.width(250.dp).testTag("AddRecipeButton"),
+                  text = "Add Recipe",
+                  fontSize = 18,
+                  color = PrimaryPink)
+              Spacer(modifier = Modifier.height(8.dp))
+              PrimaryButton(
+                  onClick = {
                     Log.v("Add to Diary", "Clicked")
                     setMeal()
                     navigateForward()
-                },
-                modifier = Modifier
-                    .width(250.dp)
-                    .testTag("AddToDiaryButton"),
-                text = "Add to Diary",
-                fontSize = 18,
-                isEnabled = isComplete,
-                color = PrimaryPurple,
-            )
-        }
-    }
+                  },
+                  modifier = Modifier.width(250.dp).testTag("AddToDiaryButton"),
+                  text = "Add to Diary",
+                  fontSize = 18,
+                  isEnabled = isComplete,
+                  color = PrimaryPurple,
+              )
+            }
+      }
 }
