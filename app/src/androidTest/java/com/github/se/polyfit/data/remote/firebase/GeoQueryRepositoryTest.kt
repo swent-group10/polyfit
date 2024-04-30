@@ -22,7 +22,7 @@ class GeoQueryRepositoryTest {
 
   private val mockRtdb: FirebaseDatabase = mockk()
   private val mockGeoFireRef: DatabaseReference = mockk()
-  private lateinit var repository: GeoQueryRepository
+  private lateinit var repository: PostFirebaseRepository
 
   @Before
   fun setUp() {
@@ -39,7 +39,7 @@ class GeoQueryRepositoryTest {
 
     every { mockGeoFireRef.addListenerForSingleValueEvent(any()) } just Runs
 
-    repository = GeoQueryRepository(mockRtdb)
+    repository = PostFirebaseRepository(rtdb = mockRtdb)
   }
 
   @Test

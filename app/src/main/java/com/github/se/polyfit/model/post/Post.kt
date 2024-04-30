@@ -25,7 +25,9 @@ data class Post(
   override fun toString(): String {
     return "The post from the user ${userId} with the following description ${description}" +
         " and the following location ${location}" +
-        " for following meal ${meal}"
+        " for following meal ${meal}" +
+        " created at ${createdAt}" +
+        " with the following images ${listOfImages}"
   }
 
   fun getCarbs(): Nutrient? {
@@ -99,12 +101,13 @@ data class Post(
     }
 
     fun default(): Post {
+
       return Post(
-          "testId",
-          "Description",
-          Location(0.0, 0.0, 10.0, "EPFL"),
-          Meal.default(),
-          LocalDate.now())
+          userId = "testId",
+          description = "Description",
+          location = Location(0.0, 0.0, 10.0, "EPFL"),
+          meal = Meal.default(),
+          createdAt = LocalDate.now())
     }
   }
 }
