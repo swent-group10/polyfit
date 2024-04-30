@@ -16,4 +16,7 @@
     <string name="condition3">" and "</string>
     <string name="condition4">"Privacy Policy"</string>
     <string name="signGoogle">"Sign in with Google"</string>
+    <string name="noPostAvailable">"Unfortunately there is no post\navailable around you"</string>
+    <string name="description">"Description"</string>
+    <string name="nutrient">"Nutrient"</string>
 </resources>
