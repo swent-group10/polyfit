@@ -22,7 +22,10 @@ data class Meal(
   init {
     require(mealID >= 0)
 
-    updateMeal()
+    // TODO: https://github.com/swent-group10/polyfit/issues/177
+    if (nutritionalInformation.nutrients.isEmpty()) {
+      updateMeal()
+    }
   }
 
   fun deepCopy(
