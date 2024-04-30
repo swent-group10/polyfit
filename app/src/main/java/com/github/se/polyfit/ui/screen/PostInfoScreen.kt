@@ -34,7 +34,7 @@ fun PostInfoScreen(posts: List<Post>, index: Int = 0) {
 }
 
 @Composable
-fun NoPost() {
+private fun NoPost() {
   Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
     Text(
         text = ContextCompat.getString(LocalContext.current, R.string.noPostAvailable),
