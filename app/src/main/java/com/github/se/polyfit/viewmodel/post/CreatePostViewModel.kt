@@ -62,8 +62,6 @@ constructor(
 
   suspend fun setPost() {
     try {
-      // Store the post in the database
-      // Needs to extends beyond the lifespam of the viewModel
       postFirebaseRepository.storePost(_post)
     } catch (e: Exception) {
       Log.e("CreatePostViewModel", "Failed to store post in the database : ${e.message}", e)
