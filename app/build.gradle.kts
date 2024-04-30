@@ -191,7 +191,6 @@ android {
         kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.51")
         androidTestImplementation("androidx.hilt:hilt-navigation-compose:1.2.0")
         androidTestImplementation("com.google.dagger:hilt-android-testing:2.51")
-        kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.51")
         androidTestImplementation("androidx.arch.core:core-testing:2.2.0")
 
         // Test
