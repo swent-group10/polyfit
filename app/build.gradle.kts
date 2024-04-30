@@ -162,12 +162,8 @@ android {
         kaptAndroidTest("com.google.dagger:hilt-compiler:2.51")
         kapt("androidx.hilt:hilt-compiler:1.2.0")
 
-        // Hilt
-        implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
-
         // Android Test
         androidTestImplementation("com.squareup.okhttp3:okhttp:4.12.0")
-        androidTestImplementation("androidx.arch.core:core-testing:2.2.0")
         androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
         androidTestImplementation(platform("androidx.compose:compose-bom:2024.04.01"))
         androidTestImplementation("androidx.compose.ui:ui-test-junit4")
@@ -184,13 +180,10 @@ android {
         androidTestImplementation("com.kaspersky.android-components:kaspresso:1.4.3")
         androidTestImplementation("com.kaspersky.android-components:kaspresso-allure-support:1.4.3")
         androidTestImplementation("com.kaspersky.android-components:kaspresso-compose-support:1.4.1")
-        androidTestImplementation("io.mockk:mockk:1.13.10")
-        androidTestImplementation("io.mockk:mockk-android:1.13.10")
         androidTestImplementation("io.mockk:mockk-jvm:1.13.10")
         androidTestImplementation("com.google.dagger:hilt-android-testing:2.51")
         kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.51")
         androidTestImplementation("androidx.hilt:hilt-navigation-compose:1.2.0")
-        androidTestImplementation("com.google.dagger:hilt-android-testing:2.51")
         androidTestImplementation("androidx.arch.core:core-testing:2.2.0")
 
         // Test
@@ -203,23 +196,17 @@ android {
         testImplementation("org.robolectric:robolectric:4.8")
         testImplementation("android.arch.persistence.room:testing:1.1.1")
         testImplementation("org.mockito:mockito-core:5.11.0")
-        testImplementation("androidx.arch.core:core-testing:2.2.0")
 
         // Debug
         debugImplementation("androidx.compose.ui:ui-tooling")
         debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-        // Kapt dependencies
-        kapt("com.google.dagger:hilt-android-compiler:2.51")
-        kapt("com.google.dagger:hilt-compiler:2.51")
-        kaptAndroidTest("com.google.dagger:hilt-compiler:2.51")
-        kaptTest("com.google.dagger:hilt-compiler:2.51")
+
         // Mockito
         androidTestImplementation("org.mockito:mockito-core:5.11.0")
 
         testImplementation("io.mockk:mockk:1.13.10")
 
-        testImplementation("junit:junit:4.13.2")
         testImplementation("org.mockito:mockito-core:4.2.0")
         testImplementation("androidx.arch.core:core-testing:2.1.0")
 
