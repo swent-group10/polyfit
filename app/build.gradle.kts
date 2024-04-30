@@ -219,9 +219,6 @@ android {
         androidTestImplementation("org.mockito:mockito-core:5.11.0")
 
         testImplementation("io.mockk:mockk:1.13.10")
-        androidTestImplementation("io.mockk:mockk:1.13.10")
-        androidTestImplementation("io.mockk:mockk-android:1.13.10")
-        androidTestImplementation("io.mockk:mockk-agent:1.13.10")
 
         testImplementation("junit:junit:4.13.2")
         testImplementation("org.mockito:mockito-core:4.2.0")

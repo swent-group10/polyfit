@@ -21,14 +21,10 @@ import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DropDownMenu(
-    isExpanded: MutableState<Boolean>,
-    items: List<String>,
-    text: MutableState<String>,
-    onItemSelect: (String) -> Unit
-) {
+fun DropDownMenu(items: List<String>, text: MutableState<String>, onItemSelect: (String) -> Unit) {
   val charSize = MaterialTheme.typography.titleMedium.fontSize.value.toInt()
   var estimatedWidth by remember { mutableStateOf(100) }
+  val isExpanded = remember { mutableStateOf(false) }
   ExposedDropdownMenuBox(
       expanded = isExpanded.value,
       onExpandedChange = { isExpanded.value = it },

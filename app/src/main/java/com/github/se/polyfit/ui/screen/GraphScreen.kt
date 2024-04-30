@@ -44,13 +44,11 @@ import com.github.se.polyfit.ui.viewModel.SortPoints
 fun FullGraphScreen(viewModel: GraphViewModel = hiltViewModel<GraphViewModel>()) {
 
   val isTestEnvironment = System.getProperty("isTestEnvironment") == "true"
-  val isExpanded = remember { mutableStateOf(false) }
 
   val sortedBy = remember { mutableStateOf("KCAL") }
 
   val searchText by viewModel.searchText.observeAsState()
   val graphData by viewModel.graphData.observeAsState()
-  // val isSearching by viewModel.isSearching.collectAsState()
   Scaffold(
       topBar = {
         // This will be given a return function later
@@ -86,7 +84,6 @@ fun FullGraphScreen(viewModel: GraphViewModel = hiltViewModel<GraphViewModel>())
                           shape = MaterialTheme.shapes.large)
                     }
                     DropDownMenu(
-                        isExpanded,
                         SortPoints.toList(),
                         sortedBy,
                         onItemSelect = { sortAttributeName ->
