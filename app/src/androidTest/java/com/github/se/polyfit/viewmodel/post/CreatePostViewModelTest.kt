@@ -83,7 +83,7 @@ class CreatePostViewModelTest {
 
   @Test
   fun getCarbsReturnsCarbsAmount() {
-    val carbs = Nutrient("carb", 10.0, MeasurementUnit.G)
+    val carbs = Nutrient("carbohydrates", 10.0, MeasurementUnit.G)
     val meal =
         Meal.default().copy(nutritionalInformation = NutritionalInformation(mutableListOf(carbs)))
     val post = Post.default().copy(meal = meal)
