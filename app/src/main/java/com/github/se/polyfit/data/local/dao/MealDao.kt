@@ -11,40 +11,47 @@ import java.time.LocalDate
 
 @Dao
 interface MealDao {
-  @Query("SELECT * FROM MealTable") fun getAll(): List<MealEntity>
+    @Query("SELECT * FROM MealTable")
+    fun getAll(): List<MealEntity>
 
-  fun getAllMeals(): List<Meal> {
-    val meals = getAll()
-    return meals.map { it.toMeal() }
-  }
+    fun getAllMeals(): List<Meal> {
+        val meals = getAll()
+        return meals.map { it.toMeal() }
+    }
 
-  fun getAllIngredients(): List<Ingredient> {
-    val meals = getAll()
+    fun getAllIngredients(): List<Ingredient> {
+        val meals = getAll()
 
-    return meals.flatMap { it.ingredients }
-  }
+        return meals.flatMap { it.ingredients }
+    }
 
-  @Insert(onConflict = OnConflictStrategy.REPLACE) fun insert(meal: MealEntity)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(meal: MealEntity)
 
-  fun insert(meal: Meal) {
-    insert(MealEntity.toMealEntity(meal))
-  }
+    fun insert(meal: Meal): Long {
+        val mealEntity = MealEntity.toMealEntity(meal)
+        insert(mealEntity)
 
-  @Query("SELECT * FROM MealTable WHERE firebaseId = :id LIMIT 1 ")
-  fun getMealEntityByFirebaseID(id: String): MealEntity?
+        return mealEntity.id
+    }
 
-  fun getMealByFirebaseID(id: String): Meal? {
-    val meal = getMealEntityByFirebaseID(id)
-    return meal?.toMeal()
-  }
+    @Query("SELECT * FROM MealTable WHERE firebaseId = :id LIMIT 1 ")
+    fun getMealEntityByFirebaseID(id: String): MealEntity?
 
-  @Query("SELECT * FROM MEALTABLE WHERE createdAt >= :date ")
-  fun getMealsCreatedOnOrAfterDate(date: LocalDate): List<Meal>
+    fun getMealByFirebaseID(id: String): Meal? {
+        val meal = getMealEntityByFirebaseID(id)
+        return meal?.toMeal()
+    }
 
-  @Query("SELECT * FROM MEALTABLE WHERE createdAt == :date ")
-  fun getMealsCreatedOnDate(date: LocalDate): List<Meal>
+    @Query("SELECT * FROM MEALTABLE WHERE createdAt >= :date ")
+    fun getMealsCreatedOnOrAfterDate(date: LocalDate): List<Meal>
 
-  @Query("DELETE FROM MealTable WHERE firebaseId = :id") fun deleteByFirebaseID(id: String)
+    @Query("SELECT * FROM MEALTABLE WHERE createdAt == :date ")
+    fun getMealsCreatedOnDate(date: LocalDate): List<Meal>
 
-  @Query("DELETE FROM MealTable") fun deleteAll()
+    @Query("DELETE FROM MealTable WHERE firebaseId = :id")
+    fun deleteByFirebaseID(id: String)
+
+    @Query("DELETE FROM MealTable")
+    fun deleteAll()
 }
