@@ -22,7 +22,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -34,7 +33,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.github.se.polyfit.model.ingredient.Ingredient
-import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.ui.components.GradientBox
 import com.github.se.polyfit.ui.components.button.GradientButton
 import com.github.se.polyfit.ui.theme.DeleteIconRed
@@ -48,84 +46,96 @@ fun IngredientList(
     it: PaddingValues,
     mealViewModel: MealViewModel,
 ) {
-  val ingredients = mealViewModel.meal.collectAsState(initial = Meal.default()).value.ingredients
-  // TODO: Implement potential ingredients
-  val potentialIngredients = listOf<Ingredient>()
+    val ingredients: MutableList<Ingredient> =
+        mealViewModel.meal.value?.ingredients ?: mutableListOf()
+    // TODO: Implement potential ingredients
+    val potentialIngredients = listOf<Ingredient>()
 
-  val onAddIngredient = { index: Int -> Log.v("Add Ingredient", "Clicked") }
-  val initialSuggestions = 3
-  val potentialIndex = remember {
-    // equivalent to min(3, potentialIngredients.size)
-    mutableIntStateOf(initialSuggestions.coerceAtMost(potentialIngredients.size))
-  }
+    val onAddIngredient = { index: Int -> Log.v("Add Ingredient", "Clicked") }
+    val initialSuggestions = 3
+    val potentialIndex = remember {
+        // equivalent to min(3, potentialIngredients.size)
+        mutableIntStateOf(initialSuggestions.coerceAtMost(potentialIngredients.size))
+    }
 
-  Column(
-      modifier =
-          Modifier.fillMaxSize()
-              .padding(it)
-              .verticalScroll(rememberScrollState())
-              .testTag("IngredientsList"),
-      verticalArrangement = Arrangement.Top,
-      horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        modifier =
+        Modifier
+            .fillMaxSize()
+            .padding(it)
+            .verticalScroll(rememberScrollState())
+            .testTag("IngredientsList"),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         if (ingredients.isEmpty() && potentialIngredients.isEmpty()) {
-          Text(
-              "No ingredients added.",
-              modifier = Modifier.fillMaxSize().padding(16.dp, 0.dp).testTag("NoIngredients"),
-              color = MaterialTheme.colorScheme.secondary,
-              fontSize = MaterialTheme.typography.headlineSmall.fontSize)
+            Text(
+                "No ingredients added.",
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp, 0.dp)
+                    .testTag("NoIngredients"),
+                color = MaterialTheme.colorScheme.secondary,
+                fontSize = MaterialTheme.typography.headlineSmall.fontSize
+            )
         } else {
-          FlowRow(
-              horizontalArrangement = Arrangement.Start, verticalArrangement = Arrangement.Top) {
+            FlowRow(
+                horizontalArrangement = Arrangement.Start, verticalArrangement = Arrangement.Top
+            ) {
                 ingredients.forEach { ingredient ->
-                  var isExpanded by remember { mutableStateOf(false) }
+                    var isExpanded by remember { mutableStateOf(false) }
 
-                  if (isExpanded) {
-                    ExpandedIngredient(
-                        ingredient = ingredient,
-                        onIngredientRemove = { mealViewModel.removeIngredient(ingredient) },
-                        onCollapseIngredient = { isExpanded = false })
-                  } else {
-                    GradientButton(
-                        text = "${ingredient.name} ${ingredient.amount}${ingredient.unit}",
-                        onClick = {
-                          Log.v("Expand Ingredients", "Clicked")
-                          isExpanded = true
-                        },
-                        active = true,
-                        modifier = Modifier.testTag("Ingredient"))
-                  }
+                    if (isExpanded) {
+                        ExpandedIngredient(
+                            ingredient = ingredient,
+                            onIngredientRemove = { mealViewModel.removeIngredient(ingredient) },
+                            onCollapseIngredient = { isExpanded = false })
+                    } else {
+                        GradientButton(
+                            text = "${ingredient.name} ${ingredient.amount}${ingredient.unit}",
+                            onClick = {
+                                Log.v("Expand Ingredients", "Clicked")
+                                isExpanded = true
+                            },
+                            active = true,
+                            modifier = Modifier.testTag("Ingredient")
+                        )
+                    }
                 }
-                potentialIngredients.take(potentialIndex.intValue).forEachIndexed {
-                    index,
-                    ingredient ->
-                  GradientButton(
-                      icon = {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = "Add ${ingredient.name}",
-                            tint = MaterialTheme.colorScheme.secondary)
-                      },
-                      text = ingredient.name,
-                      onClick = { onAddIngredient(index) },
-                      active = false,
-                      modifier = Modifier.testTag("PotentialIngredient"))
+                potentialIngredients.take(potentialIndex.intValue).forEachIndexed { index,
+                                                                                    ingredient ->
+                    GradientButton(
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = "Add ${ingredient.name}",
+                                tint = MaterialTheme.colorScheme.secondary
+                            )
+                        },
+                        text = ingredient.name,
+                        onClick = { onAddIngredient(index) },
+                        active = false,
+                        modifier = Modifier.testTag("PotentialIngredient")
+                    )
                 }
                 if (potentialIngredients.size > potentialIndex.intValue) {
-                  GradientButton(
-                      icon = {
-                        Icon(
-                            imageVector = Icons.Default.MoreVert,
-                            contentDescription = "More Options",
-                            modifier = Modifier.graphicsLayer(rotationZ = 90f),
-                            tint = MaterialTheme.colorScheme.secondary)
-                      },
-                      onClick = { potentialIndex.intValue = potentialIngredients.size },
-                      active = false,
-                      modifier = Modifier.testTag("MoreIngredientsButton"))
+                    GradientButton(
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Default.MoreVert,
+                                contentDescription = "More Options",
+                                modifier = Modifier.graphicsLayer(rotationZ = 90f),
+                                tint = MaterialTheme.colorScheme.secondary
+                            )
+                        },
+                        onClick = { potentialIndex.intValue = potentialIngredients.size },
+                        active = false,
+                        modifier = Modifier.testTag("MoreIngredientsButton")
+                    )
                 }
-              }
+            }
         }
-      }
+    }
 }
 
 @Composable
@@ -134,39 +144,47 @@ fun ExpandedIngredient(
     onIngredientRemove: () -> Unit,
     onCollapseIngredient: () -> Unit
 ) {
-  GradientBox(
-      outerModifier =
-          Modifier.testTag("ExpandedIngredient").padding(horizontal = 4.dp, vertical = 1.dp),
-      icon = Icons.Filled.Close,
-      iconColor = PrimaryPink,
-      iconDescriptor = "Delete ${ingredient.name}",
-      iconOnClick = onCollapseIngredient) {
+    GradientBox(
+        outerModifier =
+        Modifier
+            .testTag("ExpandedIngredient")
+            .padding(horizontal = 4.dp, vertical = 1.dp),
+        icon = Icons.Filled.Close,
+        iconColor = PrimaryPink,
+        iconDescriptor = "Delete ${ingredient.name}",
+        iconOnClick = onCollapseIngredient
+    ) {
         Column(modifier = Modifier.padding(start = 12.dp, end = 12.dp, top = 0.dp, bottom = 8.dp)) {
-          Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = ingredient.name,
-                style = MaterialTheme.typography.headlineSmall,
-                color = PrimaryPurple,
-                modifier = Modifier.padding(start = 2.dp).testTag("ExpandedIngredientName"))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = ingredient.name,
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = PrimaryPurple,
+                    modifier = Modifier
+                        .padding(start = 2.dp)
+                        .testTag("ExpandedIngredientName")
+                )
 
-            // TODO: be able to edit the name of the ingredient
+                // TODO: be able to edit the name of the ingredient
 
-            IconButton(
-                modifier = Modifier.testTag("DeleteIngredientButton"),
-                onClick = {
-                  onCollapseIngredient()
-                  onIngredientRemove()
-                }) {
-                  Icon(
-                      imageVector = Icons.Default.Delete,
-                      contentDescription = "Delete ${ingredient.name}",
-                      tint = DeleteIconRed)
+                IconButton(
+                    modifier = Modifier.testTag("DeleteIngredientButton"),
+                    onClick = {
+                        onCollapseIngredient()
+                        onIngredientRemove()
+                    }) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Delete ${ingredient.name}",
+                        tint = DeleteIconRed
+                    )
                 }
-          }
+            }
 
-          IngredientNutritionEditFields(
-              nutritionFields = ingredient.nutritionalInformation.nutrients,
-              modifier = Modifier.heightIn(max = 300.dp))
+            IngredientNutritionEditFields(
+                nutritionFields = ingredient.nutritionalInformation.nutrients,
+                modifier = Modifier.heightIn(max = 300.dp)
+            )
         }
-      }
+    }
 }

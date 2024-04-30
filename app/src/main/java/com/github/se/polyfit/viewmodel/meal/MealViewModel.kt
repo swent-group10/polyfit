@@ -10,100 +10,104 @@ import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.model.meal.MealTag
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 
 @HiltViewModel
 class MealViewModel @Inject constructor(private val mealRepo: MealRepository) : ViewModel() {
-  private val _meal = MutableStateFlow<Meal>(Meal.default())
-  val meal: StateFlow<Meal>
-    get() = _meal
+    private val _meal = MutableStateFlow<Meal>(Meal.default())
+    val meal: StateFlow<Meal>
+        get() = _meal
+    private val _isComplete: StateFlow<Boolean> =
+        _meal.map { it.isComplete() }.stateIn(GlobalScope, SharingStarted.Eagerly, false)
+    val isComplete: StateFlow<Boolean>
+        get() = _isComplete
 
-  private val _isComplete = MutableStateFlow<Boolean>(false)
-  val isComplete: StateFlow<Boolean>
-    get() = _isComplete
-
-  init {
-    viewModelScope.launch { _meal.collect { meal -> _isComplete.value = meal.isComplete() } }
-  }
-
-  fun setMealData(meal: Meal) {
-    _meal.value = meal
-  }
-
-  fun updateMealData(
-      mealOccasion: MealOccasion = _meal.value.occasion,
-      name: String = _meal.value.name,
-      mealID: Long = _meal.value.mealID,
-      mealTemp: Double = _meal.value.mealTemp,
-      ingredients: MutableList<Ingredient> = _meal.value.ingredients,
-      firebaseID: String = _meal.value.firebaseId,
-      createdAt: LocalDate = _meal.value.createdAt,
-      tags: MutableList<MealTag> = _meal.value.tags
-  ) {
-    // When we make a new Meal, we add all the ingredient values into nutritionalInfo. If we pass
-    // existing values, then its double adding
-    val newNutritionalInformation = NutritionalInformation(mutableListOf())
-    _meal.value =
-        Meal(
-            mealOccasion,
-            name,
-            mealID,
-            mealTemp,
-            newNutritionalInformation,
-            ingredients,
-            firebaseID,
-            createdAt,
-            tags)
-  }
-
-  fun setMealCreatedAt(createdAt: LocalDate) {
-    _meal.value = _meal.value.deepCopy(createdAt = createdAt)
-  }
-
-  fun setMealOccasion(occasion: MealOccasion) {
-    _meal.value = _meal.value.deepCopy(occasion = occasion)
-  }
-
-  fun setMeal() {
-    if (!_meal.value.isComplete()) {
-      throw Exception("Meal is incomplete")
+    fun setMealData(meal: Meal) {
+        _meal.value = meal
     }
-    viewModelScope.launch {
-      try {
-        mealRepo.storeMeal(_meal.value)
-      } catch (e: Exception) {
-        Log.e("Error storing meal", e.message.toString())
-        throw Exception("Error storing meal : ${e.message}")
-      }
+
+    fun updateMealData(
+        mealOccasion: MealOccasion = _meal.value.occasion,
+        name: String = _meal.value.name,
+        mealID: Long = _meal.value.mealID,
+        mealTemp: Double = _meal.value.mealTemp,
+        ingredients: MutableList<Ingredient> = _meal.value.ingredients,
+        firebaseID: String = _meal.value.firebaseId,
+        createdAt: LocalDate = _meal.value.createdAt,
+        tags: MutableList<MealTag> = _meal.value.tags
+    ) {
+        // When we make a new Meal, we add all the ingredient values into nutritionalInfo. If we pass
+        // existing values, then its double adding
+        val newNutritionalInformation = NutritionalInformation(mutableListOf())
+        Log.d("NutritionScreen", "updated name is $name")
+        _meal.value =
+            Meal(
+                mealOccasion,
+                name,
+                mealID,
+                mealTemp,
+                newNutritionalInformation,
+                ingredients,
+                firebaseID,
+                createdAt,
+                tags
+            )
+
+        Log.d("NutritionScreen", "updated meal is ${_meal.value}")
     }
-  }
 
-  fun addIngredient(ingredient: Ingredient) {
-    val updatedIngredients = _meal.value.ingredients.toMutableList().apply { add(ingredient) }
-    _meal.value = _meal.value.deepCopy(ingredients = updatedIngredients)
-  }
+    fun setMealCreatedAt(createdAt: LocalDate) {
+        _meal.value = _meal.value.deepCopy(createdAt = createdAt)
+    }
 
-  fun removeIngredient(ingredient: Ingredient) {
-    val updatedIngredients = _meal.value.ingredients.toMutableList().apply { remove(ingredient) }
+    fun setMealOccasion(occasion: MealOccasion) {
+        _meal.value = _meal.value.deepCopy(occasion = occasion)
+    }
 
-    _meal.value = _meal.value.deepCopy(ingredients = updatedIngredients)
-  }
+    fun setMeal() {
+        if (!_meal.value.isComplete()) {
+            throw Exception("Meal is incomplete")
+        }
+        viewModelScope.launch {
+            try {
+                mealRepo.storeMeal(_meal.value)
+            } catch (e: Exception) {
+                Log.e("Error storing meal", e.message.toString())
+                throw Exception("Error storing meal : ${e.message}")
+            }
+        }
+    }
 
-  fun addTag(tag: MealTag) {
-    _meal.value.tags.add(tag)
-  }
+    fun addIngredient(ingredient: Ingredient) {
+        val updatedIngredients = _meal.value.ingredients.toMutableList().apply { add(ingredient) }
+        _meal.value = _meal.value.deepCopy(ingredients = updatedIngredients)
+    }
 
-  fun removeTag(tag: MealTag) {
-    _meal.value.tags.remove(tag)
-  }
+    fun removeIngredient(ingredient: Ingredient) {
+        val updatedIngredients =
+            _meal.value.ingredients.toMutableList().apply { remove(ingredient) }
 
-  // TODO: This can be removed once we are properly using a new ViewModel for each Meal
-  fun reset() {
-    _meal.value = Meal.default()
-    _isComplete.value = false
-  }
+        _meal.value = _meal.value.deepCopy(ingredients = updatedIngredients)
+    }
+
+    fun addTag(tag: MealTag) {
+        _meal.value.tags.add(tag)
+    }
+
+    fun removeTag(tag: MealTag) {
+        _meal.value.tags.remove(tag)
+    }
+
+    // TODO: This can be removed once we are properly using a new ViewModel for each Meal
+    fun reset() {
+        _meal.value = Meal.default()
+    }
 }
