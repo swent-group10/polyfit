@@ -3,6 +3,7 @@ package com.github.se.polyfit.data.remote.firebase
 import android.graphics.Bitmap
 import android.util.Log
 import com.github.se.polyfit.model.post.Post
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage

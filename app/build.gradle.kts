@@ -139,6 +139,8 @@ android {
         implementation("com.google.firebase:firebase-database")
         implementation("com.firebaseui:firebase-ui-auth:8.0.2")
         implementation("com.google.firebase:firebase-storage:20.3.0")
+        // Full GeoFire library for Realtime Database users
+        implementation("com.firebase:geofire-android:3.2.0")
 
         // Kotlin
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0")
