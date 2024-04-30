@@ -200,11 +200,7 @@ class MealTest {
             name = "eggs",
             mealID = 1,
             mealTemp = 102.2,
-            nutritionalInformation =
-                NutritionalInformation(
-                    mutableListOf(
-                        Nutrient("calories", 100.0, MeasurementUnit.CAL),
-                        Nutrient("calcium", 1.0, MeasurementUnit.G))),
+            nutritionalInformation = NutritionalInformation(mutableListOf()),
             ingredients =
                 mutableListOf(
                     Ingredient(
@@ -217,7 +213,7 @@ class MealTest {
                                 Nutrient("calories", 100.0, MeasurementUnit.CAL),
                                 Nutrient("calcium", 1.0, MeasurementUnit.G))))))
 
-    assertEquals(200.0, meal.calculateTotalCalories(), 0.001)
+    assertEquals(100.0, meal.calculateTotalCalories(), 0.001)
   }
 
   @Test
@@ -228,11 +224,7 @@ class MealTest {
             name = "eggs",
             mealID = 1,
             mealTemp = 102.2,
-            nutritionalInformation =
-                NutritionalInformation(
-                    mutableListOf(
-                        Nutrient("calcium", 1.0, MeasurementUnit.G),
-                        Nutrient("calories", 100.0, MeasurementUnit.CAL))),
+            nutritionalInformation = NutritionalInformation(mutableListOf()),
             ingredients =
                 mutableListOf(
                     Ingredient(
@@ -245,6 +237,6 @@ class MealTest {
                                 Nutrient("calcium", 1.0, MeasurementUnit.G),
                                 Nutrient("calories", 100.0, MeasurementUnit.CAL))))))
 
-    assertEquals(2.0, meal.calculateTotalNutrient("calcium"), 0.001)
+    assertEquals(1.0, meal.calculateTotalNutrient("calcium"), 0.001)
   }
 }
