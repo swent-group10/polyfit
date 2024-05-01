@@ -1,6 +1,7 @@
 package com.github.se.polyfit.viewmodel
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import com.github.se.polyfit.data.local.dao.MealDao
 import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
 import com.github.se.polyfit.data.repository.MealRepository
@@ -12,16 +13,16 @@ import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import junit.framework.TestCase.assertEquals
 import kotlin.test.assertFailsWith
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -205,32 +206,23 @@ class MealViewModelTest {
                         unit = MeasurementUnit.G,
                     )))
 
-    coEvery { mealRepo.getMealById(mealId) } returns expectedMeal
+    coEvery { mealRepo.getMealById(any()) } returns expectedMeal
 
     viewModel.setMealData(mealId)
 
-    delay(1000) // Allow time for the coroutine to complete
-    val resultingMeal = viewModel.meal.value!!
-
-    assertEquals(expectedMeal.name, resultingMeal.name)
-    assertEquals(expectedMeal.occasion, resultingMeal.occasion)
-    assertEquals(expectedMeal.mealTemp, resultingMeal.mealTemp)
+    coVerify { mealRepo.getMealById(mealId) }
+    assertThat(viewModel.meal.value, `is`(expectedMeal))
   }
 
   @Test
   fun setMealData_withInvalidMealId_throwsException() = runTest {
     val mealId = 1L
 
-    coEvery { mealRepo.getMealById(mealId) } returns null
+    coEvery { mealRepo.getMealById(any()) } returns null
 
     viewModel.setMealData(mealId)
 
-    delay(1000) // Allow time for the coroutine to complete
-    val resultingMeal = viewModel.meal.value!!
-
-    assertEquals(Meal.default().mealID, resultingMeal.mealID)
-    assertEquals(Meal.default().name, resultingMeal.name)
-    assertEquals(Meal.default().occasion, resultingMeal.occasion)
-    assertEquals(Meal.default().mealTemp, resultingMeal.mealTemp)
+    coVerify { mealRepo.getMealById(mealId) }
+    assertThat(viewModel.meal.value, `is`(Meal.default()))
   }
 }
