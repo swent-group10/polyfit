@@ -15,12 +15,28 @@ constructor(private val mealDao: MealDao, private val spoonacularApiCaller: Spoo
     ViewModel() {
 
   fun storeMeal(imageBitmap: Bitmap?): Long? {
-    return if (imageBitmap == null) {
+    if (imageBitmap == null) {
       Log.e("OverviewViewModel", "Image is null")
-      null
+      return null
     } else {
       val meal = spoonacularApiCaller.getMealsFromImage(imageBitmap)
-      mealDao.insert(meal)
+      if (meal == null) {
+        Log.e("OverviewViewModel", "Meal could not be created from image")
+        return null
+      } else {
+        val mealId = mealDao.insert(meal)
+
+        if (mealId == null) {
+          Log.e("OverviewViewModel", "Meal could not be inserted into the database")
+          return null
+        } else {
+          return mealId
+        }
+      }
     }
+  }
+
+  fun deleteByDBId(mealDatabaseId: Long) {
+    mealDao.deleteByDatabaseID(mealDatabaseId)
   }
 }

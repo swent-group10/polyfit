@@ -8,6 +8,7 @@ import com.github.se.polyfit.model.meal.Meal
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.verify
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -40,5 +41,17 @@ class OverviewViewModelTest {
     val result = overviewViewModel.storeMeal(null)
 
     Assert.assertNull(result)
+  }
+
+  @Test
+  fun deleteByDBId_deletesMeal() {
+    val id = 1L
+    every { mockMealDao.deleteByDatabaseID(id) } returns Unit
+
+    // Call the method under test
+    overviewViewModel.deleteByDBId(id)
+
+    // Verify that the method was called with the correct parameters
+    verify { mockMealDao.deleteByDatabaseID(id) }
   }
 }

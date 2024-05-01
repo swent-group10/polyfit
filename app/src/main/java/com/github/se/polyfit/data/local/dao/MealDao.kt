@@ -48,6 +48,8 @@ interface MealDao {
 
   @Query("DELETE FROM MealTable WHERE firebaseId = :id") fun deleteByFirebaseID(id: String)
 
+  @Query("DELETE FROM MealTable WHERE id = :id") fun deleteByDatabaseID(id: Long)
+
   @Query("DELETE FROM MealTable") fun deleteAll()
 
   /**

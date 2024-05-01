@@ -163,6 +163,16 @@ class MealDatabaseTest {
     assertEquals(meal, mealFromDB)
   }
 
+  @Test
+  fun testDeleteByDatabaseID() {
+    mealDao.deleteAll()
+    val meal = createMeal("Oatmeal", "1", LocalDate.now())
+    val id = mealDao.insert(meal)
+    mealDao.deleteByDatabaseID(id)
+    val mealFromDB = mealDao.getMealByDatabaseID(id)
+    assertEquals(null, mealFromDB)
+  }
+
   private fun createMeal(name: String, firebaseId: String, createdAt: LocalDate): Meal {
     return Meal(
         name = name,
