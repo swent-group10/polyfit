@@ -18,7 +18,7 @@
     <string name="graphScreenTitle">Calories Per Day</string>
     <string name="kcalvalue">%1$.1f kCal</string>
     <string name= "weightvalue">%1$.1f lbs</string>
-    <string name="datevalue">%1$d %2$s</string>
+    <string name="datevalue">%1$s</string>
     <string name="noPostAvailable">"Unfortunately there is no post\navailable around you"</string>
     <string name="description">"Description"</string>
     <string name="nutrient">"Nutrient"</string>

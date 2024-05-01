@@ -17,12 +17,15 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -48,20 +51,25 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import co.yml.charts.ui.linechart.LineChart
 import com.github.se.polyfit.R
 import com.github.se.polyfit.data.api.SpoonacularApiCaller
 import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.ui.components.GradientBox
 import com.github.se.polyfit.ui.components.button.GradientButton
 import com.github.se.polyfit.ui.components.dialog.PictureDialog
+import com.github.se.polyfit.ui.components.lineChartData
 import com.github.se.polyfit.ui.components.showToastMessage
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.navigation.Route
 import com.github.se.polyfit.ui.utils.OverviewTags
+import com.github.se.polyfit.ui.viewModel.DataToPoints
+import com.github.se.polyfit.ui.viewModel.DateList
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
 import kotlinx.coroutines.runBlocking
 
@@ -198,6 +206,7 @@ fun OverviewScreen(
 
   val context = LocalContext.current
   val navigation = Navigation(navController)
+  val isTestEnvironment = System.getProperty("isTestEnvironment") == "true"
 
   // State to hold the URI, the image and the bitmap
   var imageUri by remember { mutableStateOf<Uri?>(null) }
@@ -315,6 +324,36 @@ fun OverviewScreen(
                         bitmap = it.asImageBitmap(),
                         contentDescription = "Captured image",
                         modifier = Modifier.testTag("GenericPicture"))
+                  }
+                }
+          }
+          item {
+            OutlinedCard(
+                modifier =
+                    Modifier.align(Alignment.Center)
+                        .padding(top = 10.dp)
+                        .size(width = 350.dp, height = 300.dp)
+                        .testTag("ThirdCard")
+                        .clickable{
+                                  navController.navigate(Route.Graph)
+                        },
+                border =
+                    BorderStroke(
+                        2.dp,
+                        brush =
+                            Brush.linearGradient(
+                                listOf(
+                                    MaterialTheme.colorScheme.inversePrimary,
+                                    MaterialTheme.colorScheme.primary))),
+                colors = CardDefaults.cardColors(Color.Transparent)) {
+                  Column(modifier = Modifier.fillMaxSize()){
+
+                      Text(text = "Calories Graph", style = MaterialTheme.typography.headlineLarge, modifier = Modifier.padding(start =10.dp).weight(1f))
+                      if (!isTestEnvironment) {
+                        LineChart(
+                            modifier = Modifier.fillMaxWidth().fillMaxHeight(0.8f).padding(bottom =10.dp).testTag("LineChart").clickable{navController.navigate(Route.Graph)},
+                            lineChartData = lineChartData(DataToPoints(), DateList()))
+                      }
                   }
                 }
           }

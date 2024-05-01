@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
 import co.yml.charts.axis.AxisData
 import co.yml.charts.common.extensions.formatToSinglePrecision
+import co.yml.charts.common.model.AccessibilityConfig
 import co.yml.charts.common.model.Point
 import co.yml.charts.ui.linechart.model.GridLines
 import co.yml.charts.ui.linechart.model.IntersectionPoint
@@ -62,8 +63,7 @@ fun lineChartData(pointList: List<Point>, dateList: List<LocalDate>): LineChartD
                                   lineType = LineType.SmoothCurve(isDotted = false)),
                           intersectionPoint =
                               IntersectionPoint(color = MaterialTheme.colorScheme.primary),
-                          selectionHighlightPoint =
-                              SelectionHighlightPoint(color = MaterialTheme.colorScheme.secondary),
+                          selectionHighlightPoint = null,
                           shadowUnderLine =
                               ShadowUnderLine(
                                   alpha = 0.5f,
@@ -77,5 +77,6 @@ fun lineChartData(pointList: List<Point>, dateList: List<LocalDate>): LineChartD
       backgroundColor = MaterialTheme.colorScheme.surface,
       xAxisData = xAxisData,
       yAxisData = yAxisData,
-      gridLines = GridLines(color = MaterialTheme.colorScheme.outlineVariant))
+      gridLines = GridLines(color = MaterialTheme.colorScheme.outlineVariant),
+  )
 }

@@ -41,7 +41,10 @@ import com.github.se.polyfit.ui.viewModel.SortPoints
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FullGraphScreen(viewModel: GraphViewModel = hiltViewModel<GraphViewModel>()) {
+fun FullGraphScreen(
+    viewModel: GraphViewModel = hiltViewModel<GraphViewModel>(),
+    goBack: () -> Unit
+) {
   val context = LocalContext.current
 
   val isTestEnvironment = System.getProperty("isTestEnvironment") == "true"
@@ -53,7 +56,7 @@ fun FullGraphScreen(viewModel: GraphViewModel = hiltViewModel<GraphViewModel>())
   Scaffold(
       topBar = {
         // This will be given a return function later
-        SimpleTopBar(context.getString(R.string.graphScreenTitle), {})
+        SimpleTopBar(context.getString(R.string.graphScreenTitle), goBack)
       }) { padding ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -113,7 +116,7 @@ fun FullGraphScreen(viewModel: GraphViewModel = hiltViewModel<GraphViewModel>())
                               }
                           Text(
                               modifier = Modifier.padding(end = 4.dp).testTag("Date"),
-                              text = context.getString(R.string.datevalue, data.day, data.month))
+                              text = context.getString(R.string.datevalue, data.date.toString()))
                         }
                     HorizontalDivider(
                         thickness = 1.dp, color = MaterialTheme.colorScheme.inversePrimary)

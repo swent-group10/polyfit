@@ -77,19 +77,21 @@ class GraphViewModel @Inject constructor() : ViewModel() {
         }
     return filteredData
   }
+
+  private fun collectData() {}
 }
 
 // Will be modified further when Data is linked
 
 private val mockData =
     listOf(
-        GraphData(kCal = 1000.0, day = 11, month = "Mar.", weight = 45.0),
-        GraphData(kCal = 870.2, day = 12, month = "Mar.", weight = 330.0),
-        GraphData(kCal = 1689.98, day = 13, month = "Mar.", weight = 78.0),
-        GraphData(kCal = 1300.0, day = 14, month = "Mar.", weight = 65.9),
-        GraphData(kCal = 1000.0, day = 15, month = "Mar.", weight = 35.0),
-        GraphData(kCal = 2399.3, day = 16, month = "Mar.", weight = 78.0),
-        GraphData(kCal = 2438.0, day = 17, month = "Mar.", weight = 80.2))
+        GraphData(kCal = 1000.0, LocalDate.of(2024, 3, 11), weight = 45.0),
+        GraphData(kCal = 870.2, LocalDate.of(2024, 3, 12), weight = 330.0),
+        GraphData(kCal = 1689.98, LocalDate.of(2024, 3, 13), weight = 78.0),
+        GraphData(kCal = 1300.0, LocalDate.of(2024, 3, 14), weight = 65.9),
+        GraphData(kCal = 1000.0, LocalDate.of(2024, 3, 15), weight = 35.0),
+        GraphData(kCal = 2399.3, LocalDate.of(2024, 3, 16), weight = 78.0),
+        GraphData(kCal = 2438.0, LocalDate.of(2024, 3, 17), weight = 80.2))
 private val mockDates =
     listOf(
         LocalDate.of(2024, 3, 11),
@@ -101,7 +103,9 @@ private val mockDates =
         LocalDate.of(2024, 3, 17))
 
 fun DateList(): List<LocalDate> {
-  return mockDates
+  val dateList: MutableList<LocalDate> = mutableListOf()
+  mockData.forEach { data -> dateList.add(data.date) }
+  return dateList.toList()
 }
 
 fun DataToPoints(): List<Point> {
