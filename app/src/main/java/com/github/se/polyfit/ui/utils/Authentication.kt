@@ -6,10 +6,10 @@ import android.content.Intent
 import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.lifecycle.ViewModel
+import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.github.se.polyfit.model.data.User
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -32,12 +32,11 @@ constructor(private val context: Context, private val user: User) : ViewModel(),
   }
 
   override fun signIn() {
-    val gso =
-        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build()
+    val providers = arrayListOf(AuthUI.IdpConfig.GoogleBuilder().build())
 
-    val mGoogleSignInClient = GoogleSignIn.getClient(context, gso)
+    val signInIntent =
+        AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(providers).build()
 
-    val signInIntent = mGoogleSignInClient.signInIntent
     signInLauncher.launch(signInIntent)
   }
 

@@ -28,6 +28,10 @@ class Navigation(private val navHostController: NavHostController) {
     navigateTo(Route.AdditionalMealInfo)
   }
 
+  fun navigateToDailyRecap() {
+    navigateTo(Route.DailyRecap)
+  }
+
   private fun navigateTo(route: String) {
     Log.i("Navigation", "Navigating to $route")
     navHostController.navigate(route)

@@ -57,7 +57,6 @@ import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.ui.components.GradientBox
 import com.github.se.polyfit.ui.components.button.GradientButton
 import com.github.se.polyfit.ui.components.dialog.PictureDialog
-import com.github.se.polyfit.ui.components.showToastMessage
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.utils.OverviewTags
 import com.github.se.polyfit.viewmodel.meal.OverviewViewModel
@@ -72,7 +71,7 @@ fun MealTrackerCard(
     meals: List<Pair<MealOccasion, Double>>,
     onCreateMealFromPhoto: () -> Unit,
     onCreateMealWithoutPhoto: () -> Unit,
-    Button3: @Composable () -> Unit = {}
+    onViewRecap: () -> Unit,
 ) {
   val context = LocalContext.current
 
@@ -150,7 +149,7 @@ fun MealTrackerCard(
                       tint = MaterialTheme.colorScheme.primary)
                 })
             GradientButton(
-                onClick = { Button3 },
+                onClick = onViewRecap,
                 modifier = Modifier.testTag(OverviewTags.overviewDetailsBtn),
                 active = true,
                 icon = {
@@ -290,7 +289,7 @@ fun OverviewScreen(
                   Log.d("OverviewScreen", "Photo button clicked")
                 },
                 onCreateMealWithoutPhoto = navigation::navigateToAddMeal,
-                Button3 = { showToastMessage(context) })
+                onViewRecap = navigation::navigateToDailyRecap)
           }
           item {
             OutlinedCard(
