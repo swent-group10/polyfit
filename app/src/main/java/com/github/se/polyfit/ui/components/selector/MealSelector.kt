@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -143,8 +143,7 @@ fun MealDetails(meal: Meal, modifier: Modifier = Modifier) {
         nutrients.forEach { (nutrientName, amount) ->
           GradientBox(
               outerModifier = Modifier.padding(horizontal = 10.dp),
-              innerModifier =
-                  Modifier.heightIn(min = 80.dp, max = 80.dp).widthIn(max = 80.dp, min = 80.dp),
+              innerModifier = Modifier.size(80.dp),
               round = 50.0) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                   Column(
