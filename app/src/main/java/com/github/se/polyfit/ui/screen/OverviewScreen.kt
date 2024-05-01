@@ -212,11 +212,7 @@ fun OverviewScreen(
 
         showPictureDialog = false
         var mealId: Long? = null
-        runBlocking(Dispatchers.IO) {
-          mealId = overviewViewModel.storeMeal(imageBitmap)
-          Log.d("OverviewScreen", "Meal ID: $mealId")
-        }
-        Log.d("OverviewScreen", "Meal ID: $mealId")
+        runBlocking(Dispatchers.IO) { mealId = overviewViewModel.storeMeal(imageBitmap) }
         navigation.navigateToAddMeal(mealId)
       }
 
