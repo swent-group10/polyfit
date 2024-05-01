@@ -58,7 +58,7 @@ class MealRepository(
     }
   }
 
-  suspend fun getMeal(firebaseID: String): Meal? {
+  fun getMeal(firebaseID: String): Meal? {
     return mealDao.getMealByFirebaseID(firebaseID)
   }
 

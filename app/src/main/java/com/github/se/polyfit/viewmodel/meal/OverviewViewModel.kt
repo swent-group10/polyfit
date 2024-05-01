@@ -9,10 +9,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class OverviewViewModel @Inject constructor(private val mealDao: MealDao) : ViewModel() {
-  private val spoonacularApiCaller = SpoonacularApiCaller()
+class OverviewViewModel
+@Inject
+constructor(private val mealDao: MealDao, private val spoonacularApiCaller: SpoonacularApiCaller) :
+    ViewModel() {
 
-  suspend fun storeMeal(imageBitmap: Bitmap?): Long? {
+  fun storeMeal(imageBitmap: Bitmap?): Long? {
     return if (imageBitmap == null) {
       Log.e("OverviewViewModel", "Image is null")
       null

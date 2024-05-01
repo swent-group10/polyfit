@@ -2,6 +2,7 @@ package com.github.se.polyfit.di
 
 import android.content.Context
 import androidx.room.Room
+import com.github.se.polyfit.data.api.SpoonacularApiCaller
 import com.github.se.polyfit.data.local.dao.MealDao
 import com.github.se.polyfit.data.local.database.MealDatabase
 import com.github.se.polyfit.data.processor.LocalDataProcessor
@@ -35,6 +36,12 @@ object UserModule {
   @Singleton
   fun providesGraphViewModel(): GraphViewModel {
     return GraphViewModel()
+  }
+
+  @Provides
+  @Singleton
+  fun providesSpoonacularApiCaller(): SpoonacularApiCaller {
+    return SpoonacularApiCaller()
   }
 
   @Provides

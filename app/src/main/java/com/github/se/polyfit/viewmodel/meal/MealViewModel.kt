@@ -13,7 +13,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -28,7 +27,7 @@ class MealViewModel @Inject constructor(private val mealRepo: MealRepository) : 
     get() = _meal
 
   private val _isComplete: StateFlow<Boolean> =
-      _meal.map { it.isComplete() }.stateIn(GlobalScope, SharingStarted.Eagerly, false)
+      _meal.map { it.isComplete() }.stateIn(viewModelScope, SharingStarted.Eagerly, false)
   val isComplete: StateFlow<Boolean>
     get() = _isComplete
 
@@ -42,7 +41,8 @@ class MealViewModel @Inject constructor(private val mealRepo: MealRepository) : 
       if (meal != null) {
         _meal.value = meal
       } else {
-        throw Exception("Meal not found")
+        Log.e("MealViewModel", "Meal with ID $mealId not found")
+        _meal.value = Meal.default()
       }
     }
   }

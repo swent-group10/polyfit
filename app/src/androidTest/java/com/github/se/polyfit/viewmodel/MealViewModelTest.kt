@@ -14,10 +14,13 @@ import com.github.se.polyfit.viewmodel.meal.MealViewModel
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import junit.framework.TestCase.assertEquals
 import kotlin.test.assertFailsWith
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
@@ -175,5 +178,59 @@ class MealViewModelTest {
 
     viewModel.updateMealData()
     assert(viewModel.meal.value == meal)
+  }
+
+  @Test
+  fun setMealData_withValidMealId_setsMeal() = runTest {
+    viewModel.reset()
+    val mealId = 1L
+    val expectedMeal =
+        Meal(
+            mealID = mealId,
+            name = "Test Meal",
+            occasion = MealOccasion.OTHER,
+            mealTemp = 0.0,
+            nutritionalInformation =
+                NutritionalInformation(
+                    mutableListOf(
+                        Nutrient("calories", 0.0, MeasurementUnit.CAL),
+                        Nutrient("totalWeight", 0.0, MeasurementUnit.G),
+                    )),
+            ingredients =
+                mutableListOf(
+                    Ingredient(
+                        name = "Tomato",
+                        id = 1,
+                        amount = 100.0,
+                        unit = MeasurementUnit.G,
+                    )))
+
+    coEvery { mealRepo.getMealById(mealId) } returns expectedMeal
+
+    viewModel.setMealData(mealId)
+
+    delay(1000) // Allow time for the coroutine to complete
+    val resultingMeal = viewModel.meal.value!!
+
+    assertEquals(expectedMeal.name, resultingMeal.name)
+    assertEquals(expectedMeal.occasion, resultingMeal.occasion)
+    assertEquals(expectedMeal.mealTemp, resultingMeal.mealTemp)
+  }
+
+  @Test
+  fun setMealData_withInvalidMealId_throwsException() = runTest {
+    val mealId = 1L
+
+    coEvery { mealRepo.getMealById(mealId) } returns null
+
+    viewModel.setMealData(mealId)
+
+    delay(1000) // Allow time for the coroutine to complete
+    val resultingMeal = viewModel.meal.value!!
+
+    assertEquals(Meal.default().mealID, resultingMeal.mealID)
+    assertEquals(Meal.default().name, resultingMeal.name)
+    assertEquals(Meal.default().occasion, resultingMeal.occasion)
+    assertEquals(Meal.default().mealTemp, resultingMeal.mealTemp)
   }
 }

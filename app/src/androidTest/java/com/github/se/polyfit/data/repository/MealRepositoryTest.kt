@@ -180,4 +180,11 @@ class MealRepositoryTest {
 
     verify { mealFirebaseRepository.deleteMeal("1") }
   }
+
+  @Test
+  fun getMealByFirebaseID() = runTest {
+    every { mealDao.getMealByFirebaseID(any()) } returns Meal.default()
+    val result = mealRepository.getMeal("1")
+    assertEquals(Meal.default(), result)
+  }
 }

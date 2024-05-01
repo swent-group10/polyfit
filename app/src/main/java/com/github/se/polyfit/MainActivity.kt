@@ -53,26 +53,18 @@ class MainActivity : ComponentActivity() {
 
           composable(Route.Register) { LoginScreen(navigation::navigateToHome) }
           composable(Route.AddMeal + "/{mId}") { backStackEntry ->
-            val arguments = backStackEntry.arguments
-            val mealId = arguments?.getString("mId")?.toLong()
+            val mealId = backStackEntry.arguments?.getString("mId")?.toLong()
 
-            if (mealId != null) {
-              AddMealFlow(
-                  goBack = navigation::goBack,
-                  navigateToHome = navigation::navigateToHome,
-                  mealId = mealId)
-            } else {
+            if (mealId == null) {
               Log.e("MainActivity", "No meal id found")
-              AddMealFlow(goBack = navigation::goBack, navigateToHome = navigation::navigateToHome)
             }
+            AddMealFlow(
+                goBack = navigation::goBack,
+                navigateToHome = navigation::navigateToHome,
+                mealId = mealId)
           }
 
-          composable(Route.AddMeal) {
-            // make sure the create is clear
-
-            // check reall created
-            AddMealFlow(navigation::goBack, navigation::navigateToHome)
-          }
+          composable(Route.AddMeal) { AddMealFlow(navigation::goBack, navigation::navigateToHome) }
         }
       }
     }
