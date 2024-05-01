@@ -1,14 +1,18 @@
 package com.github.se.polyfit.data.remote.firebase
 
+import android.content.ContentValues.TAG
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
+import android.widget.Toast
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.se.polyfit.R
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.post.Post
 import com.google.android.gms.tasks.Tasks
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ListResult
 import com.google.firebase.storage.StorageReference
@@ -16,13 +20,26 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.tasks.await
 import kotlin.test.Test
 import kotlinx.coroutines.test.runTest
+import org.junit.Before
 import java.io.File
 import java.io.FileOutputStream
 import kotlin.test.assertEquals
 
 class PushTest {
+
+    private lateinit var auth: FirebaseAuth
+
+    @Before
+    fun setup(): Unit = runBlocking {
+        auth = FirebaseAuth.getInstance()
+        auth.useEmulator("10.0.2.2", 9099) // Connect to the emulator
+
+        // Sign in an anonymous user
+        auth.signInAnonymously().await()
+    }
 
   @Test
   fun pushTest() = runTest {
@@ -50,20 +67,6 @@ class PushTest {
 
     @Test
     fun fetchImage() = runTest {
-        val auth = FirebaseAuth.getInstance()
-
-        auth.createUserWithEmailAndPassword("benjo.burki@gmail.com", "Konforever66")
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    // User was created
-                    val user = auth.currentUser
-                    println("User created: ${user?.email}")
-                } else {
-                    // User creation failed
-                    println("User creation failed: ${task.exception?.message}")
-                }
-            }
-
         val ref = PostFirebaseRepository().fetchImagesForPost("I32OPUTFfUiKytxM5v21")
     }
 
