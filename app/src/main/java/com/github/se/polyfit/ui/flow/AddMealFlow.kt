@@ -16,30 +16,38 @@ import com.github.se.polyfit.viewmodel.meal.MealViewModel
 fun AddMealFlow(
     goBack: () -> Unit,
     navigateToHome: () -> Unit,
-    mealViewModel: MealViewModel = hiltViewModel<MealViewModel>()
+    mealId: Long? = null,
+    mealViewModel: MealViewModel = hiltViewModel<MealViewModel>(),
 ) {
 
-  val navController = rememberNavController()
-  val navigation = Navigation(navController)
+    val navController = rememberNavController()
+    val navigation = Navigation(navController)
 
-  NavHost(navController = navController, startDestination = Route.Ingredients) {
-    composable(Route.Ingredients) {
-      IngredientScreen(
-          mealViewModel = mealViewModel,
-          navigateBack = { goBack() },
-          navigateForward = navigation::navigateToAdditionalMealInfo)
+    if (mealId != null) {
+        mealViewModel.setMealData(mealId)
     }
-    composable(Route.AdditionalMealInfo) {
-      AdditionalMealInfoScreen(
-          mealViewModel = mealViewModel,
-          navigateBack = { navigation.goBack() },
-          navigateForward = navigation::navigateToNutrition)
+
+
+    NavHost(navController = navController, startDestination = Route.Ingredients) {
+        composable(Route.Ingredients) {
+            IngredientScreen(
+                mealViewModel = mealViewModel,
+                navigateBack = { goBack() },
+                navigateForward = navigation::navigateToAdditionalMealInfo
+            )
+        }
+        composable(Route.AdditionalMealInfo) {
+            AdditionalMealInfoScreen(
+                mealViewModel = mealViewModel,
+                navigateBack = { navigation.goBack() },
+                navigateForward = navigation::navigateToNutrition
+            )
+        }
+        composable(Route.Nutrition) {
+            NutritionScreen(
+                mealViewModel = mealViewModel,
+                navigateBack = { navigation.goBack() },
+                navigateForward = { navigateToHome() })
+        }
     }
-    composable(Route.Nutrition) {
-      NutritionScreen(
-          mealViewModel = mealViewModel,
-          navigateBack = { navigation.goBack() },
-          navigateForward = { navigateToHome() })
-    }
-  }
 }

@@ -4,28 +4,33 @@ import android.util.Log
 import androidx.navigation.NavHostController
 
 class Navigation(private val navHostController: NavHostController) {
-  fun goBack() {
-    navHostController.popBackStack()
-  }
+    fun goBack() {
+        navHostController.popBackStack()
+    }
 
-  fun navigateToHome() {
-    navigateTo(Route.Home)
-  }
+    fun navigateToHome() {
+        navigateTo(Route.Home)
+    }
 
-  fun navigateToNutrition() {
-    navigateTo(Route.Nutrition)
-  }
+    fun navigateToNutrition() {
+        navigateTo(Route.Nutrition)
+    }
 
-  fun navigateToAddMeal() {
-    navigateTo(Route.AddMeal)
-  }
+    fun navigateToAddMeal(mealDatabaseId: Long? = null) {
+        if (mealDatabaseId == null) {
+            navigateTo(Route.AddMeal)
+        } else {
+            Log.d("Navigation", "Navigating to add meal with id $mealDatabaseId")
+            navigateTo(Route.AddMeal + "/$mealDatabaseId")
+        }
+    }
 
-  fun navigateToAdditionalMealInfo() {
-    navigateTo(Route.AdditionalMealInfo)
-  }
+    fun navigateToAdditionalMealInfo() {
+        navigateTo(Route.AdditionalMealInfo)
+    }
 
-  private fun navigateTo(route: String) {
-    Log.i("Navigation", "Navigating to $route")
-    navHostController.navigate(route)
-  }
+    private fun navigateTo(route: String) {
+        Log.i("Navigation", "Navigating to $route")
+        navHostController.navigate(route)
+    }
 }

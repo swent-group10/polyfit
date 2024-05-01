@@ -2,6 +2,7 @@ package com.github.se.polyfit
 
 import android.app.Application
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.view.WindowCompat
@@ -59,13 +60,19 @@ class MainActivity : ComponentActivity() {
 
                     composable(Route.AddMeal + "/{mId}") { backStackEntry ->
                         val arguments = backStackEntry.arguments
-                        val mealId = arguments?.getLong("mId")
-
+                        Log.d("AddMeal", "arguments: $arguments")
+                        val mealId = arguments?.getString("mId")?.toLong()
+                        Log.d("AddMeal", "mealId: $mealId")
                         // make sure the create is clear
 
                         // check reall created
-                        AddMealFlow(navigation::goBack, navigation::navigateToHome)
+                        Log.d("AddMeal", "mealId: $mealId")
+                        AddMealFlow(navigation::goBack, navigation::navigateToHome, mealId)
                     }
+//                    composable(Route.AddMeal) { backStackEntry ->
+//
+//                        AddMealFlow(navigation::goBack, navigation::navigateToHome)
+//                    }
                 }
             }
         }

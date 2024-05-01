@@ -1,5 +1,6 @@
 package com.github.se.polyfit.data.local.dao
 
+import android.util.Log
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -26,13 +27,22 @@ interface MealDao {
     }
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(meal: MealEntity)
+    fun insert(meal: MealEntity): Long
 
     fun insert(meal: Meal): Long {
-        val mealEntity = MealEntity.toMealEntity(meal)
-        insert(mealEntity)
 
-        return mealEntity.id
+        val mealId = insert(MealEntity.toMealEntity(meal))
+        Log.d("MealDao", "Inserted meal with id ${mealId}")
+        return mealId
+    }
+
+    @Query("SELECT * FROM MealTable WHERE id = :id LIMIT 1 ")
+    fun getMealEntityByID(id: Long): MealEntity?
+
+    fun getMealByID(id: Long): Meal? {
+        val meal = getMealEntityByID(id)
+
+        return meal?.toMeal()
     }
 
     @Query("SELECT * FROM MealTable WHERE firebaseId = :id LIMIT 1 ")

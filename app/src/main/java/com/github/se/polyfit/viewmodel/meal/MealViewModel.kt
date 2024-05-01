@@ -10,6 +10,7 @@ import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.model.meal.MealTag
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -36,6 +37,17 @@ class MealViewModel @Inject constructor(private val mealRepo: MealRepository) : 
 
     fun setMealData(meal: Meal) {
         _meal.value = meal
+    }
+
+    fun setMealData(mealId: Long) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val meal = mealRepo.getMealById(mealId)
+            if (meal != null) {
+                _meal.value = meal
+            } else {
+                throw Exception("Meal not found")
+            }
+        }
     }
 
     fun updateMealData(

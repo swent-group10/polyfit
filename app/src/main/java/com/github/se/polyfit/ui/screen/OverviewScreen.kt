@@ -61,6 +61,8 @@ import com.github.se.polyfit.ui.components.showToastMessage
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.utils.OverviewTags
 import com.github.se.polyfit.viewmodel.meal.OverviewViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 
 data class Meal(val name: String, val calories: Int)
 
@@ -149,8 +151,7 @@ fun MealTrackerCard(
                     .padding(vertical = 8.dp),
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
-                GradientButton(
-                    onClick = onCreateMealFromPhoto,
+                GradientButton(onClick = onCreateMealFromPhoto,
                     modifier = Modifier.testTag(OverviewTags.overviewPictureBtn),
                     active = true,
                     icon = {
@@ -160,8 +161,7 @@ fun MealTrackerCard(
                             tint = MaterialTheme.colorScheme.primary
                         )
                     })
-                GradientButton(
-                    onClick = onCreateMealWithoutPhoto,
+                GradientButton(onClick = onCreateMealWithoutPhoto,
                     modifier = Modifier.testTag(OverviewTags.overviewManualBtn),
                     active = true,
                     icon = {
@@ -171,8 +171,7 @@ fun MealTrackerCard(
                             tint = MaterialTheme.colorScheme.primary
                         )
                     })
-                GradientButton(
-                    onClick = { Button3 },
+                GradientButton(onClick = { Button3 },
                     modifier = Modifier.testTag(OverviewTags.overviewDetailsBtn),
                     active = true,
                     icon = {
@@ -221,6 +220,7 @@ fun OverviewScreen(
 
     val context = LocalContext.current
     val navigation = Navigation(navController)
+    var showPictureDialog by remember { mutableStateOf(false) }
 
     // State to hold the URI, the image and the bitmap
     var imageUri by remember { mutableStateOf<Uri?>(null) }
@@ -229,14 +229,22 @@ fun OverviewScreen(
 
     // Launcher for starting the camera activity
     val startCamera =
-        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result
-            ->
+        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             val bitmap = result.data?.extras?.get("data") as? Bitmap
             imageBitmap = bitmap
 
             //TODO : remove the live observer
             //TODO : create a viewmodel
-            overviewViewModel.storeMeal(imageBitmap)
+            showPictureDialog = false
+            var mealId: Long? = null
+            runBlocking(Dispatchers.IO) {
+                mealId = overviewViewModel.storeMeal(imageBitmap)
+                Log.d("OverviewScreen", "Meal ID: $mealId")
+
+            }
+            Log.d("OverviewScreen", "Meal ID: $mealId")
+            navigation.navigateToAddMeal(mealId)
+
 
         }
 
@@ -260,8 +268,7 @@ fun OverviewScreen(
 
     // Create a launcher to open gallery
     val pickImageLauncher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri?
-            ->
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
                 imageUri = uri // Update the UI with the selected image URI
 
@@ -278,7 +285,6 @@ fun OverviewScreen(
             }
         }
 
-    var showPictureDialog by remember { mutableStateOf(false) }
 
     if (showPictureDialog) {
         PictureDialog(
@@ -310,10 +316,8 @@ fun OverviewScreen(
                 )
             }
             item {
-                MealTrackerCard(
-                    caloriesGoal = 2200,
-                    meals =
-                    listOf(
+                MealTrackerCard(caloriesGoal = 2200,
+                    meals = listOf(
                         Pair(MealOccasion.BREAKFAST, 300.0),
                         Pair(MealOccasion.LUNCH, 456.0),
                         Pair(MealOccasion.DINNER, 0.0)
@@ -327,17 +331,13 @@ fun OverviewScreen(
             }
             item {
                 OutlinedCard(
-                    modifier =
-                    Modifier
+                    modifier = Modifier
                         .align(Alignment.Center)
                         .padding(top = 10.dp)
                         .size(width = 350.dp, height = 300.dp)
                         .testTag("SecondCard"),
-                    border =
-                    BorderStroke(
-                        2.dp,
-                        brush =
-                        Brush.linearGradient(
+                    border = BorderStroke(
+                        2.dp, brush = Brush.linearGradient(
                             listOf(
                                 MaterialTheme.colorScheme.inversePrimary,
                                 MaterialTheme.colorScheme.primary

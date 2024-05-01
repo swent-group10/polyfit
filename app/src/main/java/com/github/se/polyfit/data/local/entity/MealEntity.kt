@@ -11,7 +11,6 @@ import java.time.LocalDate
 
 @Entity(tableName = "MealTable")
 data class MealEntity(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val occasion: MealOccasion,
     val name: String,
     val mealID: Long,
@@ -20,34 +19,38 @@ data class MealEntity(
     val ingredients: MutableList<Ingredient>,
     val firebaseId: String,
     val createdAt: LocalDate,
-    val tags: MutableList<MealTag>
-) {
+    val tags: MutableList<MealTag>,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
 
-  fun toMeal(): Meal {
-    return Meal(
-        occasion,
-        name,
-        mealID,
-        mealTemp,
-        nutritionalInformation,
-        ingredients,
-        firebaseId,
-        createdAt,
-        tags)
-  }
+    ) {
 
-  companion object {
-    fun toMealEntity(meal: Meal): MealEntity {
-      return MealEntity(
-          occasion = meal.occasion,
-          name = meal.name,
-          mealID = meal.mealID,
-          mealTemp = meal.mealTemp,
-          nutritionalInformation = meal.nutritionalInformation,
-          ingredients = meal.ingredients,
-          firebaseId = meal.firebaseId,
-          createdAt = meal.createdAt,
-          tags = meal.tags)
+    fun toMeal(): Meal {
+        return Meal(
+            occasion,
+            name,
+            mealID,
+            mealTemp,
+            nutritionalInformation,
+            ingredients,
+            firebaseId,
+            createdAt,
+            tags
+        )
     }
-  }
+
+    companion object {
+        fun toMealEntity(meal: Meal): MealEntity {
+            return MealEntity(
+                occasion = meal.occasion,
+                name = meal.name,
+                mealID = meal.mealID,
+                mealTemp = meal.mealTemp,
+                nutritionalInformation = meal.nutritionalInformation,
+                ingredients = meal.ingredients,
+                firebaseId = meal.firebaseId,
+                createdAt = meal.createdAt,
+                tags = meal.tags
+            )
+        }
+    }
 }
