@@ -7,7 +7,6 @@ import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.matcher.IntentMatchers.toPackage
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.MainActivity
-import com.github.se.polyfit.ui.utils.Authentication
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import kotlinx.coroutines.delay
