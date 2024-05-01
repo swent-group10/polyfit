@@ -211,9 +211,8 @@ fun OverviewScreen(
         imageBitmap = bitmap
 
         showPictureDialog = false
-        var mealId: Long? = null
-        runBlocking(Dispatchers.IO) { mealId = overviewViewModel.storeMeal(imageBitmap) }
-        navigation.navigateToAddMeal(mealId)
+        var id: Long? = runBlocking(Dispatchers.IO) { overviewViewModel.storeMeal(imageBitmap) }
+        navigation.navigateToAddMeal(id)
       }
 
   // Launcher for requesting the camera permission

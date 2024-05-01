@@ -2,7 +2,6 @@ package com.github.se.polyfit
 
 import android.app.Application
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.view.WindowCompat
@@ -55,10 +54,6 @@ class MainActivity : ComponentActivity() {
           composable(Route.Register) { LoginScreen(navigation::navigateToHome) }
           composable(Route.AddMeal + "/{mId}") { backStackEntry ->
             val mealId = backStackEntry.arguments?.getString("mId")?.toLong()
-
-            if (mealId == null) {
-              Log.e("MainActivity", "No meal id found")
-            }
             AddMealFlow(
                 goBack = navigation::goBack,
                 navigateToHome = navigation::navigateToHome,
