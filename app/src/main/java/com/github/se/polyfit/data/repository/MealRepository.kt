@@ -8,6 +8,7 @@ import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
 import com.google.firebase.firestore.DocumentReference
+import java.time.LocalDate
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
@@ -64,6 +65,10 @@ class MealRepository(
 
   suspend fun getAllMeals(): List<Meal> {
     return mealDao.getAllMeals()
+  }
+
+  suspend fun getMealsOnDate(date: LocalDate): List<Meal> {
+    return withContext(this.dispatcher) { mealDao.getMealsCreatedOnDate(date) }
   }
 
   suspend fun deleteMeal(firebaseID: String) {
