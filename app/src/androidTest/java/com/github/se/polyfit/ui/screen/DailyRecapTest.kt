@@ -105,10 +105,6 @@ class DailyRecapTest : TestCase() {
         every { meals.value } returns (mealsByDate[date] ?: emptyList())
       }
 
-  fun addMealsForDate(date: LocalDate, newMeals: List<Meal>) {
-    mealsByDate[date] = newMeals
-  }
-
   fun setContent(
       navigateBack: () -> Unit = mockNav::goBack,
       navigateTo: () -> Unit = mockNav::navigateToAddMeal,
@@ -156,6 +152,22 @@ class DailyRecapTest : TestCase() {
       mealCalories {
         assertIsDisplayed()
         assertTextEquals("10.0 kcal")
+      }
+    }
+  }
+
+  @Test
+  fun noRecordedMeals() {
+    val mockViewModel = mockk<DailyRecapViewModel>(relaxed = true)
+    every { mockViewModel.meals.value } returns emptyList()
+    setContent(viewModel = mockViewModel)
+
+    ComposeScreen.onComposeScreen<DailyRecapScreen>(composeTestRule) {
+      spinner { assertDoesNotExist() }
+
+      noRecordedMeals {
+        assertIsDisplayed()
+        assertTextEquals("No recorded meals")
       }
     }
   }

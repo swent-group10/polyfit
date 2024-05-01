@@ -10,6 +10,8 @@ class DailyRecapScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
         viewBuilderAction = { hasTestTag("DailyRecapScreen") }) {
 
   val spinner: KNode = child { hasTestTag("Spinner") }
+  val noMealsBox: KNode = child { hasTestTag("NoMealsBox") }
+  val noRecordedMeals: KNode = noMealsBox.child { hasTestTag("NoRecordedMeals") }
 }
 
 class DailyRecapTopBar(semanticsProvider: SemanticsNodeInteractionsProvider) :

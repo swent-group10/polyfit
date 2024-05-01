@@ -40,18 +40,13 @@ fun NutritionScreen(
 ) {
   val isComplete by mealViewModel.isComplete.collectAsState()
 
-  fun setMeal() {
-    try {
-      mealViewModel.setMeal()
-      mealViewModel.reset()
-    } catch (e: Exception) {
-      Log.e("NutritionScreen", "Failed to set meal: ${e.message}")
-    }
-  }
   Scaffold(
       topBar = { TopBar(navigateBack = navigateBack) },
       bottomBar = {
-        BottomBar(setMeal = ::setMeal, isComplete = isComplete, navigateForward = navigateForward)
+        BottomBar(
+            setMeal = mealViewModel::setMeal,
+            isComplete = isComplete,
+            navigateForward = navigateForward)
       }) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) { NutritionalInformation(mealViewModel) }
       }
