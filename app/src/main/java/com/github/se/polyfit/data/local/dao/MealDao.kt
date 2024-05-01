@@ -1,6 +1,5 @@
 package com.github.se.polyfit.data.local.dao
 
-import android.util.Log
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -29,20 +28,10 @@ interface MealDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(meal: MealEntity): Long
 
+    // Converts the Meal object to a MealEntity and inserts it into the database.
+    // Returns the ID of the inserted meal.
     fun insert(meal: Meal): Long {
-
-        val mealId = insert(MealEntity.toMealEntity(meal))
-        Log.d("MealDao", "Inserted meal with id ${mealId}")
-        return mealId
-    }
-
-    @Query("SELECT * FROM MealTable WHERE id = :id LIMIT 1 ")
-    fun getMealEntityByID(id: Long): MealEntity?
-
-    fun getMealByID(id: Long): Meal? {
-        val meal = getMealEntityByID(id)
-
-        return meal?.toMeal()
+        return insert(MealEntity.toMealEntity(meal))
     }
 
     @Query("SELECT * FROM MealTable WHERE firebaseId = :id LIMIT 1 ")
@@ -64,4 +53,13 @@ interface MealDao {
 
     @Query("DELETE FROM MealTable")
     fun deleteAll()
+
+    /**
+     * Get a meal by its database ID which is the primary key of the MealEntity
+     * use to differentiate between meals who do not have yet a firebase ID     */
+    @Query("SELECT * FROM MealTable WHERE id = :id LIMIT 1 ")
+    fun getMealEntityByDatabaseID(id: Long): MealEntity?
+    fun getMealByDatabaseID(id: Long): Meal? {
+        return getMealEntityByDatabaseID(id)?.toMeal()
+    }
 }

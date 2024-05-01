@@ -109,7 +109,7 @@ class SpoonacularApiCaller {
      * @param imageBitmap The image to analyze
      * @return The response from the API
      */
-    suspend fun getMealsFromImage(imageBitmap: Bitmap): Meal {
+    fun getMealsFromImage(imageBitmap: Bitmap): Meal {
         // need to convert to File
         var file = File.createTempFile("image", ".jpg")
         imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, FileOutputStream(file))
@@ -119,12 +119,9 @@ class SpoonacularApiCaller {
 
         try {
             val apiResponse = imageAnalysis(file)
-            Log.d("SpoonacularApiCaller", "API Response: $apiResponse")
             if (apiResponse.status == APIResponse.SUCCESS) {
                 // chooses from a bunch of recipes
                 val recipeInformation = getRecipeNutrition(apiResponse.recipes.first())
-
-                Log.d("SpoonacularApiCaller", "Recipe Information: $recipeInformation")
 
                 if (recipeInformation.status == APIResponse.SUCCESS) {
                     val newMeal =

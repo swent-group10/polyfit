@@ -20,7 +20,6 @@ class Navigation(private val navHostController: NavHostController) {
         if (mealDatabaseId == null) {
             navigateTo(Route.AddMeal)
         } else {
-            Log.d("Navigation", "Navigating to add meal with id $mealDatabaseId")
             navigateTo(Route.AddMeal + "/$mealDatabaseId")
         }
     }

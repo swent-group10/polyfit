@@ -63,7 +63,7 @@ class MealRepository(
     }
 
     fun getMealById(mealId: Long): Meal? {
-        return mealDao.getMealByID(mealId)
+        return mealDao.getMealByDatabaseID(mealId)
     }
 
     suspend fun getAllMeals(): List<Meal> {

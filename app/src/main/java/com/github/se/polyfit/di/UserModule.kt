@@ -38,15 +38,11 @@ object UserModule {
     }
 
     @Provides
+    @Singleton
     fun providesMealFirebaseRepository(user: User): MealFirebaseRepository {
         return MealFirebaseRepository(user.id)
     }
 
-//    @Provides
-//    @Singleton
-//    fun providesMealViewModel(mealRepo: MealRepository): MealViewModel {
-//        return MealViewModel(mealRepo)
-//    }
 
     @Provides
     @Singleton

@@ -11,29 +11,26 @@ import com.github.se.polyfit.model.meal.MealTag
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
 class MealViewModel @Inject constructor(private val mealRepo: MealRepository) : ViewModel() {
-    init {
-        Log.d("MealViewModelCreation", "MealViewModel created")
-    }
-
     private val _meal = MutableStateFlow<Meal>(Meal.default())
     val meal: StateFlow<Meal>
         get() = _meal
 
-    private val _isComplete = MutableStateFlow<Boolean>(false)
+    private val _isComplete: StateFlow<Boolean> =
+        _meal.map { it.isComplete() }.stateIn(GlobalScope, SharingStarted.Eagerly, false)
     val isComplete: StateFlow<Boolean>
         get() = _isComplete
-
-    init {
-        viewModelScope.launch { _meal.collect { meal -> _isComplete.value = meal.isComplete() } }
-    }
 
     fun setMealData(meal: Meal) {
         _meal.value = meal
@@ -122,6 +119,5 @@ class MealViewModel @Inject constructor(private val mealRepo: MealRepository) : 
     // TODO: This can be removed once we are properly using a new ViewModel for each Meal
     fun reset() {
         _meal.value = Meal.default()
-        _isComplete.value = false
     }
 }

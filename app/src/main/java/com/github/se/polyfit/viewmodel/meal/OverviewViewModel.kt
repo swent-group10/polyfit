@@ -14,20 +14,12 @@ class OverviewViewModel @Inject constructor(private val mealDao: MealDao) : View
 
     suspend fun storeMeal(imageBitmap: Bitmap?): Long? {
         return if (imageBitmap == null) {
-            Log.d("OverviewViewModel", "Image is null")
+            Log.e("OverviewViewModel", "Image is null")
             null
         } else {
             val meal = spoonacularApiCaller.getMealsFromImage(imageBitmap)
-            val mealId = mealDao.insert(meal)
-            Log.d("OverviewViewModel", "Stored meal with id $mealId")
+            mealDao.insert(meal)
 
-            val getMeal = mealDao.getMealEntityByID(mealId)
-            Log.d("OverviewViewModel", "Retrieved meal with id $mealId: $getMeal")
-
-            val allMeals = mealDao.getAll()
-
-            
-            mealId
         }
 
     }

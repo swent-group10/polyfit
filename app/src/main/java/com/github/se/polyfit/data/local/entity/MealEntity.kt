@@ -11,6 +11,7 @@ import java.time.LocalDate
 
 @Entity(tableName = "MealTable")
 data class MealEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val occasion: MealOccasion,
     val name: String,
     val mealID: Long,
@@ -19,10 +20,8 @@ data class MealEntity(
     val ingredients: MutableList<Ingredient>,
     val firebaseId: String,
     val createdAt: LocalDate,
-    val tags: MutableList<MealTag>,
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
-
-    ) {
+    val tags: MutableList<MealTag>
+) {
 
     fun toMeal(): Meal {
         return Meal(
