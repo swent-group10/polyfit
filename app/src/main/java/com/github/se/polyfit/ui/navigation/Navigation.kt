@@ -24,6 +24,10 @@ class Navigation(private val navHostController: NavHostController) {
     }
   }
 
+  fun navigateToAddMeal() {
+    navigateToAddMeal(null)
+  }
+
   fun navigateToAdditionalMealInfo() {
     navigateTo(Route.AdditionalMealInfo)
   }
