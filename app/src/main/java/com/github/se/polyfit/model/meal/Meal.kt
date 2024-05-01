@@ -2,6 +2,7 @@ package com.github.se.polyfit.model.meal
 
 import android.util.Log
 import com.github.se.polyfit.model.ingredient.Ingredient
+import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import java.time.LocalDate
 
@@ -107,6 +108,21 @@ data class Meal(
     return name.isNotEmpty() &&
         ingredients.isNotEmpty() &&
         nutritionalInformation.nutrients.isNotEmpty()
+  }
+
+  fun getNutrient(nutrientType: String): Nutrient? {
+    return this.nutritionalInformation.getNutrient(nutrientType)
+  }
+
+  fun getMacros(): Map<String, Double> {
+    val macros = mutableMapOf<String, Double>()
+    val protein = getNutrient("protein")?.amount ?: 0.0
+    val fat = getNutrient("fat")?.amount ?: 0.0
+    val carbs = getNutrient("carbohydrates")?.amount ?: 0.0
+    macros["protein"] = protein
+    macros["fat"] = fat
+    macros["carbohydrates"] = carbs
+    return macros
   }
 
   private fun updateMeal() {

@@ -23,4 +23,10 @@
     <string name="description">"Description"</string>
     <string name="nutrient">"Nutrient"</string>
     <string name="no_recorded_meals">"No recorded meals"</string>
+    <string name="locationPermissionRequestTitle">"Location Permission Request"</string>
+    <string name="locationPermissionRequestMessage">"Your post will be visible to others around you. Allow Polyfit to access your location?"</string>
+    <string name="acceptRequest">" Allow "</string>
+    <string name="denyRequest">" Cancel "</string>
+    <string name="shareRecipePlaceholder">"Share your recipe"</string>
+    <string name="enterMealPlaceholder">"Enter a meal…"</string>
 </resources>
