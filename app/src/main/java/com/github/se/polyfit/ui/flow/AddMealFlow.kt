@@ -19,32 +19,30 @@ fun AddMealFlow(
     mealId: Long? = null,
     mealViewModel: MealViewModel = hiltViewModel<MealViewModel>(),
 ) {
-    val navController = rememberNavController()
-    val navigation = Navigation(navController)
-    if (mealId != null) {
-        mealViewModel.setMealData(mealId)
-    }
+  val navController = rememberNavController()
+  val navigation = Navigation(navController)
+  if (mealId != null) {
+    mealViewModel.setMealData(mealId)
+  }
 
-    NavHost(navController = navController, startDestination = Route.Ingredients) {
-        composable(Route.Ingredients) {
-            IngredientScreen(
-                mealViewModel = mealViewModel,
-                navigateBack = { goBack() },
-                navigateForward = navigation::navigateToAdditionalMealInfo
-            )
-        }
-        composable(Route.AdditionalMealInfo) {
-            AdditionalMealInfoScreen(
-                mealViewModel = mealViewModel,
-                navigateBack = { navigation.goBack() },
-                navigateForward = navigation::navigateToNutrition
-            )
-        }
-        composable(Route.Nutrition) {
-            NutritionScreen(
-                mealViewModel = mealViewModel,
-                navigateBack = { navigation.goBack() },
-                navigateForward = { navigateToHome() })
-        }
+  NavHost(navController = navController, startDestination = Route.Ingredients) {
+    composable(Route.Ingredients) {
+      IngredientScreen(
+          mealViewModel = mealViewModel,
+          navigateBack = { goBack() },
+          navigateForward = navigation::navigateToAdditionalMealInfo)
     }
+    composable(Route.AdditionalMealInfo) {
+      AdditionalMealInfoScreen(
+          mealViewModel = mealViewModel,
+          navigateBack = { navigation.goBack() },
+          navigateForward = navigation::navigateToNutrition)
+    }
+    composable(Route.Nutrition) {
+      NutritionScreen(
+          mealViewModel = mealViewModel,
+          navigateBack = { navigation.goBack() },
+          navigateForward = { navigateToHome() })
+    }
+  }
 }

@@ -10,17 +10,15 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OverviewViewModel @Inject constructor(private val mealDao: MealDao) : ViewModel() {
-    private val spoonacularApiCaller = SpoonacularApiCaller()
+  private val spoonacularApiCaller = SpoonacularApiCaller()
 
-    suspend fun storeMeal(imageBitmap: Bitmap?): Long? {
-        return if (imageBitmap == null) {
-            Log.e("OverviewViewModel", "Image is null")
-            null
-        } else {
-            val meal = spoonacularApiCaller.getMealsFromImage(imageBitmap)
-            mealDao.insert(meal)
-
-        }
-
+  suspend fun storeMeal(imageBitmap: Bitmap?): Long? {
+    return if (imageBitmap == null) {
+      Log.e("OverviewViewModel", "Image is null")
+      null
+    } else {
+      val meal = spoonacularApiCaller.getMealsFromImage(imageBitmap)
+      mealDao.insert(meal)
     }
+  }
 }

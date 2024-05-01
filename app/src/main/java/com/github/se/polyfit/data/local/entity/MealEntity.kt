@@ -23,33 +23,31 @@ data class MealEntity(
     val tags: MutableList<MealTag>
 ) {
 
-    fun toMeal(): Meal {
-        return Meal(
-            occasion,
-            name,
-            mealID,
-            mealTemp,
-            nutritionalInformation,
-            ingredients,
-            firebaseId,
-            createdAt,
-            tags
-        )
-    }
+  fun toMeal(): Meal {
+    return Meal(
+        occasion,
+        name,
+        mealID,
+        mealTemp,
+        nutritionalInformation,
+        ingredients,
+        firebaseId,
+        createdAt,
+        tags)
+  }
 
-    companion object {
-        fun toMealEntity(meal: Meal): MealEntity {
-            return MealEntity(
-                occasion = meal.occasion,
-                name = meal.name,
-                mealID = meal.mealID,
-                mealTemp = meal.mealTemp,
-                nutritionalInformation = meal.nutritionalInformation,
-                ingredients = meal.ingredients,
-                firebaseId = meal.firebaseId,
-                createdAt = meal.createdAt,
-                tags = meal.tags
-            )
-        }
+  companion object {
+    fun toMealEntity(meal: Meal): MealEntity {
+      return MealEntity(
+          occasion = meal.occasion,
+          name = meal.name,
+          mealID = meal.mealID,
+          mealTemp = meal.mealTemp,
+          nutritionalInformation = meal.nutritionalInformation,
+          ingredients = meal.ingredients,
+          firebaseId = meal.firebaseId,
+          createdAt = meal.createdAt,
+          tags = meal.tags)
     }
+  }
 }
