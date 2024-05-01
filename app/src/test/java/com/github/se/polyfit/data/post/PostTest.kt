@@ -13,7 +13,7 @@ class PostTest {
 
   @Test
   fun `getCarbs returns correct nutrient when present`() {
-    val expected = Nutrient("carb", 100.0, MeasurementUnit.G)
+    val expected = Nutrient("carbohydrates", 100.0, MeasurementUnit.G)
     val meal = Meal.default().apply { nutritionalInformation.update(expected) }
     val post =
         Post("userId", "description", Location(0.0, 0.0, 10.0, "EPFL"), meal, LocalDate.now())
