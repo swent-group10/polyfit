@@ -27,10 +27,10 @@ class MealViewModel @Inject constructor(private val mealRepo: MealRepository) : 
     val meal: StateFlow<Meal>
         get() = _meal
 
-    private val _isComplete: StateFlow<Boolean> =
-        _meal.map { it.isComplete() }.stateIn(GlobalScope, SharingStarted.Eagerly, false)
-    val isComplete: StateFlow<Boolean>
-        get() = _isComplete
+  private val _isComplete: StateFlow<Boolean> =
+      _meal.map { it.isComplete() }.stateIn(GlobalScope, SharingStarted.Eagerly, false)
+  val isComplete: StateFlow<Boolean>
+    get() = _isComplete
 
     fun setMealData(meal: Meal) {
         _meal.value = meal
