@@ -208,22 +208,28 @@ class PostFirebaseRepository(
     }
   }
 
-  suspend fun fetchImagesForPost(postKey: String): List<Bitmap> =
-      withContext(Dispatchers.IO) {
+ suspend fun fetchImagesForPost(postKey: String): List<Bitmap> =
+    withContext(Dispatchers.IO) {
         val storageRef = pictureDb.getReference("posts/$postKey")
+        Log.d("FetchImages", "before listAll")
         val listResult = storageRef.listAll().await()
+        Log.d("FetchImages", "after listAll")
 
         listResult.items.mapNotNull { imageRef ->
-          // Use temporary files to store downloaded data
-          val localFile = File.createTempFile("download", "tmp")
-          try {
-            imageRef.getFile(localFile).await() // Downloads the file
-            BitmapFactory.decodeFile(localFile.path) // Decode the downloaded file into a Bitmap
-          } finally {
-            localFile.delete() // Clean up the temporary file
-          }
+            // Use temporary files to store downloaded data
+            val localFile = File.createTempFile("download", "tmp")
+            try {
+                downloadFile(imageRef, localFile) // Downloads the file
+                BitmapFactory.decodeFile(localFile.path) // Decode the downloaded file into a Bitmap
+            } finally {
+                localFile.delete() // Clean up the temporary file
+            }
         }
-      }
+    }
+
+suspend fun downloadFile(imageRef: StorageReference, localFile: File) {
+    imageRef.getFile(localFile).await()
+}
 
  /* private suspend fun fetchImages(posts: List<Post>) {
     val folders = pictureDb.getReference("posts/").listAll().await().prefixes
