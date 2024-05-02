@@ -64,7 +64,6 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
 
   @Before
   fun setup() {
-    // val mealViewModel = mockk<MealViewModel>()
 
     // Create a mock of MealViewModel
     val mealViewModel = mockk<MealViewModel>(relaxed = true)
@@ -164,24 +163,24 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
       }
     }
   }
-}
 
-fun NavGraphBuilder.globalNavigationTest(
-    navController: NavHostController,
-) {
-  navigation(startDestination = Route.Home, route = Route.Overview) {
-    composable(Route.Home) {
-      GenericScreen(
-          navController = navController,
-          content = { paddingValues ->
-            OverviewScreen(paddingValues, navController, MealViewModel(mockk()))
-          })
-    }
-    composable(Route.Map) {
-      GenericScreen(navController = navController, content = { Text("Map Screen") })
-    }
-    composable(Route.Settings) {
-      GenericScreen(navController = navController, content = { Text("Settings Screen") })
+  fun NavGraphBuilder.globalNavigationTest(
+      navController: NavHostController,
+  ) {
+    navigation(startDestination = Route.Home, route = Route.Overview) {
+      composable(Route.Home) {
+        GenericScreen(
+            navController = navController,
+            content = { paddingValues ->
+              OverviewScreen(paddingValues, navController, MealViewModel(mockk()))
+            })
+      }
+      composable(Route.Map) {
+        GenericScreen(navController = navController, content = { Text("Map Screen") })
+      }
+      composable(Route.Settings) {
+        GenericScreen(navController = navController, content = { Text("Settings Screen") })
+      }
     }
   }
 }
