@@ -49,7 +49,7 @@ class MealViewModelTest {
             nutritionalInformation = NutritionalInformation(mutableListOf()))
 
     every { mealDao.getMealByFirebaseID(any()) } returns meal
-    coEvery { mealRepo.getMeal(any()) } returns meal
+    coEvery { mealRepo.getMealByFirebaseID(any()) } returns meal
 
     viewModel = MealViewModel(mealRepo)
     viewModel.setMealData(meal)
@@ -183,7 +183,6 @@ class MealViewModelTest {
 
   @Test
   fun setMealData_withValidMealId_setsMeal() = runTest {
-    viewModel.reset()
     val mealId = 1L
     val expectedMeal =
         Meal(

@@ -59,7 +59,7 @@ class MealRepository(
     }
   }
 
-  fun getMeal(firebaseID: String): Meal? {
+  fun getMealByFirebaseID(firebaseID: String): Meal? {
     return mealDao.getMealByFirebaseID(firebaseID)
   }
 
@@ -67,7 +67,7 @@ class MealRepository(
     return mealDao.getMealByDatabaseID(mealId)
   }
 
-  suspend fun getAllMeals(): List<Meal> {
+  fun getAllMeals(): List<Meal> {
     return mealDao.getAllMeals()
   }
 

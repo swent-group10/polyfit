@@ -21,9 +21,7 @@ fun AddMealFlow(
 ) {
   val navController = rememberNavController()
   val navigation = Navigation(navController)
-  if (mealId != null) {
-    mealViewModel.setMealData(mealId)
-  }
+  mealViewModel.setMealData(mealId)
 
   NavHost(navController = navController, startDestination = Route.Ingredients) {
     composable(Route.Ingredients) {

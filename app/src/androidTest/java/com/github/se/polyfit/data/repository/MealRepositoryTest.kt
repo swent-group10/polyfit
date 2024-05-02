@@ -84,7 +84,7 @@ class MealRepositoryTest {
   fun getMeal() = runTest {
     every { mealDao.getMealByFirebaseID(any()) } returns Meal.default()
 
-    val result = mealRepository.getMeal("1")
+    val result = mealRepository.getMealByFirebaseID("1")
 
     assertEquals(Meal.default(), result)
   }
@@ -184,7 +184,7 @@ class MealRepositoryTest {
   @Test
   fun getMealByFirebaseID() = runTest {
     every { mealDao.getMealByFirebaseID(any()) } returns Meal.default()
-    val result = mealRepository.getMeal("1")
+    val result = mealRepository.getMealByFirebaseID("1")
     assertEquals(Meal.default(), result)
   }
 }

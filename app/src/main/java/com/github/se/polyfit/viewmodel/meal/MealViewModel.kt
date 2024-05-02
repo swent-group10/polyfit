@@ -13,6 +13,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -35,7 +36,11 @@ class MealViewModel @Inject constructor(private val mealRepo: MealRepository) : 
     _meal.value = meal
   }
 
-  fun setMealData(mealId: Long) {
+  fun setMealData(mealId: Long?) {
+    if (mealId == null) {
+      _meal.value = Meal.default()
+      return
+    }
     viewModelScope.launch(Dispatchers.IO) {
       val meal = mealRepo.getMealById(mealId)
       if (meal != null) {
@@ -85,7 +90,7 @@ class MealViewModel @Inject constructor(private val mealRepo: MealRepository) : 
     if (!_meal.value.isComplete()) {
       throw Exception("Meal is incomplete")
     }
-    viewModelScope.launch {
+    GlobalScope.launch {
       try {
         mealRepo.storeMeal(_meal.value)
       } catch (e: Exception) {
@@ -112,10 +117,5 @@ class MealViewModel @Inject constructor(private val mealRepo: MealRepository) : 
 
   fun removeTag(tag: MealTag) {
     _meal.value.tags.remove(tag)
-  }
-
-  // TODO: This can be removed once we are properly using a new ViewModel for each Meal
-  fun reset() {
-    _meal.value = Meal.default()
   }
 }
