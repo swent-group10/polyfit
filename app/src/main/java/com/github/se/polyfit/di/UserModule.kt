@@ -11,6 +11,7 @@ import com.github.se.polyfit.data.remote.firebase.PostFirebaseRepository
 import com.github.se.polyfit.data.repository.MealRepository
 import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.ui.utils.AuthenticationCloud
+import com.github.se.polyfit.viewmodel.meal.MealViewModel
 import com.github.se.polyfit.ui.viewModel.GraphViewModel
 import dagger.Module
 import dagger.Provides
@@ -34,6 +35,8 @@ object UserModule {
 
   @Provides
   @Singleton
+  fun providesMealFirebaseRepository(user: User): MealFirebaseRepository {
+    return MealFirebaseRepository(user.id)
   fun providesGraphViewModel(): GraphViewModel {
     return GraphViewModel()
   }
