@@ -312,6 +312,12 @@ class NutritionalInformationTest {
   }
 
   @Test
+  fun `get total nutrient with wrong letter case`() {
+    val nutrient = nutritionalInformation.calculateTotalNutrient("tOtAl WeIgHt")
+    assertEquals(100.0, nutrient, 0.1)
+  }
+
+  @Test
   fun `get certain amount of nutrient`() {
     val nutrient = nutritionalInformation.getNutrient("Total Weight")
     assertEquals(Nutrient("Total Weight", 100.0, MeasurementUnit.G), nutrient)
