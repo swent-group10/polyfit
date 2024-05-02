@@ -75,16 +75,6 @@ class PostTest {
   }
 
   @Test
-  fun `toString outputs expected format`() {
-    val meal = Meal.default()
-    val post =
-        Post("userId", "description", Location(0.0, 0.0, 10.0, "EPFL"), meal, LocalDate.now())
-    val expectedString =
-        "The post from the user userId with the following description description and the following location Location(longitude=0.0, latitude=0.0, altitude=10.0, name=EPFL) for following meal $meal"
-    assertEquals(expectedString, post.toString())
-  }
-
-  @Test
   fun `default method returns expected Post object`() {
     val post = Post.default()
     val expectedPost =

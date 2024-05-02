@@ -24,13 +24,6 @@ data class Post(
     var listOfImages: List<Bitmap> = emptyList(),
     var listOfURLs: List<StorageReference> = emptyList()
 ) : UnmodifiablePost {
-  override fun toString(): String {
-    return "The post from the user ${userId} with the following description ${description}" +
-        " and the following location ${location}" +
-        " for following meal ${meal}" +
-        " created at ${createdAt}" +
-        " with the following images ${listOfImages}"
-  }
 
   fun getCarbs(): Nutrient? {
     return meal.getNutrient("carbohydrates")
