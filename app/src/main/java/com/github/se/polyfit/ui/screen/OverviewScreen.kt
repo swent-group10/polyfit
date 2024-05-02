@@ -60,6 +60,7 @@ import com.github.se.polyfit.data.api.SpoonacularApiCaller
 import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.ui.components.GradientBox
 import com.github.se.polyfit.ui.components.button.GradientButton
+import com.github.se.polyfit.ui.components.button.PrimaryButton
 import com.github.se.polyfit.ui.components.dialog.PictureDialog
 import com.github.se.polyfit.ui.components.lineChartData
 import com.github.se.polyfit.ui.navigation.Navigation
@@ -298,6 +299,10 @@ fun OverviewScreen(
                 },
                 onCreateMealWithoutPhoto = navigation::navigateToAddMeal,
                 onViewRecap = navigation::navigateToDailyRecap)
+            PrimaryButton(
+                text = "Create a Post",
+                onClick = navigation::navigateToCreatePost,
+                modifier = Modifier.padding(top = 8.dp).testTag("CreateAPost"))
           }
           item {
             OutlinedCard(

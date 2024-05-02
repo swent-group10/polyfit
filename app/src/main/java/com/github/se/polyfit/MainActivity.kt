@@ -14,6 +14,7 @@ import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.flow.AddMealFlow
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.navigation.Route
+import com.github.se.polyfit.ui.screen.CreatePostScreen
 import com.github.se.polyfit.ui.screen.DailyRecapScreen
 import com.github.se.polyfit.ui.screen.FullGraphScreen
 import com.github.se.polyfit.ui.screen.LoginScreen
@@ -58,6 +59,10 @@ class MainActivity : ComponentActivity() {
 
           composable(Route.PostInfo) {
             GenericScreen(navController = navController, content = { PostInfoScreen() })
+          }
+
+          composable(Route.CreatePost) {
+            CreatePostScreen(navigation::goBack, navigation::navigateToHome)
           }
 
           composable(Route.DailyRecap) {
