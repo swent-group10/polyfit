@@ -12,37 +12,37 @@ import org.junit.Test
 
 class PostFirebaseRepositoryTest {
 
-    private lateinit var postFirebaseRepository: PostFirebaseRepository
-    private val mockPictureDb: FirebaseStorage = mockk(relaxed = true)
-    private val mockStorageRef: StorageReference = mockk(relaxed = true)
-    private val mockListResult: ListResult = mockk(relaxed = true)
+  private lateinit var postFirebaseRepository: PostFirebaseRepository
+  private val mockPictureDb: FirebaseStorage = mockk(relaxed = true)
+  private val mockStorageRef: StorageReference = mockk(relaxed = true)
+  private val mockListResult: ListResult = mockk(relaxed = true)
 
-    @Before
-    fun setUp() {
-        postFirebaseRepository = PostFirebaseRepository(pictureDb = mockPictureDb)
-    }
+  @Before
+  fun setUp() {
+    postFirebaseRepository = PostFirebaseRepository(pictureDb = mockPictureDb)
+  }
 
-    @Test
-    fun fetchImageReferencesForPostReturnsListOfStorageReferencesOnSuccess() = runTest {
-        val mockImageRef: StorageReference = mockk(relaxed = true)
+  @Test
+  fun fetchImageReferencesForPostReturnsListOfStorageReferencesOnSuccess() = runTest {
+    val mockImageRef: StorageReference = mockk(relaxed = true)
 
-        coEvery { mockPictureDb.getReference("posts/postKey") } returns mockStorageRef
-        coEvery { mockStorageRef.listAll()} returns Tasks.forResult(mockListResult)
-        coEvery { mockListResult.items } returns listOf(mockImageRef)
+    coEvery { mockPictureDb.getReference("posts/postKey") } returns mockStorageRef
+    coEvery { mockStorageRef.listAll() } returns Tasks.forResult(mockListResult)
+    coEvery { mockListResult.items } returns listOf(mockImageRef)
 
-        val result = postFirebaseRepository.fetchImageReferencesForPost("postKey")
+    val result = postFirebaseRepository.fetchImageReferencesForPost("postKey")
 
-        assertEquals(listOf(mockImageRef), result)
-    }
+    assertEquals(listOf(mockImageRef), result)
+  }
 
-    @Test
-    fun fetchImageReferencesForPostReturnsEmptyListWhenNoImages() = runTest {
-        coEvery { mockPictureDb.getReference("posts/postKey") } returns mockStorageRef
-        coEvery { mockStorageRef.listAll() } returns Tasks.forResult(mockListResult)
-        coEvery { mockListResult.items } returns emptyList()
+  @Test
+  fun fetchImageReferencesForPostReturnsEmptyListWhenNoImages() = runTest {
+    coEvery { mockPictureDb.getReference("posts/postKey") } returns mockStorageRef
+    coEvery { mockStorageRef.listAll() } returns Tasks.forResult(mockListResult)
+    coEvery { mockListResult.items } returns emptyList()
 
-        val result = postFirebaseRepository.fetchImageReferencesForPost("postKey")
+    val result = postFirebaseRepository.fetchImageReferencesForPost("postKey")
 
-        assertEquals(emptyList<StorageReference>(), result)
-    }
+    assertEquals(emptyList<StorageReference>(), result)
+  }
 }
