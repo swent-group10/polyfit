@@ -5,6 +5,8 @@ import com.github.se.polyfit.model.post.Post
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 
 class PostFirebaseRepository(
@@ -24,7 +26,7 @@ class PostFirebaseRepository(
     }
   }
 
-  suspend fun getAllPosts(): List<Post> {
+  fun getAllPosts(): Flow<List<Post>> = flow {
     val posts = mutableListOf<Post>()
     val batchSize = 10
     var itr = 0
@@ -35,6 +37,6 @@ class PostFirebaseRepository(
           itr++
         }
 
-    return posts
+    emit(posts)
   }
 }

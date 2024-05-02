@@ -2,17 +2,22 @@ package com.github.se.polyfit.ui.screen
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.se.polyfit.R
@@ -21,17 +26,24 @@ import com.github.se.polyfit.viewmodel.post.ViewPostViewModel
 
 @Composable
 fun PostInfoScreen(index: Int = 0, viewPostViewModel: ViewPostViewModel = hiltViewModel()) {
-  val posts = viewPostViewModel.getAllPost()
+  val posts by viewPostViewModel.posts.collectAsState()
+  val isFetching by viewPostViewModel.isFetching.collectAsState()
 
-  if (posts.isEmpty()) {
-    NoPost()
-    return
-  }
+  if (isFetching) {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+      CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+    }
+  } else {
+    if (posts.isEmpty()) {
+      NoPost()
+      return
+    }
 
-  LazyColumn(
-      state = rememberLazyListState(index),
-  ) {
-    items(posts) { post -> PostCard(post = post) }
+    LazyColumn(
+        state = rememberLazyListState(index),
+    ) {
+      items(posts) { post -> PostCard(post = post) }
+    }
   }
 }
 
