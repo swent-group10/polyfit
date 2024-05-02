@@ -8,21 +8,15 @@ data class GraphData(val kCal: Double, val date: LocalDate, val weight: Double) 
         listOf(
             "$kCal",
             "${date.dayOfMonth}",
-            "${date.dayOfYear}",
             "${date.monthValue}",
             "${date.year}",
             "$kCal ${date.dayOfMonth}",
-            "$kCal ${date.dayOfYear}",
             "$kCal ${date.monthValue}",
             "$kCal ${date.year}",
             "$kCal ${date.dayOfMonth} ${date.monthValue}",
-            "$kCal ${date.dayOfYear} ${date.monthValue}",
             "$kCal ${date.dayOfMonth} ${date.monthValue} ${date.year}",
-            "$kCal ${date.dayOfYear} ${date.monthValue} ${date.year}",
             "${date.dayOfMonth} ${date.monthValue}",
-            "${date.dayOfYear} ${date.monthValue}",
             "${date.dayOfMonth} ${date.monthValue} ${date.year}",
-            "${date.dayOfYear} ${date.monthValue} ${date.year}",
         )
 
     return matchingCombinations.any { it.contains(query, ignoreCase = true) }

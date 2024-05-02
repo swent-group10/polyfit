@@ -34,7 +34,6 @@ import com.github.se.polyfit.R
 import com.github.se.polyfit.ui.components.DropDownMenu
 import com.github.se.polyfit.ui.components.lineChartData
 import com.github.se.polyfit.ui.components.scaffold.SimpleTopBar
-import com.github.se.polyfit.ui.viewModel.DateList
 import com.github.se.polyfit.ui.viewModel.DisplayScreen
 import com.github.se.polyfit.ui.viewModel.GraphViewModel
 import com.github.se.polyfit.ui.viewModel.SortPoints

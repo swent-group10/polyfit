@@ -63,9 +63,7 @@ import com.github.se.polyfit.ui.components.button.GradientButton
 import com.github.se.polyfit.ui.components.dialog.PictureDialog
 import com.github.se.polyfit.ui.components.lineChartData
 import com.github.se.polyfit.ui.navigation.Navigation
-import com.github.se.polyfit.ui.navigation.Route
 import com.github.se.polyfit.ui.utils.OverviewTags
-import com.github.se.polyfit.ui.viewModel.DateList
 import com.github.se.polyfit.ui.viewModel.DisplayScreen
 import com.github.se.polyfit.ui.viewModel.GraphViewModel
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
@@ -332,7 +330,7 @@ fun OverviewScreen(
                         .padding(top = 10.dp)
                         .size(width = 350.dp, height = 300.dp)
                         .testTag("Graph Card")
-                        .clickable { navController.navigate(Route.Graph) },
+                        .clickable { navigation.navigateToGraph() },
                 border =
                     BorderStroke(
                         2.dp,
@@ -362,7 +360,6 @@ fun OverviewScreen(
                                         .testTag("Overview Line Chart")
                                         .fillMaxSize()
                                         .testTag("LineChart")
-                                        .clickable { navController.navigate(Route.Graph) }
                                         .align(Alignment.Center),
                                 lineChartData =
                                     lineChartData(

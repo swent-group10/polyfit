@@ -19,6 +19,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import co.yml.charts.axis.AxisData
+import co.yml.charts.common.model.Point
 import co.yml.charts.ui.linechart.model.GridLines
 import co.yml.charts.ui.linechart.model.IntersectionPoint
 import co.yml.charts.ui.linechart.model.LineStyle
@@ -28,9 +29,8 @@ import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.components.lineChartData
 import com.github.se.polyfit.ui.flow.AddMealFlow
 import com.github.se.polyfit.ui.navigation.Route
+import com.github.se.polyfit.ui.utils.GraphData
 import com.github.se.polyfit.ui.utils.OverviewTags
-import com.github.se.polyfit.ui.viewModel.DataToPoints
-import com.github.se.polyfit.ui.viewModel.DateList
 import com.github.se.polyfit.ui.viewModel.DisplayScreen
 import com.kaspersky.components.composesupport.config.withComposeSupport
 import com.kaspersky.kaspresso.kaspresso.Kaspresso
@@ -41,6 +41,7 @@ import io.mockk.junit4.MockKRule
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
+import java.time.LocalDate
 import kotlin.test.assertEquals
 import org.junit.After
 import org.junit.Before
@@ -69,6 +70,29 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
           AddMealFlow(goBack = {}, navigateToHome = {}, mockk(relaxed = true))
         }
       }
+    }
+  }
+
+  private val mockData =
+      listOf(
+          GraphData(kCal = 1000.0, LocalDate.of(2024, 3, 11), weight = 45.0),
+          GraphData(kCal = 870.2, LocalDate.of(2024, 3, 12), weight = 330.0),
+          GraphData(kCal = 1689.98, LocalDate.of(2024, 3, 13), weight = 78.0),
+          GraphData(kCal = 1300.0, LocalDate.of(2024, 3, 14), weight = 65.9),
+          GraphData(kCal = 1000.0, LocalDate.of(2024, 3, 15), weight = 35.0),
+          GraphData(kCal = 2399.3, LocalDate.of(2024, 3, 16), weight = 78.0),
+          GraphData(kCal = 2438.0, LocalDate.of(2024, 3, 17), weight = 80.2))
+
+  fun DateList(): List<LocalDate> {
+    val dateList: MutableList<LocalDate> = mutableListOf()
+    mockData.forEach { data -> dateList.add(data.date) }
+    return dateList.toList()
+  }
+
+  fun DataToPoints(): List<Point> {
+    val data = mockData
+    return data.mapIndexed { index, graphData ->
+      Point(x = index.toFloat(), y = graphData.kCal.toFloat())
     }
   }
 

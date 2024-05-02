@@ -30,14 +30,6 @@ object UserModule {
     // firestoredatabase needs a user id to be initialized
     return User(id = "testUserID")
   }
-  /*
-  @Provides
-  @Singleton
-  fun providesGraphViewModel(dataProcessor: LocalDataProcessor): GraphViewModel {
-    return GraphViewModel(dataProcessor)
-  }
-
-   */
 
   @Provides
   @Singleton

@@ -9,6 +9,7 @@ import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import co.yml.charts.axis.AxisData
 import co.yml.charts.common.extensions.formatToSinglePrecision
+import co.yml.charts.common.model.Point
 import co.yml.charts.ui.linechart.model.GridLines
 import co.yml.charts.ui.linechart.model.IntersectionPoint
 import co.yml.charts.ui.linechart.model.LineStyle
@@ -18,8 +19,7 @@ import com.github.se.polyfit.data.processor.DailyCalorieSummary
 import com.github.se.polyfit.data.processor.LocalDataProcessor
 import com.github.se.polyfit.ui.components.lineChartData
 import com.github.se.polyfit.ui.navigation.Navigation
-import com.github.se.polyfit.ui.viewModel.DataToPoints
-import com.github.se.polyfit.ui.viewModel.DateList
+import com.github.se.polyfit.ui.utils.GraphData
 import com.github.se.polyfit.ui.viewModel.DisplayScreen
 import com.github.se.polyfit.ui.viewModel.GraphViewModel
 import com.kaspersky.components.composesupport.config.withComposeSupport
@@ -54,7 +54,7 @@ class GraphScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withCompos
     // Create a list of dates for the last 7 days including today
     val dates = (0..6).map { today.minusDays(it.toLong()) }
     // Create a baseline list of GraphData with calories set to 0
-    every { dataProcessor.getCaloriesLastWeek() } returns
+    every { dataProcessor.calculateCaloriesSince(LocalDate.now().minusDays(7L)) } returns
         listOf(
             DailyCalorieSummary(dates[0], 1000.0),
             DailyCalorieSummary(dates[1], 870.2),
@@ -65,6 +65,29 @@ class GraphScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withCompos
             DailyCalorieSummary(dates[6], 2438.0))
     composeTestRule.setContent {
       FullGraphScreen(viewModel = GraphViewModel(dataProcessor), goBack = mockNav::goBack)
+    }
+  }
+
+  private val mockData =
+      listOf(
+          GraphData(kCal = 1000.0, LocalDate.of(2024, 3, 11), weight = 45.0),
+          GraphData(kCal = 870.2, LocalDate.of(2024, 3, 12), weight = 330.0),
+          GraphData(kCal = 1689.98, LocalDate.of(2024, 3, 13), weight = 78.0),
+          GraphData(kCal = 1300.0, LocalDate.of(2024, 3, 14), weight = 65.9),
+          GraphData(kCal = 1000.0, LocalDate.of(2024, 3, 15), weight = 35.0),
+          GraphData(kCal = 2399.3, LocalDate.of(2024, 3, 16), weight = 78.0),
+          GraphData(kCal = 2438.0, LocalDate.of(2024, 3, 17), weight = 80.2))
+
+  fun DateList(): List<LocalDate> {
+    val dateList: MutableList<LocalDate> = mutableListOf()
+    mockData.forEach { data -> dateList.add(data.date) }
+    return dateList.toList()
+  }
+
+  fun DataToPoints(): List<Point> {
+    val data = mockData
+    return data.mapIndexed { index, graphData ->
+      Point(x = index.toFloat(), y = graphData.kCal.toFloat())
     }
   }
 

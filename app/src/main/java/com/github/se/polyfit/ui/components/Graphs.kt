@@ -91,6 +91,5 @@ fun lineChartData(
       backgroundColor = MaterialTheme.colorScheme.surface,
       xAxisData = xAxisData,
       yAxisData = yAxisData,
-      gridLines = GridLines(color = MaterialTheme.colorScheme.outlineVariant),
-  )
+      gridLines = GridLines(color = MaterialTheme.colorScheme.outlineVariant))
 }

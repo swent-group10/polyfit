@@ -57,11 +57,11 @@ class GraphViewModel @Inject constructor(private val dataProcessor: LocalDataPro
     fetchCaloriesData()
   }
 
-  private fun fetchCaloriesData() {
+  private fun fetchCaloriesData(numDays: Int = 7) {
     viewModelScope.launch(Dispatchers.IO) {
       val today = LocalDate.now()
       // Create a list of dates for the last 7 days including today
-      val dates = (0..6).map { today.minusDays(it.toLong()) }
+      val dates = (0 ..< numDays).map { today.minusDays(it.toLong()) }
       // Create a baseline list of GraphData with calories set to 0
       val baselineGraphData =
           dates.map { GraphData(kCal = 0.0, date = it, weight = 0.0) }.toMutableList()
@@ -69,7 +69,7 @@ class GraphViewModel @Inject constructor(private val dataProcessor: LocalDataPro
       Log.d("ViewModelTest", "Fetching Data...")
       // Fetch data from the processor
       val actualData =
-          dataProcessor.getCaloriesLastWeek().map {
+          dataProcessor.calculateCaloriesSince(LocalDate.now().minusDays(numDays.toLong())).map {
             GraphData(
                 kCal = it.totalCalories,
                 date = it.date,
@@ -161,39 +161,5 @@ class GraphViewModel @Inject constructor(private val dataProcessor: LocalDataPro
     val data = _graphData.value ?: initGraphData()
     data.forEach { d -> dateList.add(d.date) }
     return dateList
-  }
-}
-
-// Will be modified further when Data is linked
-
-private val mockData =
-    listOf(
-        GraphData(kCal = 1000.0, LocalDate.of(2024, 3, 11), weight = 45.0),
-        GraphData(kCal = 870.2, LocalDate.of(2024, 3, 12), weight = 330.0),
-        GraphData(kCal = 1689.98, LocalDate.of(2024, 3, 13), weight = 78.0),
-        GraphData(kCal = 1300.0, LocalDate.of(2024, 3, 14), weight = 65.9),
-        GraphData(kCal = 1000.0, LocalDate.of(2024, 3, 15), weight = 35.0),
-        GraphData(kCal = 2399.3, LocalDate.of(2024, 3, 16), weight = 78.0),
-        GraphData(kCal = 2438.0, LocalDate.of(2024, 3, 17), weight = 80.2))
-private val mockDates =
-    listOf(
-        LocalDate.of(2024, 3, 11),
-        LocalDate.of(2024, 3, 12),
-        LocalDate.of(2024, 3, 13),
-        LocalDate.of(2024, 3, 14),
-        LocalDate.of(2024, 3, 15),
-        LocalDate.of(2024, 3, 16),
-        LocalDate.of(2024, 3, 17))
-
-fun DateList(): List<LocalDate> {
-  val dateList: MutableList<LocalDate> = mutableListOf()
-  mockData.forEach { data -> dateList.add(data.date) }
-  return dateList.toList()
-}
-
-fun DataToPoints(): List<Point> {
-  val data = mockData
-  return data.mapIndexed { index, graphData ->
-    Point(x = index.toFloat(), y = graphData.kCal.toFloat())
   }
 }
