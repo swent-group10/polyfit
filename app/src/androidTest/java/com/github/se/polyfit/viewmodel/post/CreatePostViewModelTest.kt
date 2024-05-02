@@ -10,7 +10,6 @@ import com.github.se.polyfit.model.post.Location
 import com.github.se.polyfit.model.post.Post
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
 import java.time.LocalDate
 import kotlin.test.assertFailsWith
@@ -84,7 +83,7 @@ class CreatePostViewModelTest {
 
   @Test
   fun getCarbsReturnsCarbsAmount() {
-    val carbs = Nutrient("carb", 10.0, MeasurementUnit.G)
+    val carbs = Nutrient("carbohydrates", 10.0, MeasurementUnit.G)
     val meal =
         Meal.default().copy(nutritionalInformation = NutritionalInformation(mutableListOf(carbs)))
     val post = Post.default().copy(meal = meal)
@@ -122,7 +121,7 @@ class CreatePostViewModelTest {
 
   @Test
   fun setPostFailed() = runTest {
-    every { mockPostFirebaseRepository.storePost(any()) } throws
+    coEvery { mockPostFirebaseRepository.storePost(any()) } throws
         Exception("Failed to store post in the database")
     assertFailsWith<Exception> { viewModel.setPost() }
   }

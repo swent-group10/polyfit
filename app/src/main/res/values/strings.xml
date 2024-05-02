@@ -16,4 +16,18 @@
     <string name="condition3">" and "</string>
     <string name="condition4">"Privacy Policy"</string>
     <string name="signGoogle">"Sign in with Google"</string>
+    <string name="graphScreenTitle">Calories Per Day</string>
+    <string name="kcalvalue">%1$.1f kCal</string>
+    <string name="weightvalue">%1$.1f lbs</string>
+    <string name="datevalue">%1$d %2$s</string>
+    <string name="noPostAvailable">"Unfortunately there is no post\navailable around you"</string>
+    <string name="description">"Description"</string>
+    <string name="nutrient">"Nutrient"</string>
+    <string name="no_recorded_meals">"No recorded meals"</string>
+    <string name="locationPermissionRequestTitle">"Location Permission Request"</string>
+    <string name="locationPermissionRequestMessage">"Your post will be visible to others around you. Allow Polyfit to access your location?"</string>
+    <string name="acceptRequest">" Allow "</string>
+    <string name="denyRequest">" Cancel "</string>
+    <string name="shareRecipePlaceholder">"Share your recipe"</string>
+    <string name="enterMealPlaceholder">"Enter a meal…"</string>
 </resources>
