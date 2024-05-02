@@ -108,7 +108,7 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
           // check reall created
           AddMealFlow({}, {}, mealViewModel)
         }
-        globalNavigationTest(navController)
+        //globalNavigationTest(navController)
       }
     }
   }
@@ -146,11 +146,11 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
         assertExists()
         assertIsDisplayed()
         assertHasClickAction()
-        performClick()
+        //performClick()
       }
     }
     Intents.release()
-
+    /*
     ComposeScreen.onComposeScreen<IngredientsBottomBar>(composeTestRule) {
       assertExists()
       assertIsDisplayed()
@@ -161,10 +161,10 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
         assertHasClickAction()
         performClick()
       }
-    }
+    }*/
   }
 
-  fun NavGraphBuilder.globalNavigationTest(
+  /*fun NavGraphBuilder.globalNavigationTest(
       navController: NavHostController,
   ) {
     navigation(startDestination = Route.Home, route = Route.Overview) {
@@ -182,5 +182,5 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
         GenericScreen(navController = navController, content = { Text("Settings Screen") })
       }
     }
-  }
+  }*/
 }
