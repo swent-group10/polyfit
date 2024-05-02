@@ -1,6 +1,5 @@
 package com.github.se.polyfit.ui.screen
 
-import android.content.Context
 import android.util.Log
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
@@ -13,45 +12,28 @@ import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.room.Room
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.se.polyfit.data.local.dao.MealDao
-import com.github.se.polyfit.data.local.database.MealDatabase
-import com.github.se.polyfit.data.processor.LocalDataProcessor
-import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
-import com.github.se.polyfit.data.remote.firebase.PostFirebaseRepository
-import com.github.se.polyfit.data.repository.MealRepository
-import com.github.se.polyfit.di.UserModule
-import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.flow.AddMealFlow
 import com.github.se.polyfit.ui.navigation.Route
-import com.github.se.polyfit.ui.utils.AuthenticationCloud
 import com.github.se.polyfit.ui.utils.OverviewTags
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
 import com.kaspersky.components.composesupport.config.withComposeSupport
 import com.kaspersky.kaspresso.kaspresso.Kaspresso
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.testing.HiltAndroidTest
-import dagger.hilt.android.testing.UninstallModules
-import dagger.hilt.components.SingletonComponent
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.mockk.junit4.MockKRule
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
-import javax.inject.Singleton
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-@UninstallModules(UserModule::class)
+// @UninstallModules(UserModule::class)
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
 class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport()) {
@@ -233,7 +215,7 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
 
 // All the moduel from UserModule.kt except the providesMealViewModel
 
-@Module
+/*@Module
 @InstallIn(SingletonComponent::class)
 object UserModule {
 
@@ -286,9 +268,10 @@ object UserModule {
     return PostFirebaseRepository()
   }
 
-  @Provides
+  /*@Provides
   @Singleton
   fun provideAuthentication(@ApplicationContext context: Context, user: User): AuthenticationCloud {
     return AuthenticationCloud(context, user)
-  }
+  }*/
 }
+*/

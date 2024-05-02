@@ -23,7 +23,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import com.github.se.polyfit.R
-import com.github.se.polyfit.di.UserModule
 import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import com.github.se.polyfit.ui.components.GenericScreen
@@ -39,7 +38,6 @@ import com.kaspersky.kaspresso.kaspresso.Kaspresso
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import dagger.hilt.android.testing.CustomTestApplication
 import dagger.hilt.android.testing.HiltAndroidTest
-import dagger.hilt.android.testing.UninstallModules
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.mockk.Runs
 import io.mockk.every
@@ -55,7 +53,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-@UninstallModules(UserModule::class)
 @HiltAndroidTest
 @CustomTestApplication(Application::class)
 @RunWith(AndroidJUnit4::class)
