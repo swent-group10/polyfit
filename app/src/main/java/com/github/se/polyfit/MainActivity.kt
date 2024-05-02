@@ -54,8 +54,13 @@ class MainActivity : ComponentActivity() {
           }
 
           composable(Route.Register) { LoginScreen(navigation::navigateToHome) }
-
-          composable(Route.AddMeal) { AddMealFlow(navigation::goBack, navigation::navigateToHome) }
+          composable(Route.AddMeal + "/{mId}") { backStackEntry ->
+            val mealId = backStackEntry.arguments?.getString("mId")?.toLong()
+            AddMealFlow(
+                goBack = navigation::goBack,
+                navigateToHome = navigation::navigateToHome,
+                mealId = mealId)
+          }
 
           composable(Route.PostInfo) {
             GenericScreen(navController = navController, content = { PostInfoScreen() })
@@ -69,6 +74,7 @@ class MainActivity : ComponentActivity() {
             DailyRecapScreen(
                 navigateBack = navigation::goBack, navigateTo = navigation::navigateToAddMeal)
           }
+          composable(Route.AddMeal) { AddMealFlow(navigation::goBack, navigation::navigateToHome) }
         }
       }
     }

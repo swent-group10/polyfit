@@ -38,17 +38,17 @@ fun PostInfoScreen(
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
       CircularProgressIndicator(modifier = Modifier.padding(16.dp))
     }
-  } else {
-    if (posts.isEmpty()) {
-      NoPost()
-      return
-    }
+    return
+  }
+  if (posts.isEmpty()) {
+    NoPost()
+    return
+  }
 
-    LazyColumn(
-        state = rememberLazyListState(index),
-    ) {
-      items(posts) { post -> PostCard(post = post) }
-    }
+  LazyColumn(
+      state = rememberLazyListState(index),
+  ) {
+    items(posts) { post -> PostCard(post = post) }
   }
 }
 

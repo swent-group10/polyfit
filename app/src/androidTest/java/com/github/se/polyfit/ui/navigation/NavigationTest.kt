@@ -62,4 +62,14 @@ class NavigationTest {
 
     verify { navHostController.navigate(Route.Nutrition) }
   }
+
+  @Test
+  fun navigateToAddMealWithIdNull() {
+    route = Route.AddMeal
+    every { navHostController.navigate(any<String>()) } returns Unit
+
+    navigation.navigateToAddMeal()
+
+    verify { navHostController.navigate(Route.AddMeal) }
+  }
 }

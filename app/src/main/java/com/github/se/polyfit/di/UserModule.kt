@@ -2,6 +2,7 @@ package com.github.se.polyfit.di
 
 import android.content.Context
 import androidx.room.Room
+import com.github.se.polyfit.data.api.SpoonacularApiCaller
 import com.github.se.polyfit.data.local.dao.MealDao
 import com.github.se.polyfit.data.local.database.MealDatabase
 import com.github.se.polyfit.data.processor.LocalDataProcessor
@@ -10,7 +11,7 @@ import com.github.se.polyfit.data.remote.firebase.PostFirebaseRepository
 import com.github.se.polyfit.data.repository.MealRepository
 import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.ui.utils.AuthenticationCloud
-import com.github.se.polyfit.viewmodel.meal.MealViewModel
+import com.github.se.polyfit.ui.viewModel.GraphViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,16 +32,20 @@ object UserModule {
     return User(id = "testUserID")
   }
 
-  @Provides
-  @Singleton
-  fun providesMealFirebaseRepository(user: User): MealFirebaseRepository {
-    return MealFirebaseRepository(user.id)
+  fun providesGraphViewModel(dataProcessor: LocalDataProcessor): GraphViewModel {
+    return GraphViewModel(dataProcessor)
   }
 
   @Provides
   @Singleton
-  fun providesMealViewModel(mealRepo: MealRepository): MealViewModel {
-    return MealViewModel(mealRepo)
+  fun providesSpoonacularApiCaller(): SpoonacularApiCaller {
+    return SpoonacularApiCaller()
+  }
+
+  @Provides
+  @Singleton
+  fun providesMealFirebaseRepository(user: User): MealFirebaseRepository {
+    return MealFirebaseRepository(user.id)
   }
 
   @Provides

@@ -43,7 +43,6 @@ fun IngredientScreen(
 
   fun goBackAndReset() {
     navigateBack()
-    mealViewModel.reset()
   }
 
   Scaffold(
