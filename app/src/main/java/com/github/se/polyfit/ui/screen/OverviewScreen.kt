@@ -62,7 +62,6 @@ import com.github.se.polyfit.ui.components.GradientBox
 import com.github.se.polyfit.ui.components.button.GradientButton
 import com.github.se.polyfit.ui.components.dialog.PictureDialog
 import com.github.se.polyfit.ui.components.lineChartData
-import com.github.se.polyfit.ui.components.showToastMessage
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.utils.OverviewTags
 import com.github.se.polyfit.ui.viewModel.DateList
