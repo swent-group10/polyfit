@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -51,7 +50,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -68,8 +66,9 @@ import com.github.se.polyfit.ui.components.showToastMessage
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.navigation.Route
 import com.github.se.polyfit.ui.utils.OverviewTags
-import com.github.se.polyfit.ui.viewModel.DataToPoints
 import com.github.se.polyfit.ui.viewModel.DateList
+import com.github.se.polyfit.ui.viewModel.DisplayScreen
+import com.github.se.polyfit.ui.viewModel.GraphViewModel
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
 import kotlinx.coroutines.runBlocking
 
@@ -333,10 +332,8 @@ fun OverviewScreen(
                     Modifier.align(Alignment.Center)
                         .padding(top = 10.dp)
                         .size(width = 350.dp, height = 300.dp)
-                        .testTag("ThirdCard")
-                        .clickable{
-                                  navController.navigate(Route.Graph)
-                        },
+                        .testTag("Graph Card")
+                        .clickable { navController.navigate(Route.Graph) },
                 border =
                     BorderStroke(
                         2.dp,
@@ -346,14 +343,35 @@ fun OverviewScreen(
                                     MaterialTheme.colorScheme.inversePrimary,
                                     MaterialTheme.colorScheme.primary))),
                 colors = CardDefaults.cardColors(Color.Transparent)) {
-                  Column(modifier = Modifier.fillMaxSize()){
-
-                      Text(text = "Calories Graph", style = MaterialTheme.typography.headlineLarge, modifier = Modifier.padding(start =10.dp).weight(1f))
-                      if (!isTestEnvironment) {
-                        LineChart(
-                            modifier = Modifier.fillMaxWidth().fillMaxHeight(0.8f).padding(bottom =10.dp).testTag("LineChart").clickable{navController.navigate(Route.Graph)},
-                            lineChartData = lineChartData(DataToPoints(), DateList()))
-                      }
+                  Column(modifier = Modifier.fillMaxSize().testTag("Graph Card Column")) {
+                    Text(
+                        text = "Calories Graph",
+                        style = MaterialTheme.typography.headlineLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.secondary,
+                        modifier =
+                            Modifier.padding(start = 10.dp, top = 10.dp)
+                                .weight(1f)
+                                .testTag("Graph Card Title"))
+                    if (!isTestEnvironment) {
+                      Box(
+                          modifier =
+                              Modifier.fillMaxSize(0.85f).align(Alignment.CenterHorizontally)) {
+                            LineChart(
+                                modifier =
+                                    Modifier.fillMaxWidth()
+                                        .testTag("Overview Line Chart")
+                                        .fillMaxSize()
+                                        .testTag("LineChart")
+                                        .clickable { navController.navigate(Route.Graph) }
+                                        .align(Alignment.Center),
+                                lineChartData =
+                                    lineChartData(
+                                        hiltViewModel<GraphViewModel>().DataPoints(),
+                                        hiltViewModel<GraphViewModel>().DateList(),
+                                        DisplayScreen.OVERVIEW))
+                          }
+                    }
                   }
                 }
           }

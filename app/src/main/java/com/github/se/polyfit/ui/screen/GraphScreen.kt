@@ -34,8 +34,8 @@ import com.github.se.polyfit.R
 import com.github.se.polyfit.ui.components.DropDownMenu
 import com.github.se.polyfit.ui.components.lineChartData
 import com.github.se.polyfit.ui.components.scaffold.SimpleTopBar
-import com.github.se.polyfit.ui.viewModel.DataToPoints
 import com.github.se.polyfit.ui.viewModel.DateList
+import com.github.se.polyfit.ui.viewModel.DisplayScreen
 import com.github.se.polyfit.ui.viewModel.GraphViewModel
 import com.github.se.polyfit.ui.viewModel.SortPoints
 
@@ -52,7 +52,9 @@ fun FullGraphScreen(
   val sortedBy = remember { mutableStateOf("KCAL") }
 
   val searchText by viewModel.searchText.observeAsState()
-  val graphData by viewModel.graphData.observeAsState()
+  val graphData by viewModel.graphData.observeAsState(viewModel.initGraphData())
+  val dataPoints = viewModel.DataPoints()
+  val dates = viewModel.DateList()
   Scaffold(
       topBar = {
         // This will be given a return function later
@@ -67,9 +69,13 @@ fun FullGraphScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.SpaceAround) {
                       if (!isTestEnvironment) {
+                        println(
+                            "viewModel.DataPoints().size = ${viewModel.DataPoints().size} datelist size = ${viewModel.DateList().size}")
+                        println("initGraphData = ${viewModel.initGraphData().size}")
                         LineChart(
                             modifier = Modifier.fillMaxSize().testTag("LineChart"),
-                            lineChartData = lineChartData(DataToPoints(), DateList()))
+                            lineChartData =
+                                lineChartData(dataPoints, dates, DisplayScreen.GRAPH_SCREEN))
                       } else {
                         Spacer(modifier = Modifier.fillMaxSize().testTag("LineChartSpacer"))
                       }
