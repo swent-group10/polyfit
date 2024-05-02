@@ -96,4 +96,73 @@ constructor(private val mealDao: MealDao, private val spoonacularApiCaller: Spoo
     // Return the filtered meals
     return filteredMeals
   }
+
+  fun getMealsByMultipleCriteria(
+      name: String,
+      minCalories: Double,
+      maxCalories: Double,
+      occasion: MealOccasion
+  ): List<Meal> {
+    val allMeals = mealDao.getAllMeals()
+
+    val filteredMeals =
+        allMeals.filter { meal ->
+          meal.nutritionalInformation.nutrients
+              .find { it.nutrientType == "calories" }
+              ?.amount
+              ?.let { calories -> calories in minCalories..maxCalories } ?: false
+        }
+
+    if (filteredMeals.isEmpty()) {
+      Log.e("OverviewViewModel", "No meals found matching all criteria")
+    } else {
+      Log.i("OverviewViewModel", "Found ${filteredMeals.size} meals matching all criteria")
+    }
+
+    return filteredMeals
+  }
+
+  fun getMealWithHighestCalories(): Meal? {
+    // Get all meals from the database
+    val allMeals = mealDao.getAllMeals()
+
+    // Find the meal with the highest calories
+    val highestCalorieMeal =
+        allMeals.maxByOrNull { meal ->
+          meal.nutritionalInformation.nutrients.find { it.nutrientType == "calories" }?.amount
+              ?: 0.0
+        }
+
+    // Log the result
+    if (highestCalorieMeal == null) {
+      Log.e("OverviewViewModel", "No meals found in the database")
+    } else {
+      Log.i("OverviewViewModel", "Meal with the highest calories found: ${highestCalorieMeal.name}")
+    }
+
+    // Return the meal with the highest calories
+    return highestCalorieMeal
+  }
+
+  fun getMealWithLowestCalories(): Meal? {
+    // Get all meals from the database
+    val allMeals = mealDao.getAllMeals()
+
+    // Find the meal with the lowest calories
+    val lowestCalorieMeal =
+        allMeals.minByOrNull { meal ->
+          meal.nutritionalInformation.nutrients.find { it.nutrientType == "calories" }?.amount
+              ?: Double.MAX_VALUE
+        }
+
+    // Log the result
+    if (lowestCalorieMeal == null) {
+      Log.e("OverviewViewModel", "No meals found in the database")
+    } else {
+      Log.i("OverviewViewModel", "Meal with the lowest calories found: ${lowestCalorieMeal.name}")
+    }
+
+    // Return the meal with the lowest calories
+    return lowestCalorieMeal
+  }
 }

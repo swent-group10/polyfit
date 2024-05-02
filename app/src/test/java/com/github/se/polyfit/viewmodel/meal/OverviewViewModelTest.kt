@@ -210,4 +210,250 @@ class OverviewViewModelTest {
     // Verify the result
     Assert.assertEquals(0, result.size)
   }
+
+  @Test
+  fun getMealsByMultipleCriteria_returnsCorrectMeals() {
+    // Prepare the meals
+    val meal1 =
+        Meal(
+            mealID = 1,
+            name = "Chicken Salad",
+            occasion = MealOccasion.BREAKFAST,
+            nutritionalInformation =
+                NutritionalInformation(
+                    mutableListOf(Nutrient("calories", 150.0, MeasurementUnit.KCAL))))
+    val meal2 =
+        Meal(
+            mealID = 2,
+            name = "Beef Stew",
+            occasion = MealOccasion.LUNCH,
+            nutritionalInformation =
+                NutritionalInformation(
+                    mutableListOf(Nutrient("calories", 250.0, MeasurementUnit.KCAL))))
+    val meal3 =
+        Meal(
+            mealID = 3,
+            name = "Chicken Soup",
+            occasion = MealOccasion.DINNER,
+            nutritionalInformation =
+                NutritionalInformation(
+                    mutableListOf(Nutrient("calories", 350.0, MeasurementUnit.KCAL))))
+    val allMeals = listOf(meal1, meal2, meal3)
+
+    // Mock the getAllMeals function in the dao
+    every { mockMealDao.getAllMeals() } returns allMeals
+
+    // Call the method under test
+    val result =
+        overviewViewModel.getMealsByMultipleCriteria(
+            "Chicken", 100.0, 200.0, MealOccasion.BREAKFAST)
+
+    // Verify the result
+    Assert.assertEquals(1, result.size)
+    Assert.assertEquals(meal1, result[0])
+  }
+
+  @Test
+  fun getMealsByMultipleCriteria_OneMatchingMeals() {
+    // Prepare the meals
+    val meal1 =
+        Meal(
+            mealID = 1,
+            name = "Chicken Salad",
+            occasion = MealOccasion.BREAKFAST,
+            nutritionalInformation =
+                NutritionalInformation(
+                    mutableListOf(Nutrient("calories", 150.0, MeasurementUnit.KCAL))))
+    val meal2 =
+        Meal(
+            mealID = 2,
+            name = "Beef Stew",
+            occasion = MealOccasion.LUNCH,
+            nutritionalInformation =
+                NutritionalInformation(
+                    mutableListOf(Nutrient("calories", 250.0, MeasurementUnit.KCAL))))
+    val meal3 =
+        Meal(
+            mealID = 3,
+            name = "Chicken Soup",
+            occasion = MealOccasion.DINNER,
+            nutritionalInformation =
+                NutritionalInformation(
+                    mutableListOf(Nutrient("calories", 350.0, MeasurementUnit.KCAL))))
+    val allMeals = listOf(meal1, meal2, meal3)
+
+    // Mock the getAllMeals function in the dao
+    every { mockMealDao.getAllMeals() } returns allMeals
+
+    // Call the method under test
+    val result =
+        overviewViewModel.getMealsByMultipleCriteria("Fish", 100.0, 200.0, MealOccasion.BREAKFAST)
+
+    // Verify the result
+    Assert.assertEquals(1, result.size)
+  }
+
+  @Test
+  fun getMealWithHighestCalories_returnsCorrectMeal() {
+    // Prepare the meals
+    val meal1 =
+        Meal(
+            mealID = 1,
+            occasion = MealOccasion.BREAKFAST,
+            name = "Chicken Salad",
+            nutritionalInformation =
+                NutritionalInformation(
+                    mutableListOf(Nutrient("calories", 150.0, MeasurementUnit.KCAL))))
+    val meal2 =
+        Meal(
+            mealID = 2,
+            name = "Beef Stew",
+            occasion = MealOccasion.BREAKFAST,
+            nutritionalInformation =
+                NutritionalInformation(
+                    mutableListOf(Nutrient("calories", 250.0, MeasurementUnit.KCAL))))
+    val meal3 =
+        Meal(
+            mealID = 3,
+            name = "Chicken Soup",
+            occasion = MealOccasion.BREAKFAST,
+            nutritionalInformation =
+                NutritionalInformation(
+                    mutableListOf(Nutrient("calories", 350.0, MeasurementUnit.KCAL))))
+    val allMeals = listOf(meal1, meal2, meal3)
+
+    // Mock the getAllMeals function in the dao
+    every { mockMealDao.getAllMeals() } returns allMeals
+
+    // Call the method under test
+    val result = overviewViewModel.getMealWithHighestCalories()
+
+    // Verify the result
+    Assert.assertEquals(meal3, result)
+  }
+
+  @Test
+  fun getMealWithHighestCalories_noMealsInDatabase() {
+    // Mock the getAllMeals function in the dao
+    every { mockMealDao.getAllMeals() } returns listOf()
+
+    // Call the method under test
+    val result = overviewViewModel.getMealWithHighestCalories()
+
+    // Verify the result
+    Assert.assertNull(result)
+  }
+
+  fun getMealsByMultipleCriteria_noMatchingMeals() {
+    // Prepare the meals
+    val meal1 =
+        Meal(
+            mealID = 1,
+            name = "Chicken Salad",
+            occasion = MealOccasion.BREAKFAST,
+            nutritionalInformation =
+                NutritionalInformation(
+                    mutableListOf(Nutrient("calories", 150.0, MeasurementUnit.KCAL))))
+    val meal2 =
+        Meal(
+            mealID = 2,
+            name = "Beef Stew",
+            occasion = MealOccasion.LUNCH,
+            nutritionalInformation =
+                NutritionalInformation(
+                    mutableListOf(Nutrient("calories", 250.0, MeasurementUnit.KCAL))))
+    val meal3 =
+        Meal(
+            mealID = 3,
+            name = "Chicken Soup",
+            occasion = MealOccasion.DINNER,
+            nutritionalInformation =
+                NutritionalInformation(
+                    mutableListOf(Nutrient("calories", 350.0, MeasurementUnit.KCAL))))
+    val allMeals = listOf(meal1, meal2, meal3)
+
+    // Mock the getAllMeals function in the dao
+    every { mockMealDao.getAllMeals() } returns allMeals
+
+    // Call the method under test
+    val result =
+        overviewViewModel.getMealsByMultipleCriteria("Fish", 0.0, 50.0, MealOccasion.BREAKFAST)
+
+    // Verify the result
+    Assert.assertEquals(0, result.size)
+  }
+
+  @Test
+  fun getMealWithLowestCalories_returnsCorrectMeal() {
+    // Prepare the meals
+    val meal1 =
+        Meal(
+            mealID = 1,
+            occasion = MealOccasion.BREAKFAST,
+            name = "Chicken Salad",
+            nutritionalInformation =
+                NutritionalInformation(
+                    mutableListOf(Nutrient("calories", 150.0, MeasurementUnit.KCAL))))
+    val meal2 =
+        Meal(
+            mealID = 2,
+            occasion = MealOccasion.BREAKFAST,
+            name = "Beef Stew",
+            nutritionalInformation =
+                NutritionalInformation(
+                    mutableListOf(Nutrient("calories", 250.0, MeasurementUnit.KCAL))))
+    val meal3 =
+        Meal(
+            mealID = 3,
+            name = "Chicken Soup",
+            occasion = MealOccasion.BREAKFAST,
+            nutritionalInformation =
+                NutritionalInformation(
+                    mutableListOf(Nutrient("calories", 100.0, MeasurementUnit.KCAL))))
+    val allMeals = listOf(meal1, meal2, meal3)
+
+    // Mock the getAllMeals function in the dao
+    every { mockMealDao.getAllMeals() } returns allMeals
+
+    // Call the method under test
+    val result = overviewViewModel.getMealWithLowestCalories()
+
+    // Verify the result
+    Assert.assertEquals(meal3, result)
+  }
+
+  @Test
+  fun getMealWithLowestCalories_noMealsInDatabase() {
+    // Mock the getAllMeals function in the dao
+    every { mockMealDao.getAllMeals() } returns listOf()
+
+    // Call the method under test
+    val result = overviewViewModel.getMealWithLowestCalories()
+
+    // Verify the result
+    Assert.assertNull(result)
+  }
+
+  @Test
+  fun getMealWithHighestCalories_returnFails() {
+    // Prepare the meals
+    val meal1 =
+        Meal(
+            mealID = 1,
+            occasion = MealOccasion.BREAKFAST,
+            name = "Chicken Salad",
+            nutritionalInformation =
+                NutritionalInformation(mutableListOf(Nutrient("fat", 150.0, MeasurementUnit.G))))
+
+    val allMeals = listOf(meal1)
+
+    // Mock the getAllMeals function in the dao
+    every { mockMealDao.getAllMeals() } returns allMeals
+
+    // Call the method under test
+    val result = overviewViewModel.getMealWithHighestCalories()
+
+    // Verify the result
+    Assert.assertEquals(meal1, result)
+  }
 }
