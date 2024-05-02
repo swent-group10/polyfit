@@ -21,12 +21,17 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.se.polyfit.R
+import com.github.se.polyfit.model.post.Post
 import com.github.se.polyfit.ui.components.postinfo.PostCard
 import com.github.se.polyfit.viewmodel.post.ViewPostViewModel
 
 @Composable
-fun PostInfoScreen(index: Int = 0, viewPostViewModel: ViewPostViewModel = hiltViewModel()) {
-  val posts by viewPostViewModel.posts.collectAsState()
+fun PostInfoScreen(
+    posts: List<Post> = listOf(),
+    index: Int = 0,
+    viewPostViewModel: ViewPostViewModel = hiltViewModel()
+) {
+  val posts by viewPostViewModel.posts.collectAsState(posts)
   val isFetching by viewPostViewModel.isFetching.collectAsState()
 
   if (isFetching) {

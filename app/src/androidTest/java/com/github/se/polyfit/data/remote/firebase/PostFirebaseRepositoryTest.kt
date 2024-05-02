@@ -8,7 +8,6 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -50,7 +49,7 @@ class PostFirebaseRepositoryTest {
 
     val result = postFirebaseRepository.storePost(testPost)
 
-    assertEquals(listOf<StorageReference>(), result)
+    assertEquals(mockDocRef, result)
   }
 
   @Test
