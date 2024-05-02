@@ -28,14 +28,11 @@ class PostFirebaseRepository(
 
   fun getAllPosts(): Flow<List<Post>> = flow {
     val posts = mutableListOf<Post>()
-    val batchSize = 10
-    var itr = 0
 
-    val postList =
-        postCollection.get().await().map { document ->
-          Post.deserialize(document.data)?.let { posts.add(it) }
-          itr++
-        }
+    postCollection.get().await().map { document ->
+      Log.d("PostFirebaseRepository", "Document: ${document.data}")
+      Post.deserialize(document.data)?.let { posts.add(it) }
+    }
 
     emit(posts)
   }
