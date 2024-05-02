@@ -10,8 +10,6 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -108,7 +106,22 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
           // check reall created
           AddMealFlow({}, {}, mealViewModel)
         }
-        //globalNavigationTest(navController)
+
+        navigation(startDestination = Route.Home, route = Route.Overview) {
+          composable(Route.Home) {
+            GenericScreen(
+                navController = navController,
+                content = { paddingValues ->
+                  OverviewScreen(paddingValues, navController, MealViewModel(mockk()))
+                })
+          }
+          composable(Route.Map) {
+            GenericScreen(navController = navController, content = { Text("Map Screen") })
+          }
+          composable(Route.Settings) {
+            GenericScreen(navController = navController, content = { Text("Settings Screen") })
+          }
+        }
       }
     }
   }
@@ -146,11 +159,11 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
         assertExists()
         assertIsDisplayed()
         assertHasClickAction()
-        //performClick()
+        performClick()
       }
     }
     Intents.release()
-    /*
+
     ComposeScreen.onComposeScreen<IngredientsBottomBar>(composeTestRule) {
       assertExists()
       assertIsDisplayed()
@@ -161,26 +174,6 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
         assertHasClickAction()
         performClick()
       }
-    }*/
-  }
-
-  /*fun NavGraphBuilder.globalNavigationTest(
-      navController: NavHostController,
-  ) {
-    navigation(startDestination = Route.Home, route = Route.Overview) {
-      composable(Route.Home) {
-        GenericScreen(
-            navController = navController,
-            content = { paddingValues ->
-              OverviewScreen(paddingValues, navController, MealViewModel(mockk()))
-            })
-      }
-      composable(Route.Map) {
-        GenericScreen(navController = navController, content = { Text("Map Screen") })
-      }
-      composable(Route.Settings) {
-        GenericScreen(navController = navController, content = { Text("Settings Screen") })
-      }
     }
-  }*/
+  }
 }
