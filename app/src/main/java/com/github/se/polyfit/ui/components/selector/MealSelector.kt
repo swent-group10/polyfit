@@ -32,6 +32,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import co.yml.charts.common.extensions.roundTwoDecimal
 import com.github.se.polyfit.R
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.ui.components.GradientBox
@@ -51,7 +52,7 @@ fun MealSelector(
   val isDisplayMealDetails by
       remember(selectedMeal) { derivedStateOf { selectedMeal.isComplete() } }
 
-  Box(modifier = Modifier.testTag("MealSelector")) {
+  Column(modifier = Modifier.testTag("MealSelector")) {
     if (!showMealSearch) {
       Row(
           modifier =
@@ -149,7 +150,7 @@ fun MealDetails(meal: Meal, modifier: Modifier = Modifier) {
                   Column(
                       horizontalAlignment = Alignment.CenterHorizontally,
                       modifier = Modifier.testTag(nutrientName)) {
-                        Text(text = "$amount g", color = SecondaryGrey)
+                        Text(text = "${amount!!.roundTwoDecimal()} g", color = SecondaryGrey)
                         Text(text = nutrientName, color = PrimaryPurple, fontSize = 15.sp)
                       }
                 }

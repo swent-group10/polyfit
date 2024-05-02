@@ -21,6 +21,7 @@ class OverviewScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
   val calorieCard: KNode = lazyColumn.child { hasTestTag(OverviewTags.overviewMain) }
   val secondCard: KNode = lazyColumn.child { hasTestTag("SecondCard") }
   val genericImage: KNode = secondCard.child { hasTestTag("GenericPicture") }
+  val createAPostButton: KNode = lazyColumn.child { hasTestTag("CreateAPost") }
 }
 
 class CalorieCard(semanticsProvider: SemanticsNodeInteractionsProvider) :

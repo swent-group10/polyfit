@@ -32,6 +32,10 @@ class Navigation(private val navHostController: NavHostController) {
     navigateTo(Route.DailyRecap)
   }
 
+  fun navigateToCreatePost() {
+    navigateTo(Route.CreatePost)
+  }
+
   private fun navigateTo(route: String) {
     Log.i("Navigation", "Navigating to $route")
     navHostController.navigate(route)
