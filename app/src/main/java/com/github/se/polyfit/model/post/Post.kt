@@ -89,11 +89,15 @@ data class Post(
       }
     }
 
-    private fun deserializeLocalDate(data: Map<String, Any?>, key: String): LocalDate? {
+    private fun deserializeLocalDate(data: Map<String, Any?>, key: String): LocalDate {
       return try {
-        data[key] as LocalDate
+        val data = data[key] as Map<String, Any>
+        val year = (data["year"] as Long).toInt()
+        val month = (data["monthValue"] as Long).toInt()
+        val day = (data["dayOfMonth"] as Long).toInt()
+        LocalDate.of(year, month, day)
       } catch (e: Exception) {
-        throw IllegalArgumentException("Failed to deserialize LocalDate object", e)
+        throw Exception("Failed to deserialize LocalDate object", e)
       }
     }
 
