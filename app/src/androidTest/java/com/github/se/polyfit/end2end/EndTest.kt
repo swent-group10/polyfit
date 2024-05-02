@@ -1,7 +1,6 @@
 package com.github.se.polyfit.end2end
 
 import android.app.Activity
-import android.app.Application
 import android.app.Instrumentation
 import android.content.Intent
 import android.graphics.BitmapFactory
@@ -36,7 +35,6 @@ import com.github.se.polyfit.viewmodel.meal.MealViewModel
 import com.kaspersky.components.composesupport.config.withComposeSupport
 import com.kaspersky.kaspresso.kaspresso.Kaspresso
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
-import dagger.hilt.android.testing.CustomTestApplication
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.mockk.Runs
@@ -54,7 +52,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @HiltAndroidTest
-@CustomTestApplication(Application::class)
 @RunWith(AndroidJUnit4::class)
 class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport()) {
   @get:Rule val composeTestRule = createComposeRule()
@@ -188,5 +185,3 @@ fun NavGraphBuilder.globalNavigationTest(
     }
   }
 }
-
-// All the moduel from UserModule.kt except the providesMealViewModel

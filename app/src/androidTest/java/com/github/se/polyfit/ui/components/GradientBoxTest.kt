@@ -9,10 +9,8 @@ import androidx.compose.ui.test.onChild
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.se.polyfit.ui.navigation.Navigation
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.kakaocup.compose.node.element.ComposeScreen
-import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit4.MockKRule
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
@@ -27,8 +25,6 @@ class GradientBoxTest : TestCase() {
   @get:Rule val composeTestRule = createComposeRule()
 
   @get:Rule val mockkRule = MockKRule(this)
-
-  @RelaxedMockK lateinit var mockNav: Navigation
 
   @Before
   fun setup() {
