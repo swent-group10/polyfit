@@ -8,6 +8,10 @@ class Navigation(private val navHostController: NavHostController) {
     navHostController.popBackStack()
   }
 
+  fun navigateToGraph() {
+    navigateTo(Route.Graph)
+  }
+
   fun navigateToHome() {
     navigateTo(Route.Home)
   }
@@ -26,6 +30,10 @@ class Navigation(private val navHostController: NavHostController) {
 
   fun navigateToDailyRecap() {
     navigateTo(Route.DailyRecap)
+  }
+
+  fun navigateToCreatePost() {
+    navigateTo(Route.CreatePost)
   }
 
   private fun navigateTo(route: String) {

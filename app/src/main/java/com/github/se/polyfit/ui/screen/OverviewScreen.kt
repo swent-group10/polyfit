@@ -17,12 +17,14 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -52,14 +54,19 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import co.yml.charts.ui.linechart.LineChart
 import com.github.se.polyfit.R
 import com.github.se.polyfit.data.api.SpoonacularApiCaller
 import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.ui.components.GradientBox
 import com.github.se.polyfit.ui.components.button.GradientButton
+import com.github.se.polyfit.ui.components.button.PrimaryButton
 import com.github.se.polyfit.ui.components.dialog.PictureDialog
+import com.github.se.polyfit.ui.components.lineChartData
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.utils.OverviewTags
+import com.github.se.polyfit.ui.viewModel.DisplayScreen
+import com.github.se.polyfit.ui.viewModel.GraphViewModel
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
 import kotlinx.coroutines.runBlocking
 
@@ -196,6 +203,7 @@ fun OverviewScreen(
 
   val context = LocalContext.current
   val navigation = Navigation(navController)
+  val isTestEnvironment = System.getProperty("isTestEnvironment") == "true"
 
   // State to hold the URI, the image and the bitmap
   var imageUri by remember { mutableStateOf<Uri?>(null) }
@@ -291,6 +299,10 @@ fun OverviewScreen(
                 },
                 onCreateMealWithoutPhoto = navigation::navigateToAddMeal,
                 onViewRecap = navigation::navigateToDailyRecap)
+            PrimaryButton(
+                text = "Create a Post",
+                onClick = navigation::navigateToCreatePost,
+                modifier = Modifier.padding(top = 8.dp).testTag("CreateAPost"))
           }
           item {
             OutlinedCard(
@@ -313,6 +325,54 @@ fun OverviewScreen(
                         bitmap = it.asImageBitmap(),
                         contentDescription = "Captured image",
                         modifier = Modifier.testTag("GenericPicture"))
+                  }
+                }
+          }
+          item {
+            OutlinedCard(
+                modifier =
+                    Modifier.align(Alignment.Center)
+                        .padding(top = 10.dp)
+                        .size(width = 350.dp, height = 300.dp)
+                        .testTag("Graph Card")
+                        .clickable { navigation.navigateToGraph() },
+                border =
+                    BorderStroke(
+                        2.dp,
+                        brush =
+                            Brush.linearGradient(
+                                listOf(
+                                    MaterialTheme.colorScheme.inversePrimary,
+                                    MaterialTheme.colorScheme.primary))),
+                colors = CardDefaults.cardColors(Color.Transparent)) {
+                  Column(modifier = Modifier.fillMaxSize().testTag("Graph Card Column")) {
+                    Text(
+                        text = "Calories Graph",
+                        style = MaterialTheme.typography.headlineLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.secondary,
+                        modifier =
+                            Modifier.padding(start = 10.dp, top = 10.dp)
+                                .weight(1f)
+                                .testTag("Graph Card Title")
+                                .clickable { navigation.navigateToGraph() })
+                    Box(
+                        modifier =
+                            Modifier.fillMaxSize(0.85f)
+                                .align(Alignment.CenterHorizontally)
+                                .testTag("Graph Box")) {
+                          if (!isTestEnvironment) {
+                            LineChart(
+                                modifier = Modifier.testTag("Overview Line Chart").fillMaxSize(),
+                                lineChartData =
+                                    lineChartData(
+                                        hiltViewModel<GraphViewModel>().DataPoints(),
+                                        hiltViewModel<GraphViewModel>().DateList(),
+                                        DisplayScreen.OVERVIEW))
+                          } else {
+                            Spacer(modifier = Modifier.fillMaxSize().testTag("LineChartSpacer"))
+                          }
+                        }
                   }
                 }
           }

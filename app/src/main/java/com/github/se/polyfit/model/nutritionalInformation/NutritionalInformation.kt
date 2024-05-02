@@ -10,10 +10,10 @@ class NutritionalInformation {
   }
 
   fun calculateTotalNutrient(nutrientType: String): Double {
-
-    val totalNutrient = nutrients.filter { it.nutrientType == nutrientType }.map { it.amount }.sum()
-
-    return totalNutrient
+    return nutrients
+        .filter { it.nutrientType.equals(nutrientType, ignoreCase = true) }
+        .map { it.amount }
+        .sum()
   }
 
   fun deepCopy(): NutritionalInformation {

@@ -17,8 +17,8 @@
     <string name="signGoogle">"Sign in with Google"</string>
     <string name="graphScreenTitle">Calories Per Day</string>
     <string name="kcalvalue">%1$.1f kCal</string>
-    <string name="weightvalue">%1$.1f lbs</string>
-    <string name="datevalue">%1$d %2$s</string>
+    <string name= "weightvalue">%1$.1f lbs</string>
+    <string name="datevalue">%1$s</string>
     <string name="noPostAvailable">"Unfortunately there is no post\navailable around you"</string>
     <string name="description">"Description"</string>
     <string name="nutrient">"Nutrient"</string>
@@ -29,4 +29,7 @@
     <string name="denyRequest">" Cancel "</string>
     <string name="shareRecipePlaceholder">"Share your recipe"</string>
     <string name="enterMealPlaceholder">"Enter a meal…"</string>
+    <string name="newPostTitle">"New Post"</string>
+    <string name="newPostDescriptionPlaceholder">" What's on your mind today?"</string>
+    <string name="postButton">"Post"</string>
 </resources>

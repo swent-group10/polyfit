@@ -19,4 +19,5 @@ object Route {
   const val Graph = "Graph"
 
   const val PostInfo = "PostInfo"
+  const val CreatePost = "CreatePost"
 }
