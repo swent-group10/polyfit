@@ -91,7 +91,7 @@ data class Post(
 
     private fun deserializeLocalDate(data: Map<String, Any?>, key: String): LocalDate? {
       return try {
-        val dateString = data[key] as? String
+        val dateString = data[key] as String
         dateString?.let { LocalDate.parse(it) }
       } catch (e: Exception) {
         throw IllegalArgumentException("Failed to deserialize LocalDate object", e)
