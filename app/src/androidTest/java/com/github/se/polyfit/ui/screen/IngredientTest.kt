@@ -201,13 +201,6 @@ class IngredientTest : TestCase() {
         performClick()
       }
 
-      val ingredients =
-          mockMealViewModel.meal.value.ingredients.find {
-            it.name == "apple" && it.amount == 10.0 && it.unit == MeasurementUnit.G
-          }
-
-      //            assert(ingredients == null)
-
       addIngredientDialog { assertDoesNotExist() }
     }
   }

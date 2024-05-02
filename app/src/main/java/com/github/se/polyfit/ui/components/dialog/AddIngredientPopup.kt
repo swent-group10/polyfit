@@ -55,12 +55,12 @@ fun AddIngredientDialog(
   // ingredient info in a meal.
 
   val nutritionFields = remember {
-    mutableStateListOf<Nutrient>(
-        Nutrient("calories", 0.0, MeasurementUnit.CAL),
-        Nutrient("totalWeight", 0.0, MeasurementUnit.G),
-        Nutrient("carbohydrates", 0.0, MeasurementUnit.G),
-        Nutrient("fat", 0.0, MeasurementUnit.G),
-        Nutrient("protein", 0.0, MeasurementUnit.G))
+    mutableStateListOf(
+        Nutrient("Calories", 0.0, MeasurementUnit.CAL),
+        Nutrient("Total Weight", 0.0, MeasurementUnit.G),
+        Nutrient("Carbohydrates", 0.0, MeasurementUnit.G),
+        Nutrient("Fat", 0.0, MeasurementUnit.G),
+        Nutrient("Protein", 0.0, MeasurementUnit.G))
   }
 
   var searchText by remember { mutableStateOf("") }
@@ -75,7 +75,7 @@ fun AddIngredientDialog(
         iconDescriptor = "close",
     ) {
       val nutritionalInformation = NutritionalInformation(nutritionFields.toMutableList())
-      val totalWeight = nutritionalInformation.getNutrient("totalWeight")
+      val totalWeight = nutritionalInformation.getNutrient("Total Weight")
 
       Column(
           modifier =
