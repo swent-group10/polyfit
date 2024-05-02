@@ -349,25 +349,25 @@ fun OverviewScreen(
                         modifier =
                             Modifier.padding(start = 10.dp, top = 10.dp)
                                 .weight(1f)
-                                .testTag("Graph Card Title"))
-                    if (!isTestEnvironment) {
-                      Box(
-                          modifier =
-                              Modifier.fillMaxSize(0.85f).align(Alignment.CenterHorizontally)) {
+                                .testTag("Graph Card Title")
+                                .clickable { navigation.navigateToGraph() })
+                    Box(
+                        modifier =
+                            Modifier.fillMaxSize(0.85f)
+                                .align(Alignment.CenterHorizontally)
+                                .testTag("Graph Box")) {
+                          if (!isTestEnvironment) {
                             LineChart(
-                                modifier =
-                                    Modifier.fillMaxWidth()
-                                        .testTag("Overview Line Chart")
-                                        .fillMaxSize()
-                                        .testTag("LineChart")
-                                        .align(Alignment.Center),
+                                modifier = Modifier.testTag("Overview Line Chart").fillMaxSize(),
                                 lineChartData =
                                     lineChartData(
                                         hiltViewModel<GraphViewModel>().DataPoints(),
                                         hiltViewModel<GraphViewModel>().DateList(),
                                         DisplayScreen.OVERVIEW))
+                          } else {
+                            Spacer(modifier = Modifier.fillMaxSize().testTag("LineChartSpacer"))
                           }
-                    }
+                        }
                   }
                 }
           }

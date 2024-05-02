@@ -38,6 +38,7 @@ import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.*
 import org.junit.runner.RunWith
 
@@ -111,10 +112,10 @@ class GraphScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withCompos
       // Define a mock ViewModel or required data setup here
       val pointList = DataToPoints() // Assuming this can be accessed here
       val dateList = DateList() // Assuming this can be accessed here
-      val screen = DisplayScreen.GRAPH_SCREEN
+      val screen = MutableStateFlow(DisplayScreen.GRAPH_SCREEN)
       val steps = 10
       // Invoke the composable to render the chart with test data
-      val xAxisData =
+      var xAxisData =
           AxisData.Builder()
               .axisLabelAngle(15f)
               .axisLabelDescription { "Date" }
@@ -122,22 +123,32 @@ class GraphScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withCompos
               .shouldDrawAxisLineTillEnd(false)
               .backgroundColor(MaterialTheme.colorScheme.background)
               .steps(pointList.size - 1)
-              .labelData { i -> dateList[i].toString() }
+              .labelData { i ->
+                if (screen.value == DisplayScreen.GRAPH_SCREEN) {
+                  dateList[i].toString()
+                } else {
+                  ""
+                }
+              }
               .labelAndAxisLinePadding(15.dp)
               .axisLineColor(MaterialTheme.colorScheme.inversePrimary)
               .build()
 
-      val yAxisData =
+      var yAxisData =
           AxisData.Builder()
               .steps(steps)
               .backgroundColor(MaterialTheme.colorScheme.background)
               .labelAndAxisLinePadding(30.dp)
               .axisLineColor(MaterialTheme.colorScheme.inversePrimary)
               .labelData { i ->
-                val yMin = pointList.minOf { it.y }.let { (floor(it / 10) * 10).toInt() }
-                val yMax = pointList.maxOf { it.y }.let { (ceil(it / 10) * 10).toInt() }
-                val yScale = (yMax - yMin) / steps
-                ((i * yScale) + yMin).toFloat().formatToSinglePrecision()
+                if (screen.value == DisplayScreen.GRAPH_SCREEN) {
+                  val yMin = pointList.minOf { it.y }.let { (floor(it / 10) * 10).toInt() }
+                  val yMax = pointList.maxOf { it.y }.let { (ceil(it / 10) * 10).toInt() }
+                  val yScale = (yMax - yMin) / steps
+                  ((i * yScale) + yMin).toFloat().formatToSinglePrecision()
+                } else {
+                  ""
+                }
               }
               .build()
               .toString()
@@ -147,6 +158,7 @@ class GraphScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withCompos
           lineChartData(pointList = pointList, dateList = dateList, DisplayScreen.GRAPH_SCREEN)
       assertEquals(xAxisData.toString(), data.xAxisData.toString())
       assertEquals(yAxisData, data.yAxisData.toString())
+
       val line = data.linePlotData.lines[0]
 
       assertEquals(

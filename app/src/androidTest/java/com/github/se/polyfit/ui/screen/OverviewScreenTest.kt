@@ -3,6 +3,7 @@ package com.github.se.polyfit.ui.screen
 import android.util.Log
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
@@ -25,6 +26,7 @@ import co.yml.charts.ui.linechart.model.IntersectionPoint
 import co.yml.charts.ui.linechart.model.LineStyle
 import co.yml.charts.ui.linechart.model.LineType
 import co.yml.charts.ui.linechart.model.ShadowUnderLine
+import com.github.se.polyfit.data.processor.LocalDataProcessor
 import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.components.lineChartData
 import com.github.se.polyfit.ui.flow.AddMealFlow
@@ -32,6 +34,7 @@ import com.github.se.polyfit.ui.navigation.Route
 import com.github.se.polyfit.ui.utils.GraphData
 import com.github.se.polyfit.ui.utils.OverviewTags
 import com.github.se.polyfit.ui.viewModel.DisplayScreen
+import com.github.se.polyfit.ui.viewModel.GraphViewModel
 import com.kaspersky.components.composesupport.config.withComposeSupport
 import com.kaspersky.kaspresso.kaspresso.Kaspresso
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
@@ -57,6 +60,7 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
   @get:Rule val mockkRule = MockKRule(this)
 
   fun setup() {
+    val dataProcessor = mockk<LocalDataProcessor>(relaxed = true)
     composeTestRule.setContent {
       val navController = rememberNavController()
       NavHost(navController = navController, startDestination = Route.Home) {
@@ -68,6 +72,9 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
 
         composable(Route.AddMeal) {
           AddMealFlow(goBack = {}, navigateToHome = {}, mockk(relaxed = true))
+        }
+        composable(Route.Graph) {
+          FullGraphScreen(goBack = {}, viewModel = GraphViewModel(dataProcessor))
         }
       }
     }
@@ -368,5 +375,25 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
     composeTestRule
         .onNodeWithTag("Overview Line Chart", useUnmergedTree = true)
         .assertDoesNotExist()
+
+    composeTestRule
+        .onNodeWithTag("Graph Box", useUnmergedTree = true)
+        .assertExists()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag("LineChartSpacer", useUnmergedTree = true)
+        .assertExists()
+        .assertIsDisplayed()
+  }
+
+  @OptIn(ExperimentalTestApi::class)
+  @Test
+  fun graphScreenAccessed() {
+    setup()
+    composeTestRule
+        .onNodeWithTag("OverviewScreenLazyColumn")
+        .performScrollToNode(hasTestTag("Graph Card"))
+    composeTestRule.onNodeWithTag("Graph Card").assertHasClickAction().performClick()
+    composeTestRule.onNodeWithTag("GraphScreenColumn").assertExists().assertIsDisplayed()
   }
 }

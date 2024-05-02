@@ -68,9 +68,6 @@ fun FullGraphScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.SpaceAround) {
                       if (!isTestEnvironment) {
-                        println(
-                            "viewModel.DataPoints().size = ${viewModel.DataPoints().size} datelist size = ${viewModel.DateList().size}")
-                        println("initGraphData = ${viewModel.initGraphData().size}")
                         LineChart(
                             modifier = Modifier.fillMaxSize().testTag("LineChart"),
                             lineChartData =
