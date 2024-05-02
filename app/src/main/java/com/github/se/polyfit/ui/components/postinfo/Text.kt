@@ -40,7 +40,9 @@ fun TextPostInfo(modifier: Modifier = Modifier, post: Post) {
       modifier = modifier.testTag("NutrientTitle"),
       bold = true)
 
-  post.meal.ingredients.forEach { it.nutritionalInformation.nutrients.forEach { NutrientInfo(it) } }
+    post.getCarbs()?.let { NutrientInfo(it) }
+    post.getFat()?.let { NutrientInfo(it) }
+    post.getProtein()?.let { NutrientInfo(it) }
 }
 
 @Composable
