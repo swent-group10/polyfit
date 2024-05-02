@@ -60,11 +60,13 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
   val grantPermissionRule: GrantPermissionRule =
       GrantPermissionRule.grant(android.Manifest.permission.CAMERA)
 
+  val mealViewModel: MealViewModel = mockk<MealViewModel>(relaxed = true)
+
   @Before
   fun setup() {
 
     // Create a mock of MealViewModel
-    val mealViewModel = mockk<MealViewModel>(relaxed = true)
+    // mealViewModel = mockk<MealViewModel>(relaxed = true)
 
     // Mock the behavior of the meal property
     val a: com.github.se.polyfit.model.meal.Meal =
@@ -94,36 +96,6 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
     every { mealViewModel.removeIngredient(any()) } just Runs
 
     mockkStatic(Log::class)
-    composeTestRule.setContent {
-      val navController = rememberNavController()
-      NavHost(navController = navController, startDestination = Route.Overview) {
-
-        // composable(Route.Register) { LoginScreen(navigation::navigateToHome) }
-
-        composable(Route.AddMeal) {
-          // make sure the create is clear
-
-          // check reall created
-          AddMealFlow({}, {}, mealViewModel)
-        }
-
-        navigation(startDestination = Route.Home, route = Route.Overview) {
-          composable(Route.Home) {
-            GenericScreen(
-                navController = navController,
-                content = { paddingValues ->
-                  OverviewScreen(paddingValues, navController, MealViewModel(mockk()))
-                })
-          }
-          composable(Route.Map) {
-            GenericScreen(navController = navController, content = { Text("Map Screen") })
-          }
-          composable(Route.Settings) {
-            GenericScreen(navController = navController, content = { Text("Settings Screen") })
-          }
-        }
-      }
-    }
   }
 
   @After
@@ -149,6 +121,37 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
     // Tell Espresso to expect an Intent to the camera, but respond with the mock result
     Intents.init()
     Intents.intending(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE)).respondWith(result)
+
+    composeTestRule.setContent {
+      val navController = rememberNavController()
+      NavHost(navController = navController, startDestination = Route.Overview) {
+
+        // composable(Route.Register) { LoginScreen({Log.d("Register", "Register go to ????")}) }
+
+        composable(Route.AddMeal) {
+          // make sure the create is clear
+
+          // check reall created
+          AddMealFlow({}, {}, mealViewModel)
+        }
+
+        navigation(startDestination = Route.Home, route = Route.Overview) {
+          composable(Route.Home) {
+            GenericScreen(
+                navController = navController,
+                content = { paddingValues ->
+                  OverviewScreen(paddingValues, navController, MealViewModel(mockk()))
+                })
+          }
+          composable(Route.Map) {
+            GenericScreen(navController = navController, content = { Text("Map Screen") })
+          }
+          composable(Route.Settings) {
+            GenericScreen(navController = navController, content = { Text("Settings Screen") })
+          }
+        }
+      }
+    }
 
     ComposeScreen.onComposeScreen<PictureDialogBox>(composeTestRule) {
       assertDoesNotExist()
