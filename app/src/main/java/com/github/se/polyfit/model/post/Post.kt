@@ -1,6 +1,7 @@
 package com.github.se.polyfit.model.post
 
 import android.graphics.Bitmap
+import android.util.Log
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import java.time.LocalDate
@@ -67,6 +68,32 @@ data class Post(
         this["location"] = data.location
         this["meal"] = data.meal.serialize()
         this["createdAt"] = data.createdAt
+      }
+    }
+
+    fun deserialize(data: Map<String, Any?>): Post? {
+      return try {
+        val userId = data["userId"] as String
+
+        val description = data["description"] as? String ?: ""
+        val location = Location.deserialize(data["location"] as Map<String, Any>)
+        val meal = Meal.deserialize(data["meal"] as Map<String, Any>)
+        val createdAt = deserializeLocalDate(data, "createdAt") ?: LocalDate.now()
+
+        val newPost = Post(userId, description, location, meal, createdAt)
+
+        newPost
+      } catch (e: Exception) {
+        Log.e("Post", "Failed to deserialize Post object: ${e.message}", e)
+        throw IllegalArgumentException("Failed to deserialize Post object", e)
+      }
+    }
+
+    private fun deserializeLocalDate(data: Map<String, Any?>, key: String): LocalDate? {
+      return try {
+        data[key] as LocalDate
+      } catch (e: Exception) {
+        throw IllegalArgumentException("Failed to deserialize LocalDate object", e)
       }
     }
 

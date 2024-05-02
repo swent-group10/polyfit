@@ -14,7 +14,7 @@ import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
  */
 data class Ingredient(
     val name: String, // name is now a val
-    val id: Int,
+    val id: Long,
     val amount: Double,
     val unit: MeasurementUnit,
     val nutritionalInformation: NutritionalInformation = NutritionalInformation(mutableListOf()),
@@ -48,7 +48,7 @@ data class Ingredient(
     fun deserialize(data: Map<String, Any>): Ingredient {
       return try {
         val name = data["name"] as String
-        val id = data["id"] as Int
+        val id = data["id"] as Long
         val amount = data["amount"] as Double
         val unit = MeasurementUnit.fromString(data["unit"] as String)
         val nutValue = data["nutritionalInformation"] as List<Map<String, Any>>
