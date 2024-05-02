@@ -14,13 +14,18 @@ import co.yml.charts.ui.linechart.model.LineChartData
 import co.yml.charts.ui.linechart.model.LinePlotData
 import co.yml.charts.ui.linechart.model.LineStyle
 import co.yml.charts.ui.linechart.model.LineType
-import co.yml.charts.ui.linechart.model.SelectionHighlightPoint
-import co.yml.charts.ui.linechart.model.SelectionHighlightPopUp
 import co.yml.charts.ui.linechart.model.ShadowUnderLine
+import com.github.se.polyfit.ui.viewModel.DisplayScreen
 import java.time.LocalDate
+import kotlin.math.ceil
+import kotlin.math.floor
 
 @Composable
-fun lineChartData(pointList: List<Point>, dateList: List<LocalDate>): LineChartData {
+fun lineChartData(
+    pointList: List<Point>,
+    dateList: List<LocalDate>,
+    screen: DisplayScreen
+): LineChartData {
   val steps = 10
   val xAxisData =
       AxisData.Builder()
@@ -30,7 +35,13 @@ fun lineChartData(pointList: List<Point>, dateList: List<LocalDate>): LineChartD
           .shouldDrawAxisLineTillEnd(false)
           .backgroundColor(MaterialTheme.colorScheme.background)
           .steps(pointList.size - 1)
-          .labelData { i -> dateList[i].toString() }
+          .labelData { i ->
+            if (screen == DisplayScreen.GRAPH_SCREEN) {
+              dateList[i].toString()
+            } else {
+              ""
+            }
+          }
           .labelAndAxisLinePadding(15.dp)
           .axisLineColor(MaterialTheme.colorScheme.inversePrimary)
           .build()
@@ -42,10 +53,14 @@ fun lineChartData(pointList: List<Point>, dateList: List<LocalDate>): LineChartD
           .labelAndAxisLinePadding(30.dp)
           .axisLineColor(MaterialTheme.colorScheme.inversePrimary)
           .labelData { i ->
-            val yMin = pointList.minOf { it.y }
-            val yMax = pointList.maxOf { it.y }
-            val yScale = (yMax - yMin) / steps
-            ((i * yScale) + yMin).formatToSinglePrecision()
+            if (screen == DisplayScreen.GRAPH_SCREEN) {
+              val yMin = pointList.minOf { it.y }.let { (floor(it / 10) * 10).toInt() }
+              val yMax = pointList.maxOf { it.y }.let { (ceil(it / 10) * 10).toInt() }
+              val yScale = (yMax - yMin) / steps
+              ((i * yScale) + yMin).toFloat().formatToSinglePrecision()
+            } else {
+              ""
+            }
           }
           .build()
 
@@ -62,8 +77,7 @@ fun lineChartData(pointList: List<Point>, dateList: List<LocalDate>): LineChartD
                                   lineType = LineType.SmoothCurve(isDotted = false)),
                           intersectionPoint =
                               IntersectionPoint(color = MaterialTheme.colorScheme.primary),
-                          selectionHighlightPoint =
-                              SelectionHighlightPoint(color = MaterialTheme.colorScheme.secondary),
+                          selectionHighlightPoint = null,
                           shadowUnderLine =
                               ShadowUnderLine(
                                   alpha = 0.5f,
@@ -73,7 +87,7 @@ fun lineChartData(pointList: List<Point>, dateList: List<LocalDate>): LineChartD
                                               listOf(
                                                   MaterialTheme.colorScheme.inversePrimary,
                                                   MaterialTheme.colorScheme.background))),
-                          selectionHighlightPopUp = SelectionHighlightPopUp()))),
+                          selectionHighlightPopUp = null))),
       backgroundColor = MaterialTheme.colorScheme.surface,
       xAxisData = xAxisData,
       yAxisData = yAxisData,
