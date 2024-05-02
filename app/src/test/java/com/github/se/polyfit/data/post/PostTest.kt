@@ -6,6 +6,7 @@ import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import java.time.LocalDate
+import kotlin.test.assertFails
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -141,5 +142,119 @@ class PostTest {
     val location = Location.default()
     val expectedLocation = Location(0.0, 0.0, 0.0, "EPFL")
     assertEquals(expectedLocation, location)
+  }
+
+  @Test
+  fun deserializePost() {
+    val post =
+        Post.deserialize(
+            mapOf(
+                "userId" to "userId",
+                "description" to "description",
+                "location" to
+                    mapOf(
+                        "longitude" to 0.0,
+                        "latitude" to 0.0,
+                        "altitude" to 10.0,
+                        "name" to "EPFL"),
+                "meal" to Meal.default().serialize(),
+                "createdAt" to LocalDate.now()))
+    val expectedPost =
+        Post(
+            "userId",
+            "description",
+            Location(0.0, 0.0, 10.0, "EPFL"),
+            Meal.default(),
+            LocalDate.now())
+    assertEquals(expectedPost, post)
+  }
+
+  @Test
+  fun deserializePostWithDifferentLocation() {
+    val post =
+        Post.deserialize(
+            mapOf(
+                "userId" to "userId",
+                "description" to "description",
+                "location" to
+                    mapOf(
+                        "longitude" to 10.0,
+                        "latitude" to 20.0,
+                        "altitude" to 30.0,
+                        "name" to "MIT"),
+                "meal" to Meal.default().serialize(),
+                "createdAt" to LocalDate.now()))
+    val expectedPost =
+        Post(
+            "userId",
+            "description",
+            Location(10.0, 20.0, 30.0, "MIT"),
+            Meal.default(),
+            LocalDate.now())
+    assertEquals(expectedPost, post)
+  }
+
+  @Test
+  fun deserializePostWithDifferentUserId() {
+    val post =
+        Post.deserialize(
+            mapOf(
+                "userId" to "differentUserId",
+                "description" to "description",
+                "location" to
+                    mapOf(
+                        "longitude" to 0.0,
+                        "latitude" to 0.0,
+                        "altitude" to 10.0,
+                        "name" to "EPFL"),
+                "meal" to Meal.default().serialize(),
+                "createdAt" to LocalDate.now()))
+    val expectedPost =
+        Post(
+            "differentUserId",
+            "description",
+            Location(0.0, 0.0, 10.0, "EPFL"),
+            Meal.default(),
+            LocalDate.now())
+    assertEquals(expectedPost, post)
+  }
+
+  @Test
+  fun deserializePostWithDifferentDescription() {
+    val post =
+        Post.deserialize(
+            mapOf(
+                "userId" to "userId",
+                "description" to "differentDescription",
+                "location" to
+                    mapOf(
+                        "longitude" to 0.0,
+                        "latitude" to 0.0,
+                        "altitude" to 10.0,
+                        "name" to "EPFL"),
+                "meal" to Meal.default().serialize(),
+                "createdAt" to LocalDate.now()))
+    val expectedPost =
+        Post(
+            "userId",
+            "differentDescription",
+            Location(0.0, 0.0, 10.0, "EPFL"),
+            Meal.default(),
+            LocalDate.now())
+    assertEquals(expectedPost, post)
+  }
+
+  @Test
+  fun deserializeThrowsException() {
+    val data =
+        mapOf(
+            "userId" to null,
+            "description" to "description",
+            "location" to
+                mapOf("longitude" to 0.0, "latitude" to 0.0, "altitude" to 10.0, "name" to "EPFL"),
+            "meal" to Meal.default().serialize(),
+            "createdAt" to LocalDate.now())
+
+    assertFails { Post.deserialize(data) }
   }
 }

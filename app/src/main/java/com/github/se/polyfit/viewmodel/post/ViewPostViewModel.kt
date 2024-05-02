@@ -30,10 +30,9 @@ constructor(private val postFirebaseRepository: PostFirebaseRepository) : ViewMo
     viewModelScope.launch {
       _isFetching.value = true
 
-      val newPosts =
-          withContext(Dispatchers.Main) {
-            postFirebaseRepository.getAllPosts().collect { posts -> _posts.value = posts }
-          } // FYI: UI updates only on Main Thread
+      withContext(Dispatchers.Main) {
+        postFirebaseRepository.getAllPosts().collect { posts -> _posts.value = posts }
+      } // FYI: UI updates only on Main Thread
 
       _isFetching.value = false
     }
