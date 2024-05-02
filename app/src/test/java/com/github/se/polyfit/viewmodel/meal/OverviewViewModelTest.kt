@@ -113,4 +113,101 @@ class OverviewViewModelTest {
     // Verify the result
     Assert.assertEquals(0, result.size)
   }
+
+  @Test
+  fun getMealsByName_noMatchingMeals() {
+    // Prepare the meals
+    val meal1 = Meal.default().apply { name = "Fish" }
+    val meal2 = Meal.default().apply { name = "Beef" }
+    val meal3 = Meal.default().apply { name = "Chicken" }
+    val allMeals = listOf(meal1, meal2, meal3)
+
+    // Mock the getAllMeals function in the dao
+    every { mockMealDao.getAllMeals() } returns allMeals
+
+    // Call the method under test
+    val result = overviewViewModel.getMealsByName("Fish")
+
+    // Verify the result
+    Assert.assertEquals(1, result.size)
+  }
+
+  @Test
+  fun getMealsByOccasion_returnsCorrectMeals() {
+    // Prepare the meals
+    val meal1 =
+        Meal(
+            mealID = 1,
+            name = "Breakfast Meal",
+            occasion = MealOccasion.BREAKFAST,
+            nutritionalInformation =
+                NutritionalInformation(
+                    mutableListOf(Nutrient("calories", 100.0, MeasurementUnit.KCAL))))
+    val meal2 =
+        Meal(
+            mealID = 2,
+            name = "Lunch Meal",
+            occasion = MealOccasion.LUNCH,
+            nutritionalInformation =
+                NutritionalInformation(
+                    mutableListOf(Nutrient("calories", 100.0, MeasurementUnit.KCAL))))
+    val meal3 =
+        Meal(
+            mealID = 3,
+            name = "Dinner Meal",
+            occasion = MealOccasion.DINNER,
+            nutritionalInformation =
+                NutritionalInformation(
+                    mutableListOf(Nutrient("calories", 100.0, MeasurementUnit.KCAL))))
+    val allMeals = listOf(meal1, meal2, meal3)
+
+    // Mock the getAllMeals function in the dao
+    every { mockMealDao.getAllMeals() } returns allMeals
+
+    // Call the method under test
+    val result = overviewViewModel.getMealsByOccasion(MealOccasion.BREAKFAST)
+
+    // Verify the result
+    Assert.assertEquals(1, result.size)
+    Assert.assertEquals(meal1, result[0])
+  }
+
+  @Test
+  fun getMealsByOccasion_noMatchingMeals() {
+    // Prepare the meals
+    val meal1 =
+        Meal(
+            mealID = 1,
+            name = "Breakfast Meal",
+            occasion = MealOccasion.BREAKFAST,
+            nutritionalInformation =
+                NutritionalInformation(
+                    mutableListOf(Nutrient("calories", 100.0, MeasurementUnit.KCAL))))
+    val meal2 =
+        Meal(
+            mealID = 2,
+            name = "Lunch Meal",
+            occasion = MealOccasion.LUNCH,
+            nutritionalInformation =
+                NutritionalInformation(
+                    mutableListOf(Nutrient("calories", 100.0, MeasurementUnit.KCAL))))
+    val meal3 =
+        Meal(
+            mealID = 3,
+            name = "Dinner Meal",
+            occasion = MealOccasion.DINNER,
+            nutritionalInformation =
+                NutritionalInformation(
+                    mutableListOf(Nutrient("calories", 100.0, MeasurementUnit.KCAL))))
+    val allMeals = listOf(meal1, meal2, meal3)
+
+    // Mock the getAllMeals function in the dao
+    every { mockMealDao.getAllMeals() } returns allMeals
+
+    // Call the method under test
+    val result = overviewViewModel.getMealsByOccasion(MealOccasion.SNACK)
+
+    // Verify the result
+    Assert.assertEquals(0, result.size)
+  }
 }
