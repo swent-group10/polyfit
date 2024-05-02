@@ -5,6 +5,10 @@ import android.util.Log
 import com.github.se.polyfit.data.api.SpoonacularApiCaller
 import com.github.se.polyfit.data.local.dao.MealDao
 import com.github.se.polyfit.model.meal.Meal
+import com.github.se.polyfit.model.meal.MealOccasion
+import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
+import com.github.se.polyfit.model.nutritionalInformation.Nutrient
+import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -24,6 +28,7 @@ class OverviewViewModelTest {
   fun setup() {
     mockkStatic(Log::class)
     every { Log.e(any(), any()) } returns 0
+    every { Log.i(any(), any()) } returns 0
     overviewViewModel = OverviewViewModel(mockMealDao, mockSpoonacularApiCaller)
   }
 
@@ -53,5 +58,59 @@ class OverviewViewModelTest {
 
     // Verify that the method was called with the correct parameters
     verify { mockMealDao.deleteByDatabaseID(id) }
+  }
+
+  @Test
+  fun getMealsByCalorieRange_returnsCorrectMeals() {
+    // Prepare the meals
+    val meal1 =
+        Meal(
+            mealID = 1,
+            nutritionalInformation =
+                NutritionalInformation(
+                    mutableListOf(Nutrient("calories", 100.0, MeasurementUnit.KCAL))),
+            name = "Meal 1",
+            occasion = MealOccasion.BREAKFAST)
+    val meal2 =
+        Meal(
+            mealID = 2,
+            nutritionalInformation =
+                NutritionalInformation(
+                    mutableListOf(Nutrient("calories", 200.0, MeasurementUnit.KCAL))),
+            name = "Meal 2",
+            occasion = MealOccasion.LUNCH)
+
+    val meal3 =
+        Meal(
+            mealID = 3,
+            nutritionalInformation =
+                NutritionalInformation(
+                    mutableListOf(Nutrient("calories", 300.0, MeasurementUnit.KCAL))),
+            name = "Meal 3",
+            occasion = MealOccasion.DINNER)
+    val allMeals = listOf(meal1, meal2, meal3)
+
+    // Mock the getAllMeals function in the dao
+    every { mockMealDao.getAllMeals() } returns allMeals
+
+    // Call the method under test
+    val result = overviewViewModel.getMealsByCalorieRange(150.0, 250.0)
+
+    // Verify the result
+    Assert.assertEquals(1, result.size)
+    Assert.assertEquals(meal2, result[0])
+  }
+
+  @Test
+  fun getMealsByCalorieRange_emptyDatabase() {
+
+    // Mock the getAllMeals function in the dao
+    every { mockMealDao.getAllMeals() } returns listOf()
+
+    // Call the method under test
+    val result = overviewViewModel.getMealsByCalorieRange(150.0, 250.0)
+
+    // Verify the result
+    Assert.assertEquals(0, result.size)
   }
 }
