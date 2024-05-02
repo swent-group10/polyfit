@@ -35,11 +35,13 @@ import com.github.se.polyfit.ui.utils.GraphData
 import com.github.se.polyfit.ui.utils.OverviewTags
 import com.github.se.polyfit.ui.viewModel.DisplayScreen
 import com.github.se.polyfit.ui.viewModel.GraphViewModel
+import com.github.se.polyfit.viewmodel.post.CreatePostViewModel
 import com.kaspersky.components.composesupport.config.withComposeSupport
 import com.kaspersky.kaspresso.kaspresso.Kaspresso
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.github.kakaocup.compose.node.element.ComposeScreen
+import io.mockk.every
 import io.mockk.junit4.MockKRule
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -61,6 +63,10 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
 
   fun setup() {
     val dataProcessor = mockk<LocalDataProcessor>(relaxed = true)
+    val mockPostViewModel: CreatePostViewModel = mockk(relaxed = true)
+
+    every { mockPostViewModel.meals.value } returns listOf()
+
     composeTestRule.setContent {
       val navController = rememberNavController()
       NavHost(navController = navController, startDestination = Route.Home) {
@@ -76,6 +82,7 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
         composable(Route.Graph) {
           FullGraphScreen(goBack = {}, viewModel = GraphViewModel(dataProcessor))
         }
+        composable(Route.CreatePost) { CreatePostScreen(postViewModel = mockPostViewModel) }
       }
     }
   }
@@ -395,5 +402,22 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
         .performScrollToNode(hasTestTag("Graph Card"))
     composeTestRule.onNodeWithTag("Graph Card").assertHasClickAction().performClick()
     composeTestRule.onNodeWithTag("GraphScreenColumn").assertExists().assertIsDisplayed()
+  }
+
+  @Test
+  fun createAPost() {
+    setup()
+    ComposeScreen.onComposeScreen<OverviewScreen>(composeTestRule) {
+      createAPostButton {
+        assertExists()
+        assertIsDisplayed()
+        assertTextEquals("Create a Post")
+        assertHasClickAction()
+        performClick()
+        assertDoesNotExist()
+      }
+    }
+
+    ComposeScreen.onComposeScreen<CreatePostTopBar>(composeTestRule) { title { assertExists() } }
   }
 }
