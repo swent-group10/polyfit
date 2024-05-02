@@ -42,11 +42,11 @@ class IngredientNutritionEditFieldsTest : TestCase() {
       IngredientNutritionEditFields(
           nutritionFields =
               mutableListOf(
-                  Nutrient("totalWeight", 0.0, MeasurementUnit.G),
-                  Nutrient("calories", 0.0, MeasurementUnit.CAL),
-                  Nutrient("carbohydrates", 0.0, MeasurementUnit.G),
-                  Nutrient("fat", 0.0, MeasurementUnit.G),
-                  Nutrient("protein", 0.0, MeasurementUnit.G),
+                  Nutrient("Total Weight", 0.0, MeasurementUnit.G),
+                  Nutrient("Calories", 0.0, MeasurementUnit.CAL),
+                  Nutrient("Carbohydrates", 0.0, MeasurementUnit.G),
+                  Nutrient("Fat", 0.0, MeasurementUnit.G),
+                  Nutrient("Protein", 0.0, MeasurementUnit.G),
               ))
     }
 

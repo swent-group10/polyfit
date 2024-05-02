@@ -10,7 +10,6 @@ import com.github.se.polyfit.data.remote.firebase.PostFirebaseRepository
 import com.github.se.polyfit.data.repository.MealRepository
 import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.ui.utils.AuthenticationCloud
-import com.github.se.polyfit.ui.viewModel.GraphViewModel
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
 import dagger.Module
 import dagger.Provides
@@ -30,12 +29,6 @@ object UserModule {
     // if for some reason the user is not signed in, without this, it could cause and error
     // firestoredatabase needs a user id to be initialized
     return User(id = "testUserID")
-  }
-
-  @Provides
-  @Singleton
-  fun providesGraphViewModel(): GraphViewModel {
-    return GraphViewModel()
   }
 
   @Provides

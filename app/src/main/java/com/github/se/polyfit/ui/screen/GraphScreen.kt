@@ -34,14 +34,16 @@ import com.github.se.polyfit.R
 import com.github.se.polyfit.ui.components.DropDownMenu
 import com.github.se.polyfit.ui.components.lineChartData
 import com.github.se.polyfit.ui.components.scaffold.SimpleTopBar
-import com.github.se.polyfit.ui.viewModel.DataToPoints
-import com.github.se.polyfit.ui.viewModel.DateList
+import com.github.se.polyfit.ui.viewModel.DisplayScreen
 import com.github.se.polyfit.ui.viewModel.GraphViewModel
 import com.github.se.polyfit.ui.viewModel.SortPoints
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FullGraphScreen(viewModel: GraphViewModel = hiltViewModel<GraphViewModel>()) {
+fun FullGraphScreen(
+    viewModel: GraphViewModel = hiltViewModel<GraphViewModel>(),
+    goBack: () -> Unit
+) {
   val context = LocalContext.current
 
   val isTestEnvironment = System.getProperty("isTestEnvironment") == "true"
@@ -49,11 +51,13 @@ fun FullGraphScreen(viewModel: GraphViewModel = hiltViewModel<GraphViewModel>())
   val sortedBy = remember { mutableStateOf("KCAL") }
 
   val searchText by viewModel.searchText.observeAsState()
-  val graphData by viewModel.graphData.observeAsState()
+  val graphData by viewModel.graphData.observeAsState(viewModel.initGraphData())
+  val dataPoints = viewModel.DataPoints()
+  val dates = viewModel.DateList()
   Scaffold(
       topBar = {
         // This will be given a return function later
-        SimpleTopBar(context.getString(R.string.graphScreenTitle), {})
+        SimpleTopBar(context.getString(R.string.graphScreenTitle), goBack)
       }) { padding ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -66,7 +70,8 @@ fun FullGraphScreen(viewModel: GraphViewModel = hiltViewModel<GraphViewModel>())
                       if (!isTestEnvironment) {
                         LineChart(
                             modifier = Modifier.fillMaxSize().testTag("LineChart"),
-                            lineChartData = lineChartData(DataToPoints(), DateList()))
+                            lineChartData =
+                                lineChartData(dataPoints, dates, DisplayScreen.GRAPH_SCREEN))
                       } else {
                         Spacer(modifier = Modifier.fillMaxSize().testTag("LineChartSpacer"))
                       }
@@ -113,7 +118,7 @@ fun FullGraphScreen(viewModel: GraphViewModel = hiltViewModel<GraphViewModel>())
                               }
                           Text(
                               modifier = Modifier.padding(end = 4.dp).testTag("Date"),
-                              text = context.getString(R.string.datevalue, data.day, data.month))
+                              text = context.getString(R.string.datevalue, data.date.toString()))
                         }
                     HorizontalDivider(
                         thickness = 1.dp, color = MaterialTheme.colorScheme.inversePrimary)

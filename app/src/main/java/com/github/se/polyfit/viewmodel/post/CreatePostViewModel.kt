@@ -2,6 +2,7 @@ package com.github.se.polyfit.viewmodel.post
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.github.se.polyfit.data.remote.firebase.PostFirebaseRepository
 import com.github.se.polyfit.data.repository.MealRepository
 import com.github.se.polyfit.model.meal.Meal
@@ -11,6 +12,11 @@ import com.github.se.polyfit.model.post.UnmodifiablePost
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 @HiltViewModel
 class CreatePostViewModel
@@ -25,6 +31,16 @@ constructor(
     get() = _post
 
   suspend fun getRecentMeals() = mealRepository.getAllMeals().sortedBy { it.createdAt }.take(5)
+
+  private val _meals = MutableStateFlow<List<Meal>>(emptyList())
+  val meals = _meals
+
+  init {
+    viewModelScope.launch {
+      val recentMeals = getRecentMeals()
+      withContext(Dispatchers.Main) { _meals.value = recentMeals }
+    }
+  }
 
   fun setPostDescription(description: String) {
     _post.description = description
@@ -60,12 +76,14 @@ constructor(
     return _post.getProtein()?.amount ?: 0.0
   }
 
-  suspend fun setPost() {
-    try {
-      postFirebaseRepository.storePost(_post)
-    } catch (e: Exception) {
-      Log.e("CreatePostViewModel", "Failed to store post in the database : ${e.message}", e)
-      throw Exception("Failed to store post in the database : ${e.message}")
+  fun setPost() {
+    runBlocking {
+      try {
+        postFirebaseRepository.storePost(_post)
+      } catch (e: Exception) {
+        Log.e("CreatePostViewModel", "Failed to store post in the database : ${e.message}", e)
+        throw Exception("Failed to store post in the database : ${e.message}")
+      }
     }
   }
 }

@@ -64,7 +64,7 @@ class MealRepository(
   }
 
   suspend fun getAllMeals(): List<Meal> {
-    return mealDao.getAllMeals()
+    return withContext(this.dispatcher) { mealDao.getAllMeals() }
   }
 
   suspend fun getMealsOnDate(date: LocalDate): List<Meal> {
