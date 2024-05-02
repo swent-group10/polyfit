@@ -10,16 +10,26 @@ import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import com.github.se.polyfit.model.post.Post
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
+import com.github.se.polyfit.viewmodel.post.ViewPostViewModel
 import io.mockk.every
 import io.mockk.mockk
 import java.time.LocalDate
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
 class PostInfoScreenTest {
 
   @get:Rule val composeTestRule = createComposeRule()
+
+  private lateinit var viewPostViewModel: ViewPostViewModel
+
+  @Before
+  fun setup() {
+    viewPostViewModel = mockk<ViewPostViewModel>(relaxed = true)
+    every { viewPostViewModel.isFetching } returns MutableStateFlow(false)
+  }
 
   @Test
   fun PostInfoScreen_displays_post_information() {
@@ -43,8 +53,9 @@ class PostInfoScreenTest {
 
     every { mealViewModel.meal } returns MutableStateFlow(Meal.default())
     every { mealViewModel.isComplete } returns MutableStateFlow(true)
+    every { viewPostViewModel.posts } returns MutableStateFlow(posts)
 
-    composeTestRule.setContent { PostInfoScreen(posts) }
+    composeTestRule.setContent { PostInfoScreen(posts, viewPostViewModel = viewPostViewModel) }
 
     composeTestRule
         .onNodeWithTag("DescriptionTitle")
@@ -65,8 +76,9 @@ class PostInfoScreenTest {
   @Test
   fun PostInfoScreen_displays_no_post_available_when_there_are_no_posts() {
     val posts = listOf<Post>()
+    every { viewPostViewModel.posts } returns MutableStateFlow(posts)
 
-    composeTestRule.setContent { PostInfoScreen(posts) }
+    composeTestRule.setContent { PostInfoScreen(posts, viewPostViewModel = viewPostViewModel) }
 
     composeTestRule
         .onNodeWithTag("NoPostText")

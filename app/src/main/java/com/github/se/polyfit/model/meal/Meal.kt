@@ -174,9 +174,9 @@ data class Meal(
                 createdAt = createdAt,
                 tags = tags)
 
-        val ingredientsData = data["ingredients"] as? List<Map<String, Any>>
-        if (ingredientsData != null) {
-          for (ingredientData in ingredientsData) {
+        val ingredientsDatas = data["ingredients"] as? List<Map<String, Any>>
+        if (ingredientsDatas != null) {
+          for (ingredientData in ingredientsDatas) {
             newMeal.addIngredient(Ingredient.deserialize(ingredientData))
           }
         }

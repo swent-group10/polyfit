@@ -19,6 +19,7 @@ import com.github.se.polyfit.ui.screen.DailyRecapScreen
 import com.github.se.polyfit.ui.screen.FullGraphScreen
 import com.github.se.polyfit.ui.screen.LoginScreen
 import com.github.se.polyfit.ui.screen.OverviewScreen
+import com.github.se.polyfit.ui.screen.PostInfoScreen
 import com.github.se.polyfit.ui.theme.PolyfitTheme
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
@@ -55,6 +56,10 @@ class MainActivity : ComponentActivity() {
           composable(Route.Register) { LoginScreen(navigation::navigateToHome) }
 
           composable(Route.AddMeal) { AddMealFlow(navigation::goBack, navigation::navigateToHome) }
+
+          composable(Route.PostInfo) {
+            GenericScreen(navController = navController, content = { PostInfoScreen() })
+          }
 
           composable(Route.CreatePost) {
             CreatePostScreen(navigation::goBack, navigation::navigateToHome)

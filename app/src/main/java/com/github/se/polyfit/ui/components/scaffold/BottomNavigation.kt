@@ -2,7 +2,7 @@ package com.github.se.polyfit.ui.components.scaffold
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -11,7 +11,6 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -58,7 +57,7 @@ fun BottomNavigationBar(
             NavigationBarItemDefaults.colors(
                 unselectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 selectedIconColor = MaterialTheme.colorScheme.primary),
-        icon = { Icon(Icons.Default.Search, contentDescription = OverviewTags.overviewMapIcon) },
+        icon = { Icon(Icons.Default.Menu, contentDescription = OverviewTags.overviewMapIcon) },
         label = {
           if (currentRoute == Route.Map)
               Text(

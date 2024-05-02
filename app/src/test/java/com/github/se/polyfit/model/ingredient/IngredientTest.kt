@@ -28,7 +28,7 @@ class IngredientTest {
     val expectedMap =
         mapOf(
             "name" to "eggs",
-            "id" to 1,
+            "id" to 1.toLong(),
             "amount" to 1.2,
             "unit" to MeasurementUnit.G.toString(),
             "nutritionalInformation" to
@@ -90,7 +90,7 @@ class IngredientTest {
     val data =
         mapOf(
             "name" to "eggs",
-            "id" to 1,
+            "id" to 1.toLong(),
             "amount" to 10.2,
             "unit" to MeasurementUnit.G.toString(),
             "nutritionalInformation" to listOf<Map<String, Any>>())
