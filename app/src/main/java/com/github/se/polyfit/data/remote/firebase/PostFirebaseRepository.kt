@@ -1,7 +1,6 @@
 package com.github.se.polyfit.data.remote.firebase
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.util.Log
 import com.firebase.geofire.GeoFire
 import com.firebase.geofire.GeoLocation
@@ -10,6 +9,7 @@ import com.github.se.polyfit.BuildConfig
 import com.github.se.polyfit.model.post.Post
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
@@ -17,7 +17,6 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
-import java.io.File
 import java.util.UUID
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
@@ -135,42 +134,19 @@ class PostFirebaseRepository(
         })
   }
 
-  fun fetchPosts(keys: List<String>, completion: (List<Post>) -> Unit) {
-    val posts = mutableListOf<Post>()
-    val batchSize = 10
-    val batches = keys.chunked(batchSize)
-    var itr = 0
-
-    // Use a batch operation to fetch all posts
-    for (batch in batches) {
-      postCollection
-          .whereIn(FieldPath.documentId(), batch)
-          .get()
-          .addOnSuccessListener { querySnapshot ->
-            querySnapshot.documents.forEach { document ->
-              val post = Post.deserialize(document.data ?: return@forEach)
-              itr++
-              if (post != null) {
-                posts.add(post)
-              } else {
-                return@forEach
-              }
-            }
-            if (itr == batches.size) {
-              completion(posts)
-            }
-          }
-          .addOnFailureListener() {
-            Log.e("PostFirebaseRepository", "Failed to fetch posts: ${it.message}")
-          }
-    }
-  }
-
-  fun fetchPostsAndImages(keys: List<String>, completion: (List<Post>) -> Unit) {
+  fun fetchPostsAndImages(
+      keys: List<String>,
+      postCollection: CollectionReference = this.postCollection,
+      completion: (List<Post>) -> Unit
+  ) {
     val posts = mutableListOf<Post>()
     val batchSize = 10
     val batches = keys.chunked(batchSize)
     var completedBatches = 0
+
+    Log.d("PostFirebaseRepository", "Fetching ${batches.size} batches")
+    Log.d("PostFirebaseRepository", "Keys: $keys")
+    Log.d("PostFirebaseRepository", "Batches: $batches")
 
     // Use a batch operation to fetch all posts
     batches.forEach { batch ->
@@ -186,7 +162,7 @@ class PostFirebaseRepository(
                 document.data?.let {
                   Post.deserialize(it)?.also { post ->
                     deferredImages.add(
-                        async { post.listOfImages = fetchImagesForPost(document.id) })
+                        async { post.listOfURLs = fetchImageReferencesForPost(document.id) })
                     tempPosts.add(post)
                   }
                 }
@@ -208,56 +184,11 @@ class PostFirebaseRepository(
     }
   }
 
- suspend fun fetchImagesForPost(postKey: String): List<Bitmap> =
-    withContext(Dispatchers.IO) {
-        val storageRef = pictureDb.getReference("posts/$postKey")
-        Log.d("FetchImages", "before listAll")
-        val listResult = storageRef.listAll().await()
-        Log.d("FetchImages", "after listAll")
-
-        listResult.items.mapNotNull { imageRef ->
-            // Use temporary files to store downloaded data
-            val localFile = File.createTempFile("download", "tmp")
-            try {
-                downloadFile(imageRef, localFile) // Downloads the file
-                BitmapFactory.decodeFile(localFile.path) // Decode the downloaded file into a Bitmap
-            } finally {
-                localFile.delete() // Clean up the temporary file
-            }
-        }
+  suspend fun fetchImageReferencesForPost(postKey: String): List<StorageReference> {
+    return withContext(Dispatchers.IO) {
+      val storageRef = pictureDb.getReference("posts/$postKey")
+      val listResult = storageRef.listAll().await()
+      listResult.items
     }
-
-suspend fun downloadFile(imageRef: StorageReference, localFile: File) {
-    imageRef.getFile(localFile).await()
-}
-
- /* private suspend fun fetchImages(posts: List<Post>) {
-    val folders = pictureDb.getReference("posts/").listAll().await().prefixes
-
-    for (post in posts) {
-      val folderName = folders.filter { !it.name.contains(post.firebaseId) }
-
-      Log.d("PostFirebaseRepository", "Folder: ${folderName}")
-      if (folderName.isNotEmpty()) {
-        Log.d("PostFirebaseRepository", "Folder: ${folderName.first().name}")
-        val imagesList =
-            pictureDb.getReference(folders.first().toString() + "/").listAll().await().prefixes
-        imagesList.forEach { Log.d("PostFirebaseRepository", "Image: ${it.name}") }
-      }
-    }
-
-    val fileRef =
-        pictureDb.getReference(
-            "posts/07OKJRRwHCi9teFnXAyA/ffdbba30-2457-4911-910e-1e9afc68aa1d.jpg")
-
-    // Create a local file
-    val localFile = File.createTempFile("images", ".jpg")
-
-    // Download the file
-    fileRef.getFile(localFile).await()
-
-    // Now the file has been downloaded to localFile
-    Log.d("PostFirebaseRepository", "File downloaded to ${localFile.absolutePath}")
-    //        println("File downloaded to ${localFile.absolutePath}")
-  }*/
+  }
 }

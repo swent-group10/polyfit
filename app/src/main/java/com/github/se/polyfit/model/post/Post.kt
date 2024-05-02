@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.util.Log
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
+import com.google.firebase.storage.StorageReference
 import java.time.LocalDate
 
 interface UnmodifiablePost {
@@ -20,7 +21,8 @@ data class Post(
     override var location: Location,
     override var meal: Meal,
     override var createdAt: LocalDate,
-    var listOfImages: List<Bitmap> = emptyList()
+    var listOfImages: List<Bitmap> = emptyList(),
+    var listOfURLs: List<StorageReference> = emptyList()
 ) : UnmodifiablePost {
   override fun toString(): String {
     return "The post from the user ${userId} with the following description ${description}" +
