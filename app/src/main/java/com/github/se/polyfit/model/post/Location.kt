@@ -14,5 +14,13 @@ data class Location(
     fun default(): Location {
       return Location(0.0, 0.0, 0.0, "EPFL")
     }
+
+    fun deserialize(data: Map<String, Any>): Location {
+      return Location(
+          data["longitude"] as Double,
+          data["latitude"] as Double,
+          data["altitude"] as? Double ?: 0.0,
+          data["name"] as? String ?: "")
+    }
   }
 }

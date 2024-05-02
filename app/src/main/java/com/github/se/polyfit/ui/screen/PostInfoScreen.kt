@@ -14,12 +14,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.core.content.ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.se.polyfit.R
-import com.github.se.polyfit.model.post.Post
 import com.github.se.polyfit.ui.components.postinfo.PostCard
+import com.github.se.polyfit.viewmodel.post.ViewPostViewModel
 
 @Composable
-fun PostInfoScreen(posts: List<Post>, index: Int = 0) {
+fun PostInfoScreen(index: Int = 0, viewPostViewModel: ViewPostViewModel = hiltViewModel()) {
+  val posts = viewPostViewModel.getAllPost()
 
   if (posts.isEmpty()) {
     NoPost()
