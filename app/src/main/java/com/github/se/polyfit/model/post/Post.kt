@@ -31,15 +31,15 @@ data class Post(
   }
 
   fun getCarbs(): Nutrient? {
-    return meal.nutritionalInformation.getNutrient("carb")
+    return meal.getNutrient("carbohydrates")
   }
 
   fun getFat(): Nutrient? {
-    return meal.nutritionalInformation.getNutrient("fat")
+    return meal.getNutrient("fat")
   }
 
   fun getProtein(): Nutrient? {
-    return meal.nutritionalInformation.getNutrient("protein")
+    return meal.getNutrient("protein")
   }
 
   fun serialize(): Map<String, Any> {
