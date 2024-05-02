@@ -39,6 +39,7 @@ fun NutritionScreen(
     navigateForward: () -> Unit
 ) {
   val isComplete by mealViewModel.isComplete.collectAsState()
+
   Scaffold(
       topBar = { TopBar(navigateBack = navigateBack) },
       bottomBar = {
@@ -94,8 +95,8 @@ private fun BottomBar(setMeal: () -> Unit, isComplete: Boolean, navigateForward:
               PrimaryButton(
                   onClick = {
                     Log.v("Add to Diary", "Clicked")
-                    setMeal()
                     navigateForward()
+                    setMeal()
                   },
                   modifier = Modifier.width(250.dp).testTag("AddToDiaryButton"),
                   text = "Add to Diary",
