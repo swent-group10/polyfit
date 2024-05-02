@@ -1,16 +1,26 @@
 package com.github.se.polyfit.model.post
 
+import android.util.Log
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
+import io.mockk.every
+import io.mockk.mockkStatic
 import java.time.LocalDate
 import kotlin.test.assertFails
 import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Test
 
 class PostTest {
+
+  @Before
+  fun setup() {
+    mockkStatic(Log::class)
+    every { Log.e(any<String>(), any<String>(), any()) } returns 0
+  }
 
   @Test
   fun `getCarbs returns correct nutrient when present`() {

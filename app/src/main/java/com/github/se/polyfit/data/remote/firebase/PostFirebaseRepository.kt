@@ -29,11 +29,16 @@ class PostFirebaseRepository(
   fun getAllPosts(): Flow<List<Post>> = flow {
     val posts = mutableListOf<Post>()
 
-    postCollection.get().await().map { document ->
-      Log.d("PostFirebaseRepository", "Document: ${document.data}")
-      Post.deserialize(document.data)?.let { posts.add(it) }
-    }
+    try {
 
+      postCollection.get().await().map { document ->
+        Log.d("PostFirebaseRepository", "Document: ${document.data}")
+        Post.deserialize(document.data)?.let { posts.add(it) }
+      }
+    } catch (e: Exception) {
+      Log.e("PostFirebaseRepository", "Failed to get posts from the database", e)
+      throw Exception("Error getting posts : ${e.message}", e)
+    }
     emit(posts)
   }
 }

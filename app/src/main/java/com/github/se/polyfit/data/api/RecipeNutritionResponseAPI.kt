@@ -54,7 +54,7 @@ data class RecipeNutritionResponseAPI(
                   val nutritionalInformation = NutritionalInformation(nutrients)
 
                   Ingredient(
-                      id = ingredientJsonArray.getInt("id"),
+                      id = ingredientJsonArray.getLong("id"),
                       name = ingredientJsonArray.getString("name"),
                       nutritionalInformation = nutritionalInformation,
                       amount = ingredientJsonArray.getDouble("amount"),
