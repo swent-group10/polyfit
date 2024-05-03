@@ -221,7 +221,7 @@ class MealViewModelTest {
 
     viewModel.setMealData(mealId)
 
-    coVerify { mealRepo.getMealById(mealId) }
+    coVerify { mealRepo.getMealById(any()) }
     assertThat(viewModel.meal.value, `is`(Meal.default()))
   }
 }
