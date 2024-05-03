@@ -1,4 +1,4 @@
-/*
+
 package com.github.se.polyfit.data.remote.firebase
 
 import com.firebase.geofire.GeoFire
@@ -135,4 +135,4 @@ class GeoQueryRepositoryTest {
     listenerSlot.captured.onGeoQueryError(DatabaseError.fromCode(DatabaseError.UNKNOWN_ERROR))
   }
 }
-*/
+

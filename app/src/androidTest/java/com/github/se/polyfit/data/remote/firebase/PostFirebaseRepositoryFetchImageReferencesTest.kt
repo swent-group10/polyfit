@@ -1,4 +1,4 @@
-/*
+
 import com.github.se.polyfit.data.remote.firebase.PostFirebaseRepository
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.storage.FirebaseStorage
@@ -47,4 +47,4 @@ class PostFirebaseRepositoryTest {
     assertEquals(emptyList<StorageReference>(), result)
   }
 }
-*/
+
