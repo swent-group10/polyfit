@@ -156,7 +156,7 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
             GenericScreen(
                 navController = navController,
                 content = { paddingValues ->
-                  OverviewScreen(paddingValues, navController, MealViewModel(mockk()))
+                  OverviewScreen(paddingValues, navController, mealViewModel)
                 })
           }
           composable(Route.Map) {
