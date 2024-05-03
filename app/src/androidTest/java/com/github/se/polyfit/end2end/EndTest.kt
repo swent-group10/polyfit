@@ -21,9 +21,11 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import com.github.se.polyfit.R
 import com.github.se.polyfit.data.processor.LocalDataProcessor
+import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.flow.AddMealFlow
 import com.github.se.polyfit.ui.navigation.Route
+import com.github.se.polyfit.ui.screen.AdditionalMealInfoScreen
 import com.github.se.polyfit.ui.screen.CreatePostScreen
 import com.github.se.polyfit.ui.screen.FullGraphScreen
 import com.github.se.polyfit.ui.screen.IngredientsBottomBar
@@ -39,11 +41,14 @@ import com.kaspersky.kaspresso.kaspresso.Kaspresso
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.github.kakaocup.compose.node.element.ComposeScreen
+import io.mockk.Runs
 import io.mockk.every
 import io.mockk.junit4.MockKRule
+import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -68,7 +73,7 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
     mockkStatic(Log::class)
     System.setProperty("isTestEnvironment", "true")
 
-    every { overviewViewModel.storeMeal(any()) } returns 1L // or any other appropriate return value
+    every { overviewViewModel.storeMeal(any()) } returns 1L
   }
 
   @After
@@ -80,9 +85,19 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
     val dataProcessor = mockk<LocalDataProcessor>(relaxed = true)
     val mockPostViewModel: CreatePostViewModel = mockk(relaxed = true)
 
-    every { mockPostViewModel.meals.value } returns listOf()
+    // Mock the behavior of the methods
+    every { mockPostViewModel.getCarbs() } returns 0.0
+    every { mockPostViewModel.getFat() } returns 0.0
+    every { mockPostViewModel.getProtein() } returns 0.0
+    every { mockPostViewModel.setPost() } just Runs
+
+    every { mockPostViewModel.meals.value } returns listOf<Meal>(Meal.default())
 
     val mealViewModel = mockk<MealViewModel>(relaxed = true)
+    mealViewModel.setMealData(Meal.default())
+
+    val mockMeal = Meal.default()
+    every { mealViewModel.meal } returns MutableStateFlow(mockMeal)
 
     composeTestRule.setContent {
       val navController = rememberNavController()
@@ -95,9 +110,6 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
               })
         }
 
-        composable(Route.AddMeal) {
-          AddMealFlow(goBack = {}, navigateToHome = {}, mealId = null, mealViewModel)
-        }
         composable(Route.Graph) {
           FullGraphScreen(goBack = {}, viewModel = GraphViewModel(dataProcessor))
         }
@@ -112,11 +124,8 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
 
   @Test
   fun endToEndTest() {
-    Log.d("EndTest", "Test debut du test")
 
     setup()
-
-    Log.d("EndTest", "Part 2")
 
     // Click on the OverviewPictureBtn to open the PictureDialogBox
     ComposeScreen.onComposeScreen<OverviewScreen>(composeTestRule) {
@@ -160,5 +169,33 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
         performClick()
       }
     }
+
+    ComposeScreen.onComposeScreen<AdditionalMealInfoScreen>(composeTestRule) {
+      assertExists()
+      assertIsDisplayed()
+    }
+
+    /*
+    ComposeScreen.onComposeScreen<AdditionalMealInfoScreen>(composeTestRule) {
+      assertExists()
+      assertIsDisplayed()
+
+      dateSelector {
+        assertExists()
+        assertIsDisplayed()
+      }
+
+      mealOccasionSelector {
+        assertExists()
+        assertIsDisplayed()
+      }
+
+      mealTagSelector {
+        assertExists()
+        assertIsDisplayed()
+      }
+
+    }
+     */
   }
 }
