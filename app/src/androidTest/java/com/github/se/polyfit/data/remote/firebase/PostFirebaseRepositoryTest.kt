@@ -10,7 +10,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.runBlocking
 import java.time.LocalDate
 import kotlin.test.assertFailsWith
 import kotlin.test.fail
@@ -20,7 +19,6 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import kotlin.test.fail
 
 class PostFirebaseRepositoryTest {
 
