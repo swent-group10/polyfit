@@ -5,6 +5,7 @@ on:
     branches:
       - 'release/**'
       - 'main'
+      - 'bugfix/apk-not-enough-ram'
 
 
 jobs:
