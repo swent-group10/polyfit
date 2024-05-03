@@ -41,7 +41,7 @@ class MealViewModel @Inject constructor(private val mealRepo: MealRepository) : 
       _meal.value = Meal.default()
       return
     }
-    viewModelScope.launch(Dispatchers.IO) {
+    viewModelScope.launch(Dispatchers.Default) {
       val meal = mealRepo.getMealById(mealId)
       if (meal != null) {
         _meal.value = meal
