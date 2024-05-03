@@ -4,7 +4,6 @@ import android.util.Log
 import com.firebase.geofire.GeoFire
 import com.firebase.geofire.GeoLocation
 import com.firebase.geofire.GeoQueryEventListener
-import com.github.se.polyfit.BuildConfig
 import com.github.se.polyfit.model.post.Post
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -13,18 +12,14 @@ import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import com.google.firebase.storage.StorageReference
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.util.UUID
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -32,7 +27,9 @@ import kotlinx.coroutines.withContext
 class PostFirebaseRepository(
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance(),
     private val pictureDb: FirebaseStorage = FirebaseStorage.getInstance(),
-    private val rtdb: FirebaseDatabase = FirebaseDatabase.getInstance("https://polyfit-316e8-default-rtdb.europe-west1.firebasedatabase.app/")
+    private val rtdb: FirebaseDatabase =
+        FirebaseDatabase.getInstance(
+            "https://polyfit-316e8-default-rtdb.europe-west1.firebasedatabase.app/")
 ) {
   private val postCollection = db.collection("posts")
   private val geoFireRef = rtdb.getReference("posts_location")
@@ -41,7 +38,6 @@ class PostFirebaseRepository(
   suspend fun storePost(post: Post): DocumentReference? {
     try {
       val documentRef = postCollection.add(post.serialize()).await()
-    
 
       return documentRef
     } catch (e: Exception) {

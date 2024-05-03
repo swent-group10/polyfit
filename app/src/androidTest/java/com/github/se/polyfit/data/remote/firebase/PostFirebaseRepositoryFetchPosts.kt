@@ -11,7 +11,6 @@ import com.google.firebase.firestore.QuerySnapshot
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
-import java.time.LocalDate
 import junit.framework.TestCase.assertEquals
 import kotlin.test.Test
 import kotlinx.coroutines.Dispatchers
@@ -36,21 +35,17 @@ class PostFirebaseRepositoryFetchPosts {
         Tasks.forResult(mockQuerySnapshot)
     coEvery { mockQuerySnapshot.documents } returns listOf(mockDocumentSnapshot)
     coEvery { mockDocumentSnapshot.data } returns
-            mapOf(
-                "userId" to "userId",
-                "description" to "description",
-                "location" to
-                        mapOf(
-                            "longitude" to 0.0,
-                            "latitude" to 0.0,
-                            "altitude" to 10.0,
-                            "name" to "EPFL"),
-                "meal" to Meal.default().serialize(),
-                "createdAt" to
-                        mapOf(
-                            "year" to 2021.toLong(),
-                            "monthValue" to 10.toLong(),
-                            "dayOfMonth" to 10.toLong()))
+        mapOf(
+            "userId" to "userId",
+            "description" to "description",
+            "location" to
+                mapOf("longitude" to 0.0, "latitude" to 0.0, "altitude" to 10.0, "name" to "EPFL"),
+            "meal" to Meal.default().serialize(),
+            "createdAt" to
+                mapOf(
+                    "year" to 2021.toLong(),
+                    "monthValue" to 10.toLong(),
+                    "dayOfMonth" to 10.toLong()))
   }
 
   @Test
