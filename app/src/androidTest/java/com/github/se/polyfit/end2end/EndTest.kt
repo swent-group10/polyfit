@@ -85,7 +85,7 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
     every { mealViewModel.isComplete } returns MutableStateFlow(true)
 
     // Mock the behavior of the setMealData method
-    every { mealViewModel.setMealData(any()) } just Runs
+    every { mealViewModel.setMealData(a) } just Runs
 
     // Mock the behavior of the updateMealData method
     every {
