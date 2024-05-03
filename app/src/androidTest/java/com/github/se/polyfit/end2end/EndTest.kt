@@ -27,10 +27,12 @@ import com.github.se.polyfit.ui.navigation.Route
 import com.github.se.polyfit.ui.screen.CreatePostScreen
 import com.github.se.polyfit.ui.screen.FullGraphScreen
 import com.github.se.polyfit.ui.screen.IngredientsBottomBar
+import com.github.se.polyfit.ui.screen.IngredientsList
 import com.github.se.polyfit.ui.screen.OverviewScreen
 import com.github.se.polyfit.ui.screen.PictureDialogBox
 import com.github.se.polyfit.ui.utils.OverviewTags
 import com.github.se.polyfit.ui.viewModel.GraphViewModel
+import com.github.se.polyfit.viewmodel.meal.MealViewModel
 import com.github.se.polyfit.viewmodel.meal.OverviewViewModel
 import com.github.se.polyfit.viewmodel.post.CreatePostViewModel
 import com.kaspersky.components.composesupport.config.withComposeSupport
@@ -81,6 +83,8 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
 
     every { mockPostViewModel.meals.value } returns listOf()
 
+    val mealViewModel = mockk<MealViewModel>(relaxed = true)
+
     composeTestRule.setContent {
       val navController = rememberNavController()
       NavHost(navController = navController, startDestination = Route.Home) {
@@ -93,7 +97,7 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
         }
 
         composable(Route.AddMeal) {
-          AddMealFlow(goBack = {}, navigateToHome = {}, mealId = null, mockk(relaxed = true))
+          AddMealFlow(goBack = {}, navigateToHome = {}, mealId = null, mealViewModel)
         }
         composable(Route.Graph) {
           FullGraphScreen(goBack = {}, viewModel = GraphViewModel(dataProcessor))
@@ -101,7 +105,7 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
         composable(Route.CreatePost) { CreatePostScreen(postViewModel = mockPostViewModel) }
         composable(Route.AddMeal + "/{mId}") { backStackEntry ->
           val mealId = backStackEntry.arguments?.getString("mId")?.toLong()
-          AddMealFlow({}, {}, mealId = mealId)
+          AddMealFlow({}, {}, mealId = mealId, mealViewModel)
         }
       }
     }
@@ -109,8 +113,11 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
 
   @Test
   fun endToEndTest() {
+    Log.d("EndTest", "Test debut du test")
 
     setup()
+
+    Log.d("EndTest", "Part 2")
 
     // Click on the OverviewPictureBtn to open the PictureDialogBox
     ComposeScreen.onComposeScreen<OverviewScreen>(composeTestRule) {
@@ -141,7 +148,13 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
     }
     Intents.release()
 
-    ComposeScreen.onComposeScreen<IngredientsBottomBar>(composeTestRule) {}
+    ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
+      assertExists()
+    }
+
+    /*ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule){
+        //assertExists()
+    }*/
 
     // Go to Ingredient analyse and especially IngredientsBottomBar
     /*ComposeScreen.onComposeScreen<IngredientsBottomBar>(composeTestRule) {
