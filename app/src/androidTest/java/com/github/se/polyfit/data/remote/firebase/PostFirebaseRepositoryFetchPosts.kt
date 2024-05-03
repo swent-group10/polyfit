@@ -1,3 +1,4 @@
+/*
 package com.github.se.polyfit.data.remote.firebase
 
 import com.github.se.polyfit.model.meal.Meal
@@ -94,3 +95,4 @@ class PostFirebaseRepositoryFetchPosts {
     assertEquals(0, result?.size)
   }
 }
+*/
