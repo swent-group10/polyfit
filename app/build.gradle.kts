@@ -58,7 +58,7 @@ android {
         properties.load(FileReader(project.rootProject.file("local.properties")))
         buildConfigField("String", "X_RapidAPI_Key", "\"${properties["X_RapidAPI_Key"]}\"")
         buildConfigField("String", "X_RapidAPI_Host", "\"${properties["X_RapidAPI_Host"]}\"")
-        buildConfigField("String", "RTDB_URL", "\"${properties["RTDB_URL"]}\"")
+        //buildConfigField("String", "RTDB_URL", "\"${properties["RTDB_URL"]}\"")
     }
 
     signingConfigs {
@@ -115,14 +115,14 @@ android {
 
     dependencies {
         // AndroidX
-        implementation("androidx.core:core:1.13.0")
+        implementation("androidx.core:core:1.13.1")
         implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
         implementation("androidx.activity:activity-compose:1.9.0")
         implementation("androidx.room:room-runtime:2.6.1")
 
         // Compose
-        implementation(platform("androidx.compose:compose-bom:2024.04.01"))
-        implementation("androidx.compose.runtime:runtime-livedata:1.6.6")
+        implementation(platform("androidx.compose:compose-bom:2024.05.00"))
+        implementation("androidx.compose.runtime:runtime-livedata:1.6.7")
         implementation("androidx.compose.ui:ui")
         implementation("androidx.compose.ui:ui-graphics")
         implementation("androidx.compose.ui:ui-tooling-preview")
@@ -168,7 +168,7 @@ android {
         // Android Test
         androidTestImplementation("com.squareup.okhttp3:okhttp:4.12.0")
         androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-        androidTestImplementation(platform("androidx.compose:compose-bom:2024.04.01"))
+        androidTestImplementation(platform("androidx.compose:compose-bom:2024.05.00"))
         androidTestImplementation("androidx.compose.ui:ui-test-junit4")
         androidTestImplementation("androidx.test.espresso:espresso-intents:3.5.1")
         androidTestImplementation("org.mockito:mockito-android:5.11.0")
@@ -210,10 +210,10 @@ android {
 
         testImplementation("io.mockk:mockk:1.13.10")
         testImplementation("org.mockito:mockito-core:5.11.0")
-        testImplementation("androidx.arch.core:core-testing:2.1.0")
+        testImplementation("androidx.arch.core:core-testing:2.2.0")
 
-        androidTestImplementation("androidx.test.ext:junit:1.1.3")
-        androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
+        androidTestImplementation("androidx.test.ext:junit:1.1.5")
+        androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
 
         //Ycharts
