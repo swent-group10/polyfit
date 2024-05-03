@@ -59,12 +59,12 @@ fun BottomNavigationBar(
                 selectedIconColor = MaterialTheme.colorScheme.primary),
         icon = { Icon(Icons.Default.Menu, contentDescription = OverviewTags.overviewMapIcon) },
         label = {
-          if (currentRoute == Route.Map)
+          if (currentRoute == Route.PostInfo)
               Text(
                   context.getString(R.string.map_nav_label),
                   Modifier.testTag(OverviewTags.overviewMapLabel))
         },
-        selected = currentRoute == Route.Map,
+        selected = currentRoute == Route.PostInfo,
         onClick = navSearch)
 
     NavigationBarItem(

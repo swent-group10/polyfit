@@ -30,16 +30,16 @@ constructor(
   val post: UnmodifiablePost
     get() = _post
 
-  suspend fun getRecentMeals() = mealRepository.getAllMeals().sortedBy { it.createdAt }.take(5)
+  suspend fun getRecentMeals() =
+      withContext(Dispatchers.Default) {
+        mealRepository.getAllMeals().sortedBy { it.createdAt }.take(5)
+      }
 
   private val _meals = MutableStateFlow<List<Meal>>(emptyList())
   val meals = _meals
 
   init {
-    viewModelScope.launch {
-      val recentMeals = getRecentMeals()
-      withContext(Dispatchers.Main) { _meals.value = recentMeals }
-    }
+    viewModelScope.launch { _meals.value = getRecentMeals() }
   }
 
   fun setPostDescription(description: String) {

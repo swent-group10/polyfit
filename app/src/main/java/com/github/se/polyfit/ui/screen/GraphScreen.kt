@@ -28,7 +28,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import co.yml.charts.ui.linechart.LineChart
 import com.github.se.polyfit.R
 import com.github.se.polyfit.ui.components.DropDownMenu
@@ -67,7 +66,7 @@ fun FullGraphScreen(
                     modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.SpaceAround) {
-                      if (!isTestEnvironment) {
+                      if (!isTestEnvironment && dataPoints.isNotEmpty()) {
                         LineChart(
                             modifier = Modifier.fillMaxSize().testTag("LineChart"),
                             lineChartData =
