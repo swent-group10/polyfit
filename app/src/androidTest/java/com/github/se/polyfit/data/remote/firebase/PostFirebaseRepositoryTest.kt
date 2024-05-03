@@ -50,6 +50,7 @@ class PostFirebaseRepositoryTest {
     val task = Tasks.forResult(mockDocRef)
 
     coEvery { mockCollectionRef.add(testPost.serialize()) } returns task
+    every { mockDocRef.id } returns "mockId"
 
     val result = postFirebaseRepository.storePost(testPost)
 

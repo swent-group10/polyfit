@@ -1,0 +1,78 @@
+Title	URL	Assignees	Status	Sprint	Task Type	Nature	Epic	Expected time (hours)	Actual time (hours)
+Frontend UI for Graphs	https://github.com/swent-group10/polyfit/issues/103	sharif-bbd	Done in Sprint 4/5/6	Sprint 4	Frontend	Sprint Task	Technical		
+End-to-end test for user story picture	https://github.com/swent-group10/polyfit/issues/66	antomax33	Done in Sprint 4/5/6	Sprint 3	Backend	Sprint Task	Miscellaneous	10	32
+Creating a logo.	https://github.com/swent-group10/polyfit/issues/98	antomax33	Done in Sprint 4/5/6	Sprint 4	Frontend	Sprint Task	Technical	1.5	
+UI Summary meal information	https://github.com/swent-group10/polyfit/issues/102	aprilslis	Done in Sprint 4/5/6	Sprint 4	Figma	Sprint Task	Epics	2	
+Figma Design for Graphs	https://github.com/swent-group10/polyfit/issues/97	aprilslis	Done in Sprint 4/5/6	Sprint 4	Figma	Sprint Task	Miscellaneous		
+Add tags to a meal for allergies and animal friendliness	https://github.com/swent-group10/polyfit/issues/110	aprilslis	Done in Sprint 4/5/6	Sprint 4					
+UI Summary meal information	https://github.com/swent-group10/polyfit/issues/152	medwardson	Done in Sprint 4/5/6	Sprint 6	Frontend	Sprint Task	Technical		
+UI for posting a Meal for others to see	https://github.com/swent-group10/polyfit/issues/156	aprilslis	Done in Sprint 4/5/6	Sprint 5					
+Creating a post/ Sharing	https://github.com/swent-group10/polyfit/issues/212		Done in Sprint 4/5/6	Sprint 6		User Story			
+Revolve APK pipeline issue	https://github.com/swent-group10/polyfit/issues/113	Neb1010, RandomUsername1315	Done in Sprint 4/5/6	Sprint 4	Backend	Sprint Task	Technical	4	
+Set Up local Database for offline use	https://github.com/swent-group10/polyfit/issues/91	RandomUsername1315	Done in Sprint 4/5/6	Sprint 4	Backend	Sprint Task	Technical	6	
+API Class for getting if animal can eat a type of food	https://github.com/swent-group10/polyfit/issues/106	Neb1010	Done in Sprint 4/5/6	Sprint 4	Backend	Sprint Task	Technical		
+Prevent negative values when minus NutritionalInformation	https://github.com/swent-group10/polyfit/issues/95	medwardson	Done in Sprint 4/5/6	Sprint 4				1	1.5
+MealViewModel add test coverage	https://github.com/swent-group10/polyfit/issues/107	medwardson	Done in Sprint 4/5/6	Sprint 4				1	
+Cleanup console warnings	https://github.com/swent-group10/polyfit/issues/116	medwardson	Done in Sprint 4/5/6	Sprint 4				1.5	1
+Modify the Meal class to also store date	https://github.com/swent-group10/polyfit/issues/99	medwardson	Done in Sprint 4/5/6	Sprint 4				1.5	1
+Modify MealRepo to use the localdatabase	https://github.com/swent-group10/polyfit/issues/125	RandomUsername1315	Done in Sprint 4/5/6	Sprint 4	Backend	Sprint Task	Technical	6	
+Update MealViewModel to use the mealRepo	https://github.com/swent-group10/polyfit/issues/114	RandomUsername1315	Done in Sprint 4/5/6	Sprint 4	Backend	Sprint Task	Miscellaneous	2	
+MapViewModel	https://github.com/swent-group10/polyfit/issues/233	Neb1010	Sprint Backlog	Sprint 7	Backend			8	
+Settings Page UI	https://github.com/swent-group10/polyfit/issues/185	aprilslis	Sprint Backlog	Sprint 7					
+Design Icon : Icon not Gluten free			Product Backlog						
+Design Icon : Icon vegetarian / not vegetarian			Product Backlog						
+Design Icon : Icon Vegan / not Vegan			Product Backlog						
+Design Icon : not dairy free			Product Backlog						
+Streamlined Access to Camera and Photo Upload			Product Backlog		Backend	User Story			
+Store food picture locally, in case of loss of network			Product Backlog		Backend	Sprint Task	Technical		
+Program and objectif			Product Backlog			User Story			
+Sport compensation meal			Product Backlog			User Story			
+Calorie to amount exercise			Product Backlog						
+Share calorie consumption			Product Backlog			User Story			
+* Understanding nutritional facts			Product Backlog			User Story			
+Fix Test that uses live database (mock them)	https://github.com/swent-group10/polyfit/issues/120	RandomUsername1315	Sprint Backlog	Sprint 7					
+Fix test of sign in intent	https://github.com/swent-group10/polyfit/issues/84	antomax33	In Development	Sprint 5	Backend	Sprint Task	Miscellaneous	2	
+Post Data Model	https://github.com/swent-group10/polyfit/issues/136	RandomUsername1315	Done in Sprint 4/5/6	Sprint 5	Backend	Sprint Task	Technical	5	
+Clean up MainActivity by using Hilt Di	https://github.com/swent-group10/polyfit/issues/138	RandomUsername1315	Done in Sprint 4/5/6	Sprint 5	Backend	Sprint Task	Miscellaneous	8	
+Modify mealrepo to use locald db with Hilt	https://github.com/swent-group10/polyfit/issues/150	RandomUsername1315	Done in Sprint 4/5/6	Sprint 5	Backend	Sprint Task	Technical	4	
+Bug : Food Name Not Displayed on Nutritional Information Screen After Spoonacular API Request	https://github.com/swent-group10/polyfit/issues/160	RandomUsername1315	Done in Sprint 4/5/6	Sprint 5	Backend	Sprint Task	Miscellaneous	2	
+Create Post viewmodel	https://github.com/swent-group10/polyfit/issues/137	RandomUsername1315	Done in Sprint 4/5/6	Sprint 5	Backend	Sprint Task	Miscellaneous	5	
+Fix Jacoco version for proper coverage report	https://github.com/swent-group10/polyfit/issues/154	aprilslis	Done in Sprint 4/5/6	Sprint 5					
+UI for additional meal properties	https://github.com/swent-group10/polyfit/issues/121	aprilslis, medwardson	Done in Sprint 4/5/6	Sprint 5					
+Bug: edit ingredient does not update	https://github.com/swent-group10/polyfit/issues/135	aprilslis, medwardson	Done in Sprint 4/5/6	Sprint 5					
+API class for getting allergy information from a food name	https://github.com/swent-group10/polyfit/issues/105	Neb1010	Sprint Backlog	Sprint 4	Backend		Technical		
+Link overview Screen to graph screen	https://github.com/swent-group10/polyfit/issues/169	sharif-bbd	Done in Sprint 4/5/6	Sprint 5	Frontend	User Story	Epics	2	
+Updated Architecture Chart	https://github.com/swent-group10/polyfit/issues/183	medwardson	Done in Sprint 4/5/6	Sprint 6					
+Fix Vitamin name formatting	https://github.com/swent-group10/polyfit/issues/196	medwardson	Done in Sprint 4/5/6	Sprint 6					
+Post Sharing UI map background	https://github.com/swent-group10/polyfit/issues/151	antomax33	In Review	Sprint 5	Frontend	Sprint Task	Technical		
+Post Sharing UI Button zoom		antomax33	In Review						
+GeoFire	https://github.com/swent-group10/polyfit/issues/159	Neb1010	Done in Sprint 4/5/6	Sprint 6	Backend			8	25
+Data processing class  for graphs/ui elements	https://github.com/swent-group10/polyfit/issues/100	RandomUsername1315	Done in Sprint 4/5/6	Sprint 6	Backend	Sprint Task	Technical	5	
+Adding the possibility to store images in the Post data class	https://github.com/swent-group10/polyfit/issues/171	RandomUsername1315	Done in Sprint 4/5/6	Sprint 6	Backend	Sprint Task	Technical	7	
+Firebase/Sign-in issues	https://github.com/swent-group10/polyfit/issues/193	Neb1010	Done in Sprint 4/5/6	Sprint 6	Backend			1	1
+Seamless Re-entry with Secure Auto-Login	https://github.com/swent-group10/polyfit/issues/186	Neb1010	In Development		Backend	User Story		2	
+Change nutrition screen to show up to 2 decimals	https://github.com/swent-group10/polyfit/issues/167	medwardson	Sprint Backlog	Sprint 7				1	
+Scan QR code UI	https://github.com/swent-group10/polyfit/issues/214	sharif-bbd	Sprint Backlog	Sprint 7	Frontend	User Story		2	
+Adjust Add Meal Flow to work with Editing	https://github.com/swent-group10/polyfit/issues/184	medwardson	Sprint Backlog	Sprint 7				6	
+Update Meal class to NutritionalInformation as a constructor field	https://github.com/swent-group10/polyfit/issues/177	medwardson	Sprint Backlog	Sprint 7				5	
+Create + extract SimpleBottomBar	https://github.com/swent-group10/polyfit/issues/168	medwardson	Product Backlog	Sprint 7					
+Meal Temperature Recommendations - Backend (Get temperature to store with meal)	https://github.com/swent-group10/polyfit/issues/211	medwardson	Product Backlog	Sprint 7					
+Fix Spoonacular API response formatting			Product Backlog						
+Fix the automatic release : Issue with duplicate names	https://github.com/swent-group10/polyfit/issues/230		Product Backlog						
+NutritionScreen inconsistently emitting name update	https://github.com/swent-group10/polyfit/issues/182	RandomUsername1315	Done in Sprint 4/5/6	Sprint 6	Backend	Sprint Task	Technical		
+Modify the Implementation to use a new MealViewModel each time	https://github.com/swent-group10/polyfit/issues/164	RandomUsername1315	Done in Sprint 4/5/6	Sprint 6	Backend	Sprint Task	Technical	6	
+Issue with generation APK not having enought ram	https://github.com/swent-group10/polyfit/issues/208	RandomUsername1315	Done in Sprint 4/5/6	Sprint 6	Backend	Sprint Task	Miscellaneous	1	
+Nominatim API	https://github.com/swent-group10/polyfit/issues/153	Neb1010	Sprint Backlog	Sprint 5	Backend			3	
+Recipe Dataclass	https://github.com/swent-group10/polyfit/issues/223	RandomUsername1315	Sprint Backlog	Sprint 7	Backend	Sprint Task	Technical	4	
+Modify the Spoonacular API to fetch recipe recommendations	https://github.com/swent-group10/polyfit/issues/225	RandomUsername1315	Sprint Backlog	Sprint 7	Backend	Sprint Task	Technical	3	
+Figma for recipe recommendation	https://github.com/swent-group10/polyfit/issues/224	RandomUsername1315	Sprint Backlog	Sprint 7	Figma	Sprint Task	Technical	1	
+UI recipe recommendation	https://github.com/swent-group10/polyfit/issues/222	RandomUsername1315	Sprint Backlog	Sprint 7	Frontend	Sprint Task	Technical	4	
+Modify the meal class to store the intolerance tag from the spooncular api	https://github.com/swent-group10/polyfit/issues/221	RandomUsername1315	Sprint Backlog	Sprint 7	Backend	Sprint Task	Technical	4	
+Add recipe to firebase and the logic to fetch the data	https://github.com/swent-group10/polyfit/issues/220	RandomUsername1315	Sprint Backlog	Sprint 7	Backend	Sprint Task	Technical	5	
+Displaying screens post near when button pressed, Displaying postinfo when second button pressed.	https://github.com/swent-group10/polyfit/issues/228	antomax33	Sprint Backlog	Sprint 7	Frontend	Sprint Task	Technical	3	
+Edit user info settings UI + backend	https://github.com/swent-group10/polyfit/issues/213	aprilslis	Sprint Backlog	Sprint 7					
+QR Code Backend	https://github.com/swent-group10/polyfit/issues/216	sharif-bbd	Sprint Backlog	Sprint 7	Backend	User Story		8	
+Add Figma screen for the QR code	https://github.com/swent-group10/polyfit/issues/215	sharif-bbd	Sprint Backlog		Figma	User Story		3	
+Refactoring Overview Screen	https://github.com/swent-group10/polyfit/issues/227	sharif-bbd	Sprint Backlog		Backend	Sprint Task		6	
+Allergen in my food?			Sprint Backlog			User Story			
+Offline feature: add seamless reentry if the user is already signed in	https://github.com/swent-group10/polyfit/issues/226	antomax33	Sprint Backlog		Backend	Sprint Task	Technical	5	
