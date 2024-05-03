@@ -22,16 +22,18 @@ import com.github.se.polyfit.model.post.Post
 fun TextPostInfo(modifier: Modifier = Modifier, post: Post) {
 
   Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-    TextPost(
-        text = ContextCompat.getString(LocalContext.current, R.string.description),
-        modifier = modifier.testTag("DescriptionTitle"),
-        bold = true)
+    TextPost(text = post.meal.name, modifier = modifier.testTag("Title"), bold = true)
 
     TextPost(
         text = post.createdAt.dayOfMonth.toString() + " " + post.createdAt.month.toString(),
         modifier = modifier.testTag("Date"),
         bold = false)
   }
+
+  TextPost(
+      text = ContextCompat.getString(LocalContext.current, R.string.description),
+      modifier = modifier.testTag("DescriptionTitle"),
+      bold = true)
 
   TextPost(text = post.description, modifier = modifier.testTag("Description"), bold = false)
 
@@ -40,7 +42,9 @@ fun TextPostInfo(modifier: Modifier = Modifier, post: Post) {
       modifier = modifier.testTag("NutrientTitle"),
       bold = true)
 
-  post.meal.ingredients.forEach { it.nutritionalInformation.nutrients.forEach { NutrientInfo(it) } }
+  post.getCarbs()?.let { NutrientInfo(it) }
+  post.getFat()?.let { NutrientInfo(it) }
+  post.getProtein()?.let { NutrientInfo(it) }
 }
 
 @Composable
