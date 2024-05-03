@@ -141,9 +141,7 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
     }
     Intents.release()
 
-    ComposeScreen.onComposeScreen<IngredientsBottomBar>(composeTestRule){
-
-    }
+    ComposeScreen.onComposeScreen<IngredientsBottomBar>(composeTestRule) {}
 
     // Go to Ingredient analyse and especially IngredientsBottomBar
     /*ComposeScreen.onComposeScreen<IngredientsBottomBar>(composeTestRule) {
