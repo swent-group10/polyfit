@@ -32,7 +32,7 @@ import kotlinx.coroutines.withContext
 class PostFirebaseRepository(
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance(),
     private val pictureDb: FirebaseStorage = FirebaseStorage.getInstance(),
-    private val rtdb: FirebaseDatabase = FirebaseDatabase.getInstance(BuildConfig.RTDB_URL)
+    private val rtdb: FirebaseDatabase = FirebaseDatabase.getInstance("https://polyfit-316e8-default-rtdb.europe-west1.firebasedatabase.app/")
 ) {
   private val postCollection = db.collection("posts")
   private val geoFireRef = rtdb.getReference("posts_location")
