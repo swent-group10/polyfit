@@ -26,7 +26,6 @@ import com.github.se.polyfit.ui.flow.AddMealFlow
 import com.github.se.polyfit.ui.navigation.Route
 import com.github.se.polyfit.ui.screen.CreatePostScreen
 import com.github.se.polyfit.ui.screen.FullGraphScreen
-import com.github.se.polyfit.ui.screen.IngredientsBottomBar
 import com.github.se.polyfit.ui.screen.IngredientsList
 import com.github.se.polyfit.ui.screen.OverviewScreen
 import com.github.se.polyfit.ui.screen.PictureDialogBox
@@ -148,9 +147,7 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
     }
     Intents.release()
 
-    ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
-      assertExists()
-    }
+    ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) { assertExists() }
 
     /*ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule){
         //assertExists()
