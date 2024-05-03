@@ -130,7 +130,7 @@ class PostFirebaseRepository(
           .whereIn(FieldPath.documentId(), batch)
           .get()
           .addOnSuccessListener { querySnapshot ->
-            CoroutineScope(Dispatchers.IO).launch {
+            CoroutineScope(Dispatchers.Default).launch {
               val tempPosts = mutableListOf<Post>()
               val deferredImages = mutableListOf<Deferred<Unit>>()
 
@@ -161,7 +161,7 @@ class PostFirebaseRepository(
   }
 
   suspend fun fetchImageReferencesForPost(postKey: String): List<StorageReference> {
-    return withContext(Dispatchers.IO) {
+    return withContext(Dispatchers.Default) {
       val storageRef = pictureDb.getReference("posts/$postKey")
       val listResult = storageRef.listAll().await()
       listResult.items
