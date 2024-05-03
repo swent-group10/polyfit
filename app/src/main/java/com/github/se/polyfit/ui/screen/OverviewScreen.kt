@@ -17,12 +17,14 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -50,17 +52,23 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import co.yml.charts.ui.linechart.LineChart
 import com.github.se.polyfit.R
-import com.github.se.polyfit.data.api.SpoonacularApiCaller
 import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.ui.components.GradientBox
-import com.github.se.polyfit.ui.components.GradientButton
-import com.github.se.polyfit.ui.components.PictureDialog
-import com.github.se.polyfit.ui.components.showToastMessage
-import com.github.se.polyfit.ui.navigation.Route
+import com.github.se.polyfit.ui.components.button.GradientButton
+import com.github.se.polyfit.ui.components.button.PrimaryButton
+import com.github.se.polyfit.ui.components.dialog.PictureDialog
+import com.github.se.polyfit.ui.components.lineChartData
+import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.utils.OverviewTags
-import com.github.se.polyfit.viewmodel.meal.MealViewModel
+import com.github.se.polyfit.ui.viewModel.DisplayScreen
+import com.github.se.polyfit.ui.viewModel.GraphViewModel
+import com.github.se.polyfit.viewmodel.meal.OverviewViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 
 data class Meal(val name: String, val calories: Int)
 
@@ -68,9 +76,9 @@ data class Meal(val name: String, val calories: Int)
 fun MealTrackerCard(
     caloriesGoal: Int,
     meals: List<Pair<MealOccasion, Double>>,
-    onPhoto: () -> Unit,
-    Button2: @Composable () -> Unit = {},
-    Button3: @Composable () -> Unit = {}
+    onCreateMealFromPhoto: () -> Unit,
+    onCreateMealWithoutPhoto: () -> Unit,
+    onViewRecap: () -> Unit,
 ) {
   val context = LocalContext.current
 
@@ -128,7 +136,7 @@ fun MealTrackerCard(
           modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
           horizontalArrangement = Arrangement.SpaceAround) {
             GradientButton(
-                onClick = onPhoto,
+                onClick = onCreateMealFromPhoto,
                 modifier = Modifier.testTag(OverviewTags.overviewPictureBtn),
                 active = true,
                 icon = {
@@ -138,7 +146,7 @@ fun MealTrackerCard(
                       tint = MaterialTheme.colorScheme.primary)
                 })
             GradientButton(
-                onClick = { Button2 },
+                onClick = onCreateMealWithoutPhoto,
                 modifier = Modifier.testTag(OverviewTags.overviewManualBtn),
                 active = true,
                 icon = {
@@ -148,7 +156,7 @@ fun MealTrackerCard(
                       tint = MaterialTheme.colorScheme.primary)
                 })
             GradientButton(
-                onClick = { Button3 },
+                onClick = onViewRecap,
                 modifier = Modifier.testTag(OverviewTags.overviewDetailsBtn),
                 active = true,
                 icon = {
@@ -190,10 +198,13 @@ private fun callCamera(
 fun OverviewScreen(
     paddingValues: PaddingValues,
     navController: NavHostController,
-    mealViewModel: MealViewModel
+    overviewViewModel: OverviewViewModel = hiltViewModel()
 ) {
 
   val context = LocalContext.current
+  val navigation = Navigation(navController)
+  var showPictureDialog by remember { mutableStateOf(false) }
+  val isTestEnvironment = System.getProperty("isTestEnvironment") == "true"
 
   // State to hold the URI, the image and the bitmap
   var imageUri by remember { mutableStateOf<Uri?>(null) }
@@ -207,11 +218,9 @@ fun OverviewScreen(
         val bitmap = result.data?.extras?.get("data") as? Bitmap
         imageBitmap = bitmap
 
-        // observe the live data and log the result on changes
-        SpoonacularApiCaller().getMealsFromImage(imageBitmap!!).observeForever {
-          mealViewModel.setMealData(it)
-          navController.navigate(Route.AddMeal)
-        }
+        showPictureDialog = false
+        var id: Long? = runBlocking(Dispatchers.IO) { overviewViewModel.storeMeal(imageBitmap) }
+        navigation.navigateToAddMeal(id)
       }
 
   // Launcher for requesting the camera permission
@@ -224,11 +233,9 @@ fun OverviewScreen(
           try {
             startCamera.launch(takePictureIntent)
           } catch (e: Exception) {
-            Log.e("OverviewScreen", "Error launching camera intent: $e")
             // Handle the exception if the camera intent cannot be launched
           }
         } else {
-          Log.e("OverviewScreen", "Permission denied")
           // Permission is denied. Handle the denial appropriately.
         }
       }
@@ -250,8 +257,6 @@ fun OverviewScreen(
           }
         }
       }
-
-  var showPictureDialog by remember { mutableStateOf(false) }
 
   if (showPictureDialog) {
     PictureDialog(
@@ -282,12 +287,16 @@ fun OverviewScreen(
                         Pair(MealOccasion.BREAKFAST, 300.0),
                         Pair(MealOccasion.LUNCH, 456.0),
                         Pair(MealOccasion.DINNER, 0.0)),
-                onPhoto = {
+                onCreateMealFromPhoto = {
                   showPictureDialog = true
                   Log.d("OverviewScreen", "Photo button clicked")
                 },
-                Button2 = { showToastMessage(context) },
-                Button3 = { showToastMessage(context) })
+                onCreateMealWithoutPhoto = navigation::navigateToAddMeal,
+                onViewRecap = navigation::navigateToDailyRecap)
+            PrimaryButton(
+                text = "Create a Post",
+                onClick = navigation::navigateToCreatePost,
+                modifier = Modifier.padding(top = 8.dp).testTag("CreateAPost"))
           }
           item {
             OutlinedCard(
@@ -305,14 +314,59 @@ fun OverviewScreen(
                                     MaterialTheme.colorScheme.inversePrimary,
                                     MaterialTheme.colorScheme.primary))),
                 colors = CardDefaults.cardColors(Color.Transparent)) {
-
-                  //
-
                   imageBitmap?.let {
                     Image(
                         bitmap = it.asImageBitmap(),
                         contentDescription = "Captured image",
                         modifier = Modifier.testTag("GenericPicture"))
+                  }
+                }
+          }
+          item {
+            OutlinedCard(
+                modifier =
+                    Modifier.align(Alignment.Center)
+                        .padding(top = 10.dp)
+                        .size(width = 350.dp, height = 300.dp)
+                        .testTag("Graph Card")
+                        .clickable { navigation.navigateToGraph() },
+                border =
+                    BorderStroke(
+                        2.dp,
+                        brush =
+                            Brush.linearGradient(
+                                listOf(
+                                    MaterialTheme.colorScheme.inversePrimary,
+                                    MaterialTheme.colorScheme.primary))),
+                colors = CardDefaults.cardColors(Color.Transparent)) {
+                  Column(modifier = Modifier.fillMaxSize().testTag("Graph Card Column")) {
+                    Text(
+                        text = "Calories Graph",
+                        style = MaterialTheme.typography.headlineLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.secondary,
+                        modifier =
+                            Modifier.padding(start = 10.dp, top = 10.dp)
+                                .weight(1f)
+                                .testTag("Graph Card Title")
+                                .clickable { navigation.navigateToGraph() })
+                    Box(
+                        modifier =
+                            Modifier.fillMaxSize(0.85f)
+                                .align(Alignment.CenterHorizontally)
+                                .testTag("Graph Box")) {
+                          if (!isTestEnvironment) {
+                            LineChart(
+                                modifier = Modifier.testTag("Overview Line Chart").fillMaxSize(),
+                                lineChartData =
+                                    lineChartData(
+                                        hiltViewModel<GraphViewModel>().DataPoints(),
+                                        hiltViewModel<GraphViewModel>().DateList(),
+                                        DisplayScreen.OVERVIEW))
+                          } else {
+                            Spacer(modifier = Modifier.fillMaxSize().testTag("LineChartSpacer"))
+                          }
+                        }
                   }
                 }
           }

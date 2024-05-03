@@ -12,6 +12,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.se.polyfit.data.repository.MealRepository
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
@@ -22,15 +23,13 @@ import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.kakaocup.compose.node.element.ComposeScreen
-import io.mockk.Runs
 import io.mockk.confirmVerified
-import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit4.MockKRule
-import io.mockk.just
-import io.mockk.mockkStatic
+import io.mockk.mockk
 import io.mockk.unmockkStatic
 import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
 import org.junit.Ignore
@@ -46,14 +45,10 @@ class IngredientTest : TestCase() {
 
   @RelaxedMockK lateinit var mockNav: Navigation
 
-  @RelaxedMockK lateinit var mockMealViewModel: MealViewModel
+  private val mockMealRepo: MealRepository = mockk()
+  private val mockMealViewModel: MealViewModel = MealViewModel(mockMealRepo)
 
-  @Before
-  fun setup() {
-    mockkStatic(Log::class)
-    every { mockMealViewModel.addIngredient(any()) } just Runs
-    every { mockMealViewModel.removeIngredient(any()) } just Runs
-  }
+  @Before fun setup() {}
 
   @After
   fun tearDown() {
@@ -62,7 +57,7 @@ class IngredientTest : TestCase() {
 
   private fun launchIngredientScreenWithTestData(
       testIngredients: MutableList<Ingredient>,
-      testPotentials: List<Ingredient>
+      testPotentials: List<Ingredient> // Leaving this, waiting to decide if we will use this feat
   ) {
     val navigateBack = { mockNav.goBack() }
     val navigateForward = { mockNav.navigateToNutrition() }
@@ -74,7 +69,8 @@ class IngredientTest : TestCase() {
             ingredients = testIngredients,
             nutritionalInformation = NutritionalInformation(mutableListOf()),
         )
-    every { mockMealViewModel.meal.value } returns testMeal
+
+    mockMealViewModel.setMealData(testMeal)
 
     composeTestRule.setContent {
       IngredientScreen(mockMealViewModel, navigateBack, navigateForward)
@@ -162,8 +158,6 @@ class IngredientTest : TestCase() {
         performClick()
       }
 
-      verify { Log.v("Add Ingredient", "Clicked") }
-
       // make sure cross icon button closes popup properly
       addIngredientDialog { assertIsDisplayed() }
 
@@ -205,11 +199,6 @@ class IngredientTest : TestCase() {
         assertIsDisplayed()
         assertHasClickAction()
         performClick()
-      }
-
-      verify {
-        mockMealViewModel.addIngredient(
-            match { it.name == "apple" && it.amount == 10.0 && it.unit == MeasurementUnit.G })
       }
 
       addIngredientDialog { assertDoesNotExist() }
@@ -277,8 +266,6 @@ class IngredientTest : TestCase() {
         performClick()
       }
 
-      verify { Log.v("Expand Ingredients", "Clicked") }
-
       composeTestRule.onNodeWithTag("ExpandedIngredient").assertIsDisplayed()
 
       composeTestRule.onNodeWithTag("ExpandedIngredientName").assertTextContains("Olive Oil")
@@ -297,7 +284,7 @@ class IngredientTest : TestCase() {
   }
 
   @Test
-  fun deleteIngredient() {
+  fun deleteIngredient() = runTest {
     launchIngredientScreenWithTestData(manyIngredients, mutableListOf())
 
     ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
@@ -316,10 +303,7 @@ class IngredientTest : TestCase() {
 
       composeTestRule.onNodeWithTag("DeleteIngredientButton").assertIsDisplayed().performClick()
 
-      verify {
-        mockMealViewModel.removeIngredient(
-            match { it.name == "Olive Oil" && it.amount == 5.0 && it.unit == MeasurementUnit.ML })
-      }
+      composeTestRule.onAllNodesWithTag("Ingredient").assertCountEquals(4)
     }
   }
 

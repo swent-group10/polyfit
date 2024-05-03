@@ -2,8 +2,6 @@ package com.github.se.polyfit.data.api
 
 import android.graphics.Bitmap
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.github.se.polyfit.BuildConfig
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
@@ -11,8 +9,6 @@ import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -113,45 +109,37 @@ class SpoonacularApiCaller {
    * @param imageBitmap The image to analyze
    * @return The response from the API
    */
-  fun getMealsFromImage(imageBitmap: Bitmap): LiveData<Meal> {
+  fun getMealsFromImage(imageBitmap: Bitmap): Meal {
     // need to convert to File
     var file = File.createTempFile("image", ".jpg")
     imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, FileOutputStream(file))
     // Gets Api response
 
-    val meal = MutableLiveData<Meal>()
-    meal.postValue(Meal.default())
+    var meal = Meal.default()
 
-    GlobalScope.launch {
-      try {
-        val apiResponse = imageAnalysis(file)
-        Log.d("SpoonacularApiCaller", "API Response: $apiResponse")
-        if (apiResponse.status == APIResponse.SUCCESS) {
-          // chooses from a bunch of recipes
-          val recipeInformation = getRecipeNutrition(apiResponse.recipes.first())
+    try {
+      val apiResponse = imageAnalysis(file)
+      if (apiResponse.status == APIResponse.SUCCESS) {
+        // chooses from a bunch of recipes
+        val recipeInformation = getRecipeNutrition(apiResponse.recipes.first())
 
-          Log.d("SpoonacularApiCaller", "Recipe Information: $recipeInformation")
+        if (recipeInformation.status == APIResponse.SUCCESS) {
+          val newMeal =
+              Meal(
+                  MealOccasion.OTHER, // New Meal should default to no occasion
+                  apiResponse.category,
+                  apiResponse.recipes.first().toLong(),
+                  20.0,
+                  NutritionalInformation(recipeInformation.nutrients.toMutableList()),
+                  recipeInformation.ingredients.toMutableList(),
+                  // firebase id not defined yet because no calls to store the information
+                  "")
 
-          if (recipeInformation.status == APIResponse.SUCCESS) {
-            val newMeal =
-                Meal(
-                    MealOccasion.LUNCH,
-                    apiResponse.category,
-                    apiResponse.recipes.first().toLong(),
-                    20.0,
-                    NutritionalInformation(recipeInformation.nutrients.toMutableList()),
-                    recipeInformation.ingredients.toMutableList(),
-                    // firebase id not defined yet because no calls to store the information
-                    "")
-
-            meal.postValue(newMeal)
-          }
+          meal = newMeal
         }
-
-        Log.d("SpoonacularApiCaller", "Meal: ${meal.value}")
-      } catch (e: Exception) {
-        Log.e("SpoonacularApiCaller", "Error getting recipe nutrition", e)
       }
+    } catch (e: Exception) {
+      Log.e("SpoonacularApiCaller", "Error getting recipe nutrition", e)
     }
 
     return meal

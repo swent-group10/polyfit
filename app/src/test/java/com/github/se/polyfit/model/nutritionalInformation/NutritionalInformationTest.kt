@@ -18,12 +18,13 @@ class NutritionalInformationTest {
     mockkStatic(Log::class)
     every { Log.e(any(), any()) } returns 0
     every { Log.e(any(), any(), any()) } returns 0
+    every { Log.d(any(), any()) } returns 0
 
     nutritionalInformation =
         NutritionalInformation(
             mutableListOf(
-                Nutrient("totalWeight", 100.0, MeasurementUnit.G),
-                Nutrient("calories", 200.0, MeasurementUnit.CAL)))
+                Nutrient("Total Weight", 100.0, MeasurementUnit.G),
+                Nutrient("Calories", 200.0, MeasurementUnit.CAL)))
   }
 
   @Test
@@ -32,11 +33,11 @@ class NutritionalInformationTest {
     val expectedData =
         listOf(
             mapOf(
-                "nutrientType" to "totalWeight",
+                "nutrientType" to "Total Weight",
                 "amount" to 100.0,
                 "unit" to MeasurementUnit.G.toString()),
             mapOf(
-                "nutrientType" to "calories",
+                "nutrientType" to "Calories",
                 "amount" to 200.0,
                 "unit" to MeasurementUnit.CAL.toString()),
         )
@@ -56,16 +57,16 @@ class NutritionalInformationTest {
     val nutritionalInformation1 =
         NutritionalInformation(
             mutableListOf(
-                Nutrient("totalWeight", 100.0, MeasurementUnit.G),
-                Nutrient("calories", 200.0, MeasurementUnit.CAL),
-                Nutrient("fat", 10.0, MeasurementUnit.G)))
+                Nutrient("Total Weight", 100.0, MeasurementUnit.G),
+                Nutrient("Calories", 200.0, MeasurementUnit.CAL),
+                Nutrient("Fat", 10.0, MeasurementUnit.G)))
 
     val nutritionalInformation2 =
         NutritionalInformation(
             mutableListOf(
-                Nutrient("totalWeight", 100.0, MeasurementUnit.G),
-                Nutrient("calories", 200.0, MeasurementUnit.CAL),
-                Nutrient("fat", 9.0, MeasurementUnit.G)))
+                Nutrient("Total Weight", 100.0, MeasurementUnit.G),
+                Nutrient("Calories", 200.0, MeasurementUnit.CAL),
+                Nutrient("Fat", 9.0, MeasurementUnit.G)))
 
     assertNotEquals(nutritionalInformation1, nutritionalInformation2)
   }
@@ -74,36 +75,36 @@ class NutritionalInformationTest {
   fun `fault serialization should return null`() {
     val wrongData =
         listOf(
-            mapOf("nutrientType" to "totalWeight", "amount" to 100.0, "unit" to "G"),
-            mapOf("nutrientType" to "calories", "amount" to 200.0, "unit" to "CAL"),
-            mapOf("nutrientType" to "fat", "amount" to 10.0, "unit" to "G"),
-            mapOf("nutrientType" to "saturatedFat", "amount" to 3.0, "unit" to "G"),
-            mapOf("nutrientType" to "carbohydrates", "amount" to 20.0, "unit" to "G"),
-            mapOf("nutrientType" to "netCarbohydrates", "amount" to 15.0, "unit" to "G"),
-            mapOf("nutrientType" to "sugar", "amount" to 5.0, "unit" to "G"),
-            mapOf("nutrientType" to "cholesterol", "amount" to 0.0, "unit" to "MG"),
-            mapOf("nutrientType" to "sodium", "amount" to 0.0, "unit" to "MG"),
-            mapOf("nutrientType" to "protein", "amount" to 15.0, "unit" to "G"),
-            mapOf("nutrientType" to "vitaminC", "amount" to 0.0, "unit" to "MG"),
+            mapOf("nutrientType" to "Total Weight", "amount" to 100.0, "unit" to "G"),
+            mapOf("nutrientType" to "Calories", "amount" to 200.0, "unit" to "CAL"),
+            mapOf("nutrientType" to "Fat", "amount" to 10.0, "unit" to "G"),
+            mapOf("nutrientType" to "Saturated Fat", "amount" to 3.0, "unit" to "G"),
+            mapOf("nutrientType" to "Carbohydrates", "amount" to 20.0, "unit" to "G"),
+            mapOf("nutrientType" to "Net Carbohydrates", "amount" to 15.0, "unit" to "G"),
+            mapOf("nutrientType" to "Sugar", "amount" to 5.0, "unit" to "G"),
+            mapOf("nutrientType" to "Cholesterol", "amount" to 0.0, "unit" to "MG"),
+            mapOf("nutrientType" to "Sodium", "amount" to 0.0, "unit" to "MG"),
+            mapOf("nutrientType" to "Protein", "amount" to 15.0, "unit" to "G"),
+            mapOf("nutrientType" to "Vitamin C", "amount" to 0.0, "unit" to "MG"),
             mapOf("nutrientType" to "manganese", "amount" to 0.0, "unit" to "UG"),
-            mapOf("nutrientType" to "fiber", "amount" to 2.0, "unit" to "G"),
-            mapOf("nutrientType" to "vitaminB6", "amount" to 0.0, "unit" to "MG"),
-            mapOf("nutrientType" to "copper", "amount" to 0.0, "unit" to "UG"),
-            mapOf("nutrientType" to "vitaminB1", "amount" to 0.0, "unit" to "MG"),
-            mapOf("nutrientType" to "folate", "amount" to 0.0, "unit" to "UG"),
-            mapOf("nutrientType" to "potassium", "amount" to 0.0, "unit" to "MG"),
-            mapOf("nutrientType" to "magnesium", "amount" to 0.0, "unit" to "MG"),
-            mapOf("nutrientType" to "vitaminB3", "amount" to 0.0, "unit" to "MG"),
-            mapOf("nutrientType" to "vitaminB5", "amount" to 0.0, "unit" to "MG"),
-            mapOf("nutrientType" to "vitaminB2", "amount" to 0.0, "unit" to "MG"),
-            mapOf("nutrientType" to "iron", "amount" to 0.0, "unit" to "MG"),
-            mapOf("nutrientType" to "calcium", "amount" to 0.0, "unit" to "MG"),
-            mapOf("nutrientType" to "vitaminA", "amount" to 0.0, "unit" to "IU"),
-            mapOf("nutrientType" to "zinc", "amount" to 0.0, "unit" to "MG"),
-            mapOf("nutrientType" to "phosphorus", "amount" to 0.0, "unit" to "MG"),
-            mapOf("nutrientType" to "vitaminK", "amount" to 0.0, "unit" to "UG"),
-            mapOf("nutrientType" to "selenium", "amount" to 0.0, "unit" to "UG"),
-            mapOf("nutrientType" to "vitaminE", "amount" to 0, "unit" to "INVALID"))
+            mapOf("nutrientType" to "Fiber", "amount" to 2.0, "unit" to "G"),
+            mapOf("nutrientType" to "Vitamin B6", "amount" to 0.0, "unit" to "MG"),
+            mapOf("nutrientType" to "Copper", "amount" to 0.0, "unit" to "UG"),
+            mapOf("nutrientType" to "Vitamin B1", "amount" to 0.0, "unit" to "MG"),
+            mapOf("nutrientType" to "Folate", "amount" to 0.0, "unit" to "UG"),
+            mapOf("nutrientType" to "Potassium", "amount" to 0.0, "unit" to "MG"),
+            mapOf("nutrientType" to "Magnesium", "amount" to 0.0, "unit" to "MG"),
+            mapOf("nutrientType" to "Vitamin B3", "amount" to 0.0, "unit" to "MG"),
+            mapOf("nutrientType" to "Vitamin B5", "amount" to 0.0, "unit" to "MG"),
+            mapOf("nutrientType" to "Vitamin B2", "amount" to 0.0, "unit" to "MG"),
+            mapOf("nutrientType" to "Iron", "amount" to 0.0, "unit" to "MG"),
+            mapOf("nutrientType" to "Calcium", "amount" to 0.0, "unit" to "MG"),
+            mapOf("nutrientType" to "Vitamin A", "amount" to 0.0, "unit" to "IU"),
+            mapOf("nutrientType" to "Zinc", "amount" to 0.0, "unit" to "MG"),
+            mapOf("nutrientType" to "Phosphorus", "amount" to 0.0, "unit" to "MG"),
+            mapOf("nutrientType" to "Vitamin K", "amount" to 0.0, "unit" to "UG"),
+            mapOf("nutrientType" to "Selenium", "amount" to 0.0, "unit" to "UG"),
+            mapOf("nutrientType" to "Vitamin E", "amount" to 0, "unit" to "INVALID"))
 
     assertFailsWith<Exception> { NutritionalInformation.deserialize(wrongData) }
   }
@@ -113,28 +114,28 @@ class NutritionalInformationTest {
     val nutritionalInformation1 =
         NutritionalInformation(
             mutableListOf(
-                Nutrient("totalWeight", 100.0, MeasurementUnit.G),
-                Nutrient("calories", 200.0, MeasurementUnit.CAL),
-                Nutrient("fat", 10.0, MeasurementUnit.G)))
+                Nutrient("Total Weight", 100.0, MeasurementUnit.G),
+                Nutrient("Calories", 200.0, MeasurementUnit.CAL),
+                Nutrient("Fat", 10.0, MeasurementUnit.G)))
 
     val nutritionalInformation2 =
         NutritionalInformation(
             mutableListOf(
-                Nutrient("totalWeight", 50.0, MeasurementUnit.G),
-                Nutrient("calories", 100.0, MeasurementUnit.CAL),
-                Nutrient("fat", 5.0, MeasurementUnit.G)))
+                Nutrient("Total Weight", 50.0, MeasurementUnit.G),
+                Nutrient("Calories", 100.0, MeasurementUnit.CAL),
+                Nutrient("Fat", 5.0, MeasurementUnit.G)))
 
     val result = nutritionalInformation1 + nutritionalInformation2
 
     assertEquals(
-        Nutrient("totalWeight", 150.0, MeasurementUnit.G),
-        result.nutrients.filter { it.nutrientType == "totalWeight" }[0])
+        Nutrient("Total Weight", 150.0, MeasurementUnit.G),
+        result.nutrients.filter { it.nutrientType == "Total Weight" }[0])
     assertEquals(
-        Nutrient("calories", 300.0, MeasurementUnit.CAL),
-        result.nutrients.filter { it.nutrientType == "calories" }[0])
+        Nutrient("Calories", 300.0, MeasurementUnit.CAL),
+        result.nutrients.filter { it.nutrientType == "Calories" }[0])
     assertEquals(
-        Nutrient("fat", 15.0, MeasurementUnit.G),
-        result.nutrients.filter { it.nutrientType == "fat" }[0])
+        Nutrient("Fat", 15.0, MeasurementUnit.G),
+        result.nutrients.filter { it.nutrientType == "Fat" }[0])
   }
 
   @Test
@@ -142,28 +143,46 @@ class NutritionalInformationTest {
     val nutritionalInformation1 =
         NutritionalInformation(
             mutableListOf(
-                Nutrient("totalWeight", 100.0, MeasurementUnit.G),
-                Nutrient("calories", 200.0, MeasurementUnit.CAL),
-                Nutrient("fat", 10.0, MeasurementUnit.G)))
+                Nutrient("Total Weight", 100.0, MeasurementUnit.G),
+                Nutrient("Calories", 200.0, MeasurementUnit.CAL),
+                Nutrient("Fat", 10.0, MeasurementUnit.G)))
 
     val nutritionalInformation2 =
         NutritionalInformation(
             mutableListOf(
-                Nutrient("totalWeight", 50.0, MeasurementUnit.G),
-                Nutrient("calories", 100.0, MeasurementUnit.CAL),
-                Nutrient("fat", 5.0, MeasurementUnit.G)))
+                Nutrient("Total Weight", 50.0, MeasurementUnit.G),
+                Nutrient("Calories", 100.0, MeasurementUnit.CAL),
+                Nutrient("Fat", 5.0, MeasurementUnit.G)))
 
     val result = nutritionalInformation1 - nutritionalInformation2
 
     assertEquals(
-        Nutrient("totalWeight", 50.0, MeasurementUnit.G),
-        result.nutrients.filter { it.nutrientType == "totalWeight" }[0])
+        Nutrient("Total Weight", 50.0, MeasurementUnit.G),
+        result.nutrients.filter { it.nutrientType == "Total Weight" }[0])
     assertEquals(
-        Nutrient("calories", 100.0, MeasurementUnit.CAL),
-        result.nutrients.filter { it.nutrientType == "calories" }[0])
+        Nutrient("Calories", 100.0, MeasurementUnit.CAL),
+        result.nutrients.filter { it.nutrientType == "Calories" }[0])
     assertEquals(
-        Nutrient("fat", 5.0, MeasurementUnit.G),
-        result.nutrients.filter { it.nutrientType == "fat" }[0])
+        Nutrient("Fat", 5.0, MeasurementUnit.G),
+        result.nutrients.filter { it.nutrientType == "Fat" }[0])
+  }
+
+  @Test
+  fun `minus function should remove a Nutrient if it goes negative`() {
+    val nutritionalInformation1 =
+        NutritionalInformation(
+            mutableListOf(
+                Nutrient("Total Weight", 100.0, MeasurementUnit.G),
+                Nutrient("Calories", 200.0, MeasurementUnit.CAL)))
+    val nutritionalInformation2 =
+        NutritionalInformation(
+            mutableListOf(
+                Nutrient("Total Weight", 50.0, MeasurementUnit.G),
+                Nutrient("Calories", 200.1, MeasurementUnit.CAL)))
+
+    val result = nutritionalInformation1 - nutritionalInformation2
+    assert(result.nutrients.size == 1)
+    assert(result.nutrients[0].nutrientType == "Total Weight")
   }
 
   @Test
@@ -171,17 +190,39 @@ class NutritionalInformationTest {
     val nutritionalInformation1 =
         NutritionalInformation(
             mutableListOf(
-                Nutrient("totalWeight", 100.0, MeasurementUnit.G),
-                Nutrient("calories", 200.0, MeasurementUnit.CAL),
-                Nutrient("fat", 10.0, MeasurementUnit.G)))
+                Nutrient("Total Weight", 100.0, MeasurementUnit.G),
+                Nutrient("Calories", 200.0, MeasurementUnit.CAL),
+                Nutrient("Fat", 10.0, MeasurementUnit.G)))
 
-    val nutrient1 = Nutrient("totalWeight", 50.0, MeasurementUnit.G)
+    val nutrient1 = Nutrient("Total Weight", 50.0, MeasurementUnit.G)
 
     nutritionalInformation1.update(nutrient1)
 
     assertEquals(
-        Nutrient("totalWeight", 150.0, MeasurementUnit.G),
-        nutritionalInformation1.nutrients.filter { it.nutrientType == "totalWeight" }[0])
+        Nutrient("Total Weight", 150.0, MeasurementUnit.G),
+        nutritionalInformation1.nutrients.filter { it.nutrientType == "Total Weight" }[0])
+  }
+
+  @Test
+  fun `update shouldn't add a nutrient if the amount is less than 0`() {
+    val nutritionalInformation1 = NutritionalInformation(mutableListOf())
+    val nutritionalInformation2 =
+        NutritionalInformation(mutableListOf(Nutrient("Total Weight", -10.0, MeasurementUnit.G)))
+
+    nutritionalInformation1.update(nutritionalInformation2)
+    assert(nutritionalInformation1.nutrients.isEmpty())
+  }
+
+  @Test
+  fun `update should subtract from existing nutrient if amount is less than 0`() {
+    val nutritionalInformation1 =
+        NutritionalInformation(mutableListOf(Nutrient("Total Weight", 10.0, MeasurementUnit.G)))
+    val nutritionalInformation2 =
+        NutritionalInformation(mutableListOf(Nutrient("Total Weight", -5.0, MeasurementUnit.G)))
+
+    nutritionalInformation1.update(nutritionalInformation2)
+    assert(nutritionalInformation1.nutrients.size == 1)
+    assert(nutritionalInformation1.nutrients[0].amount == 5.0)
   }
 
   @Test
@@ -189,22 +230,22 @@ class NutritionalInformationTest {
     val nutritionalInformation1 =
         NutritionalInformation(
             mutableListOf(
-                Nutrient("totalWeight", 100.0, MeasurementUnit.G),
-                Nutrient("calories", 200.0, MeasurementUnit.CAL),
-                Nutrient("fat", 10.0, MeasurementUnit.G)))
+                Nutrient("Total Weight", 100.0, MeasurementUnit.G),
+                Nutrient("Calories", 200.0, MeasurementUnit.CAL),
+                Nutrient("Fat", 10.0, MeasurementUnit.G)))
 
     val nutritionalInformation2 =
         NutritionalInformation(
             mutableListOf(
-                Nutrient("totalWeight", 100.0, MeasurementUnit.G),
-                Nutrient("calories", 200.0, MeasurementUnit.CAL),
-                Nutrient("fat", 10.0, MeasurementUnit.G)))
+                Nutrient("Total Weight", 100.0, MeasurementUnit.G),
+                Nutrient("Calories", 200.0, MeasurementUnit.CAL),
+                Nutrient("Fat", 10.0, MeasurementUnit.G)))
 
     // Check if two identical instances are equal
     assertEquals(nutritionalInformation1, nutritionalInformation2)
 
     // Modify one instance
-    nutritionalInformation2.update(Nutrient("totalWeight", 50.0, MeasurementUnit.G))
+    nutritionalInformation2.update(Nutrient("Total Weight", 50.0, MeasurementUnit.G))
 
     // Check if two different instances are not equal
     assertNotEquals(nutritionalInformation1, nutritionalInformation2)
@@ -215,16 +256,16 @@ class NutritionalInformationTest {
     val originalNutritionalInformation =
         NutritionalInformation(
             mutableListOf(
-                Nutrient("totalWeight", 100.0, MeasurementUnit.G),
-                Nutrient("calories", 200.0, MeasurementUnit.CAL),
-                Nutrient("fat", 10.0, MeasurementUnit.G)))
+                Nutrient("Total Weight", 100.0, MeasurementUnit.G),
+                Nutrient("Calories", 200.0, MeasurementUnit.CAL),
+                Nutrient("Fat", 10.0, MeasurementUnit.G)))
 
     val newValues =
         NutritionalInformation(
             mutableListOf(
-                Nutrient("totalWeight", 50.0, MeasurementUnit.G),
-                Nutrient("calories", 100.0, MeasurementUnit.CAL),
-                Nutrient("fat", 5.0, MeasurementUnit.G)))
+                Nutrient("Total Weight", 50.0, MeasurementUnit.G),
+                Nutrient("Calories", 100.0, MeasurementUnit.CAL),
+                Nutrient("Fat", 5.0, MeasurementUnit.G)))
 
     val updatedNutritionalInformation = originalNutritionalInformation.deepCopy()
 
@@ -238,24 +279,24 @@ class NutritionalInformationTest {
     val nutritionalInformation1 =
         NutritionalInformation(
             mutableListOf(
-                Nutrient("totalWeight", 100.0, MeasurementUnit.G),
-                Nutrient("calories", 200.0, MeasurementUnit.CAL),
-                Nutrient("fat", 10.0, MeasurementUnit.G)))
+                Nutrient("Total Weight", 100.0, MeasurementUnit.G),
+                Nutrient("Calories", 200.0, MeasurementUnit.CAL),
+                Nutrient("Fat", 10.0, MeasurementUnit.G)))
 
     val nutritionalInformation2 =
         NutritionalInformation(
             mutableListOf(
-                Nutrient("totalWeight", 100.0, MeasurementUnit.G),
-                Nutrient("calories", 200.0, MeasurementUnit.CAL),
-                Nutrient("fat", 10.0, MeasurementUnit.G)))
+                Nutrient("Total Weight", 100.0, MeasurementUnit.G),
+                Nutrient("Calories", 200.0, MeasurementUnit.CAL),
+                Nutrient("Fat", 10.0, MeasurementUnit.G)))
 
     assertEquals(nutritionalInformation1.hashCode(), nutritionalInformation2.hashCode())
   }
 
   @Test
   fun `getNutrient returns the correct nutrient`() {
-    val nutrient = nutritionalInformation.getNutrient("totalWeight")
-    assertEquals(Nutrient("totalWeight", 100.0, MeasurementUnit.G), nutrient)
+    val nutrient = nutritionalInformation.getNutrient("Total Weight")
+    assertEquals(Nutrient("Total Weight", 100.0, MeasurementUnit.G), nutrient)
   }
 
   @Test
@@ -266,13 +307,19 @@ class NutritionalInformationTest {
 
   @Test
   fun `get certain total of nutrient`() {
-    val nutrient = nutritionalInformation.calculateTotalNutrient("totalWeight")
+    val nutrient = nutritionalInformation.calculateTotalNutrient("Total Weight")
+    assertEquals(100.0, nutrient, 0.1)
+  }
+
+  @Test
+  fun `get total nutrient with wrong letter case`() {
+    val nutrient = nutritionalInformation.calculateTotalNutrient("tOtAl WeIgHt")
     assertEquals(100.0, nutrient, 0.1)
   }
 
   @Test
   fun `get certain amount of nutrient`() {
-    val nutrient = nutritionalInformation.getNutrient("totalWeight")
-    assertEquals(Nutrient("totalWeight", 100.0, MeasurementUnit.G), nutrient)
+    val nutrient = nutritionalInformation.getNutrient("Total Weight")
+    assertEquals(Nutrient("Total Weight", 100.0, MeasurementUnit.G), nutrient)
   }
 }

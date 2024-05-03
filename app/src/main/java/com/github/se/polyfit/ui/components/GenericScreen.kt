@@ -10,6 +10,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.github.se.polyfit.R
+import com.github.se.polyfit.ui.components.scaffold.AppTitle
+import com.github.se.polyfit.ui.components.scaffold.BottomNavigationBar
 import com.github.se.polyfit.ui.navigation.Route
 
 @Composable
@@ -22,7 +24,7 @@ fun GenericScreen(navController: NavHostController, content: @Composable (Paddin
         BottomNavigationBar(
             stackEntry,
             { navController.navigate(Route.Home) },
-            showToastMessage(context = context),
+            { navController.navigate(Route.PostInfo) },
             showToastMessage(context = context))
       },
       content = content)

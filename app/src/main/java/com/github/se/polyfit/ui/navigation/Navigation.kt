@@ -8,6 +8,10 @@ class Navigation(private val navHostController: NavHostController) {
     navHostController.popBackStack()
   }
 
+  fun navigateToGraph() {
+    navigateTo(Route.Graph)
+  }
+
   fun navigateToHome() {
     navigateTo(Route.Home)
   }
@@ -16,8 +20,28 @@ class Navigation(private val navHostController: NavHostController) {
     navigateTo(Route.Nutrition)
   }
 
+  fun navigateToAddMeal(mealDatabaseId: Long? = null) {
+    if (mealDatabaseId == null) {
+      navigateTo(Route.AddMeal)
+    } else {
+      navigateTo(Route.AddMeal + "/$mealDatabaseId")
+    }
+  }
+
   fun navigateToAddMeal() {
-    navigateTo(Route.AddMeal)
+    navigateToAddMeal(null)
+  }
+
+  fun navigateToAdditionalMealInfo() {
+    navigateTo(Route.AdditionalMealInfo)
+  }
+
+  fun navigateToDailyRecap() {
+    navigateTo(Route.DailyRecap)
+  }
+
+  fun navigateToCreatePost() {
+    navigateTo(Route.CreatePost)
   }
 
   private fun navigateTo(route: String) {

@@ -24,21 +24,11 @@ data class Nutrient(val nutrientType: String, val amount: Double, val unit: Meas
   }
 
   fun getFormattedName(): String {
-    return if (!isVitamin()) {
-      val regex = "(?=[A-Z])".toRegex()
-      titleCase(nutrientType.split(regex).joinToString(" "))
-    } else {
-      val vitaminType = nutrientType.substringAfter("vitamin", "")
-      titleCase("vitamin $vitaminType")
-    }
+    return titleCase(nutrientType)
   }
 
   fun getFormattedAmount(): String {
     return "${amount.toInt()} ${unit.toString().lowercase()}"
-  }
-
-  private fun isVitamin(): Boolean {
-    return nutrientType.startsWith("vitamin", ignoreCase = true)
   }
 
   override fun equals(other: Any?): Boolean {

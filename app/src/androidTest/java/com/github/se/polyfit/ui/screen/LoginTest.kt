@@ -9,6 +9,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.MainActivity
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.kakaocup.compose.node.element.ComposeScreen
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -22,6 +24,7 @@ class LoginTest : TestCase() {
   @Before
   fun setup() {
     Intents.init()
+
     composeTestRule.activityRule.scenario.moveToState(Lifecycle.State.RESUMED)
   }
 
@@ -62,6 +65,10 @@ class LoginTest : TestCase() {
         assertIsDisplayed()
         assertHasClickAction()
         performClick()
+      }
+
+      runBlocking {
+        delay(5000) // waits for 5 seconds
       }
       // TODO check we are on another page
       intended(toPackage("com.google.android.gms"))

@@ -14,11 +14,15 @@ import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
  */
 data class Ingredient(
     val name: String, // name is now a val
-    val id: Int,
+    val id: Long,
     val amount: Double,
     val unit: MeasurementUnit,
     val nutritionalInformation: NutritionalInformation = NutritionalInformation(mutableListOf()),
 ) {
+
+  fun deepCopy(): Ingredient {
+    return Ingredient(name, id, amount, unit, nutritionalInformation.deepCopy())
+  }
 
   companion object {
     fun serialize(ingredient: Ingredient): Map<String, Any> {
@@ -44,7 +48,7 @@ data class Ingredient(
     fun deserialize(data: Map<String, Any>): Ingredient {
       return try {
         val name = data["name"] as String
-        val id = data["id"] as Int
+        val id = data["id"] as Long
         val amount = data["amount"] as Double
         val unit = MeasurementUnit.fromString(data["unit"] as String)
         val nutValue = data["nutritionalInformation"] as List<Map<String, Any>>
@@ -55,6 +59,10 @@ data class Ingredient(
         Log.e("Ingredient", "Failed to deserialize Ingredient object: ${e.message}", e)
         throw IllegalArgumentException("Failed to deserialize Ingredient object", e)
       }
+    }
+
+    fun default(): Ingredient {
+      return Ingredient("tomato", 2, 123.4, MeasurementUnit.G)
     }
   }
 }

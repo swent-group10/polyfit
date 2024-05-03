@@ -2,11 +2,13 @@ package com.github.se.polyfit.model.meal
 
 import android.util.Log
 import com.github.se.polyfit.model.ingredient.Ingredient
+import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
+import java.time.LocalDate
 
 // modeled after the log meal api
 data class Meal(
-    val occasion: MealOccasion,
+    var occasion: MealOccasion,
     var name: String,
     val mealID: Long,
     // represent the ideal temperature at which should be eaten at,
@@ -14,12 +16,43 @@ data class Meal(
     val mealTemp: Double = 20.0,
     val nutritionalInformation: NutritionalInformation,
     val ingredients: MutableList<Ingredient> = mutableListOf(),
-    var firebaseId: String = ""
+    var firebaseId: String = "",
+    var createdAt: LocalDate = LocalDate.now(),
+    val tags: MutableList<MealTag> = mutableListOf()
 ) {
   init {
     require(mealID >= 0)
 
-    updateMeal()
+    // TODO: https://github.com/swent-group10/polyfit/issues/177
+    if (nutritionalInformation.nutrients.isEmpty()) {
+      updateMeal()
+    }
+  }
+
+  fun deepCopy(
+      occasion: MealOccasion = this.occasion,
+      name: String = this.name,
+      mealID: Long = this.mealID,
+      mealTemp: Double = this.mealTemp,
+      ingredients: MutableList<Ingredient> = this.ingredients,
+      firebaseId: String = this.firebaseId,
+      createdAt: LocalDate = this.createdAt,
+      tags: MutableList<MealTag> = this.tags
+  ): Meal {
+    val newIngredients = ingredients.map { it.deepCopy() }.toMutableList()
+    val newTags = tags.map { it.copy() }.toMutableList()
+    val newNutritionalInformation = NutritionalInformation(mutableListOf())
+
+    return Meal(
+        occasion = occasion,
+        name = name,
+        mealID = mealID,
+        mealTemp = mealTemp,
+        nutritionalInformation = newNutritionalInformation,
+        ingredients = newIngredients,
+        firebaseId = firebaseId,
+        createdAt = createdAt,
+        tags = newTags)
   }
 
   override fun equals(other: Any?): Boolean {
@@ -33,6 +66,8 @@ data class Meal(
     if (nutritionalInformation != other.nutritionalInformation) return false
     if (ingredients != other.ingredients) return false
     if (firebaseId != other.firebaseId) return false
+    if (createdAt != other.createdAt) return false
+    if (tags != other.tags) return false
 
     return true
   }
@@ -45,6 +80,8 @@ data class Meal(
     result = 31 * result + nutritionalInformation.hashCode()
     result = 31 * result + ingredients.hashCode()
     result = 31 * result + firebaseId.hashCode()
+    result = 31 * result + createdAt.hashCode()
+    result = 31 * result + tags.hashCode()
 
     return result
   }
@@ -54,12 +91,7 @@ data class Meal(
   }
 
   fun calculateTotalCalories(): Double {
-    val mealNutrients = nutritionalInformation.nutrients
-
-    val totalCaluries =
-        mealNutrients.filter { it.nutrientType == "calories" }.map { it.amount }.sum()
-
-    return totalCaluries
+    return calculateTotalNutrient("calories")
   }
 
   fun addIngredient(ingredient: Ingredient) {
@@ -73,8 +105,22 @@ data class Meal(
         nutritionalInformation.nutrients.isNotEmpty()
   }
 
-  private fun updateMeal() {
+  fun getNutrient(nutrientType: String): Nutrient? {
+    return this.nutritionalInformation.getNutrient(nutrientType)
+  }
 
+  fun getMacros(): Map<String, Double> {
+    val macros = mutableMapOf<String, Double>()
+    val protein = getNutrient("protein")?.amount ?: 0.0
+    val fat = getNutrient("fat")?.amount ?: 0.0
+    val carbs = getNutrient("carbohydrates")?.amount ?: 0.0
+    macros["protein"] = protein
+    macros["fat"] = fat
+    macros["carbohydrates"] = carbs
+    return macros
+  }
+
+  private fun updateMeal() {
     var newNutritionalInformation = NutritionalInformation(mutableListOf())
 
     for (ingredient in ingredients) {
@@ -98,6 +144,8 @@ data class Meal(
         this["nutritionalInformation"] =
             NutritionalInformation.serialize(data.nutritionalInformation)
         this["ingredients"] = data.ingredients.map { Ingredient.serialize(it) }
+        this["createdAt"] = data.createdAt.toString()
+        this["tags"] = data.tags.map { MealTag.serialize(it) }
       }
     }
 
@@ -105,20 +153,30 @@ data class Meal(
       return try {
         val mealID = data["mealID"] as Long
         val occasion = data["occasion"].let { MealOccasion.valueOf(it as String) }
-
         val mealTemp = data["mealTemp"] as Double
-
         val name = data["name"] as String
 
         val nutritionalInformationData =
             NutritionalInformation.deserialize(
                 data["nutritionalInformation"] as List<Map<String, Any>>)
 
-        val newMeal = Meal(occasion, name, mealID, mealTemp, nutritionalInformationData)
+        val createdAt = LocalDate.parse(data["createdAt"] as String)
+        val tags =
+            (data["tags"] as List<Map<String, Any>>).map { MealTag.deserialize(it) }.toMutableList()
 
-        val ingredientsData = data["ingredients"] as? List<Map<String, Any>>
-        if (ingredientsData != null) {
-          for (ingredientData in ingredientsData) {
+        val newMeal =
+            Meal(
+                occasion = occasion,
+                name = name,
+                mealID = mealID,
+                mealTemp = mealTemp,
+                nutritionalInformation = nutritionalInformationData,
+                createdAt = createdAt,
+                tags = tags)
+
+        val ingredientsDatas = data["ingredients"] as? List<Map<String, Any>>
+        if (ingredientsDatas != null) {
+          for (ingredientData in ingredientsDatas) {
             newMeal.addIngredient(Ingredient.deserialize(ingredientData))
           }
         }
@@ -137,7 +195,9 @@ data class Meal(
           20.0,
           NutritionalInformation(mutableListOf()),
           mutableListOf(),
-          "")
+          "",
+          LocalDate.now(),
+          mutableListOf())
     }
   }
 }
