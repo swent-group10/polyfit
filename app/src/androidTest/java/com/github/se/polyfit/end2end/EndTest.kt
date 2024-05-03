@@ -122,6 +122,7 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
     Intents.init()
     Intents.intending(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE)).respondWith(result)
 
+    // Set up the Compose content
     composeTestRule.setContent {
       val navController = rememberNavController()
       NavHost(navController = navController, startDestination = Route.Overview) {
