@@ -132,14 +132,14 @@ android {
         // Google
         implementation("com.google.android.play:core-ktx:1.8.1")
         implementation("com.google.dagger:hilt-android:2.51")
-        implementation("com.google.firebase:firebase-auth:22.3.1")
+        implementation("com.google.firebase:firebase-auth:23.0.0")
         implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
         implementation("com.google.firebase:firebase-analytics")
-        implementation("com.google.firebase:firebase-database-ktx:20.3.1")
-        implementation("com.google.firebase:firebase-firestore:24.11.1")
+        implementation("com.google.firebase:firebase-database-ktx:21.0.0")
+        implementation("com.google.firebase:firebase-firestore:25.0.0")
         implementation("com.google.firebase:firebase-database")
         implementation("com.firebaseui:firebase-ui-auth:8.0.2")
-        implementation("com.google.firebase:firebase-storage:20.3.0")
+        implementation("com.google.firebase:firebase-storage:21.0.0")
         // Full GeoFire library for Realtime Database users
         implementation("com.firebase:geofire-android:3.2.0")
 
@@ -209,8 +209,7 @@ android {
         androidTestImplementation("org.mockito:mockito-core:5.11.0")
 
         testImplementation("io.mockk:mockk:1.13.10")
-
-        testImplementation("org.mockito:mockito-core:4.2.0")
+        testImplementation("org.mockito:mockito-core:5.11.0")
         testImplementation("androidx.arch.core:core-testing:2.1.0")
 
         androidTestImplementation("androidx.test.ext:junit:1.1.3")
