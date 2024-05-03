@@ -173,12 +173,6 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
     ComposeScreen.onComposeScreen<AdditionalMealInfoScreen>(composeTestRule) {
       assertExists()
       assertIsDisplayed()
-    }
-
-    /*
-    ComposeScreen.onComposeScreen<AdditionalMealInfoScreen>(composeTestRule) {
-      assertExists()
-      assertIsDisplayed()
 
       dateSelector {
         assertExists()
@@ -194,8 +188,7 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
         assertExists()
         assertIsDisplayed()
       }
-
     }
-     */
+
   }
 }
