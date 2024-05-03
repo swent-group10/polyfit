@@ -20,6 +20,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import com.github.se.polyfit.R
+import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import com.github.se.polyfit.ui.components.GenericScreen
@@ -42,6 +43,7 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
+import java.time.LocalDate
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.After
 import org.junit.Before
@@ -60,20 +62,22 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
   val grantPermissionRule: GrantPermissionRule =
       GrantPermissionRule.grant(android.Manifest.permission.CAMERA)
 
-  val mealViewModel: MealViewModel = mockk<MealViewModel>(relaxed = true)
+  private val mealViewModel: MealViewModel = mockk<MealViewModel>(relaxed = true)
 
   @Before
   fun setup() {
 
-    // Create a mock of MealViewModel
-    // mealViewModel = mockk<MealViewModel>(relaxed = true)
-
     // Mock the behavior of the meal property
-    val a: com.github.se.polyfit.model.meal.Meal =
-        com.github.se.polyfit.model.meal.Meal(
+    val a: Meal =
+        Meal(
             name = "Old Name",
             mealID = 123,
+            mealTemp = 0.0,
             nutritionalInformation = NutritionalInformation(mutableListOf()),
+            ingredients = mutableListOf(),
+            firebaseId = "",
+            createdAt = LocalDate.now(),
+            tags = mutableListOf(),
             occasion = MealOccasion.BREAKFAST)
     every { mealViewModel.meal } returns MutableStateFlow(a)
 
@@ -83,8 +87,10 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
     // Mock the behavior of the setMealData method
     every { mealViewModel.setMealData(any()) } just Runs
 
-    // Mock the behavior of the setMealName method
-    // every { mealViewModel.setMealName(any()) } just Runs
+    // Mock the behavior of the updateMealData method
+    every {
+      mealViewModel.updateMealData(any(), any(), any(), any(), any(), any(), any(), any())
+    } just Runs
 
     // Mock the behavior of the setMeal method
     every { mealViewModel.setMeal() } just Runs
@@ -94,6 +100,15 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
 
     // Mock the behavior of the removeIngredient method
     every { mealViewModel.removeIngredient(any()) } just Runs
+
+    // Mock the behavior of the addTag method
+    every { mealViewModel.addTag(any()) } just Runs
+
+    // Mock the behavior of the removeTag method
+    every { mealViewModel.removeTag(any()) } just Runs
+
+    // Mock the behavior of the reset method
+    every { mealViewModel.reset() } just Runs
 
     mockkStatic(Log::class)
   }
