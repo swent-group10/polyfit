@@ -1,15 +1,26 @@
 package com.github.se.polyfit.model.post
 
+import android.util.Log
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
+import io.mockk.every
+import io.mockk.mockkStatic
 import java.time.LocalDate
+import kotlin.test.assertFails
 import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Test
 
 class PostTest {
+
+  @Before
+  fun setup() {
+    mockkStatic(Log::class)
+    every { Log.e(any<String>(), any<String>(), any()) } returns 0
+  }
 
   @Test
   fun `getCarbs returns correct nutrient when present`() {
@@ -134,11 +145,132 @@ class PostTest {
   }
 
   @Test
-  fun `deserialize location`() {
-    val location =
-        Location.deserialize(
-            mapOf("longitude" to 0.0, "latitude" to 0.0, "altitude" to 10.0, "name" to "EPFL"))
-    val expectedLocation = Location(0.0, 0.0, 10.0, "EPFL")
-    assertEquals(expectedLocation, location)
+  fun deserializePost() {
+    val post =
+        Post.deserialize(
+            mapOf(
+                "userId" to "userId",
+                "description" to "description",
+                "location" to
+                    mapOf(
+                        "longitude" to 0.0,
+                        "latitude" to 0.0,
+                        "altitude" to 10.0,
+                        "name" to "EPFL"),
+                "meal" to Meal.default().serialize(),
+                "createdAt" to
+                    mapOf(
+                        "year" to 2021.toLong(),
+                        "monthValue" to 10.toLong(),
+                        "dayOfMonth" to 10.toLong())))
+    val expectedPost =
+        Post(
+            "userId",
+            "description",
+            Location(0.0, 0.0, 10.0, "EPFL"),
+            Meal.default(),
+            LocalDate.of(2021, 10, 10))
+    assertEquals(expectedPost, post)
+  }
+
+  @Test
+  fun deserializePostWithDifferentLocation() {
+    val post =
+        Post.deserialize(
+            mapOf(
+                "userId" to "userId",
+                "description" to "description",
+                "location" to
+                    mapOf(
+                        "longitude" to 10.0,
+                        "latitude" to 20.0,
+                        "altitude" to 30.0,
+                        "name" to "MIT"),
+                "meal" to Meal.default().serialize(),
+                "createdAt" to
+                    mapOf(
+                        "year" to 2021.toLong(),
+                        "monthValue" to 10.toLong(),
+                        "dayOfMonth" to 10.toLong())))
+    val expectedPost =
+        Post(
+            "userId",
+            "description",
+            Location(10.0, 20.0, 30.0, "MIT"),
+            Meal.default(),
+            LocalDate.of(2021, 10, 10))
+    assertEquals(expectedPost, post)
+  }
+
+  @Test
+  fun deserializePostWithDifferentUserId() {
+    val post =
+        Post.deserialize(
+            mapOf(
+                "userId" to "differentUserId",
+                "description" to "description",
+                "location" to
+                    mapOf(
+                        "longitude" to 0.0,
+                        "latitude" to 0.0,
+                        "altitude" to 10.0,
+                        "name" to "EPFL"),
+                "meal" to Meal.default().serialize(),
+                "createdAt" to
+                    mapOf(
+                        "year" to 2021.toLong(),
+                        "monthValue" to 10.toLong(),
+                        "dayOfMonth" to 10.toLong())))
+    val expectedPost =
+        Post(
+            "differentUserId",
+            "description",
+            Location(0.0, 0.0, 10.0, "EPFL"),
+            Meal.default(),
+            LocalDate.of(2021, 10, 10))
+    assertEquals(expectedPost, post)
+  }
+
+  @Test
+  fun deserializePostWithDifferentDescription() {
+    val post =
+        Post.deserialize(
+            mapOf(
+                "userId" to "userId",
+                "description" to "differentDescription",
+                "location" to
+                    mapOf(
+                        "longitude" to 0.0,
+                        "latitude" to 0.0,
+                        "altitude" to 10.0,
+                        "name" to "EPFL"),
+                "meal" to Meal.default().serialize(),
+                "createdAt" to
+                    mapOf(
+                        "year" to 2021.toLong(),
+                        "monthValue" to 10.toLong(),
+                        "dayOfMonth" to 10.toLong())))
+    val expectedPost =
+        Post(
+            "userId",
+            "differentDescription",
+            Location(0.0, 0.0, 10.0, "EPFL"),
+            Meal.default(),
+            LocalDate.of(2021, 10, 10))
+    assertEquals(expectedPost, post)
+  }
+
+  @Test
+  fun deserializeThrowsException() {
+    val data =
+        mapOf(
+            "userId" to null,
+            "description" to "description",
+            "location" to
+                mapOf("longitude" to 0.0, "latitude" to 0.0, "altitude" to 10.0, "name" to "EPFL"),
+            "meal" to Meal.default().serialize(),
+            "createdAt" to LocalDate.now())
+
+    assertFails { Post.deserialize(data) }
   }
 }

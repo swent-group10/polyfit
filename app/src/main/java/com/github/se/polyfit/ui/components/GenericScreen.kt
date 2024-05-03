@@ -24,7 +24,7 @@ fun GenericScreen(navController: NavHostController, content: @Composable (Paddin
         BottomNavigationBar(
             stackEntry,
             { navController.navigate(Route.Home) },
-            showToastMessage(context = context),
+            { navController.navigate(Route.PostInfo) },
             showToastMessage(context = context))
       },
       content = content)

@@ -16,11 +16,12 @@ import com.github.se.polyfit.viewmodel.meal.MealViewModel
 fun AddMealFlow(
     goBack: () -> Unit,
     navigateToHome: () -> Unit,
-    mealViewModel: MealViewModel = hiltViewModel<MealViewModel>()
+    mealId: Long? = null,
+    mealViewModel: MealViewModel = hiltViewModel<MealViewModel>(),
 ) {
-
   val navController = rememberNavController()
   val navigation = Navigation(navController)
+  mealViewModel.setMealData(mealId)
 
   NavHost(navController = navController, startDestination = Route.Ingredients) {
     composable(Route.Ingredients) {

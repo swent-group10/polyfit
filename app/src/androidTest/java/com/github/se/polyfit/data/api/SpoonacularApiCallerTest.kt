@@ -9,8 +9,6 @@ import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import java.io.File
 import java.io.InputStream
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
 import kotlin.test.assertFailsWith
 import kotlinx.coroutines.runBlocking
 import okhttp3.mockwebserver.Dispatcher
@@ -192,21 +190,9 @@ class SpoonacularApiCallerTest {
         InstrumentationRegistry.getInstrumentation().context.assets.open("cheesecake.jpg")
 
     // Act
-    val liveDataMeal = runBlocking {
+    val actualMeal = runBlocking {
       spoonacularApiCaller.getMealsFromImage(BitmapFactory.decodeStream(inputStream))
     }
-    val latch = CountDownLatch(2)
-
-    // Since LiveData is asynchronous, we need to observe it to get the value.
-    // We use a CountDownLatch to wait for LiveData to set a value.
-    var actualMeal: Meal? = null
-    liveDataMeal.observeForever {
-      actualMeal = it
-      latch.countDown() // LiveData has set a value, we can stop waiting.
-    }
-
-    // Wait for LiveData to set a value
-    latch.await(2, TimeUnit.SECONDS)
 
     // Assert
     assertEquals("cheesecake", actualMeal!!.name)
@@ -224,23 +210,11 @@ class SpoonacularApiCallerTest {
         InstrumentationRegistry.getInstrumentation().context.assets.open("cheesecake.jpg")
 
     // Act
-    val liveDataMeal = runBlocking {
+    val actualMeal = runBlocking {
       spoonacularApiCaller.getMealsFromImage(
           BitmapFactory.decodeStream(inputStream),
       )
     }
-    val latch = CountDownLatch(2)
-
-    // Since LiveData is asynchronous, we need to observe it to get the value.
-    // We use a CountDownLatch to wait for LiveData to set a value.
-    var actualMeal: Meal? = null
-    liveDataMeal.observeForever {
-      actualMeal = it
-      latch.countDown() // LiveData has set a value, we can stop waiting.
-    }
-
-    // Wait for LiveData to set a value
-    latch.await(2, TimeUnit.SECONDS)
 
     // Assert
     assertEquals(Meal.default(), actualMeal!!)
@@ -255,23 +229,11 @@ class SpoonacularApiCallerTest {
         InstrumentationRegistry.getInstrumentation().context.assets.open("cheesecake.jpg")
 
     // Act
-    val liveDataMeal = runBlocking {
+    val actualMeal = runBlocking {
       spoonacularApiCaller.getMealsFromImage(
           BitmapFactory.decodeStream(inputStream),
       )
     }
-    val latch = CountDownLatch(2)
-
-    // Since LiveData is asynchronous, we need to observe it to get the value.
-    // We use a CountDownLatch to wait for LiveData to set a value.
-    var actualMeal: Meal? = null
-    liveDataMeal.observeForever {
-      actualMeal = it
-      latch.countDown() // LiveData has set a value, we can stop waiting.
-    }
-
-    // Wait for LiveData to set a value
-    latch.await(2, TimeUnit.SECONDS)
 
     // Assert
     assertEquals(Meal.default(), actualMeal!!)

@@ -12,6 +12,7 @@ import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -27,12 +28,28 @@ class MealViewModel @Inject constructor(private val mealRepo: MealRepository) : 
     get() = _meal
 
   private val _isComplete: StateFlow<Boolean> =
-      _meal.map { it.isComplete() }.stateIn(GlobalScope, SharingStarted.Eagerly, false)
+      _meal.map { it.isComplete() }.stateIn(viewModelScope, SharingStarted.Eagerly, false)
   val isComplete: StateFlow<Boolean>
     get() = _isComplete
 
   fun setMealData(meal: Meal) {
     _meal.value = meal
+  }
+
+  fun setMealData(mealId: Long?) {
+    if (mealId == null) {
+      _meal.value = Meal.default()
+      return
+    }
+    viewModelScope.launch(Dispatchers.IO) {
+      val meal = mealRepo.getMealById(mealId)
+      if (meal != null) {
+        _meal.value = meal
+      } else {
+        Log.e("MealViewModel", "Meal with ID $mealId not found")
+        _meal.value = Meal.default()
+      }
+    }
   }
 
   fun updateMealData(
@@ -73,7 +90,7 @@ class MealViewModel @Inject constructor(private val mealRepo: MealRepository) : 
     if (!_meal.value.isComplete()) {
       throw Exception("Meal is incomplete")
     }
-    viewModelScope.launch {
+    GlobalScope.launch {
       try {
         mealRepo.storeMeal(_meal.value)
       } catch (e: Exception) {
@@ -100,10 +117,5 @@ class MealViewModel @Inject constructor(private val mealRepo: MealRepository) : 
 
   fun removeTag(tag: MealTag) {
     _meal.value.tags.remove(tag)
-  }
-
-  // TODO: This can be removed once we are properly using a new ViewModel for each Meal
-  fun reset() {
-    _meal.value = Meal.default()
   }
 }

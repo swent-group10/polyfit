@@ -38,7 +38,8 @@ class AddMealFlowTest {
       NavHost(navController = navController, startDestination = Route.Home) {
         composable(Route.Home) { HomeScreen() }
         composable(Route.AddMeal) {
-          AddMealFlow(navigation::goBack, navigation::navigateToHome, MealViewModel(mockk()))
+          AddMealFlow(
+              navigation::goBack, navigation::navigateToHome, mealId = null, MealViewModel(mockk()))
         }
       }
       navigation.navigateToAddMeal()

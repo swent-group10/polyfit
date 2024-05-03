@@ -56,7 +56,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import co.yml.charts.ui.linechart.LineChart
 import com.github.se.polyfit.R
-import com.github.se.polyfit.data.api.SpoonacularApiCaller
 import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.ui.components.GradientBox
 import com.github.se.polyfit.ui.components.button.GradientButton
@@ -67,7 +66,8 @@ import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.utils.OverviewTags
 import com.github.se.polyfit.ui.viewModel.DisplayScreen
 import com.github.se.polyfit.ui.viewModel.GraphViewModel
-import com.github.se.polyfit.viewmodel.meal.MealViewModel
+import com.github.se.polyfit.viewmodel.meal.OverviewViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 
 data class Meal(val name: String, val calories: Int)
@@ -198,11 +198,12 @@ private fun callCamera(
 fun OverviewScreen(
     paddingValues: PaddingValues,
     navController: NavHostController,
-    mealViewModel: MealViewModel = hiltViewModel()
+    overviewViewModel: OverviewViewModel = hiltViewModel()
 ) {
 
   val context = LocalContext.current
   val navigation = Navigation(navController)
+  var showPictureDialog by remember { mutableStateOf(false) }
   val isTestEnvironment = System.getProperty("isTestEnvironment") == "true"
 
   // State to hold the URI, the image and the bitmap
@@ -217,12 +218,9 @@ fun OverviewScreen(
         val bitmap = result.data?.extras?.get("data") as? Bitmap
         imageBitmap = bitmap
 
-        // observe the live data and log the result on changes
-        runBlocking {}
-        SpoonacularApiCaller().getMealsFromImage(imageBitmap!!).observeForever {
-          mealViewModel.setMealData(it)
-          navigation.navigateToAddMeal()
-        }
+        showPictureDialog = false
+        var id: Long? = runBlocking(Dispatchers.IO) { overviewViewModel.storeMeal(imageBitmap) }
+        navigation.navigateToAddMeal(id)
       }
 
   // Launcher for requesting the camera permission
@@ -235,11 +233,9 @@ fun OverviewScreen(
           try {
             startCamera.launch(takePictureIntent)
           } catch (e: Exception) {
-            Log.e("OverviewScreen", "Error launching camera intent: $e")
             // Handle the exception if the camera intent cannot be launched
           }
         } else {
-          Log.e("OverviewScreen", "Permission denied")
           // Permission is denied. Handle the denial appropriately.
         }
       }
@@ -261,8 +257,6 @@ fun OverviewScreen(
           }
         }
       }
-
-  var showPictureDialog by remember { mutableStateOf(false) }
 
   if (showPictureDialog) {
     PictureDialog(

@@ -24,10 +24,12 @@ interface MealDao {
     return meals.flatMap { it.ingredients }
   }
 
-  @Insert(onConflict = OnConflictStrategy.REPLACE) fun insert(meal: MealEntity)
+  @Insert(onConflict = OnConflictStrategy.REPLACE) fun insert(meal: MealEntity): Long
 
-  fun insert(meal: Meal) {
-    insert(MealEntity.toMealEntity(meal))
+  // Converts the Meal object to a MealEntity and inserts it into the database.
+  // Returns the ID of the inserted meal.
+  fun insert(meal: Meal): Long {
+    return insert(MealEntity.toMealEntity(meal))
   }
 
   @Query("SELECT * FROM MealTable WHERE firebaseId = :id LIMIT 1 ")
@@ -46,5 +48,18 @@ interface MealDao {
 
   @Query("DELETE FROM MealTable WHERE firebaseId = :id") fun deleteByFirebaseID(id: String)
 
+  @Query("DELETE FROM MealTable WHERE id = :id") fun deleteByDatabaseID(id: Long)
+
   @Query("DELETE FROM MealTable") fun deleteAll()
+
+  /**
+   * Get a meal by its database ID which is the primary key of the MealEntity use to differentiate
+   * between meals who do not have yet a firebase ID
+   */
+  @Query("SELECT * FROM MealTable WHERE id = :id LIMIT 1 ")
+  fun getMealEntityByDatabaseID(id: Long): MealEntity?
+
+  fun getMealByDatabaseID(id: Long): Meal? {
+    return getMealEntityByDatabaseID(id)?.toMeal()
+  }
 }

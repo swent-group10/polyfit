@@ -44,11 +44,8 @@ constructor(private val context: Context, private val user: User) : ViewModel(),
       result: FirebaseAuthUIAuthenticationResult,
       callback: (Boolean) -> Unit
   ) {
-    Log.i("LoginScreen", "onSignInResult")
     val response = result.idpResponse
-    Log.i("LoginScreen", "response: $response")
     if (result.resultCode == Activity.RESULT_OK) {
-      Log.i("LoginScreen", "User signed in")
       // to get google acount infos
       val account = GoogleSignIn.getLastSignedInAccount(context)
 

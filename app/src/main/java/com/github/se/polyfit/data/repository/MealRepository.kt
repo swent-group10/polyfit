@@ -59,12 +59,16 @@ class MealRepository(
     }
   }
 
-  suspend fun getMeal(firebaseID: String): Meal? {
+  fun getMealByFirebaseID(firebaseID: String): Meal? {
     return mealDao.getMealByFirebaseID(firebaseID)
   }
 
-  suspend fun getAllMeals(): List<Meal> {
-    return withContext(this.dispatcher) { mealDao.getAllMeals() }
+  fun getMealById(mealId: Long): Meal? {
+    return mealDao.getMealByDatabaseID(mealId)
+  }
+
+  fun getAllMeals(): List<Meal> {
+    return mealDao.getAllMeals()
   }
 
   suspend fun getMealsOnDate(date: LocalDate): List<Meal> {
