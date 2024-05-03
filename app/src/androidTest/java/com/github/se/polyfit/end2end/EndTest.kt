@@ -189,6 +189,5 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
         assertIsDisplayed()
       }
     }
-
   }
 }
