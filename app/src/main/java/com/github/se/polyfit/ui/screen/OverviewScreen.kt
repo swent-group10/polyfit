@@ -175,6 +175,7 @@ private fun callCamera(
     startCamera: ManagedActivityResultLauncher<Intent, ActivityResult>,
     requestPermissionLauncher: ManagedActivityResultLauncher<String, Boolean>
 ): () -> Unit = {
+  Log.d("OverviewScreen", "Photo button clicked")
   // Check if the permission has already been granted
   when (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)) {
     PackageManager.PERMISSION_GRANTED -> {
