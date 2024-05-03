@@ -8,6 +8,7 @@ import android.provider.MediaStore
 import android.util.Log
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
@@ -25,6 +26,7 @@ import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.flow.AddMealFlow
 import com.github.se.polyfit.ui.navigation.Route
+import com.github.se.polyfit.ui.screen.AdditionalMealInfoBottomBar
 import com.github.se.polyfit.ui.screen.AdditionalMealInfoScreen
 import com.github.se.polyfit.ui.screen.CreatePostScreen
 import com.github.se.polyfit.ui.screen.FullGraphScreen
@@ -41,6 +43,7 @@ import com.kaspersky.kaspresso.kaspresso.Kaspresso
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.github.kakaocup.compose.node.element.ComposeScreen
+import io.github.kakaocup.compose.node.element.KNode
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.junit4.MockKRule
@@ -182,11 +185,38 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
       mealOccasionSelector {
         assertExists()
         assertIsDisplayed()
+
+        // Navigate to the RightColumn
+        val ButtonRow: KNode = child { hasTestTag("ButtonRow") }
+
+        ButtonRow.assertExists()
+
+        // Find the LunchButton and perform click action
+        val LeftColumn: KNode = ButtonRow.child { hasTestTag("RightColumn") }
+        LeftColumn.assertExists()
+
+        val lunchrow: KNode = LeftColumn.child { hasTestTag("LunchRow") }
+        lunchrow.assertExists()
+
+        val lunchButton: KNode = lunchrow.child { hasTestTag("LunchButton") }
+        lunchButton.performClick()
       }
 
       mealTagSelector {
         assertExists()
         assertIsDisplayed()
+      }
+    }
+
+    ComposeScreen.onComposeScreen<AdditionalMealInfoBottomBar>(composeTestRule) {
+      assertExists()
+      assertIsDisplayed()
+
+      doneButton {
+        assertExists()
+        assertIsDisplayed()
+        assertHasClickAction()
+        performClick()
       }
     }
   }
