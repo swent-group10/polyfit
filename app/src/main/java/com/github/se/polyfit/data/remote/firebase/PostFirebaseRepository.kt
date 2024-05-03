@@ -85,18 +85,16 @@ class PostFirebaseRepository(
   ) {
     val center = GeoLocation(centerLatitude, centerLongitude)
     val query = geoFire.queryAtLocation(center, radiusInKm)
-    Log.d("GeoQuery", "Querying posts within $radiusInKm km of $center")
+
     query.addGeoQueryEventListener(
         object : GeoQueryEventListener {
           val nearbyKeys = mutableListOf<String>()
 
           override fun onKeyEntered(key: String, location: GeoLocation) {
-            Log.d("GeoQuery", "Key entered: $key")
             nearbyKeys.add(key)
           }
 
           override fun onKeyExited(key: String) {
-            Log.d("GeoQuery", "Key exited: $key")
             nearbyKeys.remove(key)
           }
 
@@ -125,10 +123,6 @@ class PostFirebaseRepository(
     val batchSize = 10
     val batches = keys.chunked(batchSize)
     var completedBatches = 0
-
-    Log.d("PostFirebaseRepository", "Fetching ${batches.size} batches")
-    Log.d("PostFirebaseRepository", "Keys: $keys")
-    Log.d("PostFirebaseRepository", "Batches: $batches")
 
     // Use a batch operation to fetch all posts
     batches.forEach { batch ->
