@@ -24,17 +24,14 @@ class MealTest {
 
   @Test
   fun `Meal addIngredient should update meal`() {
-    val meal = Meal(MealOccasion.DINNER, "eggs", 1, 102.2, NutritionalInformation(mutableListOf()))
+    val meal = Meal(MealOccasion.DINNER, "eggs", 1, 102.2)
     val newNutritionalInformation =
         NutritionalInformation(mutableListOf(Nutrient("calcium", 1.0, MeasurementUnit.G)))
 
     val ingredient = Ingredient("milk", 1, 102.0, MeasurementUnit.MG, newNutritionalInformation)
     meal.addIngredient(ingredient)
-    // Assert that the meal has been updated after adding an ingredient
     assertEquals(1, meal.ingredients.size)
-    // Assert that the meal's nutritional information has been updated
-
-    assertEquals(1.0, meal.nutritionalInformation.nutrients[0].amount, 0.001)
+    assertEquals(1.0, meal.getNutrient("calcium")!!.amount, 0.001)
   }
 
   @Test
@@ -45,7 +42,6 @@ class MealTest {
             "eggs",
             1.toLong(),
             102.2,
-            NutritionalInformation(mutableListOf()),
             createdAt = LocalDate.parse("2021-01-01"),
             tags = mutableListOf(MealTag("name of tag", MealTagColor.BLUE)))
     val serializedMeal = Meal.serialize(meal)
@@ -67,7 +63,6 @@ class MealTest {
             "occasion" to "DINNER",
             "name" to "eggs",
             "mealTemp" to "wrongValue",
-            "nutritionalInformation" to listOf<Map<String, Any>>(),
             "createdAt" to "notARealDate")
     // Make sure that an exception is thrown
     assertFailsWith<Exception> { Meal.deserialize(data) }
@@ -81,7 +76,6 @@ class MealTest {
             "occasion" to "DINNER",
             "name" to "eggs",
             "mealTemp" to 102.2,
-            "nutritionalInformation" to NutritionalInformation(mutableListOf()).serialize(),
             "createdAt" to "2021-01-01",
             "tags" to mutableListOf(MealTag("name of tag", MealTagColor.BLUE).serialize()))
     val meal = Meal.deserialize(data)
@@ -103,7 +97,6 @@ class MealTest {
             "occasion" to "DINNER",
             "name" to "eggs",
             "mealTemp" to 102.2,
-            "nutritionalInformation" to listOf<Map<String, Any>>(),
             "createdAt" to "2021-01-01",
             "tags" to listOf<Map<String, Any>>())
 
@@ -120,16 +113,7 @@ class MealTest {
             name = "",
             mealID = 1,
             mealTemp = 102.2,
-            nutritionalInformation =
-                NutritionalInformation(mutableListOf(Nutrient("calcium", 1.0, MeasurementUnit.G))),
-            ingredients =
-                mutableListOf(
-                    Ingredient(
-                        "milk",
-                        1,
-                        102.0,
-                        MeasurementUnit.MG,
-                        NutritionalInformation(mutableListOf()))))
+            ingredients = mutableListOf(Ingredient("milk", 1, 102.0, MeasurementUnit.MG)))
 
     assertEquals(false, meal.isComplete())
   }
@@ -142,8 +126,6 @@ class MealTest {
             name = "eggs",
             mealID = 1,
             mealTemp = 102.2,
-            nutritionalInformation =
-                NutritionalInformation(mutableListOf(Nutrient("calcium", 1.0, MeasurementUnit.G))),
             ingredients = mutableListOf())
 
     assertEquals(false, meal.isComplete())
@@ -157,15 +139,7 @@ class MealTest {
             name = "eggs",
             mealID = 1,
             mealTemp = 102.2,
-            nutritionalInformation = NutritionalInformation(mutableListOf()),
-            ingredients =
-                mutableListOf(
-                    Ingredient(
-                        "milk",
-                        1,
-                        102.0,
-                        MeasurementUnit.MG,
-                        NutritionalInformation(mutableListOf()))))
+            ingredients = mutableListOf(Ingredient("milk", 1, 102.0, MeasurementUnit.MG)))
 
     assertEquals(false, meal.isComplete())
   }
@@ -178,8 +152,6 @@ class MealTest {
             name = "eggs",
             mealID = 1,
             mealTemp = 102.2,
-            nutritionalInformation =
-                NutritionalInformation(mutableListOf(Nutrient("calcium", 1.0, MeasurementUnit.G))),
             ingredients =
                 mutableListOf(
                     Ingredient(
@@ -187,7 +159,8 @@ class MealTest {
                         1,
                         102.0,
                         MeasurementUnit.MG,
-                        NutritionalInformation(mutableListOf()))))
+                        NutritionalInformation(
+                            mutableListOf(Nutrient("calcium", 1.0, MeasurementUnit.G))))))
 
     assertEquals(true, meal.isComplete())
   }
@@ -200,7 +173,6 @@ class MealTest {
             name = "eggs",
             mealID = 1,
             mealTemp = 102.2,
-            nutritionalInformation = NutritionalInformation(mutableListOf()),
             ingredients =
                 mutableListOf(
                     Ingredient(
@@ -224,7 +196,6 @@ class MealTest {
             name = "eggs",
             mealID = 1,
             mealTemp = 102.2,
-            nutritionalInformation = NutritionalInformation(mutableListOf()),
             ingredients =
                 mutableListOf(
                     Ingredient(
