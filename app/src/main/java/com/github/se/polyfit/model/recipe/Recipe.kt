@@ -10,7 +10,8 @@ data class Recipe(
     val usedIngredients: Long,
     val missingIngredients: Long,
     val likes: Long,
-    val recipeInformation: RecipeInformation
+    val recipeInformation: RecipeInformation,
+    var firebaseId: String = ""
 ) {
 
   fun serialize(): Map<String, Any> {

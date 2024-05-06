@@ -80,4 +80,12 @@ class RecipeInformationTest {
     assertEquals(2, (result["listIngredients"] as List<*>).size)
     assertEquals("instructions", result["instructions"])
   }
+
+  @Test
+  fun `serialize and deserialize default`() {
+    val recipeInformation = RecipeInformation.default()
+    val result = RecipeInformation.serialize(recipeInformation)
+    val deserialized = RecipeInformation.deserialize(result)
+    assertEquals(recipeInformation, deserialized)
+  }
 }
