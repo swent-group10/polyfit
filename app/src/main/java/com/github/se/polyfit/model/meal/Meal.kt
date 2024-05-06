@@ -115,6 +115,7 @@ data class Meal(
         this["occasion"] = data.occasion.name
         this["name"] = data.name
         this["mealTemp"] = data.mealTemp
+        this["nutritionalInformation"] = listOf<Any>() // TODO: Remove after M2 Grading
         this["ingredients"] = data.ingredients.map { Ingredient.serialize(it) }
         this["createdAt"] = data.createdAt.toString()
         this["tags"] = data.tags.map { MealTag.serialize(it) }
