@@ -10,7 +10,7 @@ import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
 import com.github.se.polyfit.data.remote.firebase.PostFirebaseRepository
 import com.github.se.polyfit.data.repository.MealRepository
 import com.github.se.polyfit.model.data.User
-import com.github.se.polyfit.ui.utils.AuthenticationCloud
+import com.github.se.polyfit.ui.utils.Authentication
 import com.github.se.polyfit.ui.viewModel.GraphViewModel
 import dagger.Module
 import dagger.Provides
@@ -84,7 +84,7 @@ object UserModule {
 
   @Provides
   @Singleton
-  fun provideAuthentication(@ApplicationContext context: Context, user: User): AuthenticationCloud {
-    return AuthenticationCloud(context, user)
+  fun provideAuthentication(@ApplicationContext context: Context, user: User): Authentication {
+    return Authentication(context, user)
   }
 }

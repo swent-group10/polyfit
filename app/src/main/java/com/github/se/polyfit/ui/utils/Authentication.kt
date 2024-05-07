@@ -13,25 +13,24 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
-interface Authentication {
-  fun signIn()
 
-  fun onSignInResult(result: FirebaseAuthUIAuthenticationResult, callback: (Boolean) -> Unit)
-
-  fun setSignInLauncher(launcher: ActivityResultLauncher<Intent>)
-}
 
 @HiltViewModel
-class AuthenticationCloud
+class Authentication
 @Inject
-constructor(private val context: Context, private val user: User) : ViewModel(), Authentication {
+constructor(private val context: Context, private val user: User) : ViewModel() {
   private lateinit var signInLauncher: ActivityResultLauncher<Intent>
 
-  override fun setSignInLauncher(launcher: ActivityResultLauncher<Intent>) {
+  /*fun isAuthenticated(): Boolean {
+    // Replace this with your actual implementation
+    return firebaseAuth.currentUser != null
+  }*/
+
+  fun setSignInLauncher(launcher: ActivityResultLauncher<Intent>) {
     signInLauncher = launcher
   }
 
-  override fun signIn() {
+  fun signIn() {
     val providers = arrayListOf(AuthUI.IdpConfig.GoogleBuilder().build())
 
     val signInIntent =
@@ -40,7 +39,7 @@ constructor(private val context: Context, private val user: User) : ViewModel(),
     signInLauncher.launch(signInIntent)
   }
 
-  override fun onSignInResult(
+  fun onSignInResult(
       result: FirebaseAuthUIAuthenticationResult,
       callback: (Boolean) -> Unit
   ) {

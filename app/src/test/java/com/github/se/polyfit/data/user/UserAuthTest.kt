@@ -4,7 +4,7 @@ import android.app.Activity
 import android.util.Log
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.github.se.polyfit.model.data.User
-import com.github.se.polyfit.ui.utils.AuthenticationCloud
+import com.github.se.polyfit.ui.utils.Authentication
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import io.mockk.every
@@ -20,7 +20,7 @@ import kotlin.test.assertEquals
 class UserAuthTest {
 
   private lateinit var mockAccount: GoogleSignInAccount
-  private lateinit var authCloud: AuthenticationCloud
+  private lateinit var authCloud: Authentication
   private val user: User = User()
 
   @BeforeTest
@@ -43,7 +43,7 @@ class UserAuthTest {
     every { GoogleSignIn.getLastSignedInAccount(any()) } returns mockAccount
 
     // Initialize AuthenticationCloud
-    authCloud = AuthenticationCloud(mockk(relaxed = true), user)
+    authCloud = Authentication(mockk(relaxed = true), user)
   }
 
   @AfterTest

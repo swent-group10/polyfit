@@ -2,6 +2,7 @@ package com.github.se.polyfit.ui.screen
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -36,27 +37,24 @@ import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.github.se.polyfit.R
 import com.github.se.polyfit.ui.compose.Title
 import com.github.se.polyfit.ui.theme.PrimaryPurple
-import com.github.se.polyfit.ui.utils.AuthenticationCloud
+import com.github.se.polyfit.ui.utils.Authentication
 
 @Composable
-fun LoginScreen(goTo: () -> Unit, authenticationCloud: AuthenticationCloud = hiltViewModel()) {
-  // Create an instance of the Authentication class
+fun LoginScreen(goTo: () -> Unit, authentication: Authentication = hiltViewModel()) {
+
   val context = LocalContext.current
 
   val signInLauncher =
       rememberLauncherForActivityResult(contract = FirebaseAuthUIActivityResultContract()) { res ->
-        authenticationCloud.onSignInResult(res) {
-          if (it) goTo() else Log.d("LoginScreen", "Sign in failed")
+        authentication.onSignInResult(res) {
+          if (it) goTo() else {Log.d("LoginScreen", "Sign in failed"); Toast.makeText(context, "Sign in failed", Toast.LENGTH_SHORT).show()}
         }
       }
 
   // Set the signInLauncher in the Authentication class
-  authenticationCloud.setSignInLauncher(signInLauncher)
+  authentication.setSignInLauncher(signInLauncher)
 
   // This function starts the sign-in process
-  fun createSignInIntent() {
-    authenticationCloud.signIn()
-  }
 
   Surface(
       modifier = Modifier.fillMaxSize().testTag("LoginScreen"),
@@ -72,7 +70,8 @@ fun LoginScreen(goTo: () -> Unit, authenticationCloud: AuthenticationCloud = hil
 
               SignInButton {
                 Log.d("LoginScreen", "button clicked")
-                createSignInIntent()
+
+                authentication.signIn()
               }
 
               Spacer(Modifier.weight(0.03f))
