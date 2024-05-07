@@ -74,8 +74,7 @@ class MealListTest : TestCase() {
           mealID = 1,
           ingredients = mutableListOf(ingredient),
           tags = tags,
-          occasion = MealOccasion.BREAKFAST,
-          nutritionalInformation = NutritionalInformation(mutableListOf()))
+          occasion = MealOccasion.BREAKFAST)
 
   private val meal2 =
       Meal(
@@ -83,8 +82,7 @@ class MealListTest : TestCase() {
           mealID = 2,
           ingredients = mutableListOf(ingredient),
           tags = tags,
-          occasion = MealOccasion.BREAKFAST,
-          nutritionalInformation = NutritionalInformation(mutableListOf()))
+          occasion = MealOccasion.BREAKFAST)
 
   @Test
   fun oneMealDisplays() {

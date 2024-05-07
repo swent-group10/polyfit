@@ -65,8 +65,7 @@ class DailyRecapTest : TestCase() {
                                     MealTag("And yet another long", MealTagColor.LAVENDER),
                                     MealTag(
                                         "And yet another long long", MealTagColor.BRIGHTORANGE)),
-                            occasion = MealOccasion.BREAKFAST,
-                            nutritionalInformation = NutritionalInformation(mutableListOf())),
+                            occasion = MealOccasion.BREAKFAST),
                     ),
                 LocalDate.now().minusDays(1) to
                     listOf(
@@ -91,8 +90,7 @@ class DailyRecapTest : TestCase() {
                                     MealTag("And yet another long", MealTagColor.LAVENDER),
                                     MealTag(
                                         "And yet another long long", MealTagColor.BRIGHTORANGE)),
-                            occasion = MealOccasion.BREAKFAST,
-                            nutritionalInformation = NutritionalInformation(mutableListOf())),
+                            occasion = MealOccasion.BREAKFAST),
                     ))
 
         every { getMealsOnDate(any()) } answers
