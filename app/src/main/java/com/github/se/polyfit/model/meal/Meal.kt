@@ -20,12 +20,35 @@ data class Meal(
     val tags: MutableList<MealTag> = mutableListOf()
 ) {
   var nutritionalInformation: NutritionalInformation = NutritionalInformation()
-    internal set
 
   init {
     require(mealID >= 0)
 
     updateMeal()
+  }
+
+  fun deepCopy(
+      occasion: MealOccasion = this.occasion,
+      name: String = this.name,
+      mealID: Long = this.mealID,
+      mealTemp: Double = this.mealTemp,
+      ingredients: MutableList<Ingredient> = this.ingredients,
+      firebaseId: String = this.firebaseId,
+      createdAt: LocalDate = this.createdAt,
+      tags: MutableList<MealTag> = this.tags
+  ): Meal {
+    val newIngredients = ingredients.map { it.deepCopy() }.toMutableList()
+    val newTags = tags.map { it.copy() }.toMutableList()
+
+    return Meal(
+        occasion = occasion,
+        name = name,
+        mealID = mealID,
+        mealTemp = mealTemp,
+        ingredients = newIngredients,
+        firebaseId = firebaseId,
+        createdAt = createdAt,
+        tags = newTags)
   }
 
   override fun equals(other: Any?): Boolean {

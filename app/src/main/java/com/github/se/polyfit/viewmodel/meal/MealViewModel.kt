@@ -66,11 +66,11 @@ class MealViewModel @Inject constructor(private val mealRepo: MealRepository) : 
   }
 
   fun setMealCreatedAt(createdAt: LocalDate) {
-    _meal.value = _meal.value.copy(createdAt = createdAt)
+    _meal.value = _meal.value.deepCopy(createdAt = createdAt)
   }
 
   fun setMealOccasion(occasion: MealOccasion) {
-    _meal.value = _meal.value.copy(occasion = occasion)
+    _meal.value = _meal.value.deepCopy(occasion = occasion)
   }
 
   fun setMeal() {
@@ -89,13 +89,13 @@ class MealViewModel @Inject constructor(private val mealRepo: MealRepository) : 
 
   fun addIngredient(ingredient: Ingredient) {
     val updatedIngredients = _meal.value.ingredients.toMutableList().apply { add(ingredient) }
-    _meal.value = _meal.value.copy(ingredients = updatedIngredients)
+    _meal.value = _meal.value.deepCopy(ingredients = updatedIngredients)
   }
 
   fun removeIngredient(ingredient: Ingredient) {
     val updatedIngredients = _meal.value.ingredients.toMutableList().apply { remove(ingredient) }
 
-    _meal.value = _meal.value.copy(ingredients = updatedIngredients)
+    _meal.value = _meal.value.deepCopy(ingredients = updatedIngredients)
   }
 
   fun addTag(tag: MealTag) {
