@@ -65,4 +65,12 @@ class RecipeTest {
     assertEquals(100L, result["likes"])
     assertEquals("instructions", (result["recipeInformation"] as Map<String, Any>)["instructions"])
   }
+
+  @Test
+  fun `serialize and deserialize default meal`() {
+    val recipe = Recipe.default()
+    val serialized = Recipe.serialize(recipe)
+    val deserialized = Recipe.deserialize(serialized)
+    assertEquals(recipe, deserialized)
+  }
 }

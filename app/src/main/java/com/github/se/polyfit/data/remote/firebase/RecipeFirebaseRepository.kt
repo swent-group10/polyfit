@@ -11,7 +11,7 @@ class RecipeFirebaseRepository(
 ) {
   private val recipeCollection = db.collection("users").document(userId).collection("recipes")
 
-  fun storeRecipe(recipe: Recipe): Task<Void> {
+  fun storeRecipe(recipe: Recipe): Task<Unit> {
     val documentReference =
         if (recipe.firebaseId.isEmpty()) {
           recipeCollection.document()
@@ -19,21 +19,23 @@ class RecipeFirebaseRepository(
           recipeCollection.document(recipe.firebaseId)
         }
 
-    return documentReference
-        .set(recipe)
-        .addOnSuccessListener {
-          recipe.firebaseId = recipe.firebaseId.ifEmpty { documentReference.id }
+    return documentReference.set(recipe).continueWith { task ->
+      if (task.isSuccessful) {
+        if (recipe.firebaseId.isEmpty()) {
+          recipe.firebaseId = documentReference.id
         }
-        .addOnFailureListener { exception ->
-          Log.e("RecipeFirebaseRepository", "Error adding recipe: $exception")
-          throw Exception("Error adding recipe: $exception")
-        }
+      } else {
+        val exception = task.exception
+        Log.e("RecipeFirebaseRepository", "Error adding recipe: $exception")
+        throw Exception("Error adding recipe: $exception")
+      }
+    }
   }
 
   fun getRecipe(firebaseId: String): Task<Recipe> {
     if (firebaseId.isEmpty()) {
       Log.e("RecipeFirebaseRepository", "Cannot fetch recipe. No FirebaseId")
-      throw Exception("Error. Recipe has no firebase id")
+      throw IllegalArgumentException("Error. Recipe has no firebase id")
     }
 
     return recipeCollection.document(firebaseId).get().continueWith { task ->

@@ -48,5 +48,16 @@ data class Recipe(
         throw IllegalArgumentException("Failed to deserialize Recipe object", e)
       }
     }
+
+    fun default(): Recipe {
+      return Recipe(
+          641803L,
+          "Easy & Delish! ~ Apple Crumble",
+          URL("https://spoonacular.com/recipeImages/Easy---Delish--Apple-Crumble-641803.jpg"),
+          3,
+          3,
+          1,
+          RecipeInformation.default())
+    }
   }
 }
