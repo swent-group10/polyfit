@@ -205,7 +205,7 @@ class NutritionalInformationTest {
 
   @Test
   fun `update shouldn't add a nutrient if the amount is less than 0`() {
-    val nutritionalInformation1 = NutritionalInformation(mutableListOf())
+    val nutritionalInformation1 = NutritionalInformation()
     val nutritionalInformation2 =
         NutritionalInformation(mutableListOf(Nutrient("Total Weight", -10.0, MeasurementUnit.G)))
 

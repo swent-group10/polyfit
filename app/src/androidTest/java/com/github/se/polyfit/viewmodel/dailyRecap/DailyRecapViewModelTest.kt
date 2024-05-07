@@ -55,7 +55,6 @@ class DailyRecapViewModelTest {
                   MealTag("And yet another long", MealTagColor.LAVENDER),
                   MealTag("And yet another long long", MealTagColor.BRIGHTORANGE)),
           occasion = MealOccasion.BREAKFAST,
-          nutritionalInformation = NutritionalInformation(mutableListOf()),
           createdAt = date)
 
   @Test

@@ -102,8 +102,7 @@ class NutritionalInformationTest : TestCase() {
           name = "Steak & Veggie",
           ingredients = mutableListOf(ingredient),
           occasion = MealOccasion.DINNER,
-          mealID = 20,
-          nutritionalInformation = NutritionalInformation(mutableListOf()))
+          mealID = 20)
 
   private fun setup(meal: Meal) {
     composeTestRule.setContent {
