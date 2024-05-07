@@ -101,7 +101,6 @@ class RecipeFirebaseRepositoryTest {
   @Test
   fun getRecipeFailure() = runTest {
     val firebaseId = "SomeFunkyId"
-    val mockDocumentSnapshot: DocumentSnapshot = mockk()
     every { mockkRecipeCollection.document(firebaseId).get() } returns
         Tasks.forException(Exception("Some exception"))
 

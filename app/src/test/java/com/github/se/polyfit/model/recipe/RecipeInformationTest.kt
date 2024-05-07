@@ -52,7 +52,7 @@ class RecipeInformationTest {
     assertEquals(false, result.vegan)
     assertEquals(true, result.glutenFree)
     assertEquals(false, result.dairyFree)
-    assertEquals(2, result.listIngredients.size)
+    assertEquals(2, result.ingredients.size)
     assertEquals("instructions", result.instructions)
   }
 
