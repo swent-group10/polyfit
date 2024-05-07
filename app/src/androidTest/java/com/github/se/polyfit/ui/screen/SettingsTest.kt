@@ -41,7 +41,7 @@ class SettingsTest : TestCase() {
 
   @Test
   fun everythingIsDisplayed() {
-    ComposeScreen.onComposeScreen<SettingsScreen>(composeTestRule) {
+    ComposeScreen.onComposeScreen<SettingScreen>(composeTestRule) {
       title {
         assertExists()
         assertIsDisplayed()

@@ -4,8 +4,8 @@ import androidx.compose.ui.test.SemanticsNodeInteractionsProvider
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.github.kakaocup.compose.node.element.KNode
 
-class SettingsScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
-    ComposeScreen<SettingsScreen>(
+class SettingScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
+    ComposeScreen<SettingScreen>(
         semanticsProvider = semanticsProvider,
         viewBuilderAction = { hasTestTag("SettingsScreen") }) {
 
