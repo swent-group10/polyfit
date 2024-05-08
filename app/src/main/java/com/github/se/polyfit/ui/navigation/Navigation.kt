@@ -20,7 +20,7 @@ class Navigation(private val navHostController: NavHostController) {
     navigateTo(Route.Nutrition)
   }
 
-  fun navigateToAddMeal(mealDatabaseId: Long? = null) {
+  fun navigateToAddMeal(mealDatabaseId: String? = null) {
     if (mealDatabaseId == null) {
       navigateTo(Route.AddMeal)
     } else {
