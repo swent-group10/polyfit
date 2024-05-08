@@ -66,9 +66,7 @@ class IngredientTest : TestCase() {
             occasion = MealOccasion.OTHER,
             name = "Test Meal",
             mealID = 0,
-            ingredients = testIngredients,
-            nutritionalInformation = NutritionalInformation(mutableListOf()),
-        )
+            ingredients = testIngredients)
 
     mockMealViewModel.setMealData(testMeal)
 

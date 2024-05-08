@@ -79,7 +79,7 @@ fun BottomNavigationBar(
         label = {
           if (currentRoute == Route.Settings)
               Text(
-                  context.getString(R.string.settings_nav_labal),
+                  context.getString(R.string.settings),
                   Modifier.testTag(OverviewTags.overviewSettingsLabel))
         },
         selected = currentRoute == Route.Settings,

@@ -111,14 +111,6 @@ class MealDatabaseTest {
             occasion = MealOccasion.BREAKFAST,
             mealID = 1,
             mealTemp = 20.0,
-            nutritionalInformation =
-                NutritionalInformation(
-                    mutableListOf(
-                        Nutrient("calories", 100.0, MeasurementUnit.UG),
-                        Nutrient("protein", 10.0, MeasurementUnit.G),
-                        Nutrient("carbs", 20.0, MeasurementUnit.G),
-                        Nutrient("fat", 5.0, MeasurementUnit.ML)),
-                ),
             ingredients = ingredientList,
             firebaseId = "1",
             createdAt = LocalDate.now())
@@ -179,16 +171,19 @@ class MealDatabaseTest {
         occasion = MealOccasion.BREAKFAST,
         mealID = 1,
         mealTemp = 20.0,
-        nutritionalInformation =
-            NutritionalInformation(
-                mutableListOf(
-                    Nutrient("calories", 100.0, MeasurementUnit.UG),
-                    Nutrient("protein", 10.0, MeasurementUnit.G),
-                    Nutrient("carbs", 20.0, MeasurementUnit.G),
-                    Nutrient("fat", 5.0, MeasurementUnit.ML))),
         ingredients =
             mutableListOf(
-                Ingredient("Oats", 12, 192.2, MeasurementUnit.G),
+                Ingredient(
+                    "Oats",
+                    12,
+                    192.2,
+                    MeasurementUnit.G,
+                    NutritionalInformation(
+                        mutableListOf(
+                            Nutrient("calories", 100.0, MeasurementUnit.UG),
+                            Nutrient("protein", 10.0, MeasurementUnit.G),
+                            Nutrient("carbs", 20.0, MeasurementUnit.G),
+                            Nutrient("fat", 5.0, MeasurementUnit.ML)))),
                 Ingredient("Milk", 200, 12.0, MeasurementUnit.ML)),
         firebaseId = firebaseId,
         createdAt = createdAt)

@@ -5,7 +5,6 @@ import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
 import com.github.se.polyfit.data.repository.MealRepository
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
-import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.DocumentReference
 import io.mockk.coEvery
@@ -43,14 +42,7 @@ class MealRepositoryTest {
   @Test
   fun storeMeal_whenConnectionAvailableAndDataNotOutdated_storesMealInFirebaseAndLocalDb() =
       runTest {
-        val meal =
-            Meal(
-                MealOccasion.DINNER,
-                "name",
-                1,
-                12.0,
-                NutritionalInformation(mutableListOf()),
-                mutableListOf())
+        val meal = Meal(MealOccasion.DINNER, "name", 1, 12.0, mutableListOf())
         val documentReference = mockk<DocumentReference>()
         coEvery { mealFirebaseRepository.storeMeal(meal) } returns
             Tasks.forResult(documentReference)
@@ -64,14 +56,7 @@ class MealRepositoryTest {
 
   @Test
   fun storeMeal_whenConnectionNotAvailable_storesMealInLocalDbOnly() = runTest {
-    val meal =
-        Meal(
-            MealOccasion.DINNER,
-            "name",
-            1,
-            12.0,
-            NutritionalInformation(mutableListOf()),
-            mutableListOf())
+    val meal = Meal(MealOccasion.DINNER, "name", 1, 12.0, mutableListOf())
     coEvery { mealDao.insert(any<Meal>()) } returns 109
     coEvery { checkConnectivity.checkConnection() } returns false
 

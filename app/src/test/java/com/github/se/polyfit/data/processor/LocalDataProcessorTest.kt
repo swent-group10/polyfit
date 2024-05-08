@@ -95,14 +95,19 @@ class LocalDataProcessorTest {
           name = name,
           mealID = 1,
           mealTemp = 20.0,
-          nutritionalInformation =
-              NutritionalInformation(
-                  mutableListOf(
-                      Nutrient("calories", calories, MeasurementUnit.UG),
-                      Nutrient("protein", 10.0, MeasurementUnit.G),
-                      Nutrient("carbs", 20.0, MeasurementUnit.G),
-                      Nutrient("fat", 5.0, MeasurementUnit.ML))),
-          ingredients = mutableListOf(Ingredient(name, 100, 10.0, MeasurementUnit.G)),
+          ingredients =
+              mutableListOf(
+                  Ingredient(
+                      name,
+                      100,
+                      10.0,
+                      MeasurementUnit.G,
+                      NutritionalInformation(
+                          mutableListOf(
+                              Nutrient("calories", calories, MeasurementUnit.UG),
+                              Nutrient("protein", 10.0, MeasurementUnit.G),
+                              Nutrient("carbs", 20.0, MeasurementUnit.G),
+                              Nutrient("fat", 5.0, MeasurementUnit.ML))))),
           firebaseId = "1",
           createdAt = LocalDate.now())
 

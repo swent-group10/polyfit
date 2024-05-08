@@ -64,10 +64,7 @@ class NutritionalInfoTest : TestCase() {
                       100.0,
                       MeasurementUnit.G,
                       NutritionalInformation(
-                          mutableListOf(Nutrient("Calories", 1000.0, MeasurementUnit.CAL))))),
-          nutritionalInformation =
-              NutritionalInformation(
-                  mutableListOf(Nutrient("Calories", 1000.0, MeasurementUnit.CAL))),
+                          mutableListOf(Nutrient("Calories", 2000.0, MeasurementUnit.CAL))))),
           occasion = MealOccasion.LUNCH)
 
   @Before

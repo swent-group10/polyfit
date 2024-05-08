@@ -2,6 +2,7 @@ package com.github.se.polyfit.viewmodel.post
 
 import com.github.se.polyfit.data.remote.firebase.PostFirebaseRepository
 import com.github.se.polyfit.data.repository.MealRepository
+import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
@@ -85,8 +86,11 @@ class CreatePostViewModelTest {
   @Test
   fun getCarbsReturnsCarbsAmount() {
     val carbs = Nutrient("carbohydrates", 10.0, MeasurementUnit.G)
-    val meal =
-        Meal.default().copy(nutritionalInformation = NutritionalInformation(mutableListOf(carbs)))
+    val meal = Meal.default()
+    meal.addIngredient(
+        Ingredient.default()
+            .copy(nutritionalInformation = NutritionalInformation(mutableListOf(carbs))))
+
     val post = Post.default().copy(meal = meal)
     viewModel.setPostData(meal = meal)
 
@@ -98,8 +102,10 @@ class CreatePostViewModelTest {
   @Test
   fun getFatReturnsFatAmount() {
     val fat = Nutrient("fat", 10.0, MeasurementUnit.G)
-    val meal =
-        Meal.default().copy(nutritionalInformation = NutritionalInformation(mutableListOf(fat)))
+    val meal = Meal.default()
+    meal.addIngredient(
+        Ingredient.default()
+            .copy(nutritionalInformation = NutritionalInformation(mutableListOf(fat))))
     val post = Post.default().copy(meal = meal)
     viewModel.setPostData(meal = meal)
 
@@ -109,10 +115,13 @@ class CreatePostViewModelTest {
   }
 
   @Test
-  fun getPoteinReturnsProteinAmount() {
+  fun getProteinReturnsProteinAmount() {
     val protein = Nutrient("protein", 10.0, MeasurementUnit.G)
-    val meal =
-        Meal.default().copy(nutritionalInformation = NutritionalInformation(mutableListOf(protein)))
+    val meal = Meal.default()
+    meal.addIngredient(
+        Ingredient.default()
+            .copy(nutritionalInformation = NutritionalInformation(mutableListOf(protein))))
+
     viewModel.setPostData(meal = meal)
 
     val result = viewModel.getProtein()
