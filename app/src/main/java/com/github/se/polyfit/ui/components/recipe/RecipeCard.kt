@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -38,20 +39,25 @@ fun RecipeCard(
 ) {
   Card(
       modifier =
-          Modifier.height(200.dp).padding(8.dp).fillMaxSize().clip(RoundedCornerShape(16.dp)),
+          Modifier.height(200.dp)
+              .padding(8.dp)
+              .fillMaxSize()
+              .clip(RoundedCornerShape(16.dp))
+              .testTag("RecipeCard"),
       shape = RoundedCornerShape(16.dp),
       elevation = CardDefaults.cardElevation(4.dp)) {
         Box(modifier = Modifier.fillMaxSize()) {
           AsyncImage(
               model =
                   ImageRequest.Builder(LocalContext.current)
-                      .data(recipe.imageUrl)
+                      .data(recipe.imageUrl.toString())
                       .crossfade(true)
                       .build(),
               placeholder = painterResource(R.drawable.food1),
               contentDescription = stringResource(R.string.description),
               contentScale = ContentScale.Crop,
-              modifier = Modifier.fillMaxSize().clickable { onCardClick })
+              modifier =
+                  Modifier.fillMaxSize().clickable { onCardClick(recipe) }.testTag("RecipeImage"))
 
           Text(
               text = recipe.title,

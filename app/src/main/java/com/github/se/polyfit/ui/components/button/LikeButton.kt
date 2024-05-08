@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -27,20 +28,22 @@ fun LikeButton(
 ) {
   FilledTonalButton(
       onClick = { onLikeClicked },
-      colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE1BEE7)),
+      colors = ButtonDefaults.buttonColors(containerColor = Color.White),
       shape = RoundedCornerShape(20.dp),
-      modifier = modifier.padding(horizontal = 25.dp, vertical = 8.dp)) {
+      enabled = true, // Set this to true
+      modifier = modifier.padding(horizontal = 25.dp, vertical = 8.dp).testTag("LikeButton")) {
         Icon(
             imageVector = Icons.Default.Favorite,
             contentDescription = "Like Button",
             tint = Color.Red,
-            modifier = Modifier.size(24.dp))
+            modifier = Modifier.size(24.dp).testTag("LikeIcon"))
         Spacer(Modifier.width(4.dp))
         Text(
             text = likesCount.toString(),
             color = Color.Black,
             fontSize = 16.sp,
-            fontWeight = FontWeight.Bold)
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.testTag("LikeCount"))
       }
 }
 
