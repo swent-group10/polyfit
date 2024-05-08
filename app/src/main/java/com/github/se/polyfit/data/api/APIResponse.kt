@@ -5,11 +5,11 @@ enum class APIResponse {
   FAILURE;
 
   companion object {
-    fun fromString(status: String): APIResponse {
+    fun fromString(status: String): APIResponse? {
       return when (status.lowercase()) {
         "success" -> SUCCESS
         "failure" -> FAILURE
-        else -> throw IllegalArgumentException("Invalid status: $status")
+        else -> null
       }
     }
   }

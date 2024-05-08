@@ -30,7 +30,6 @@ data class Meal(
   fun deepCopy(
       occasion: MealOccasion = this.occasion,
       name: String = this.name,
-      mealID: Long = this.mealID,
       mealTemp: Double = this.mealTemp,
       ingredients: MutableList<Ingredient> = this.ingredients,
       firebaseId: String = this.firebaseId,

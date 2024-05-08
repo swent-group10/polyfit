@@ -75,7 +75,7 @@ data class MealTag(var tagName: String, var tagColor: MealTagColor) {
         val tagColor = MealTagColor.fromArgb((data["tagColor"] as String).toInt())
 
         val mealTag = MealTag(tagName, tagColor)
-        if (!mealTag.isComplete()) {
+        require(mealTag.isComplete()) {
           throw IllegalArgumentException("MealTag object is incomplete")
         }
         mealTag

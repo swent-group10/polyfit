@@ -5,7 +5,6 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
-    id("org.sonarqube") version "4.4.1.3373"
     id("com.google.dagger.hilt.android")
     id("dagger.hilt.android.plugin")
     kotlin("kapt")
@@ -13,6 +12,7 @@ plugins {
     id("jacoco")
     id("kotlin-kapt")
     id("kotlin-android")
+    id("org.sonarqube") version "5.0.0.4638"
 
 
 }
