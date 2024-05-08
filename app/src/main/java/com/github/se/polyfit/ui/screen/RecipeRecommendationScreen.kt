@@ -5,6 +5,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
@@ -14,7 +16,10 @@ import com.github.se.polyfit.ui.components.recipe.RecipeCard
 
 @Composable
 fun RecipeRecommendationScreen(navController: NavHostController, recipes: List<Recipe>) {
-  GenericScreen(navController = navController, content = { recipeDisplay(recipes) })
+  GenericScreen(
+      navController = navController,
+      content = { recipeDisplay(recipes) },
+      modifier = Modifier.testTag("RecipeDisplay"))
 }
 
 @Composable
@@ -22,16 +27,16 @@ fun recipeDisplay(recipes: List<Recipe>) {
 
   LazyColumn(
       horizontalAlignment = Alignment.CenterHorizontally,
-  ) {
-    item {
-      Text(
-          text = "Recommenced Recipes",
-          style = MaterialTheme.typography.displaySmall,
-          fontWeight = FontWeight.Bold,
-      )
-    }
-    recipes.forEach { item { RecipeCard(recipe = it) } }
-  }
+      modifier = Modifier.testTag("RecipeList")) {
+        item {
+          Text(
+              text = "Recommended Recipes",
+              style = MaterialTheme.typography.displaySmall,
+              fontWeight = FontWeight.Bold,
+          )
+        }
+        recipes.forEach { item { RecipeCard(recipe = it) } }
+      }
 }
 
 @Composable
