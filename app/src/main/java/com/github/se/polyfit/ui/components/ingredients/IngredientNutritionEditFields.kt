@@ -66,11 +66,10 @@ fun IngredientNutritionEditFields(
                 keyboardActions =
                     KeyboardActions(
                         onDone = {
-                          try {
-                            text = removeLeadingZerosAndNonDigits(text)
-                            nutritionFields[index] = nutrient.copy(amount = text.toDouble())
-                            text = text.toDouble().toString()
-                          } catch (e: NumberFormatException) {}
+                          text =
+                              tryCatchBlock(index, nutritionFields, nutrient, text) { newText ->
+                                text = newText
+                              }
                         }),
                 value = text,
                 onValueChange = { newValue -> text = newValue },
@@ -79,12 +78,9 @@ fun IngredientNutritionEditFields(
                         .weight(0.5f)
                         .onFocusChanged { focusState ->
                           isFocused = focusState.isFocused
-                          if (!isFocused) { // When the TextField loses focus
-                            try {
-                              text = removeLeadingZerosAndNonDigits(text)
-                              nutritionFields[index] = nutrient.copy(amount = text.toDouble())
-                              text = text.toDouble().toString()
-                            } catch (e: NumberFormatException) {}
+                          handleFocusChange(isFocused, index, nutritionFields, nutrient, text) {
+                              newText ->
+                            text = newText
                           }
                         },
                 singleLine = true,
@@ -107,5 +103,36 @@ fun IngredientNutritionEditFields(
           }
       Spacer(modifier = Modifier.height(10.dp))
     }
+  }
+}
+
+private fun tryCatchBlock(
+    index: Int,
+    nutritionFields: MutableList<Nutrient>,
+    nutrient: Nutrient,
+    text: String,
+    updateText: (String) -> Unit
+): String {
+  var newText = text
+  try {
+    newText = removeLeadingZerosAndNonDigits(newText)
+    nutritionFields[index] = nutrient.copy(amount = newText.toDouble())
+    newText = newText.toDouble().toString()
+  } catch (_: NumberFormatException) {}
+
+  updateText(newText)
+  return newText
+}
+
+private fun handleFocusChange(
+    isFocused: Boolean,
+    index: Int,
+    nutritionFields: MutableList<Nutrient>,
+    nutrient: Nutrient,
+    text: String,
+    updateText: (String) -> Unit
+) {
+  if (!isFocused) { // Check if the TextField has lost focus
+    tryCatchBlock(index, nutritionFields, nutrient, text, updateText)
   }
 }
