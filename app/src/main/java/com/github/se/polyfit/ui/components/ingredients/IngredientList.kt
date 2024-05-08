@@ -74,7 +74,7 @@ fun IngredientList(
             mealViewModel,
             Modifier.fillMaxSize().padding(16.dp, 0.dp).testTag("NoIngredients"))
 
-        //TODO : Remove once code is validated
+        // TODO : Remove once code is validated
         /*
           if (ingredients.isEmpty() && potentialIngredients.isEmpty()) {
             Text(
