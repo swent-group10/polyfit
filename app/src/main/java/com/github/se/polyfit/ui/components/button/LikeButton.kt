@@ -30,7 +30,7 @@ fun LikeButton(
       onClick = { onLikeClicked },
       colors = ButtonDefaults.buttonColors(containerColor = Color.White),
       shape = RoundedCornerShape(20.dp),
-      enabled = true, // Set this to true
+      enabled = false, // Set this to true
       modifier = modifier.padding(horizontal = 25.dp, vertical = 8.dp).testTag("LikeButton")) {
         Icon(
             imageVector = Icons.Default.Favorite,
