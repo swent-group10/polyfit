@@ -1,5 +1,6 @@
 package com.github.se.polyfit.ui.components.ingredients
 
+import android.util.Log
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -38,8 +39,6 @@ fun IngredientNutritionEditFields(
     nutritionFields: MutableList<Nutrient> = mutableListOf()
 ) {
 
-  // TODO: add a way to enter more fields/type of nutritents
-
   LazyColumn(modifier = modifier.testTag("NutritionInfoContainer")) {
     itemsIndexed(nutritionFields) { index, nutrient ->
       var isFocused by remember { mutableStateOf(false) }
@@ -70,7 +69,9 @@ fun IngredientNutritionEditFields(
                             text = removeLeadingZerosAndNonDigits(text)
                             nutritionFields[index] = nutrient.copy(amount = text.toDouble())
                             text = text.toDouble().toString()
-                          } catch (e: NumberFormatException) {}
+                          } catch (e: NumberFormatException) {
+                            Log.e("IngredientNutritionEditFields", "NumberFormatException $e")
+                          }
                         }),
                 value = text,
                 onValueChange = { newValue -> text = newValue },
@@ -84,7 +85,9 @@ fun IngredientNutritionEditFields(
                               text = removeLeadingZerosAndNonDigits(text)
                               nutritionFields[index] = nutrient.copy(amount = text.toDouble())
                               text = text.toDouble().toString()
-                            } catch (e: NumberFormatException) {}
+                            } catch (e: NumberFormatException) {
+                              Log.e("IngredientNutritionEditFields", "NumberFormatException $e")
+                            }
                           }
                         },
                 singleLine = true,
@@ -94,8 +97,6 @@ fun IngredientNutritionEditFields(
                         unfocusedIndicatorColor = SecondaryGrey,
                         focusedContainerColor = Color.Transparent,
                         unfocusedContainerColor = Color.Transparent))
-
-            // TODO: in the future, make it possible to choose between different units
             Text(
                 text = nutrient.unit.toString().lowercase(),
                 style = TextStyle(fontSize = 18.sp),

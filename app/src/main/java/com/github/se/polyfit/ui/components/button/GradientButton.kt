@@ -49,34 +49,10 @@ fun GradientButton(
     round: Boolean = false,
     textBold: Boolean = false,
 ) {
-  val gradient =
-      if (active) {
-        Brush.horizontalGradient(colors = listOf(GradientButtonPurple, GradientButtonPink))
-      } else {
-        // colors must be of length 2
-        Brush.horizontalGradient(colors = listOf(GradientButtonGrey, GradientButtonGrey))
-      }
-
-  val textColor =
-      if (active) {
-        MaterialTheme.colorScheme.primary
-      } else {
-        MaterialTheme.colorScheme.secondary
-      }
-
-  val rounding =
-      if (round) {
-        RoundedCornerShape(50.dp)
-      } else {
-        RoundedCornerShape(20.dp)
-      }
-
-  val buttonModifier =
-      if (round) {
-        Modifier.size(48.dp)
-      } else {
-        Modifier
-      }
+  val gradient = getGradient(active)
+  val textColor = getTextColor(active)
+  val rounding = getRounding(round)
+  val buttonModifier = getButtonModifier(round)
 
   Box(contentAlignment = Alignment.Center, modifier = modifier.padding(4.dp)) {
     Canvas(modifier = Modifier.matchParentSize()) {
@@ -93,10 +69,10 @@ fun GradientButton(
           Row(
               verticalAlignment = Alignment.CenterVertically,
               horizontalArrangement = Arrangement.Center) {
-                if (icon != null) icon()
-                if (text != null) {
+                icon?.invoke()
+                text?.let {
                   Text(
-                      text = text,
+                      text = it,
                       color = textColor,
                       fontSize = TextUnit(16f, TextUnitType.Sp),
                       fontWeight = if (textBold) FontWeight.ExtraBold else FontWeight.Normal,
@@ -106,3 +82,33 @@ fun GradientButton(
         }
   }
 }
+
+fun getGradient(active: Boolean) =
+    if (active) {
+      Brush.horizontalGradient(colors = listOf(GradientButtonPurple, GradientButtonPink))
+    } else {
+      // colors must be of length 2
+      Brush.horizontalGradient(colors = listOf(GradientButtonGrey, GradientButtonGrey))
+    }
+
+@Composable
+fun getTextColor(active: Boolean) =
+    if (active) {
+      MaterialTheme.colorScheme.primary
+    } else {
+      MaterialTheme.colorScheme.secondary
+    }
+
+fun getRounding(round: Boolean) =
+    if (round) {
+      RoundedCornerShape(50.dp)
+    } else {
+      RoundedCornerShape(20.dp)
+    }
+
+fun getButtonModifier(round: Boolean) =
+    if (round) {
+      Modifier.size(48.dp)
+    } else {
+      Modifier
+    }

@@ -52,7 +52,7 @@ fun IngredientList(
   // TODO: Implement potential ingredients
   val potentialIngredients = listOf<Ingredient>()
 
-  val onAddIngredient = { index: Int -> Log.v("Add Ingredient", "Clicked") }
+  val onAddIngredient = { _: Int -> Log.v("Add Ingredient", "Clicked") }
   val initialSuggestions = 3
   val potentialIndex = remember {
     // equivalent to min(3, potentialIngredients.size)
