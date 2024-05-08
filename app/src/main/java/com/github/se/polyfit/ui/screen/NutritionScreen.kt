@@ -31,6 +31,7 @@ import com.github.se.polyfit.ui.components.nutrition.NutritionalInformation
 import com.github.se.polyfit.ui.theme.PrimaryPink
 import com.github.se.polyfit.ui.theme.PrimaryPurple
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
+import java.time.LocalDate
 
 @Composable
 fun NutritionScreen(
@@ -46,7 +47,8 @@ fun NutritionScreen(
         BottomBar(
             setMeal = mealViewModel::setMeal,
             isComplete = isComplete,
-            navigateForward = navigateForward)
+            navigateForward = navigateForward,
+            mealViewModel = mealViewModel)
       }) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) { NutritionalInformation(mealViewModel) }
       }
@@ -79,14 +81,26 @@ private fun TopBar(navigateBack: () -> Unit) {
 }
 
 @Composable
-private fun BottomBar(setMeal: () -> Unit, isComplete: Boolean, navigateForward: () -> Unit) {
+private fun BottomBar(
+    setMeal: () -> Unit,
+    isComplete: Boolean,
+    navigateForward: () -> Unit,
+    mealViewModel: MealViewModel
+) {
   BottomAppBar(
       modifier = Modifier.height(128.dp).testTag("BottomBar"), containerColor = Color.Transparent) {
         Column(
             modifier = Modifier.fillMaxWidth().testTag("ButtonColumn"),
             horizontalAlignment = Alignment.CenterHorizontally) {
               PrimaryButton(
-                  onClick = { Log.v("Add Recipe", "Clicked") },
+                  onClick = {
+                    Log.v("Add Recipe", "Clicked")
+                    navigateForward()
+                    // Set the date of the meal to the minimum value to set a default value
+                    // who will not be on the data we see.
+                    mealViewModel.updateMealData(createdAt = LocalDate.MIN)
+                    setMeal()
+                  },
                   modifier = Modifier.width(250.dp).testTag("AddRecipeButton"),
                   text = "Add Recipe",
                   fontSize = 18,
