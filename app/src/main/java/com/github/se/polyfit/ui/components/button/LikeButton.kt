@@ -16,13 +16,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
 fun LikeButton(
-    likesCount: Long,
+    likeCount: Long,
     modifier: Modifier = Modifier,
     onLikeClicked: (Boolean) -> Unit = {}
 ) {
@@ -39,18 +38,10 @@ fun LikeButton(
             modifier = Modifier.size(24.dp).testTag("LikeIcon"))
         Spacer(Modifier.width(4.dp))
         Text(
-            text = likesCount.toString(),
+            text = likeCount.toString(),
             color = Color.Black,
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.testTag("LikeCount"))
       }
-}
-
-@Preview
-@Composable
-fun PreviewCustomLikeButton() {
-  LikeButton(
-      likesCount = 6113,
-  )
 }

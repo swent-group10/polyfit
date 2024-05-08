@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import com.github.se.polyfit.model.recipe.Recipe
+import com.github.se.polyfit.ui.theme.Purple80
 
 @Composable
 fun BookmarkButton(
@@ -23,22 +24,22 @@ fun BookmarkButton(
     removeRecipe: (Recipe) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
-  var isClicked by remember { mutableStateOf(false) }
+  var isChecked by remember { mutableStateOf(false) }
   IconToggleButton(
-      checked = isClicked,
+      checked = isChecked,
       onCheckedChange = {
-        isClicked = !isClicked
-        if (isClicked) {
+        isChecked = !isChecked
+        if (isChecked) {
           addRecipe(recipe)
         } else {
           removeRecipe(recipe)
         }
       },
       modifier = modifier.testTag("BookmarkButton"),
-      colors = IconButtonDefaults.filledIconToggleButtonColors(containerColor = Color(0xFFE1BEE7)),
+      colors = IconButtonDefaults.filledIconToggleButtonColors(containerColor = Purple80),
   ) {
     Icon(
-        imageVector = if (isClicked) Icons.Default.Done else Icons.Default.Add,
+        imageVector = if (isChecked) Icons.Default.Done else Icons.Default.Add,
         contentDescription = "Bookmark Button",
         tint = Color.Red)
   }

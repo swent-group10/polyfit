@@ -21,7 +21,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -37,6 +36,7 @@ fun RecipeCard(
     onBookmarkClick: (Recipe) -> Unit = {},
     onBookmarkRemove: (Recipe) -> Unit = {}
 ) {
+
   Card(
       modifier =
           Modifier.height(200.dp)
@@ -73,10 +73,4 @@ fun RecipeCard(
               recipe, onBookmarkClick, onBookmarkRemove, Modifier.align(Alignment.BottomEnd))
         }
       }
-}
-
-@Preview
-@Composable
-fun preview() {
-  RecipeCard(recipe = Recipe.default())
 }

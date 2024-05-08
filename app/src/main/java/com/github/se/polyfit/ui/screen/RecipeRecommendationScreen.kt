@@ -6,10 +6,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
+import com.github.se.polyfit.R
 import com.github.se.polyfit.model.recipe.Recipe
 import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.components.recipe.RecipeCard
@@ -24,23 +26,18 @@ fun RecipeRecommendationScreen(navController: NavHostController, recipes: List<R
 
 @Composable
 fun recipeDisplay(recipes: List<Recipe>) {
+  val context = LocalContext.current
 
   LazyColumn(
       horizontalAlignment = Alignment.CenterHorizontally,
       modifier = Modifier.testTag("RecipeList")) {
         item {
           Text(
-              text = "Recommended Recipes",
+              text = ContextCompat.getString(context, R.string.recommendedRecipe),
               style = MaterialTheme.typography.displaySmall,
               fontWeight = FontWeight.Bold,
           )
         }
         recipes.forEach { item { RecipeCard(recipe = it) } }
       }
-}
-
-@Composable
-@Preview
-fun recipeDisplayPreview() {
-  recipeDisplay(recipes = listOf(Recipe.default(), Recipe.default()))
 }
