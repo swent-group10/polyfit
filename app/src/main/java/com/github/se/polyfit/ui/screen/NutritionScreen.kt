@@ -48,7 +48,7 @@ fun NutritionScreen(
             setMeal = mealViewModel::setMeal,
             isComplete = isComplete,
             navigateForward = navigateForward,
-            mealViewModel = mealViewModel)
+            updateMealData = mealViewModel::setMealCreatedAt)
       }) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) { NutritionalInformation(mealViewModel) }
       }
@@ -85,7 +85,7 @@ private fun BottomBar(
     setMeal: () -> Unit,
     isComplete: Boolean,
     navigateForward: () -> Unit,
-    mealViewModel: MealViewModel
+    updateMealData: (createdAt: LocalDate) -> Unit
 ) {
   BottomAppBar(
       modifier = Modifier.height(128.dp).testTag("BottomBar"), containerColor = Color.Transparent) {
@@ -98,7 +98,7 @@ private fun BottomBar(
                     navigateForward()
                     // Set the date of the meal to the minimum value to set a default value
                     // who will not be on the data we see.
-                    mealViewModel.updateMealData(createdAt = LocalDate.MIN)
+                    updateMealData(LocalDate.MIN)
                     setMeal()
                   },
                   modifier = Modifier.width(250.dp).testTag("AddRecipeButton"),
