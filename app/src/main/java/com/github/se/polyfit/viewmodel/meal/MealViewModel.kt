@@ -8,7 +8,6 @@ import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.model.meal.MealTag
-import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
 import javax.inject.Inject
@@ -62,20 +61,8 @@ class MealViewModel @Inject constructor(private val mealRepo: MealRepository) : 
       createdAt: LocalDate = _meal.value.createdAt,
       tags: MutableList<MealTag> = _meal.value.tags
   ) {
-    // When we make a new Meal, we add all the ingredient values into nutritionalInfo. If we pass
-    // existing values, then its double adding
-    val newNutritionalInformation = NutritionalInformation(mutableListOf())
     _meal.value =
-        Meal(
-            mealOccasion,
-            name,
-            mealID,
-            mealTemp,
-            newNutritionalInformation,
-            ingredients,
-            firebaseID,
-            createdAt,
-            tags)
+        Meal(mealOccasion, name, mealID, mealTemp, ingredients, firebaseID, createdAt, tags)
   }
 
   fun setMealCreatedAt(createdAt: LocalDate) {

@@ -56,7 +56,7 @@ class MealSelectorTest : TestCase() {
 
   @Test
   fun selectingMealReplacesSelector() {
-    val meal = Meal(MealOccasion.DINNER, "eggs", 1, 102.2, NutritionalInformation(mutableListOf()))
+    val meal = Meal(MealOccasion.DINNER, "eggs", 1, 102.2)
     meal.addIngredient(
         Ingredient(
             "milk",
@@ -90,7 +90,7 @@ class MealSelectorTest : TestCase() {
 
   @Test
   fun selectedMealIsDisplayed() {
-    val meal = Meal(MealOccasion.DINNER, "eggs", 1, 102.2, NutritionalInformation(mutableListOf()))
+    val meal = Meal(MealOccasion.DINNER, "eggs", 1, 102.2)
     meal.addIngredient(
         Ingredient(
             "milk",

@@ -2,7 +2,6 @@ package com.github.se.polyfit.data.remote.firebase
 
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
-import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -51,7 +50,6 @@ class MealFirebaseRepositoryTest {
             name = "Test Meal",
             occasion = MealOccasion.BREAKFAST,
             mealTemp = 20.0,
-            nutritionalInformation = NutritionalInformation(mutableListOf()),
             ingredients = mutableListOf(),
             firebaseId = "1")
     mealNoId =
@@ -60,7 +58,6 @@ class MealFirebaseRepositoryTest {
             name = "Test Meal",
             occasion = MealOccasion.BREAKFAST,
             mealTemp = 20.0,
-            nutritionalInformation = NutritionalInformation(mutableListOf()),
             ingredients = mutableListOf(),
             firebaseId = "")
   }

@@ -14,19 +14,17 @@ data class Meal(
     // represent the ideal temperature at which should be eaten at,
     // usefull for later features
     val mealTemp: Double = 20.0,
-    val nutritionalInformation: NutritionalInformation,
     val ingredients: MutableList<Ingredient> = mutableListOf(),
     var firebaseId: String = "",
     var createdAt: LocalDate = LocalDate.now(),
     val tags: MutableList<MealTag> = mutableListOf()
 ) {
+  var nutritionalInformation: NutritionalInformation = NutritionalInformation()
+
   init {
     require(mealID >= 0)
 
-    // TODO: https://github.com/swent-group10/polyfit/issues/177
-    if (nutritionalInformation.nutrients.isEmpty()) {
-      updateMeal()
-    }
+    updateMeal()
   }
 
   fun deepCopy(
@@ -41,14 +39,12 @@ data class Meal(
   ): Meal {
     val newIngredients = ingredients.map { it.deepCopy() }.toMutableList()
     val newTags = tags.map { it.copy() }.toMutableList()
-    val newNutritionalInformation = NutritionalInformation(mutableListOf())
 
     return Meal(
         occasion = occasion,
         name = name,
         mealID = mealID,
         mealTemp = mealTemp,
-        nutritionalInformation = newNutritionalInformation,
         ingredients = newIngredients,
         firebaseId = firebaseId,
         createdAt = createdAt,
@@ -121,12 +117,13 @@ data class Meal(
   }
 
   private fun updateMeal() {
-    var newNutritionalInformation = NutritionalInformation(mutableListOf())
+    var newNutritionalInformation = NutritionalInformation()
 
     for (ingredient in ingredients) {
       newNutritionalInformation += ingredient.nutritionalInformation
     }
-    nutritionalInformation.update(newNutritionalInformation)
+
+    nutritionalInformation = newNutritionalInformation
   }
 
   fun serialize(): Map<String, Any> {
@@ -141,8 +138,7 @@ data class Meal(
         this["occasion"] = data.occasion.name
         this["name"] = data.name
         this["mealTemp"] = data.mealTemp
-        this["nutritionalInformation"] =
-            NutritionalInformation.serialize(data.nutritionalInformation)
+        this["nutritionalInformation"] = listOf<Any>() // TODO: Remove after M2 Grading
         this["ingredients"] = data.ingredients.map { Ingredient.serialize(it) }
         this["createdAt"] = data.createdAt.toString()
         this["tags"] = data.tags.map { MealTag.serialize(it) }
@@ -155,11 +151,6 @@ data class Meal(
         val occasion = data["occasion"].let { MealOccasion.valueOf(it as String) }
         val mealTemp = data["mealTemp"] as Double
         val name = data["name"] as String
-
-        val nutritionalInformationData =
-            NutritionalInformation.deserialize(
-                data["nutritionalInformation"] as List<Map<String, Any>>)
-
         val createdAt = LocalDate.parse(data["createdAt"] as String)
         val tags =
             (data["tags"] as List<Map<String, Any>>).map { MealTag.deserialize(it) }.toMutableList()
@@ -170,7 +161,6 @@ data class Meal(
                 name = name,
                 mealID = mealID,
                 mealTemp = mealTemp,
-                nutritionalInformation = nutritionalInformationData,
                 createdAt = createdAt,
                 tags = tags)
 
@@ -189,15 +179,14 @@ data class Meal(
 
     fun default(): Meal {
       return Meal(
-          MealOccasion.OTHER,
-          "",
-          0,
-          20.0,
-          NutritionalInformation(mutableListOf()),
-          mutableListOf(),
-          "",
-          LocalDate.now(),
-          mutableListOf())
+          occasion = MealOccasion.OTHER,
+          name = "",
+          mealID = 0,
+          mealTemp = 20.0,
+          ingredients = mutableListOf(),
+          firebaseId = "",
+          createdAt = LocalDate.now(),
+          tags = mutableListOf())
     }
   }
 }

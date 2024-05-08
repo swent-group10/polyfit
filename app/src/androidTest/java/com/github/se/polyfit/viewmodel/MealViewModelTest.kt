@@ -41,12 +41,7 @@ class MealViewModelTest {
     val mealDao = mockk<MealDao>()
     val mealFirebaseRepository = mockk<MealFirebaseRepository>()
 
-    val meal =
-        Meal(
-            occasion = MealOccasion.OTHER,
-            name = "Test Meal",
-            mealID = 1,
-            nutritionalInformation = NutritionalInformation(mutableListOf()))
+    val meal = Meal(occasion = MealOccasion.OTHER, name = "Test Meal", mealID = 1)
 
     every { mealDao.getMealByFirebaseID(any()) } returns meal
     coEvery { mealRepo.getMealByFirebaseID(any()) } returns meal
@@ -115,12 +110,7 @@ class MealViewModelTest {
 
   @Test
   fun testSetMealWithIncompleteMealFails() {
-    val incompleteMeal =
-        Meal(
-            name = "Meal Name",
-            mealID = 123,
-            nutritionalInformation = NutritionalInformation(mutableListOf()),
-            occasion = MealOccasion.BREAKFAST)
+    val incompleteMeal = Meal(name = "Meal Name", mealID = 123, occasion = MealOccasion.BREAKFAST)
     viewModel.setMealData(incompleteMeal)
     assertFailsWith<Exception> { viewModel.setMeal() }
   }
@@ -131,13 +121,6 @@ class MealViewModelTest {
         Meal(
             name = "Meal Name",
             mealID = 123,
-            nutritionalInformation =
-                NutritionalInformation(
-                    mutableListOf(
-                        Nutrient(
-                            nutrientType = "calories",
-                            amount = 100.0,
-                            unit = MeasurementUnit.CAL))),
             ingredients =
                 mutableListOf(
                     Ingredient(
@@ -147,7 +130,7 @@ class MealViewModelTest {
                         unit = MeasurementUnit.G,
                         nutritionalInformation =
                             NutritionalInformation(
-                                mutableListOf(Nutrient("calories", 0.0, MeasurementUnit.CAL))))),
+                                mutableListOf(Nutrient("calories", 100.0, MeasurementUnit.CAL))))),
             occasion = MealOccasion.BREAKFAST)
     runBlockingTest { coEvery { mealRepo.storeMeal(any()) } returns null }
     viewModel.setMealData(completeMeal)
@@ -162,7 +145,6 @@ class MealViewModelTest {
         Meal(
             name = "Meal Name",
             mealID = 123,
-            nutritionalInformation = NutritionalInformation(mutableListOf()),
             ingredients =
                 mutableListOf(
                     Ingredient(
@@ -190,12 +172,6 @@ class MealViewModelTest {
             name = "Test Meal",
             occasion = MealOccasion.OTHER,
             mealTemp = 0.0,
-            nutritionalInformation =
-                NutritionalInformation(
-                    mutableListOf(
-                        Nutrient("calories", 0.0, MeasurementUnit.CAL),
-                        Nutrient("totalWeight", 0.0, MeasurementUnit.G),
-                    )),
             ingredients =
                 mutableListOf(
                     Ingredient(
@@ -203,6 +179,12 @@ class MealViewModelTest {
                         id = 1,
                         amount = 100.0,
                         unit = MeasurementUnit.G,
+                        nutritionalInformation =
+                            NutritionalInformation(
+                                mutableListOf(
+                                    Nutrient("calories", 0.0, MeasurementUnit.CAL),
+                                    Nutrient("totalWeight", 0.0, MeasurementUnit.G),
+                                )),
                     )))
 
     coEvery { mealRepo.getMealById(any()) } returns expectedMeal

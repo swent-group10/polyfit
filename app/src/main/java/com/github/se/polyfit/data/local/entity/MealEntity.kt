@@ -24,16 +24,7 @@ data class MealEntity(
 ) {
 
   fun toMeal(): Meal {
-    return Meal(
-        occasion,
-        name,
-        mealID,
-        mealTemp,
-        nutritionalInformation,
-        ingredients,
-        firebaseId,
-        createdAt,
-        tags)
+    return Meal(occasion, name, mealID, mealTemp, ingredients, firebaseId, createdAt, tags)
   }
 
   companion object {
