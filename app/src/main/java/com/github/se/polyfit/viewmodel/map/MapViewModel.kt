@@ -32,7 +32,13 @@ class MapViewModel(private val repository: PostFirebaseRepository = PostFirebase
   }
 
   fun setRadius(radius: Double) {
-    _radius.postValue(radius)
+      var radiusToSet : Double
+      if (radius < 0.0 ) {
+            radiusToSet = 0.0
+        } else {
+            radiusToSet = radius
+      }
+    _radius.postValue(radiusToSet)
   }
 
   fun setLocation(location: Location) {
