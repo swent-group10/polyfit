@@ -239,6 +239,15 @@ class SpoonacularApiCallerTest {
     assertEquals(Meal.default(), actualMeal!!)
   }
 
+  @Test
+  fun testWithLiveAPI() {
+    val spoonacularApiCaller = SpoonacularApiCaller()
+
+    val response = spoonacularApiCaller.recipeByIngredients(listOf("apples", "flour", "sugar"))
+
+    assertEquals(response, "")
+  }
+
   @After
   fun tearDown() {
     mockWebServer.shutdown()
