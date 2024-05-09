@@ -10,8 +10,8 @@ import com.github.se.polyfit.model.post.Post
 class MapViewModel(private val repository: PostFirebaseRepository = PostFirebaseRepository()) :
     ViewModel() {
 
-  private val _userLocation = MutableLiveData<Location>()
-  val userLocation: LiveData<Location> = _userLocation
+  private val _location = MutableLiveData<Location>()
+  val location: LiveData<Location> = _location
 
   private val _radius = MutableLiveData<Double>()
   val radius: LiveData<Double> = _radius
@@ -20,18 +20,22 @@ class MapViewModel(private val repository: PostFirebaseRepository = PostFirebase
   val posts: LiveData<List<Post>> = _posts
 
   init {
-    listenToPosts()
+    setRadius(5.0)
   }
 
-  private fun listenToPosts() {
+  fun listenToPosts() {
     repository.queryNearbyPosts(
-        centerLatitude = userLocation.value!!.latitude,
-        centerLongitude = userLocation.value!!.longitude,
+        centerLatitude = location.value!!.latitude,
+        centerLongitude = location.value!!.longitude,
         radiusInKm = radius.value!!,
         completion = { posts -> _posts.postValue(posts) })
   }
 
-    fun setRadius(radius: Double) {
-        _radius.value = radius
-    }
+  fun setRadius(radius: Double) {
+    _radius.postValue(radius)
+  }
+
+  fun setLocation(location: Location) {
+    _location.postValue(location)
+  }
 }
