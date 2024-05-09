@@ -37,6 +37,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -198,13 +199,15 @@ private fun callCamera(
 fun OverviewScreen(
     paddingValues: PaddingValues,
     navController: NavHostController,
-    overviewViewModel: OverviewViewModel = hiltViewModel()
+    overviewViewModel: OverviewViewModel = hiltViewModel(),
+    graphViewModel: GraphViewModel = hiltViewModel()
 ) {
 
   val context = LocalContext.current
   val navigation = Navigation(navController)
   var showPictureDialog by remember { mutableStateOf(false) }
   val isTestEnvironment = System.getProperty("isTestEnvironment") == "true"
+  val mealStates by overviewViewModel.getUserDailyStats().collectAsState()
 
   // State to hold the URI, the image and the bitmap
   var imageUri by remember { mutableStateOf<Uri?>(null) }
@@ -273,7 +276,7 @@ fun OverviewScreen(
         modifier = Modifier.testTag("OverviewScreenLazyColumn")) {
           item {
             Text(
-                text = context.getString(R.string.welcome_message),
+                text = context.getString(R.string.welcome_message, overviewViewModel.getUserInfo()),
                 fontSize = MaterialTheme.typography.titleLarge.fontSize,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,
@@ -282,11 +285,7 @@ fun OverviewScreen(
           item {
             MealTrackerCard(
                 caloriesGoal = 2200,
-                meals =
-                    listOf(
-                        Pair(MealOccasion.BREAKFAST, 300.0),
-                        Pair(MealOccasion.LUNCH, 456.0),
-                        Pair(MealOccasion.DINNER, 0.0)),
+                meals = mealStates,
                 onCreateMealFromPhoto = {
                   showPictureDialog = true
                   Log.d("OverviewScreen", "Photo button clicked")
@@ -360,8 +359,8 @@ fun OverviewScreen(
                                 modifier = Modifier.testTag("Overview Line Chart").fillMaxSize(),
                                 lineChartData =
                                     lineChartData(
-                                        hiltViewModel<GraphViewModel>().DataPoints(),
-                                        hiltViewModel<GraphViewModel>().DateList(),
+                                        graphViewModel.DataPoints(),
+                                        graphViewModel.DateList(),
                                         DisplayScreen.OVERVIEW))
                           } else {
                             Spacer(modifier = Modifier.fillMaxSize().testTag("LineChartSpacer"))

@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Polyfit</string>
     <string name="main_card_title">Calories Goal</string>
-    <string name="welcome_message">Welcome Back, User432!</string>
+    <string name="welcome_message">Welcome Back, %s!</string>
     <string name="meal_tracking_headline">Track your meals</string>
     <string name="take_picture_dialog">Take Picture</string>
     <string name="import_picture_dialog">Import Picture</string>
@@ -17,7 +17,7 @@
     <string name="signGoogle">"Sign in with Google"</string>
     <string name="graphScreenTitle">Calories Per Day</string>
     <string name="kcalvalue">%1$.1f kCal</string>
-    <string name= "weightvalue">%1$.1f lbs</string>
+    <string name="weightvalue">%1$.1f lbs</string>
     <string name="datevalue">%1$s</string>
     <string name="noPostAvailable">"Unfortunately there is no post\navailable around you"</string>
     <string name="description">"Description"</string>
