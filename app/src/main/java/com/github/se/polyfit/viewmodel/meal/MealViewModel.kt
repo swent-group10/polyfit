@@ -36,7 +36,7 @@ class MealViewModel @Inject constructor(private val mealRepo: MealRepository) : 
   }
 
   fun setMealData(mealId: String?) {
-    if (mealId == null) {
+    if (mealId.isNullOrEmpty()) {
       _meal.value = Meal.default()
       return
     }
@@ -54,13 +54,12 @@ class MealViewModel @Inject constructor(private val mealRepo: MealRepository) : 
   fun updateMealData(
       mealOccasion: MealOccasion = _meal.value.occasion,
       name: String = _meal.value.name,
-      id: String = _meal.value.id,
       mealTemp: Double = _meal.value.mealTemp,
       ingredients: MutableList<Ingredient> = _meal.value.ingredients,
       createdAt: LocalDate = _meal.value.createdAt,
       tags: MutableList<MealTag> = _meal.value.tags
   ) {
-    _meal.value = Meal(mealOccasion, name, id, mealTemp, ingredients, createdAt, tags)
+    _meal.value = Meal(mealOccasion, name, _meal.value.id, mealTemp, ingredients, createdAt, tags)
   }
 
   fun setMealCreatedAt(createdAt: LocalDate) {

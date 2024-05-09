@@ -83,7 +83,7 @@ class MealRepository(
     } else {
       isDataOutdated = true
     }
-    mealDao.deleteById(id)
+    withContext(dispatcher) { mealDao.deleteById(id) }
   }
 
   /** Returns a list of unique ingredients */
@@ -94,13 +94,11 @@ class MealRepository(
   private suspend fun updateFirebase() {
     withContext(dispatcher) {
       mealDao.getAllMeals().forEach {
-        if (it != null) {
-          try {
-            mealFirebaseRepository.storeMeal(it)
-          } catch (e: Exception) {
-            Log.e("MealRepository", "Failed to store meal: ${e.message}")
-            throw Exception("Failed to store meal: ${e.message}")
-          }
+        try {
+          mealFirebaseRepository.storeMeal(it)
+        } catch (e: Exception) {
+          Log.e("MealRepository", "Failed to store meal: ${e.message}")
+          throw Exception("Failed to store meal: ${e.message}")
         }
       }
     }

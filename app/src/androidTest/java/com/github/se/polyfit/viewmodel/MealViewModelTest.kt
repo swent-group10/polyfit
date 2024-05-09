@@ -39,14 +39,13 @@ class MealViewModelTest {
 
     val mealDao = mockk<MealDao>()
 
-    val meal = Meal(occasion = MealOccasion.OTHER, name = "Test Meal")
+    val meal = Meal(occasion = MealOccasion.OTHER, name = "Test Meal", id = "firebase123")
 
     every { mealDao.getMealById(any()) } returns meal
     coEvery { mealRepo.getMealById(any()) } returns meal
 
     viewModel = MealViewModel(mealRepo)
     viewModel.setMealData(meal)
-    viewModel.updateMealData(id = "firebase123")
   }
 
   @After
@@ -199,6 +198,26 @@ class MealViewModelTest {
     viewModel.setMealData(id)
 
     coVerify { mealRepo.getMealById(any()) }
+
+    // Since default meal returns different IDs
+    val default = Meal.default().copy(id = viewModel.meal.value.id)
+    assertThat(viewModel.meal.value, `is`(default))
+  }
+
+  @Test
+  fun setMealData_withEmptyId_givesDefaultMeal() = runTest {
+    val id = ""
+    viewModel.setMealData(id)
+
+    // Since default meal returns different IDs
+    val default = Meal.default().copy(id = viewModel.meal.value.id)
+    assertThat(viewModel.meal.value, `is`(default))
+  }
+
+  @Test
+  fun setMealData_withNullId_givesDefaultMeal() = runTest {
+    val id = null
+    viewModel.setMealData(id)
 
     // Since default meal returns different IDs
     val default = Meal.default().copy(id = viewModel.meal.value.id)
