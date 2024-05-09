@@ -37,15 +37,15 @@ class MapViewModelTest {
     assertEquals(expectedRadius, viewModel.radius.value)
   }
 
-    @Test
-    fun setNegativeRadius() = runTest {
-        val expectedRadius = 0.0
-        val negativeRadius = -1.0
+  @Test
+  fun setNegativeRadius() = runTest {
+    val expectedRadius = 0.0
+    val negativeRadius = -1.0
 
-        viewModel.setRadius(negativeRadius)
+    viewModel.setRadius(negativeRadius)
 
-        assertEquals(expectedRadius, viewModel.radius.value)
-    }
+    assertEquals(expectedRadius, viewModel.radius.value)
+  }
 
   @Test
   fun setLocationUpdatesRadiusLiveData() = runTest {
