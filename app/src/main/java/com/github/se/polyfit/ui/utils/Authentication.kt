@@ -6,10 +6,13 @@ import android.content.Intent
 import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.lifecycle.ViewModel
+import co.yml.charts.common.extensions.isNotNull
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
+import com.github.se.polyfit.data.remote.firebase.UserFirebaseRepository
 import com.github.se.polyfit.model.data.User
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -24,7 +27,11 @@ interface Authentication {
 @HiltViewModel
 class AuthenticationCloud
 @Inject
-constructor(private val context: Context, private val user: User) : ViewModel(), Authentication {
+constructor(
+    private val context: Context,
+    private val user: User,
+    private val userFirebaseRepository: UserFirebaseRepository
+) : ViewModel(), Authentication {
   private lateinit var signInLauncher: ActivityResultLauncher<Intent>
 
   override fun setSignInLauncher(launcher: ActivityResultLauncher<Intent>) {
@@ -48,13 +55,7 @@ constructor(private val context: Context, private val user: User) : ViewModel(),
     if (result.resultCode == Activity.RESULT_OK) {
       // to get google acount infos
       val account = GoogleSignIn.getLastSignedInAccount(context)
-
-      this.user.id = account?.id!!
-      this.user.displayName = account.displayName ?: ""
-      this.user.familyName = account.familyName ?: ""
-      this.user.givenName = account.givenName ?: ""
-      this.user.email = account.email!!
-      this.user.photoURL = account.photoUrl
+      setUserInfo(account)
 
       callback(true)
     } else {
@@ -63,6 +64,30 @@ constructor(private val context: Context, private val user: User) : ViewModel(),
         Log.e("LoginScreen", "Error in result firebase authentication: " + "${it.error?.errorCode}")
       }
       callback(false)
+    }
+  }
+
+  private fun setUserInfo(account: GoogleSignInAccount?) {
+    this.user.id = account?.id!!
+
+    userFirebaseRepository.getUser(this.user.id).addOnSuccessListener {
+      if (it.isNotNull()) {
+        Log.d("AuthenticationCloud", "User already exists, information loaded")
+        this.user.update(
+            email = it?.email!!,
+            displayName = it.displayName,
+            familyName = it.familyName,
+            givenName = it.givenName,
+            photoURL = it.photoURL)
+      } else {
+        this.user.update(
+            email = account.email!!,
+            displayName = account.displayName,
+            familyName = account.familyName,
+            givenName = account.givenName,
+            photoURL = account.photoUrl)
+        userFirebaseRepository.storeUser(this.user)
+      }
     }
   }
 }

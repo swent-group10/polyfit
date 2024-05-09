@@ -3,10 +3,12 @@ package com.github.se.polyfit.data.user
 import android.app.Activity
 import android.util.Log
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
+import com.github.se.polyfit.data.remote.firebase.UserFirebaseRepository
 import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.ui.utils.AuthenticationCloud
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.tasks.Task
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -22,6 +24,7 @@ class UserAuthTest {
   private lateinit var mockAccount: GoogleSignInAccount
   private lateinit var authCloud: AuthenticationCloud
   private val user: User = User()
+  private val mockUserFirebaseRepository = mockk<UserFirebaseRepository>(relaxed = true)
 
   @BeforeTest
   fun setup() {
@@ -38,12 +41,25 @@ class UserAuthTest {
     every { mockAccount.email } returns "test@example.com"
     every { mockAccount.photoUrl } returns null
 
+    val mockTask = mockk<Task<User?>>(null, relaxed = true)
+    every { mockUserFirebaseRepository.getUser(any()) } answers
+        {
+          user.id = "1"
+          user.displayName = "Test User"
+          user.familyName = "Test"
+          user.givenName = "User"
+          user.email = "test@example.com"
+          user.photoURL = null
+
+          mockTask
+        }
+
     // Mock the GoogleSignIn.getLastSignedInAccount(context) method
     mockkStatic(GoogleSignIn::class)
     every { GoogleSignIn.getLastSignedInAccount(any()) } returns mockAccount
 
     // Initialize AuthenticationCloud
-    authCloud = AuthenticationCloud(mockk(relaxed = true), user)
+    authCloud = AuthenticationCloud(mockk(relaxed = true), user, mockUserFirebaseRepository)
   }
 
   @AfterTest

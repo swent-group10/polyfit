@@ -129,4 +129,12 @@ class UserTest {
             "photoURL" to "null")
     assertFailsWith<Exception> { User.deserialize(map) }
   }
+
+  @Test
+  fun `User serialize and deserialize remains unchanged`() {
+    val user = User("1", "Test User", "Test", "User", " invalid email", null)
+    val map = User.serialize(user)
+    val deserializedUser = User.deserialize(map)
+    assertEquals(user, deserializedUser)
+  }
 }
