@@ -13,11 +13,14 @@ class RecipeRecommendationViewModel
 @Inject
 constructor(private val spoonacularApiCaller: SpoonacularApiCaller) : ViewModel() {
 
-  suspend fun recipeFromIngredients(): List<Recipe> {
+  suspend fun recipeFromIngredients(ingredients: List<String>): List<Recipe> {
     val recipesResponse =
-        withContext(Dispatchers.IO) {
-          spoonacularApiCaller.recipeByIngredients(listOf("apple", "banana"))
-        }
+        withContext(Dispatchers.IO) { spoonacularApiCaller.recipeByIngredients(ingredients) }
     return recipesResponse.recipes
+  }
+
+  // A mock for now while waiting to the QR code scanner implementation
+  fun ingredientList(): List<String> {
+    return listOf("apple", "banana")
   }
 }

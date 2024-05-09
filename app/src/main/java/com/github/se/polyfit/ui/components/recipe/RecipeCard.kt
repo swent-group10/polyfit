@@ -21,13 +21,16 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.github.se.polyfit.R
 import com.github.se.polyfit.model.recipe.Recipe
+import com.github.se.polyfit.model.recipe.RecipeInformation
 import com.github.se.polyfit.ui.components.button.BookmarkButton
 import com.github.se.polyfit.ui.components.button.LikeButton
+import java.net.URL
 
 @Composable
 fun RecipeCard(
@@ -73,8 +76,23 @@ fun RecipeImage(recipe: Recipe, onCardClick: (Recipe) -> Unit) {
               .data(recipe.imageUrl.toString())
               .crossfade(true)
               .build(),
-      placeholder = painterResource(R.drawable.food1),
+      placeholder = painterResource(R.drawable.logo),
       contentDescription = stringResource(R.string.description),
       contentScale = ContentScale.Crop,
       modifier = Modifier.fillMaxSize().clickable { onCardClick(recipe) }.testTag("RecipeImage"))
+}
+
+@Composable
+@Preview
+fun RecipeCardPreview() {
+  RecipeCard(
+      recipe =
+          Recipe(
+              id = 1,
+              title = "Recipe Title",
+              imageUrl = URL("https://www.themealdb.com/images/media/meals/llcbn01574260722.jpg"),
+              likes = 10,
+              missingIngredients = 2,
+              usedIngredients = 3,
+              recipeInformation = RecipeInformation.default()))
 }

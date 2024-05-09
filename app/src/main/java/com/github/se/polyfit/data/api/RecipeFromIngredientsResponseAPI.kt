@@ -5,9 +5,13 @@ import com.github.se.polyfit.model.recipe.RecipeInformation
 import java.net.URL
 import org.json.JSONArray
 
-data class RecipeFromIngredientsResponseAPI(val status: APIResponse, val recipes: List<Recipe>) {
+data class RecipeFromIngredientsResponseAPI(
+    val status: APIResponse,
+    val recipes: List<Recipe>,
+    val returnedCode: Int = 200
+) {
   companion object {
-    private fun faillure(): RecipeFromIngredientsResponseAPI {
+    fun faillure(): RecipeFromIngredientsResponseAPI {
       return RecipeFromIngredientsResponseAPI(status = APIResponse.FAILURE, recipes = emptyList())
     }
 

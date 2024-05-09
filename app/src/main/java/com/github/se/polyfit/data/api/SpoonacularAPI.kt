@@ -150,8 +150,8 @@ class SpoonacularApiCaller {
     return meal
   }
 
-  suspend fun recipeByIngredients(ingreredients: List<String>): RecipeFromIngredientsResponseAPI {
-    ingredientsParam = ingreredients.joinToString(ingredientSeparator)
+  fun recipeByIngredients(ingredients: List<String>): RecipeFromIngredientsResponseAPI {
+    ingredientsParam = ingredients.joinToString(ingredientSeparator)
     val request =
         Request.Builder()
             .url(API_URL + RECIPE_FROM_INGREDIENTS)
@@ -161,9 +161,14 @@ class SpoonacularApiCaller {
             .build()
 
     val response = client.newCall(request).execute()
-    val responseBody = response.body?.string() ?: ""
-    val jsonObject = JSONArray(responseBody)
 
-    return RecipeFromIngredientsResponseAPI.fromJsonObject(jsonObject)
+    return try {
+      val responseBody = response.body?.string() ?: ""
+      val jsonObject = JSONArray(responseBody)
+      RecipeFromIngredientsResponseAPI.fromJsonObject(jsonObject)
+    } catch (e: Exception) {
+      Log.e("SpoonacularApiCaller", "Error getting recipe from ingredients", e)
+      RecipeFromIngredientsResponseAPI.faillure()
+    }
   }
 }

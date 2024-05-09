@@ -37,7 +37,9 @@ fun recipeDisplay(recipesRec: RecipeRecommendationViewModel) {
   val context = LocalContext.current
 
   val recipes = remember { mutableStateOf(listOf<Recipe>()) }
-  LaunchedEffect(Unit) { recipes.value = recipesRec.recipeFromIngredients() }
+  LaunchedEffect(Unit) {
+    recipes.value = recipesRec.recipeFromIngredients(recipesRec.ingredientList())
+  }
 
   LazyColumn(
       horizontalAlignment = Alignment.CenterHorizontally,
