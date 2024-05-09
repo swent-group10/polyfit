@@ -32,4 +32,5 @@
     <string name="newPostTitle">"New Post"</string>
     <string name="newPostDescriptionPlaceholder">" What's on your mind today?"</string>
     <string name="postButton">"Post"</string>
+    <string name="signInFailed">"Sign in failed"</string>
 </resources>
