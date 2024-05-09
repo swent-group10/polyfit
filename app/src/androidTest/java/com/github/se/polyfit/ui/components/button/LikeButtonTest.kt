@@ -18,7 +18,7 @@ class LikeButtonTest {
 
   @Test
   fun testEverythingIsDisplayed() {
-    composeTestRule.setContent { LikeButton(likesCount = 14) }
+    composeTestRule.setContent { LikeButton(likeCount = 14) }
     composeTestRule.waitForIdle()
 
     ComposeScreen.onComposeScreen<LikeButtonScreen>(composeTestRule) {
