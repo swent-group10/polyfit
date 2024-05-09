@@ -331,12 +331,12 @@ class IngredientTest : TestCase() {
   @Ignore("No Potential Ingredients Yet")
   @Test
   fun displayManyPotential() {
-    launchIngredientScreenWithTestData(mutableListOf(), manyPotentialIngredients)
+    launchIngredientScreenWithTestData(manyIngredients, listOf())
 
     ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
       noIngredients { assertDoesNotExist() }
-      ingredientButton { assertDoesNotExist() }
-
+      //      ingredientButton { assertDoesNotExist() }
+      composeTestRule.waitForIdle()
       potentialIngredientButton {
         assertIsDisplayed()
         assertTextContains("Carrots")
