@@ -47,17 +47,7 @@ fun RecipeCard(
       shape = RoundedCornerShape(16.dp),
       elevation = CardDefaults.cardElevation(4.dp)) {
         Box(modifier = Modifier.fillMaxSize()) {
-          AsyncImage(
-              model =
-                  ImageRequest.Builder(LocalContext.current)
-                      .data(recipe.imageUrl.toString())
-                      .crossfade(true)
-                      .build(),
-              placeholder = painterResource(R.drawable.food1),
-              contentDescription = stringResource(R.string.description),
-              contentScale = ContentScale.Crop,
-              modifier =
-                  Modifier.fillMaxSize().clickable { onCardClick(recipe) }.testTag("RecipeImage"))
+          RecipeImage(recipe, onCardClick)
 
           Text(
               text = recipe.title,
@@ -73,4 +63,18 @@ fun RecipeCard(
               recipe, onBookmarkClick, onBookmarkRemove, Modifier.align(Alignment.BottomEnd))
         }
       }
+}
+
+@Composable
+fun RecipeImage(recipe: Recipe, onCardClick: (Recipe) -> Unit) {
+  AsyncImage(
+      model =
+          ImageRequest.Builder(LocalContext.current)
+              .data(recipe.imageUrl.toString())
+              .crossfade(true)
+              .build(),
+      placeholder = painterResource(R.drawable.food1),
+      contentDescription = stringResource(R.string.description),
+      contentScale = ContentScale.Crop,
+      modifier = Modifier.fillMaxSize().clickable { onCardClick(recipe) }.testTag("RecipeImage"))
 }
