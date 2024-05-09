@@ -8,6 +8,7 @@ import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import io.mockk.every
 import io.mockk.mockkStatic
 import java.time.LocalDate
+import java.util.UUID
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 import org.junit.Assert.assertEquals
@@ -24,7 +25,7 @@ class MealTest {
 
   @Test
   fun `Meal addIngredient should update meal`() {
-    val meal = Meal(MealOccasion.DINNER, "eggs", 1, 102.2)
+    val meal = Meal(MealOccasion.DINNER, name = "eggs", mealTemp = 102.2)
     val newNutritionalInformation =
         NutritionalInformation(mutableListOf(Nutrient("calcium", 1.0, MeasurementUnit.G)))
 
@@ -39,13 +40,12 @@ class MealTest {
     val meal =
         Meal(
             MealOccasion.DINNER,
-            "eggs",
-            1.toLong(),
-            102.2,
+            name = "eggs",
+            mealTemp = 102.2,
             createdAt = LocalDate.parse("2021-01-01"),
             tags = mutableListOf(MealTag("name of tag", MealTagColor.BLUE)))
     val serializedMeal = Meal.serialize(meal)
-    assertEquals(1.toLong(), serializedMeal["mealID"])
+    assertEquals(meal.id, serializedMeal["id"])
     assertEquals(MealOccasion.DINNER.name, serializedMeal["occasion"])
     assertEquals("eggs", serializedMeal["name"])
     assertEquals(102.2, serializedMeal["mealTemp"])
@@ -59,7 +59,7 @@ class MealTest {
   fun `Meal deserialize should return null if data is incorrect`() {
     val data =
         mapOf(
-            "mealID" to 1,
+            "id" to UUID.randomUUID(),
             "occasion" to "DINNER",
             "name" to "eggs",
             "mealTemp" to "wrongValue",
@@ -70,9 +70,10 @@ class MealTest {
 
   @Test
   fun `Meal deserialize should return meal if data is correct`() {
+    val uuid = UUID.randomUUID().toString()
     val data =
         mapOf(
-            "mealID" to 1.toLong(),
+            "id" to uuid,
             "occasion" to "DINNER",
             "name" to "eggs",
             "mealTemp" to 102.2,
@@ -80,7 +81,7 @@ class MealTest {
             "tags" to mutableListOf(MealTag("name of tag", MealTagColor.BLUE).serialize()))
     val meal = Meal.deserialize(data)
     assertNotNull(meal)
-    assertEquals(1.toLong(), meal.mealID)
+    assertEquals(uuid, meal.id)
     assertEquals(MealOccasion.DINNER, meal.occasion)
     assertEquals("eggs", meal.name)
     assertEquals(102.2, meal.mealTemp, 0.001)
@@ -93,7 +94,7 @@ class MealTest {
   fun `testing deserialize with Firebase type`() {
     val data: Map<String, Any> =
         mapOf(
-            "mealID" to 1.toLong(),
+            "id" to UUID.randomUUID().toString(),
             "occasion" to "DINNER",
             "name" to "eggs",
             "mealTemp" to 102.2,
@@ -111,7 +112,6 @@ class MealTest {
         Meal(
             MealOccasion.DINNER,
             name = "",
-            mealID = 1,
             mealTemp = 102.2,
             ingredients = mutableListOf(Ingredient("milk", 1, 102.0, MeasurementUnit.MG)))
 
@@ -121,12 +121,7 @@ class MealTest {
   @Test
   fun `meal without ingredients is incomplete`() {
     val meal =
-        Meal(
-            MealOccasion.DINNER,
-            name = "eggs",
-            mealID = 1,
-            mealTemp = 102.2,
-            ingredients = mutableListOf())
+        Meal(MealOccasion.DINNER, name = "eggs", mealTemp = 102.2, ingredients = mutableListOf())
 
     assertEquals(false, meal.isComplete())
   }
@@ -137,7 +132,6 @@ class MealTest {
         Meal(
             MealOccasion.DINNER,
             name = "eggs",
-            mealID = 1,
             mealTemp = 102.2,
             ingredients = mutableListOf(Ingredient("milk", 1, 102.0, MeasurementUnit.MG)))
 
@@ -150,7 +144,6 @@ class MealTest {
         Meal(
             MealOccasion.DINNER,
             name = "eggs",
-            mealID = 1,
             mealTemp = 102.2,
             ingredients =
                 mutableListOf(
@@ -171,7 +164,6 @@ class MealTest {
         Meal(
             MealOccasion.DINNER,
             name = "eggs",
-            mealID = 1,
             mealTemp = 102.2,
             ingredients =
                 mutableListOf(
@@ -194,7 +186,6 @@ class MealTest {
         Meal(
             MealOccasion.DINNER,
             name = "eggs",
-            mealID = 1,
             mealTemp = 102.2,
             ingredients =
                 mutableListOf(

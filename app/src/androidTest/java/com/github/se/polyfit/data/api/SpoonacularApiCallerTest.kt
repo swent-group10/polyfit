@@ -217,7 +217,8 @@ class SpoonacularApiCallerTest {
     }
 
     // Assert
-    assertEquals(Meal.default(), actualMeal!!)
+    val expected = Meal.default().deepCopy(id = actualMeal.id)
+    assertEquals(expected, actualMeal)
   }
 
   @Test
@@ -236,7 +237,8 @@ class SpoonacularApiCallerTest {
     }
 
     // Assert
-    assertEquals(Meal.default(), actualMeal!!)
+    val expected = Meal.default().deepCopy(id = actualMeal.id)
+    assertEquals(expected, actualMeal)
   }
 
   @After

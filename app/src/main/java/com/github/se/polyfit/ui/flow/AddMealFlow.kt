@@ -16,7 +16,7 @@ import com.github.se.polyfit.viewmodel.meal.MealViewModel
 fun AddMealFlow(
     goBack: () -> Unit,
     navigateToHome: () -> Unit,
-    mealId: Long? = null,
+    mealId: String? = null,
     mealViewModel: MealViewModel = hiltViewModel<MealViewModel>(),
 ) {
   val navController = rememberNavController()
