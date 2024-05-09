@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity() {
 
           composable(Route.Register) { LoginScreen(navigation::navigateToHome) }
           composable(Route.AddMeal + "/{mId}") { backStackEntry ->
-            val mealId = backStackEntry.arguments?.getString("mId")?.toLong()
+            val mealId = backStackEntry.arguments?.getString("mId")
             AddMealFlow(
                 goBack = navigation::goBack,
                 navigateToHome = navigation::navigateToHome,

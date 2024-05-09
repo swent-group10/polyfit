@@ -1,5 +1,6 @@
 package com.github.se.polyfit.viewmodel.dailyRecap
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.se.polyfit.data.repository.MealRepository
@@ -32,6 +33,7 @@ class DailyRecapViewModel @Inject constructor(private val mealRepository: MealRe
 
       val newMeals = mealRepository.getMealsOnDate(date).filter { it.isComplete() }
       withContext(Dispatchers.Main) {
+        Log.v("new meals", newMeals.toString())
         _meals.value = newMeals
       } // FYI: UI updates only on Main Thread
 

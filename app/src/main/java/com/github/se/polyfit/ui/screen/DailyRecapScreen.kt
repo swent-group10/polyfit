@@ -24,14 +24,12 @@ import com.github.se.polyfit.ui.components.list.MealList
 import com.github.se.polyfit.ui.components.scaffold.SimpleTopBar
 import com.github.se.polyfit.ui.components.selector.DateSelector
 import com.github.se.polyfit.viewmodel.dailyRecap.DailyRecapViewModel
-import com.github.se.polyfit.viewmodel.meal.MealViewModel
 
 @Composable
 fun DailyRecapScreen(
     navigateBack: () -> Unit,
-    navigateTo: () -> Unit,
+    navigateTo: (String?) -> Unit,
     dailyRecapViewModel: DailyRecapViewModel = hiltViewModel(),
-    mealViewModel: MealViewModel = hiltViewModel() // TODO: Remove when stop reusing mealviewmodel
 ) {
   val context = LocalContext.current
   val meals by dailyRecapViewModel.meals.collectAsState()
@@ -54,8 +52,7 @@ fun DailyRecapScreen(
                 meals = meals,
                 occasion = occasion,
                 navigateTo = navigateTo,
-                modifier = Modifier.padding(0.dp, 8.dp),
-                mealViewModel = mealViewModel)
+                modifier = Modifier.padding(0.dp, 8.dp))
           }
         }
       } else {

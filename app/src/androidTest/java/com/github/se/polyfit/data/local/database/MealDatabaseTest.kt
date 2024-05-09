@@ -42,7 +42,7 @@ class MealDatabaseTest {
         MealEntity(
             occasion = MealOccasion.BREAKFAST,
             name = "Oatmeal",
-            mealID = 1,
+            id = "TestId",
             mealTemp = 20.0,
             nutritionalInformation =
                 NutritionalInformation(
@@ -56,7 +56,6 @@ class MealDatabaseTest {
                 mutableListOf(
                     Ingredient("Oats", 12, 192.2, MeasurementUnit.G),
                     Ingredient("Milk", 200, 12.0, MeasurementUnit.ML)),
-            firebaseId = "1",
             createdAt = nowTime,
             tags = mutableListOf()))
 
@@ -76,29 +75,6 @@ class MealDatabaseTest {
   }
 
   @Test
-  fun testOneMealDelete() {
-    mealDao.deleteAll()
-
-    mealDao.insert(Meal.default().apply { firebaseId = "aer1" })
-    mealDao.insert(Meal.default())
-
-    mealDao.deleteByFirebaseID("aer1")
-
-    assertEquals(mealDao.getAllMeals().size, 1)
-  }
-
-  @Test
-  fun getMealByFirebaseID() {
-    mealDao.deleteAll()
-    val meal = Meal.default().apply { firebaseId = "aer1" }
-    mealDao.insert(meal)
-
-    val mealFromDB = mealDao.getMealByFirebaseID("aer1")
-
-    assertEquals(meal, mealFromDB)
-  }
-
-  @Test
   fun getAllIngredients() {
     val ingredientList =
         mutableListOf(
@@ -109,10 +85,9 @@ class MealDatabaseTest {
         Meal(
             name = "Oatmeal",
             occasion = MealOccasion.BREAKFAST,
-            mealID = 1,
+            id = "TestId",
             mealTemp = 20.0,
             ingredients = ingredientList,
-            firebaseId = "1",
             createdAt = LocalDate.now())
     mealDao.insert(MealEntity.toMealEntity(meal))
 
@@ -151,7 +126,7 @@ class MealDatabaseTest {
     mealDao.deleteAll()
     val meal = createMeal("Oatmeal", "1", LocalDate.now())
     val id = mealDao.insert(meal)
-    val mealFromDB = mealDao.getMealByDatabaseID(id)
+    val mealFromDB = mealDao.getMealById(id)
     assertEquals(meal, mealFromDB)
   }
 
@@ -160,16 +135,16 @@ class MealDatabaseTest {
     mealDao.deleteAll()
     val meal = createMeal("Oatmeal", "1", LocalDate.now())
     val id = mealDao.insert(meal)
-    mealDao.deleteByDatabaseID(id)
-    val mealFromDB = mealDao.getMealByDatabaseID(id)
+    mealDao.deleteById(id)
+    val mealFromDB = mealDao.getMealById(id)
     assertEquals(null, mealFromDB)
   }
 
-  private fun createMeal(name: String, firebaseId: String, createdAt: LocalDate): Meal {
+  private fun createMeal(name: String, id: String, createdAt: LocalDate): Meal {
     return Meal(
         name = name,
         occasion = MealOccasion.BREAKFAST,
-        mealID = 1,
+        id = id,
         mealTemp = 20.0,
         ingredients =
             mutableListOf(
@@ -185,7 +160,6 @@ class MealDatabaseTest {
                             Nutrient("carbs", 20.0, MeasurementUnit.G),
                             Nutrient("fat", 5.0, MeasurementUnit.ML)))),
                 Ingredient("Milk", 200, 12.0, MeasurementUnit.ML)),
-        firebaseId = firebaseId,
         createdAt = createdAt)
   }
 
