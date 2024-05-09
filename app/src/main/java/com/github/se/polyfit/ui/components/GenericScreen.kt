@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -15,10 +16,15 @@ import com.github.se.polyfit.ui.components.scaffold.BottomNavigationBar
 import com.github.se.polyfit.ui.navigation.Route
 
 @Composable
-fun GenericScreen(navController: NavHostController, content: @Composable (PaddingValues) -> Unit) {
+fun GenericScreen(
+    navController: NavHostController,
+    content: @Composable (PaddingValues) -> Unit,
+    modifier: Modifier = Modifier,
+) {
   val context: Context = LocalContext.current
   val stackEntry by navController.currentBackStackEntryAsState()
   Scaffold(
+      modifier = modifier,
       topBar = { AppTitle() },
       bottomBar = {
         BottomNavigationBar(
