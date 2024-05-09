@@ -150,7 +150,7 @@ class SpoonacularApiCaller {
     return meal
   }
 
-  fun recipeByIngredients(ingreredients: List<String>): RecipeFromIngredientsResponseAPI {
+  suspend fun recipeByIngredients(ingreredients: List<String>): RecipeFromIngredientsResponseAPI {
     ingredientsParam = ingreredients.joinToString(ingredientSeparator)
     val request =
         Request.Builder()

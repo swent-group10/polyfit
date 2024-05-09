@@ -20,6 +20,7 @@ import com.github.se.polyfit.ui.screen.FullGraphScreen
 import com.github.se.polyfit.ui.screen.LoginScreen
 import com.github.se.polyfit.ui.screen.OverviewScreen
 import com.github.se.polyfit.ui.screen.PostInfoScreen
+import com.github.se.polyfit.ui.screen.RecipeRecommendationScreen
 import com.github.se.polyfit.ui.theme.PolyfitTheme
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
@@ -45,7 +46,7 @@ class MainActivity : ComponentActivity() {
       PolyfitTheme {
         val navController = rememberNavController()
         val navigation = Navigation(navController)
-        NavHost(navController = navController, startDestination = Route.Register) {
+        NavHost(navController = navController, startDestination = Route.RecipeRecommendation) {
           composable(Route.Graph) { FullGraphScreen(goBack = navigation::goBack) }
           composable(Route.Home) {
             GenericScreen(
@@ -75,6 +76,10 @@ class MainActivity : ComponentActivity() {
                 navigateBack = navigation::goBack, navigateTo = navigation::navigateToAddMeal)
           }
           composable(Route.AddMeal) { AddMealFlow(navigation::goBack, navigation::navigateToHome) }
+
+          composable(Route.RecipeRecommendation) {
+            RecipeRecommendationScreen(navController = navController)
+          }
         }
       }
     }
