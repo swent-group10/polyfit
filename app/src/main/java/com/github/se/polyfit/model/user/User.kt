@@ -29,6 +29,16 @@ data class User(
     return serialize(this)
   }
 
+  fun update(user: User) {
+    update(
+        id = user.id,
+        displayName = user.displayName,
+        familyName = user.familyName,
+        givenName = user.givenName,
+        email = user.email,
+        photoURL = user.photoURL)
+  }
+
   fun update(
       id: String = this.id,
       displayName: String? = this.displayName,
@@ -64,7 +74,8 @@ data class User(
             familyName = map["familyName"] as String,
             givenName = map["givenName"] as String,
             email = map["email"] as String,
-            photoURL = Uri.parse(map["photoURL"] as String))
+            photoURL =
+                if (map["photoURL"] != "null") Uri.parse(map["photoURL"] as String) else null)
       } catch (e: Exception) {
         Log.e("User", "Error deserializing user", e)
         throw IllegalArgumentException("Error deserializing user : $e")

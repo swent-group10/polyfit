@@ -62,7 +62,7 @@ class MealInputTextFieldTest : TestCase() {
 
   @Test
   fun mealsDisplayWhenSearched() {
-    val meal = Meal(MealOccasion.DINNER, "eggs", 1, 102.2)
+    val meal = Meal(MealOccasion.DINNER, "eggs", "1", 102.2)
     meal.addIngredient(
         Ingredient(
             "milk",

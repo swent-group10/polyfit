@@ -55,7 +55,6 @@ class NutritionalInfoTest : TestCase() {
   private val meal =
       Meal(
           name = "Steak and frites",
-          mealID = 1,
           ingredients =
               mutableListOf(
                   Ingredient(
