@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -29,70 +30,48 @@ import com.github.se.polyfit.viewmodel.post.ViewPostViewModel
 fun PostInfoScreen(
     posts: List<Post> = listOf(),
     index: Int = 0,
-    viewPostViewModel: ViewPostViewModel = hiltViewModel()
+    viewPostViewModel: ViewPostViewModel = hiltViewModel(),
+    navigateToCreatePost: () -> Unit
 ) {
-  val posts by viewPostViewModel.posts.collectAsState(posts)
-  val isFetching by viewPostViewModel.isFetching.collectAsState()
+    val posts by viewPostViewModel.posts.collectAsState(posts)
+    val isFetching by viewPostViewModel.isFetching.collectAsState()
 
-  if (isFetching) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-      CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+    Scaffold {
+
+        if (isFetching) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(it),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+            }
+            return@Scaffold
+        }
+        if (posts.isEmpty()) {
+            NoPost()
+            return@Scaffold
+        }
+
+        LazyColumn(
+            state = rememberLazyListState(index),
+        ) {
+            items(posts) { post -> PostCard(post = post) }
+        }
     }
-    return
-  }
-  if (posts.isEmpty()) {
-    NoPost()
-    return
-  }
-
-  LazyColumn(
-      state = rememberLazyListState(index),
-  ) {
-    items(posts) { post -> PostCard(post = post) }
-  }
 }
 
 @Composable
 private fun NoPost() {
-  Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-    Text(
-        text = ContextCompat.getString(LocalContext.current, R.string.noPostAvailable),
-        textAlign = TextAlign.Center,
-        style = MaterialTheme.typography.bodyLarge,
-        modifier = Modifier.testTag("NoPostText"))
-  }
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text(
+            text = ContextCompat.getString(LocalContext.current, R.string.noPostAvailable),
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.testTag("NoPostText")
+        )
+    }
 }
 
-/*
-@Preview
-@Composable
-fun CarouselPreview() {
-  val post = Post.default()
-  post.meal.addIngredient(
-      Ingredient(
-          "ingredient1",
-          100,
-          100.0,
-          MeasurementUnit.G,
-          NutritionalInformation(
-              mutableListOf(
-                  Nutrient("Protein", 12.0, MeasurementUnit.G),
-                  Nutrient("Carbohydrates", 21.50, MeasurementUnit.G),
-                  Nutrient("Fats", 25.0, MeasurementUnit.G),
-                  Nutrient("Vitamins", 40.0, MeasurementUnit.G),
-              ))
-      )
-  )
-  post.description = "Meal of the day, with a lot of nutrients and vitamins"
-  val posts = listOf(post, post, post, post, post, post, post, post, post)
 
-  PostInfoScreen(posts, 2)
-}
-
-@Preview
-@Composable
-fun NoPostPreview() {
-  val posts = listOf<Post>()
-  PostInfoScreen(posts)
-}
-*/
