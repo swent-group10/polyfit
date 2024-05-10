@@ -68,7 +68,13 @@ constructor(
   }
 
   private fun setUserInfo(account: GoogleSignInAccount?) {
-    this.user.id = account?.id!!
+    this.user.update(
+        id = account?.id!!,
+        email = account.email!!,
+        displayName = account.displayName,
+        familyName = account.familyName,
+        givenName = account.givenName,
+        photoURL = account.photoUrl)
 
     userFirebaseRepository.getUser(this.user.id).addOnSuccessListener {
       if (it.isNotNull()) {
@@ -80,12 +86,6 @@ constructor(
             givenName = it.givenName,
             photoURL = it.photoURL)
       } else {
-        this.user.update(
-            email = account.email!!,
-            displayName = account.displayName,
-            familyName = account.familyName,
-            givenName = account.givenName,
-            photoURL = account.photoUrl)
         userFirebaseRepository.storeUser(this.user)
       }
     }

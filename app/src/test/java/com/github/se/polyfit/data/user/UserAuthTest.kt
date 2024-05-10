@@ -8,7 +8,6 @@ import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.ui.utils.AuthenticationCloud
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.tasks.Task
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -40,19 +39,6 @@ class UserAuthTest {
     every { mockAccount.givenName } returns "User"
     every { mockAccount.email } returns "test@example.com"
     every { mockAccount.photoUrl } returns null
-
-    val mockTask = mockk<Task<User?>>(null, relaxed = true)
-    every { mockUserFirebaseRepository.getUser(any()) } answers
-        {
-          user.id = "1"
-          user.displayName = "Test User"
-          user.familyName = "Test"
-          user.givenName = "User"
-          user.email = "test@example.com"
-          user.photoURL = null
-
-          mockTask
-        }
 
     // Mock the GoogleSignIn.getLastSignedInAccount(context) method
     mockkStatic(GoogleSignIn::class)
