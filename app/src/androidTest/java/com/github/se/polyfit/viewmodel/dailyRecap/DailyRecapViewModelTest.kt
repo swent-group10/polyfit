@@ -37,7 +37,6 @@ class DailyRecapViewModelTest {
 
   private val testMeal =
       Meal(
-          mealID = 1,
           name = "Meal 1",
           ingredients =
               mutableListOf(
