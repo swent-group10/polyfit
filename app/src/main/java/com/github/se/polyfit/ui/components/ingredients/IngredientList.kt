@@ -128,7 +128,6 @@ private fun IngredientListContent(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun DisplayIngredients(ingredients: List<Ingredient>, mealViewModel: MealViewModel) {
-
   FlowRow(horizontalArrangement = Arrangement.Start, verticalArrangement = Arrangement.Top) {
     ingredients.forEach { ingredient -> IngredientButton(ingredient, mealViewModel) }
   }

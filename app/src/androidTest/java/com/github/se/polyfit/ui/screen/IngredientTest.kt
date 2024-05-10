@@ -32,7 +32,6 @@ import io.mockk.verify
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -298,129 +297,6 @@ class IngredientTest : TestCase() {
       composeTestRule.onNodeWithTag("DeleteIngredientButton").assertIsDisplayed().performClick()
 
       composeTestRule.onAllNodesWithTag("Ingredient").assertCountEquals(4)
-    }
-  }
-
-  @Ignore("No Potential Ingredients Yet")
-  @Test
-  fun displayOnePotential() {
-    launchIngredientScreenWithTestData(mutableListOf(), fewPotentialIngredients)
-
-    ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
-      potentialIngredientButton {
-        assertIsDisplayed()
-        assertTextContains("Carrots")
-        assertContentDescriptionEquals("Add Carrots")
-        assertHasClickAction()
-      }
-
-      morePotentialIngredientsButton { assertDoesNotExist() }
-      ingredientButton { assertDoesNotExist() }
-      noIngredients { assertDoesNotExist() }
-
-      composeTestRule
-          .onAllNodesWithTag("PotentialIngredient")
-          .assertCountEquals(fewPotentialIngredients.size)
-    }
-  }
-
-  @Ignore("No Potential Ingredients Yet")
-  @Test
-  fun displayManyPotential() {
-    launchIngredientScreenWithTestData(manyIngredients, listOf())
-
-    ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
-      noIngredients { assertDoesNotExist() }
-      //      ingredientButton { assertDoesNotExist() }
-      composeTestRule.waitForIdle()
-      potentialIngredientButton {
-        assertIsDisplayed()
-        assertTextContains("Carrots")
-        assertHasClickAction()
-      }
-
-      morePotentialIngredientsButton {
-        assertIsDisplayed()
-        assertHasClickAction()
-        assertContentDescriptionEquals("More Options")
-      }
-
-      composeTestRule.onAllNodesWithTag("PotentialIngredient").assertCountEquals(3)
-    }
-  }
-
-  @Ignore("No Potential Ingredients Yet")
-  @Test
-  fun displayAll() {
-    launchIngredientScreenWithTestData(manyIngredients, manyPotentialIngredients)
-
-    ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
-      noIngredients { assertDoesNotExist() }
-
-      ingredientButton {
-        assertIsDisplayed()
-        assertTextContains("Olive Oil 5.0ML")
-        assertHasClickAction()
-      }
-
-      potentialIngredientButton {
-        assertIsDisplayed()
-        assertTextContains("Carrots")
-        assertHasClickAction()
-      }
-
-      morePotentialIngredientsButton {
-        assertIsDisplayed()
-        assertHasClickAction()
-      }
-
-      composeTestRule.onAllNodesWithTag("Ingredient").assertCountEquals(manyIngredients.size)
-      composeTestRule.onAllNodesWithTag("PotentialIngredient").assertCountEquals(3)
-    }
-  }
-
-  @Ignore("No Potential Ingredients Yet")
-  @Test
-  fun addPotentialIngredient() {
-    launchIngredientScreenWithTestData(mutableListOf(), fewPotentialIngredients)
-
-    ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
-      ingredientButton { assertDoesNotExist() }
-
-      potentialIngredientButton {
-        assertIsDisplayed()
-        assertTextContains("Carrots")
-        assertHasClickAction()
-        performClick()
-      }
-
-      ingredientButton {
-        assertIsDisplayed()
-        assertTextContains("Carrots 100.0G")
-      }
-
-      potentialIngredientButton { assertDoesNotExist() }
-    }
-  }
-
-  @Ignore("No Potential Ingredients Yet")
-  @Test
-  fun expandPotentialIngredients() {
-    launchIngredientScreenWithTestData(mutableListOf(), manyPotentialIngredients)
-
-    ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
-      composeTestRule.onAllNodesWithTag("PotentialIngredient").assertCountEquals(3)
-
-      morePotentialIngredientsButton {
-        assertIsDisplayed()
-        assertHasClickAction()
-        performClick()
-        assertDoesNotExist()
-      }
-
-      composeTestRule
-          .onAllNodesWithTag("PotentialIngredient")
-          .assertCountEquals(manyPotentialIngredients.size)
     }
   }
 }

@@ -1,5 +1,6 @@
 package com.github.se.polyfit.ui.components.ingredients
 
+import android.util.Log
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -67,7 +68,7 @@ fun IngredientNutritionEditFields(
                     KeyboardActions(
                         onDone = {
                           text =
-                              tryCatchBlock(index, nutritionFields, nutrient, text) { newText ->
+                              formatText(index, nutritionFields, nutrient, text) { newText ->
                                 text = newText
                               }
                         }),
@@ -106,7 +107,7 @@ fun IngredientNutritionEditFields(
   }
 }
 
-private fun tryCatchBlock(
+private fun formatText(
     index: Int,
     nutritionFields: MutableList<Nutrient>,
     nutrient: Nutrient,
@@ -118,7 +119,9 @@ private fun tryCatchBlock(
     newText = removeLeadingZerosAndNonDigits(newText)
     nutritionFields[index] = nutrient.copy(amount = newText.toDouble())
     newText = newText.toDouble().toString()
-  } catch (_: NumberFormatException) {}
+  } catch (_: NumberFormatException) {
+    Log.w("Catch Exception", "Text formatting gone wrong")
+  }
 
   updateText(newText)
   return newText
@@ -133,6 +136,6 @@ private fun handleFocusChange(
     updateText: (String) -> Unit
 ) {
   if (!isFocused) { // Check if the TextField has lost focus
-    tryCatchBlock(index, nutritionFields, nutrient, text, updateText)
+    formatText(index, nutritionFields, nutrient, text, updateText)
   }
 }
