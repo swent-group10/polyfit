@@ -13,7 +13,6 @@ data class User(
 ) {
 
   fun signOut() {
-    Uri.EMPTY
     id = ""
     displayName = null
     familyName = null
