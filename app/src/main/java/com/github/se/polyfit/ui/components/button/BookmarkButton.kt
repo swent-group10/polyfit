@@ -47,9 +47,8 @@ private fun addOrRemoveRecipe(
     addRecipe: (Recipe) -> Unit = {},
     removeRecipe: (Recipe) -> Unit = {}
 ) {
-  if (isChecked) {
-    addRecipe(recipe)
-  } else {
-    removeRecipe(recipe)
+  when (isChecked) {
+    true -> addRecipe(recipe)
+    false -> removeRecipe(recipe)
   }
 }

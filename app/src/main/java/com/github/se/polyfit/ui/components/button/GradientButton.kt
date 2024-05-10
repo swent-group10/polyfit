@@ -82,7 +82,7 @@ fun GradientButton(
                       text = text,
                       color = textColor,
                       fontSize = TextUnit(16f, TextUnitType.Sp),
-                      fontWeight = if (textBold) FontWeight.ExtraBold else FontWeight.Normal,
+                      fontWeight = FontWeight.ExtraBold.takeIf { textBold } ?: FontWeight.Normal,
                       modifier = Modifier.testTag("ButtonText"))
                 }
               }

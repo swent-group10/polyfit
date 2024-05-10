@@ -50,19 +50,21 @@ fun NutritionalInformation(mealViewModel: MealViewModel) {
       MealName(mealName = meal.name, onNameChange = { mealViewModel.updateMealData(name = it) })
     }
 
-    // At the very least, a meal should always have calories
-    if (calories == null) {
-      item {
-        Text(
-            "No nutritional information available",
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.testTag("NoNutritionalInformation"))
+    when (calories) {
+      null -> {
+        item {
+          Text(
+              "No nutritional information available",
+              style = MaterialTheme.typography.bodyMedium,
+              modifier = Modifier.testTag("NoNutritionalInformation"))
+        }
       }
-    } else {
-      item { NutrientInfo(nutrient = calories, style = MaterialTheme.typography.bodyLarge) }
-      items(nutrients) { nutrient ->
-        if (nutrient != calories) {
-          NutrientInfo(nutrient = nutrient)
+      else -> {
+        item { NutrientInfo(nutrient = calories, style = MaterialTheme.typography.bodyLarge) }
+        items(nutrients) { nutrient ->
+          if (nutrient != calories) {
+            NutrientInfo(nutrient = nutrient)
+          }
         }
       }
     }
@@ -152,30 +154,34 @@ private fun EditableIfElse(
     modifierElse: Modifier,
     onNameChange: (String) -> Unit
 ) {
-  if (isEditable.value) {
-    TextField(
-        value = textState.value,
-        onValueChange = { newValue -> textState.value = newValue },
-        modifier = modifierIf,
-        singleLine = true,
-        colors =
-            TextFieldDefaults.textFieldColors(
-                focusedIndicatorColor = PrimaryPurple,
-                cursorColor = Color.Black,
-                unfocusedIndicatorColor = Color.Transparent),
-        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-        keyboardActions =
-            KeyboardActions(
-                onDone = {
-                  onNameChange(textState.value)
-                  isEditable.value = false
-                }))
-  } else {
-    Text(
-        text = textState.value.ifEmpty { "Enter name here" },
-        color = PrimaryPurple,
-        style = MaterialTheme.typography.headlineSmall,
-        modifier = modifierElse)
+
+  when (isEditable.value) {
+    true -> {
+      TextField(
+          value = textState.value,
+          onValueChange = { newValue -> textState.value = newValue },
+          modifier = modifierIf,
+          singleLine = true,
+          colors =
+              TextFieldDefaults.textFieldColors(
+                  focusedIndicatorColor = PrimaryPurple,
+                  cursorColor = Color.Black,
+                  unfocusedIndicatorColor = Color.Transparent),
+          keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+          keyboardActions =
+              KeyboardActions(
+                  onDone = {
+                    onNameChange(textState.value)
+                    isEditable.value = false
+                  }))
+    }
+    false -> {
+      Text(
+          text = textState.value.ifEmpty { "Enter name here" },
+          color = PrimaryPurple,
+          style = MaterialTheme.typography.headlineSmall,
+          modifier = modifierElse)
+    }
   }
 }
 
@@ -184,7 +190,10 @@ private fun LaunchIfStatement(
     textState: MutableState<String>,
     onNameChange: (String) -> Unit
 ) {
-  if (!isEditable.value) {
-    onNameChange(textState.value)
+  when (isEditable.value) {
+    true -> {}
+    false -> {
+      onNameChange(textState.value)
+    }
   }
 }
