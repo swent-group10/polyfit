@@ -26,7 +26,7 @@ class NavigationTest {
 
   @Test
   fun navigateToAddMeal_withMealDatabaseId_navigatesToCorrectRoute() {
-    val mealDatabaseId = 1L
+    val mealDatabaseId = "1L"
     val expectedRoute = Route.AddMeal + "/$mealDatabaseId"
     every { navHostController.navigate(expectedRoute) } just Runs
 

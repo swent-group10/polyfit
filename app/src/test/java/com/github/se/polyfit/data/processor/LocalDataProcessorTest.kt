@@ -93,7 +93,6 @@ class LocalDataProcessorTest {
       Meal(
           occasion = occasion,
           name = name,
-          mealID = 1,
           mealTemp = 20.0,
           ingredients =
               mutableListOf(
@@ -108,7 +107,7 @@ class LocalDataProcessorTest {
                               Nutrient("protein", 10.0, MeasurementUnit.G),
                               Nutrient("carbs", 20.0, MeasurementUnit.G),
                               Nutrient("fat", 5.0, MeasurementUnit.ML))))),
-          firebaseId = "1",
+          id = "1",
           createdAt = LocalDate.now())
 
   private fun createCustomMeal(

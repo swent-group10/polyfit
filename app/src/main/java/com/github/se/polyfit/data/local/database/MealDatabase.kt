@@ -1,9 +1,12 @@
 package com.github.se.polyfit.data.local.database
 
+import androidx.room.AutoMigration
 import androidx.room.Database
+import androidx.room.DeleteColumn
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
+import androidx.room.migration.AutoMigrationSpec
 import com.github.se.polyfit.data.local.dao.MealDao
 import com.github.se.polyfit.data.local.entity.MealEntity
 import com.github.se.polyfit.model.ingredient.Ingredient
@@ -13,7 +16,13 @@ import com.google.common.reflect.TypeToken
 import com.google.gson.Gson
 import java.time.LocalDate
 
-@Database(entities = [MealEntity::class], version = 1)
+@Database(
+    entities = [MealEntity::class],
+    version = 3,
+    autoMigrations =
+        [
+            AutoMigration(from = 1, to = 2, spec = MealDatabase.RemoveMealId::class),
+            AutoMigration(from = 2, to = 3, spec = MealDatabase.RemoveFirebaseId::class)])
 @TypeConverters(
     NutritionalInformationConverter::class,
     IngredientListConverter::class,
@@ -21,6 +30,12 @@ import java.time.LocalDate
     TagListConverter::class)
 abstract class MealDatabase : RoomDatabase() {
   abstract fun mealDao(): MealDao
+
+  @DeleteColumn.Entries(DeleteColumn(tableName = "MealTable", columnName = "mealID"))
+  class RemoveMealId : AutoMigrationSpec
+
+  @DeleteColumn.Entries(DeleteColumn(tableName = "MealTable", columnName = "firebaseId"))
+  class RemoveFirebaseId : AutoMigrationSpec
 }
 
 class NutritionalInformationConverter {
