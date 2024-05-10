@@ -25,9 +25,13 @@ import com.github.se.polyfit.ui.theme.PolyfitTheme
 import com.github.se.polyfit.ui.utils.Authentication
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+  @Inject lateinit var user: User
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
@@ -41,7 +45,7 @@ class MainActivity : ComponentActivity() {
     controller.systemBarsBehavior =
         WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 
-    val authentication = Authentication(this, User())
+    val authentication = Authentication(this, user, context = this)
 
     // TODO: technical debt, next deadline find better way to pass arguments from overview screen
     // to add meal screen

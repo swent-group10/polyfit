@@ -214,6 +214,7 @@ android {
 
         // Mockito
         androidTestImplementation("org.mockito:mockito-core:5.11.0")
+        androidTestImplementation ("org.mockito.kotlin:mockito-kotlin:5.3.1")
 
         testImplementation("io.mockk:mockk:1.13.10")
         testImplementation("org.mockito:mockito-core:5.11.0")

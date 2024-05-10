@@ -16,18 +16,21 @@ import com.github.se.polyfit.model.data.User
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.auth.FirebaseAuth
+import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class Authentication(
+class Authentication
+@Inject
+constructor(
     activity: ComponentActivity,
     private val user: User,
-    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance(),
+    private var context: Context = activity.applicationContext,
 ) {
 
   private var callback: (() -> Unit)? = null
   private var signInLauncher: ActivityResultLauncher<Intent>? = null
-  private val context: Context = activity.applicationContext
 
   init {
     initLaunch(activity)
@@ -114,8 +117,12 @@ class Authentication(
   }
 
   private fun setUserInfo(account: GoogleSignInAccount?) {
+    if (account == null) {
+      Log.e("AuthenticationCloud", "Account is null")
+      return
+    }
     this.user.update(
-        id = account?.id!!,
+        id = account.id!!,
         email = account.email!!,
         displayName = account.displayName,
         familyName = account.familyName,
