@@ -62,8 +62,11 @@ fun NutritionalInformation(mealViewModel: MealViewModel) {
       else -> {
         item { NutrientInfo(nutrient = calories, style = MaterialTheme.typography.bodyLarge) }
         items(nutrients) { nutrient ->
-          if (nutrient != calories) {
-            NutrientInfo(nutrient = nutrient)
+          when (nutrient) {
+            calories -> {}
+            else -> {
+              NutrientInfo(nutrient)
+            }
           }
         }
       }
