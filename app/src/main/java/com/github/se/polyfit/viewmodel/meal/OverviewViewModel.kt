@@ -29,7 +29,7 @@ constructor(
       MutableStateFlow(
           MealOccasion.values().filter { it != MealOccasion.OTHER }.map { Pair(it, 0.0) })
 
-  fun storeMeal(imageBitmap: Bitmap?): Long? {
+  fun storeMeal(imageBitmap: Bitmap?): String? {
     if (imageBitmap == null) {
       Log.e("OverviewViewModel", "Image is null")
       return null
@@ -47,9 +47,25 @@ constructor(
     }
   }
 
-  fun getUserInfo(): String {
-    if (user.givenName.isNullOrEmpty()) {
-      return user.email
+  fun deleteById(mealDatabaseId: String) {
+    mealDao.deleteById(mealDatabaseId)
+  }
+
+  fun getMealsByCalorieRange(minCalories: Double, maxCalories: Double): List<Meal> {
+    // Get all meals from the database
+    val allMeals = mealDao.getAllMeals()
+
+    // Filter meals based on their calorie content
+    val filteredMeals =
+        allMeals.filter { meal ->
+          val calories =
+              meal.nutritionalInformation.nutrients.find { it.nutrientType == "calories" }?.amount
+          calories != null && calories >= minCalories && calories <= maxCalories
+        }
+
+    // Log the result
+    if (filteredMeals.isEmpty()) {
+      Log.e("OverviewViewModel", "No meals found in the specified calorie range")
     } else {
       return user.givenName!!
     }

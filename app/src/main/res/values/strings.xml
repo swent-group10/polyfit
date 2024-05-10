@@ -37,4 +37,5 @@
     <string name="privacyPolicy">"Privacy Policy"</string>
     <string name="about">"About"</string>
     <string name="logout">"Logout"</string>
+    <string name="recommendedRecipe">Recommended Recipes</string>
 </resources>

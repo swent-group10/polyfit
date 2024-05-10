@@ -12,7 +12,6 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
-import kotlin.test.assertFailsWith
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.test.runTest
@@ -46,20 +45,18 @@ class MealFirebaseRepositoryTest {
 
     meal =
         Meal(
-            mealID = 1,
             name = "Test Meal",
             occasion = MealOccasion.BREAKFAST,
             mealTemp = 20.0,
             ingredients = mutableListOf(),
-            firebaseId = "1")
+            id = "1")
     mealNoId =
         Meal(
-            mealID = 1,
             name = "Test Meal",
             occasion = MealOccasion.BREAKFAST,
             mealTemp = 20.0,
             ingredients = mutableListOf(),
-            firebaseId = "")
+            id = "")
   }
 
   @Test
@@ -79,37 +76,12 @@ class MealFirebaseRepositoryTest {
   }
 
   @Test
-  fun storeMealSuccessfullyWithEmptyFirebaseId() = runBlocking {
-    every { mockCollection.document(any()) } returns mockDocumentReference
-    every { mockDocumentReference.set(any()) } returns Tasks.forResult(null)
-    every { mockCollection.add(any()) } returns Tasks.forResult(mockDocumentReference)
-    every { mockDocumentReference.id } returns "1"
-    val result = mealFirebaseRepository.storeMeal(mealNoId).await()
-
-    assert(result.id.isNotEmpty())
-    assertEquals("1", result.id)
-    assert("Test Meal" == mealNoId.name)
-  }
-
-  @Test
-  fun storeMealFailureWithEmptyFirebaseId(): Unit = runBlocking {
-    every { mockCollection.document(any()) } returns mockDocumentReference
-    every { mockDocumentReference.set(any()) } returns
-        Tasks.forException(Exception("Failed to store meal"))
-    every { mockCollection.add(any()) } returns
-        Tasks.forException(Exception("Failed to store meal"))
-    every { mockDocumentReference.id } returns "1"
-
-    assertFailsWith<Exception> { mealFirebaseRepository.storeMeal(mealNoId).await() }
-  }
-
-  @Test
   fun getMealSuccessfully() = runBlocking {
-    every { mockCollection.document(meal.firebaseId) } returns mockDocumentReference
+    every { mockCollection.document(meal.id) } returns mockDocumentReference
     every { mockDocumentReference.get() } returns Tasks.forResult(mockDocumentSnapshot)
     every { mockDocumentSnapshot.data } returns Meal.serialize(meal)
 
-    val result = mealFirebaseRepository.getMeal(meal.firebaseId).await()
+    val result = mealFirebaseRepository.getMeal(meal.id).await()
 
     assertEquals(meal, result)
     assertEquals(meal.occasion, result!!.occasion)
@@ -121,20 +93,20 @@ class MealFirebaseRepositoryTest {
     // change occasion to a wrong value
     mealData["occasion"] = "WRONG"
 
-    every { mockCollection.document(meal.firebaseId) } returns mockDocumentReference
+    every { mockCollection.document(meal.id) } returns mockDocumentReference
     every { mockDocumentReference.get() } returns Tasks.forResult(mockDocumentSnapshot)
     every { mockDocumentSnapshot.data } returns mealData
 
-    assertFails { runBlocking { mealFirebaseRepository.getMeal(meal.firebaseId).await() } }
+    assertFails { runBlocking { mealFirebaseRepository.getMeal(meal.id).await() } }
   }
 
   @Test
   fun getMealSuccessfullyFailedTask() = runTest {
-    every { mockCollection.document(meal.firebaseId) } returns mockDocumentReference
+    every { mockCollection.document(meal.id) } returns mockDocumentReference
     every { mockDocumentReference.get() } returns
         Tasks.forException(Exception("Failed to fetch meal"))
 
-    assertFails { runBlocking { mealFirebaseRepository.getMeal(meal.firebaseId).await() } }
+    assertFails { runBlocking { mealFirebaseRepository.getMeal(meal.id).await() } }
   }
 
   @Test
@@ -142,7 +114,7 @@ class MealFirebaseRepositoryTest {
     every { mockCollection.get() } returns Tasks.forResult(mockQuerySnapshot)
     every { mockQuerySnapshot.documents } returns listOf(mockDocumentSnapshot)
     every { mockDocumentSnapshot.data } returns Meal.serialize(meal)
-    every { mockDocumentSnapshot.id } returns meal.firebaseId
+    every { mockDocumentSnapshot.id } returns meal.id
 
     val result = mealFirebaseRepository.getAllMeals().await()
 
@@ -157,7 +129,7 @@ class MealFirebaseRepositoryTest {
     // change occasion to a wrong value
     mealData["occasion"] = "WRONG"
 
-    every { mockCollection.document(meal.firebaseId) } returns mockDocumentReference
+    every { mockCollection.document(meal.id) } returns mockDocumentReference
     every { mockCollection.get() } returns Tasks.forResult(mockQuerySnapshot)
     every { mockQuerySnapshot.documents } returns listOf(mockDocumentSnapshot)
     every { mockDocumentSnapshot.data } returns mealData
@@ -170,26 +142,26 @@ class MealFirebaseRepositoryTest {
     every { mockCollection.get() } returns Tasks.forException(Exception("Failed to fetch meals"))
     every { mockQuerySnapshot.documents } returns listOf(mockDocumentSnapshot)
     every { mockDocumentSnapshot.data } returns Meal.serialize(meal)
-    every { mockDocumentSnapshot.id } returns meal.firebaseId
+    every { mockDocumentSnapshot.id } returns meal.id
 
     assertFails { runBlocking { mealFirebaseRepository.getAllMeals().await() } }
   }
 
   @Test
   fun deleteMealSuccessfully() = runBlocking {
-    every { mockCollection.document(meal.firebaseId) } returns mockDocumentReference
+    every { mockCollection.document(meal.id) } returns mockDocumentReference
     every { mockDocumentReference.delete() } returns Tasks.forResult(null)
 
-    val res = mealFirebaseRepository.deleteMeal(meal.firebaseId).await()
+    val res = mealFirebaseRepository.deleteMeal(meal.id).await()
     assert(res == Unit)
   }
 
   @Test
   fun deleteMealTaskFaillure(): Unit = runBlocking {
-    every { mockCollection.document(meal.firebaseId) } returns mockDocumentReference
+    every { mockCollection.document(meal.id) } returns mockDocumentReference
     every { mockDocumentReference.delete() } returns
         Tasks.forException(Exception("Failed to delete meal"))
 
-    assertFails { mealFirebaseRepository.deleteMeal(meal.firebaseId).await() }
+    assertFails { mealFirebaseRepository.deleteMeal(meal.id).await() }
   }
 }

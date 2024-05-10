@@ -222,7 +222,7 @@ fun OverviewScreen(
         imageBitmap = bitmap
 
         showPictureDialog = false
-        var id: Long? = runBlocking(Dispatchers.IO) { overviewViewModel.storeMeal(imageBitmap) }
+        val id: String? = runBlocking(Dispatchers.IO) { overviewViewModel.storeMeal(imageBitmap) }
         navigation.navigateToAddMeal(id)
       }
 
