@@ -8,6 +8,7 @@ import com.github.se.polyfit.data.local.database.MealDatabase
 import com.github.se.polyfit.data.processor.LocalDataProcessor
 import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
 import com.github.se.polyfit.data.remote.firebase.PostFirebaseRepository
+import com.github.se.polyfit.data.remote.firebase.UserFirebaseRepository
 import com.github.se.polyfit.data.repository.MealRepository
 import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.ui.utils.AuthenticationCloud
@@ -50,6 +51,12 @@ object UserModule {
 
   @Provides
   @Singleton
+  fun providesUserFirebaseRepository(): UserFirebaseRepository {
+    return UserFirebaseRepository()
+  }
+
+  @Provides
+  @Singleton
   fun providesLocalDatabase(@ApplicationContext context: Context): MealDatabase {
     return Room.databaseBuilder(context, MealDatabase::class.java, "meal_database").build()
   }
@@ -84,7 +91,11 @@ object UserModule {
 
   @Provides
   @Singleton
-  fun provideAuthentication(@ApplicationContext context: Context, user: User): AuthenticationCloud {
-    return AuthenticationCloud(context, user)
+  fun provideAuthentication(
+      @ApplicationContext context: Context,
+      user: User,
+      userFirebaseRepository: UserFirebaseRepository
+  ): AuthenticationCloud {
+    return AuthenticationCloud(context, user, userFirebaseRepository)
   }
 }
