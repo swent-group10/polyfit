@@ -6,7 +6,9 @@ import androidx.lifecycle.ViewModel
 import com.github.se.polyfit.data.remote.firebase.PostFirebaseRepository
 import com.github.se.polyfit.model.post.Location
 import com.github.se.polyfit.model.post.Post
+import dagger.hilt.android.lifecycle.HiltViewModel
 
+@HiltViewModel
 class MapViewModel(private val repository: PostFirebaseRepository = PostFirebaseRepository()) :
     ViewModel() {
 
@@ -20,7 +22,7 @@ class MapViewModel(private val repository: PostFirebaseRepository = PostFirebase
   val posts: LiveData<List<Post>> = _posts
 
   init {
-    setRadius(5.0)
+    setRadius(5.0) // default radius can be change later for a better default value
   }
 
   fun listenToPosts() {
