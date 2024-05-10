@@ -3,7 +3,6 @@ package com.github.se.polyfit.viewmodel
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import com.github.se.polyfit.data.local.dao.MealDao
-import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
 import com.github.se.polyfit.data.repository.MealRepository
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
@@ -39,21 +38,14 @@ class MealViewModelTest {
     Dispatchers.setMain(TestCoroutineDispatcher())
 
     val mealDao = mockk<MealDao>()
-    val mealFirebaseRepository = mockk<MealFirebaseRepository>()
 
-    val meal =
-        Meal(
-            occasion = MealOccasion.OTHER,
-            name = "Test Meal",
-            mealID = 1,
-            nutritionalInformation = NutritionalInformation(mutableListOf()))
+    val meal = Meal(occasion = MealOccasion.OTHER, name = "Test Meal", id = "firebase123")
 
-    every { mealDao.getMealByFirebaseID(any()) } returns meal
-    coEvery { mealRepo.getMealByFirebaseID(any()) } returns meal
+    every { mealDao.getMealById(any()) } returns meal
+    coEvery { mealRepo.getMealById(any()) } returns meal
 
     viewModel = MealViewModel(mealRepo)
     viewModel.setMealData(meal)
-    viewModel.updateMealData(firebaseID = "firebase123")
   }
 
   @After
@@ -63,14 +55,14 @@ class MealViewModelTest {
   }
 
   @Test
-  fun testInitialization_withFirebaseID_loadsData() {
-    assert(viewModel.meal.value?.name == "Test Meal")
+  fun testInitialization_withID_loadsData() {
+    assert(viewModel.meal.value.name == "Test Meal")
   }
 
   @Test
   fun testSetMealName_updatesMealName() {
     viewModel.updateMealData(name = "New Name")
-    assert(viewModel.meal.value?.name == "New Name")
+    assert(viewModel.meal.value.name == "New Name")
   }
 
   @Test
@@ -91,7 +83,7 @@ class MealViewModelTest {
                         Nutrient("protein", 0.0, MeasurementUnit.G))))
 
     viewModel.addIngredient(ingredient)
-    assert(viewModel.meal.value?.ingredients?.contains(ingredient) == true)
+    assert(viewModel.meal.value.ingredients.contains(ingredient) == true)
   }
 
   @Test
@@ -115,12 +107,7 @@ class MealViewModelTest {
 
   @Test
   fun testSetMealWithIncompleteMealFails() {
-    val incompleteMeal =
-        Meal(
-            name = "Meal Name",
-            mealID = 123,
-            nutritionalInformation = NutritionalInformation(mutableListOf()),
-            occasion = MealOccasion.BREAKFAST)
+    val incompleteMeal = Meal(name = "Meal Name", occasion = MealOccasion.BREAKFAST)
     viewModel.setMealData(incompleteMeal)
     assertFailsWith<Exception> { viewModel.setMeal() }
   }
@@ -130,14 +117,6 @@ class MealViewModelTest {
     val completeMeal =
         Meal(
             name = "Meal Name",
-            mealID = 123,
-            nutritionalInformation =
-                NutritionalInformation(
-                    mutableListOf(
-                        Nutrient(
-                            nutrientType = "calories",
-                            amount = 100.0,
-                            unit = MeasurementUnit.CAL))),
             ingredients =
                 mutableListOf(
                     Ingredient(
@@ -147,7 +126,7 @@ class MealViewModelTest {
                         unit = MeasurementUnit.G,
                         nutritionalInformation =
                             NutritionalInformation(
-                                mutableListOf(Nutrient("calories", 0.0, MeasurementUnit.CAL))))),
+                                mutableListOf(Nutrient("calories", 100.0, MeasurementUnit.CAL))))),
             occasion = MealOccasion.BREAKFAST)
     runBlockingTest { coEvery { mealRepo.storeMeal(any()) } returns null }
     viewModel.setMealData(completeMeal)
@@ -161,8 +140,6 @@ class MealViewModelTest {
     val meal =
         Meal(
             name = "Meal Name",
-            mealID = 123,
-            nutritionalInformation = NutritionalInformation(mutableListOf()),
             ingredients =
                 mutableListOf(
                     Ingredient(
@@ -182,20 +159,13 @@ class MealViewModelTest {
   }
 
   @Test
-  fun setMealData_withValidMealId_setsMeal() = runTest {
-    val mealId = 1L
+  fun setMealData_withValidId_setsMeal() = runTest {
     val expectedMeal =
         Meal(
-            mealID = mealId,
+            id = "TestID",
             name = "Test Meal",
             occasion = MealOccasion.OTHER,
             mealTemp = 0.0,
-            nutritionalInformation =
-                NutritionalInformation(
-                    mutableListOf(
-                        Nutrient("calories", 0.0, MeasurementUnit.CAL),
-                        Nutrient("totalWeight", 0.0, MeasurementUnit.G),
-                    )),
             ingredients =
                 mutableListOf(
                     Ingredient(
@@ -203,25 +173,54 @@ class MealViewModelTest {
                         id = 1,
                         amount = 100.0,
                         unit = MeasurementUnit.G,
+                        nutritionalInformation =
+                            NutritionalInformation(
+                                mutableListOf(
+                                    Nutrient("calories", 0.0, MeasurementUnit.CAL),
+                                    Nutrient("totalWeight", 0.0, MeasurementUnit.G),
+                                )),
                     )))
 
     coEvery { mealRepo.getMealById(any()) } returns expectedMeal
 
-    viewModel.setMealData(mealId)
+    viewModel.setMealData(expectedMeal.id)
 
-    coVerify { mealRepo.getMealById(mealId) }
+    coVerify { mealRepo.getMealById(expectedMeal.id) }
     assertThat(viewModel.meal.value, `is`(expectedMeal))
   }
 
   @Test
-  fun setMealData_withInvalidMealId_throwsException() = runTest {
-    val mealId = 1L
+  fun setMealData_withInvalidId_throwsException() = runTest {
+    val id = "InvalidId"
 
     coEvery { mealRepo.getMealById(any()) } returns null
 
-    viewModel.setMealData(mealId)
+    viewModel.setMealData(id)
 
     coVerify { mealRepo.getMealById(any()) }
-    assertThat(viewModel.meal.value, `is`(Meal.default()))
+
+    // Since default meal returns different IDs
+    val default = Meal.default().copy(id = viewModel.meal.value.id)
+    assertThat(viewModel.meal.value, `is`(default))
+  }
+
+  @Test
+  fun setMealData_withEmptyId_givesDefaultMeal() = runTest {
+    val id = ""
+    viewModel.setMealData(id)
+
+    // Since default meal returns different IDs
+    val default = Meal.default().copy(id = viewModel.meal.value.id)
+    assertThat(viewModel.meal.value, `is`(default))
+  }
+
+  @Test
+  fun setMealData_withNullId_givesDefaultMeal() = runTest {
+    val id = null
+    viewModel.setMealData(id)
+
+    // Since default meal returns different IDs
+    val default = Meal.default().copy(id = viewModel.meal.value.id)
+    assertThat(viewModel.meal.value, `is`(default))
   }
 }

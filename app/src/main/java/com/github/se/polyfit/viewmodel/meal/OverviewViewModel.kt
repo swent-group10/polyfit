@@ -16,7 +16,7 @@ class OverviewViewModel
 constructor(private val mealDao: MealDao, private val spoonacularApiCaller: SpoonacularApiCaller) :
     ViewModel() {
 
-  fun storeMeal(imageBitmap: Bitmap?): Long? {
+  fun storeMeal(imageBitmap: Bitmap?): String? {
     if (imageBitmap == null) {
       Log.e("OverviewViewModel", "Image is null")
       return null
@@ -34,8 +34,8 @@ constructor(private val mealDao: MealDao, private val spoonacularApiCaller: Spoo
     }
   }
 
-  fun deleteByDBId(mealDatabaseId: Long) {
-    mealDao.deleteByDatabaseID(mealDatabaseId)
+  fun deleteById(mealDatabaseId: String) {
+    mealDao.deleteById(mealDatabaseId)
   }
 
   fun getMealsByCalorieRange(minCalories: Double, maxCalories: Double): List<Meal> {

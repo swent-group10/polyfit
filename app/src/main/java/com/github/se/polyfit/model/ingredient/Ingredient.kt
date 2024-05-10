@@ -17,7 +17,7 @@ data class Ingredient(
     val id: Long,
     val amount: Double,
     val unit: MeasurementUnit,
-    val nutritionalInformation: NutritionalInformation = NutritionalInformation(mutableListOf()),
+    val nutritionalInformation: NutritionalInformation = NutritionalInformation(),
 ) {
 
   fun deepCopy(): Ingredient {

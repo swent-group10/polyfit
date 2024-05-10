@@ -8,7 +8,7 @@
     <string name="dialog_headline">Choose Option</string>
     <string name="home_nav_label">Home</string>
     <string name="map_nav_label">Map</string>
-    <string name="settings_nav_labal">Settings</string>
+    <string name="settings">Settings</string>
     <string name="toast_message_feature_unavailable">Not available yet</string>
     <string name="condition1">"By clicking continue, you agree to our\n"</string>
     <string name="condition2">"Terms of Service"</string>
@@ -17,7 +17,7 @@
     <string name="signGoogle">"Sign in with Google"</string>
     <string name="graphScreenTitle">Calories Per Day</string>
     <string name="kcalvalue">%1$.1f kCal</string>
-    <string name= "weightvalue">%1$.1f lbs</string>
+    <string name="weightvalue">%1$.1f lbs</string>
     <string name="datevalue">%1$s</string>
     <string name="noPostAvailable">"Unfortunately there is no post\navailable around you"</string>
     <string name="description">"Description"</string>
@@ -32,5 +32,11 @@
     <string name="newPostTitle">"New Post"</string>
     <string name="newPostDescriptionPlaceholder">" What's on your mind today?"</string>
     <string name="postButton">"Post"</string>
+    <string name="account">"Account"</string>
+    <string name="termsAndConditions">"Terms &amp; Conditions"</string>
+    <string name="privacyPolicy">"Privacy Policy"</string>
+    <string name="about">"About"</string>
+    <string name="logout">"Logout"</string>
+    <string name="recommendedRecipe">Recommended Recipes</string>
     <string name="signInFailed">"Sign in failed"</string>
 </resources>

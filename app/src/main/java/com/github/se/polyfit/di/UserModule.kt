@@ -8,6 +8,7 @@ import com.github.se.polyfit.data.local.database.MealDatabase
 import com.github.se.polyfit.data.processor.LocalDataProcessor
 import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
 import com.github.se.polyfit.data.remote.firebase.PostFirebaseRepository
+import com.github.se.polyfit.data.remote.firebase.UserFirebaseRepository
 import com.github.se.polyfit.data.repository.MealRepository
 import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.ui.viewModel.GraphViewModel
@@ -45,6 +46,12 @@ object UserModule {
   @Singleton
   fun providesMealFirebaseRepository(user: User): MealFirebaseRepository {
     return MealFirebaseRepository(user.id)
+  }
+
+  @Provides
+  @Singleton
+  fun providesUserFirebaseRepository(): UserFirebaseRepository {
+    return UserFirebaseRepository()
   }
 
   @Provides

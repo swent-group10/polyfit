@@ -37,7 +37,6 @@ class DailyRecapViewModelTest {
 
   private val testMeal =
       Meal(
-          mealID = 1,
           name = "Meal 1",
           ingredients =
               mutableListOf(
@@ -55,7 +54,6 @@ class DailyRecapViewModelTest {
                   MealTag("And yet another long", MealTagColor.LAVENDER),
                   MealTag("And yet another long long", MealTagColor.BRIGHTORANGE)),
           occasion = MealOccasion.BREAKFAST,
-          nutritionalInformation = NutritionalInformation(mutableListOf()),
           createdAt = date)
 
   @Test

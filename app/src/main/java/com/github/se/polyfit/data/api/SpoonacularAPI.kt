@@ -5,7 +5,6 @@ import android.util.Log
 import com.github.se.polyfit.BuildConfig
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
-import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -126,14 +125,10 @@ class SpoonacularApiCaller {
         if (recipeInformation.status == APIResponse.SUCCESS) {
           val newMeal =
               Meal(
-                  MealOccasion.OTHER, // New Meal should default to no occasion
-                  apiResponse.category,
-                  apiResponse.recipes.first().toLong(),
-                  20.0,
-                  NutritionalInformation(recipeInformation.nutrients.toMutableList()),
-                  recipeInformation.ingredients.toMutableList(),
-                  // firebase id not defined yet because no calls to store the information
-                  "")
+                  occasion = MealOccasion.OTHER, // New Meal should default to no occasion
+                  name = apiResponse.category,
+                  mealTemp = 20.0,
+                  ingredients = recipeInformation.ingredients.toMutableList())
 
           meal = newMeal
         }

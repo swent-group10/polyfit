@@ -32,7 +32,7 @@ class Authentication(activity: ComponentActivity,
 
   private fun initLaunch(activity: ComponentActivity) {
     if(auth.currentUser != null) {
-      setUser(GoogleSignIn.getLastSignedInAccount(context))
+      setUserInfo(GoogleSignIn.getLastSignedInAccount(context))
       return
     }
     // This init is launched when the user is not signed in
@@ -98,7 +98,7 @@ class Authentication(activity: ComponentActivity,
       // to get google acount infos
       val account = GoogleSignIn.getLastSignedInAccount(context)
 
-      setUser(account)
+      setUserInfo(account)
 
       callback(true)
     } else {
@@ -110,12 +110,26 @@ class Authentication(activity: ComponentActivity,
     }
   }
 
-  private fun setUser(account: GoogleSignInAccount?) {
-    this.user.id = account?.id!!
-    this.user.displayName = account.displayName ?: ""
-    this.user.familyName = account.familyName ?: ""
-    this.user.givenName = account.givenName ?: ""
-    this.user.email = account.email!!
-    this.user.photoURL = account.photoUrl
+
+  private fun setUserInfo(account: GoogleSignInAccount?) {
+    this.user.update(
+        id = account?.id!!,
+        email = account.email!!,
+        displayName = account.displayName,
+        familyName = account.familyName,
+        givenName = account.givenName,
+        photoURL = account.photoUrl)
+
+    // TODO
+    /*
+    userFirebaseRepository.getUser(this.user.id).continueWith {
+      if (it.result.isNotNull()) {
+        Log.d("AuthenticationCloud", "User already exists, information loaded")
+        this.user.update(user = it.result!!)
+      } else {
+        userFirebaseRepository.storeUser(this.user)
+      }
+    }
+     */
   }
 }

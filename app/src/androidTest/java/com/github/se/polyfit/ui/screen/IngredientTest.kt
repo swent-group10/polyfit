@@ -62,13 +62,7 @@ class IngredientTest : TestCase() {
     val navigateBack = { mockNav.goBack() }
     val navigateForward = { mockNav.navigateToNutrition() }
     val testMeal =
-        Meal(
-            occasion = MealOccasion.OTHER,
-            name = "Test Meal",
-            mealID = 0,
-            ingredients = testIngredients,
-            nutritionalInformation = NutritionalInformation(mutableListOf()),
-        )
+        Meal(occasion = MealOccasion.OTHER, name = "Test Meal", ingredients = testIngredients)
 
     mockMealViewModel.setMealData(testMeal)
 

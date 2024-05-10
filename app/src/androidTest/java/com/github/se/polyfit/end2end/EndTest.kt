@@ -51,6 +51,7 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
+import java.util.UUID
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.After
 import org.junit.Before
@@ -70,13 +71,14 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
       GrantPermissionRule.grant(android.Manifest.permission.CAMERA)
 
   private val overviewViewModel: OverviewViewModel = mockk(relaxed = true)
+  private val id = UUID.randomUUID().toString()
 
   @Before
   fun SettingUp() {
     mockkStatic(Log::class)
     System.setProperty("isTestEnvironment", "true")
 
-    every { overviewViewModel.storeMeal(any()) } returns 1L
+    every { overviewViewModel.storeMeal(any()) } returns id
   }
 
   @After
@@ -118,7 +120,7 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
         }
         composable(Route.CreatePost) { CreatePostScreen(postViewModel = mockPostViewModel) }
         composable(Route.AddMeal + "/{mId}") { backStackEntry ->
-          val mealId = backStackEntry.arguments?.getString("mId")?.toLong()
+          val mealId = backStackEntry.arguments?.getString("mId")
           AddMealFlow({}, {}, mealId = mealId, mealViewModel)
         }
       }

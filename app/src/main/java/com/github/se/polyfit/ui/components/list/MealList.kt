@@ -17,22 +17,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.ui.theme.BorderPurple
 import com.github.se.polyfit.ui.theme.PrimaryPink
 import com.github.se.polyfit.ui.theme.PurpleGrey40
-import com.github.se.polyfit.viewmodel.meal.MealViewModel
 
 @Composable
 fun MealList(
     meals: List<Meal>,
     occasion: MealOccasion,
-    navigateTo: () -> Unit,
+    navigateTo: (String?) -> Unit,
     modifier: Modifier = Modifier,
-    mealViewModel: MealViewModel = hiltViewModel()
 ) {
   val filteredMeals = meals.filter { it.occasion == occasion }
   val totalCalories = filteredMeals.sumOf { it.calculateTotalCalories() }.toString()
@@ -60,12 +57,7 @@ fun MealList(
                     modifier = Modifier.testTag("TotalCalories"))
               }
           HorizontalDivider(color = PrimaryPink)
-          filteredMeals.forEach { meal ->
-            MealCard(meal) {
-              mealViewModel.setMealData(meal)
-              navigateTo()
-            }
-          }
+          filteredMeals.forEach { meal -> MealCard(meal) { navigateTo(meal.id) } }
         }
       }
 }
