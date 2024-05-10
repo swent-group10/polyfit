@@ -2,7 +2,6 @@ package com.github.se.polyfit
 
 import android.app.Application
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.view.WindowCompat
@@ -23,7 +22,7 @@ import com.github.se.polyfit.ui.screen.LoginScreen
 import com.github.se.polyfit.ui.screen.OverviewScreen
 import com.github.se.polyfit.ui.screen.PostInfoScreen
 import com.github.se.polyfit.ui.theme.PolyfitTheme
-import com.github.se.polyfit.ui.utils.AuthTmp
+import com.github.se.polyfit.ui.utils.Authentication
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
 
@@ -42,19 +41,17 @@ class MainActivity : ComponentActivity() {
     controller.systemBarsBehavior =
         WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 
-    val authTmp = AuthTmp(this, User())
+    val authentication = Authentication(this, User())
 
-    authTmp.onCreate(this)
     // TODO: technical debt, next deadline find better way to pass arguments from overview screen
     // to add meal screen
     setContent {
       PolyfitTheme {
         val navController = rememberNavController()
         val navigation = Navigation(navController)
-        authTmp.setCallback({ navigation.navigateToHome() }, 3)
+        authentication.setCallback({ navigation.navigateToHome() }, 3)
 
-        var startDestination = if (authTmp.isAuthenticated()) Route.Home else Route.Register
-        startDestination = Route.Register
+        val startDestination = if (authentication.isAuthenticated()) Route.Home else Route.Register
         NavHost(navController = navController, startDestination = startDestination) {
           composable(Route.Graph) { FullGraphScreen(goBack = navigation::goBack) }
           composable(Route.Home) {
@@ -64,8 +61,7 @@ class MainActivity : ComponentActivity() {
           }
 
           composable(Route.Register) {
-            LoginScreen(
-                { authTmp.signIn() })
+            LoginScreen { authentication.signIn() }
           }
           composable(Route.AddMeal + "/{mId}") { backStackEntry ->
             val mealId = backStackEntry.arguments?.getString("mId")?.toLong()

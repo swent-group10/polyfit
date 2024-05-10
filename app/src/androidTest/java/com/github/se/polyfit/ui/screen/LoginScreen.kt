@@ -8,8 +8,10 @@ class LoginScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
     ComposeScreen<LoginScreen>(
         semanticsProvider = semanticsProvider, viewBuilderAction = { hasTestTag("LoginScreen") }) {
 
+  val loginColumn: KNode = child { hasTestTag("LoginColumn") }
+
   // Structural elements of the UI
-  val loginTitle: KNode = child { hasTestTag("LoginTitle") }
-  val loginButton: KNode = child { hasTestTag("LoginButton") }
-  val loginTerm: KNode = child { hasTestTag("LoginTerms") }
+  val loginTitle: KNode = loginColumn.child { hasTestTag("LoginTitle") }
+  val loginButton: KNode = loginColumn.child { hasTestTag("LoginButton") }
+  val loginTerm: KNode = loginColumn.child { hasTestTag("LoginTerms") }
 }
