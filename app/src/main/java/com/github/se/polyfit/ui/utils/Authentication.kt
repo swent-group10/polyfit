@@ -46,10 +46,16 @@ constructor(
         activity.registerForActivityResult(FirebaseAuthUIActivityResultContract()) { res ->
           onSignInResult(res) {
             if (it) {
+              var i: Long = 0
               var c = callback
               while (c == null) {
                 c = callback
+                i++
                 Log.w("Authentication", "waiting for callback, should not be stuck here")
+                if (i > 10) {
+                  Log.e("Authentication", "callback not set")
+                  throw Exception("callback not set")
+                }
               }
               (callback!!)()
               Log.i("Authentication", "onCreate user account: ${auth.currentUser}")
@@ -98,10 +104,13 @@ constructor(
     AuthUI.getInstance().signOut(context)
   }
 
-  fun onSignInResult(result: FirebaseAuthUIAuthenticationResult, callback: (Boolean) -> Unit) {
+  fun onSignInResult(
+      result: FirebaseAuthUIAuthenticationResult,
+      callback: (Boolean) -> Unit
+  ) {
     val response = result.idpResponse
     if (result.resultCode == Activity.RESULT_OK) {
-      // to get google acount infos
+      // to get google account info
       val account = GoogleSignIn.getLastSignedInAccount(context)
 
       setUserInfo(account)
