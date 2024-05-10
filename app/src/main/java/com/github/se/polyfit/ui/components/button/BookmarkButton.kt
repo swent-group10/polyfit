@@ -29,18 +29,27 @@ fun BookmarkButton(
       checked = isChecked,
       onCheckedChange = {
         isChecked = !isChecked
-        if (isChecked) {
-          addRecipe(recipe)
-        } else {
-          removeRecipe(recipe)
-        }
+        addOrRemoveRecipe(isChecked, recipe, addRecipe, removeRecipe)
       },
       modifier = modifier.testTag("BookmarkButton"),
       colors = IconButtonDefaults.filledIconToggleButtonColors(containerColor = Purple80),
   ) {
     Icon(
-        imageVector = if (isChecked) Icons.Default.Done else Icons.Default.Add,
+        imageVector = Icons.Default.Done.takeIf { isChecked } ?: Icons.Default.Add,
         contentDescription = "Bookmark Button",
         tint = Color.Red)
+  }
+}
+
+private fun addOrRemoveRecipe(
+    isChecked: Boolean,
+    recipe: Recipe,
+    addRecipe: (Recipe) -> Unit = {},
+    removeRecipe: (Recipe) -> Unit = {}
+) {
+  if (isChecked) {
+    addRecipe(recipe)
+  } else {
+    removeRecipe(recipe)
   }
 }
