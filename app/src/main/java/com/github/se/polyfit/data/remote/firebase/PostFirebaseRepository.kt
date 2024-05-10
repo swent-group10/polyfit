@@ -81,6 +81,7 @@ class PostFirebaseRepository(
       centerLatitude: Double,
       centerLongitude: Double,
       radiusInKm: Double,
+      completion: (List<Post>) -> Unit,
       geoFire: GeoFire = GeoFire(geoFireRef)
   ) {
     val center = GeoLocation(centerLatitude, centerLongitude)
@@ -103,9 +104,7 @@ class PostFirebaseRepository(
           }
 
           override fun onGeoQueryReady() {
-            PostFirebaseRepository().fetchPostsAndImages(nearbyKeys) { posts ->
-              // Do something with the fetched posts
-            }
+            PostFirebaseRepository().fetchPostsAndImages(nearbyKeys, completion = completion)
           }
 
           override fun onGeoQueryError(error: DatabaseError) {
