@@ -11,7 +11,7 @@ class LoginScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
   val loginColumn: KNode = child { hasTestTag("LoginColumn") }
 
   // Structural elements of the UI
-  val loginTitle: KNode = loginColumn.child { hasTestTag("LoginTitle") }
+  val loginTitle: KNode = loginColumn.child { hasTestTag("TopBarTitle") }
   val loginButton: KNode = loginColumn.child { hasTestTag("LoginButton") }
   val loginTerm: KNode = loginColumn.child { hasTestTag("LoginTerms") }
 }

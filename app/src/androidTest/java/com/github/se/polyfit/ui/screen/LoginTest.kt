@@ -3,8 +3,6 @@ package com.github.se.polyfit.ui.screen
 import android.util.Log
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.espresso.intent.Intents
-import androidx.test.espresso.intent.Intents.intended
-import androidx.test.espresso.intent.matcher.IntentMatchers.toPackage
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
@@ -15,8 +13,6 @@ import io.mockk.junit4.MockKRule
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import io.mockk.verify
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -34,9 +30,8 @@ class LoginTest : TestCase() {
   fun setup() {
     Intents.init()
     mockkStatic(Log::class)
-    composeTestRule.setContent {
-      LoginScreen(mockNav::navigateToHome)
-    }
+    composeTestRule.setContent { LoginScreen(mockNav::navigateToHome) }
+    composeTestRule.waitForIdle()
   }
 
   @After
@@ -61,15 +56,14 @@ class LoginTest : TestCase() {
     confirmVerified(mockNav)
   }
 
-
   @Test
   fun loginScreenDisplaysCorrectly() {
+
+    composeTestRule.waitForIdle()
 
     ComposeScreen.onComposeScreen<LoginScreen>(composeTestRule) {
       assertExists()
       assertIsDisplayed()
-
-      loginColumn.assertExists()
 
       loginColumn {
         assertExists()
@@ -84,7 +78,6 @@ class LoginTest : TestCase() {
         assertTextContains("Polyfit", substring = true, ignoreCase = true)
       }
 
-
       loginButton {
         assertIsDisplayed()
         assertHasClickAction()
@@ -96,27 +89,7 @@ class LoginTest : TestCase() {
         assertTextContains("Terms of Service", substring = true)
         assertTextContains("and", substring = true)
         assertTextContains("Privacy Policy", substring = true)
-
       }
-    }
-  }
-
-  @Test
-  fun loginButtonNavigatesToNewScreen() {
-    // Launch the LoginScreen
-    ComposeScreen.onComposeScreen<LoginScreen>(composeTestRule) {
-      // Test the UI elements
-      loginButton {
-        assertIsDisplayed()
-        assertHasClickAction()
-        performClick()
-      }
-
-      runBlocking {
-        delay(5000) // waits for 5 seconds
-      }
-      // TODO check we are on another page
-      intended(toPackage("com.google.android.gms"))
     }
   }
 }

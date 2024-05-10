@@ -19,53 +19,56 @@ import com.google.firebase.auth.FirebaseAuth
 import javax.inject.Singleton
 
 @Singleton
-class Authentication(activity: ComponentActivity,
-                     private val user: User,
-                      private val auth: FirebaseAuth = FirebaseAuth.getInstance()){
+class Authentication(
+    activity: ComponentActivity,
+    private val user: User,
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+) {
 
   private var callback: (() -> Unit)? = null
   private var signInLauncher: ActivityResultLauncher<Intent>? = null
   private val context: Context = activity.applicationContext
-  init{
+
+  init {
     initLaunch(activity)
   }
 
   private fun initLaunch(activity: ComponentActivity) {
-    if(auth.currentUser != null) {
+    if (auth.currentUser != null) {
       setUserInfo(GoogleSignIn.getLastSignedInAccount(context))
       return
     }
     // This init is launched when the user is not signed in
     signInLauncher =
-            activity.registerForActivityResult(FirebaseAuthUIActivityResultContract()) { res ->
-              onSignInResult(res) {
-                if (it) {
-                  var c = callback
-                  while (c == null) {
-                    c = callback
-                    Log.w("Authentication", "waiting for callback, should not be stuck here")
-                  }
-                  (callback!!)()
-                  Log.i("Authentication", "onCreate user account: ${auth.currentUser}")
-                } else {
-                  Log.e("LoginScreen", "Sign in failed")
-
-                  // Display a toast message if the sign-in fails to the user
-                  Toast.makeText(
-                          context,
-                          ContextCompat.getString(context, R.string.signInFailed),
-                          Toast.LENGTH_SHORT)
-                          .show()
-                }
+        activity.registerForActivityResult(FirebaseAuthUIActivityResultContract()) { res ->
+          onSignInResult(res) {
+            if (it) {
+              var c = callback
+              while (c == null) {
+                c = callback
+                Log.w("Authentication", "waiting for callback, should not be stuck here")
               }
+              (callback!!)()
+              Log.i("Authentication", "onCreate user account: ${auth.currentUser}")
+            } else {
+              Log.e("LoginScreen", "Sign in failed")
+
+              // Display a toast message if the sign-in fails to the user
+              Toast.makeText(
+                      context,
+                      ContextCompat.getString(context, R.string.signInFailed),
+                      Toast.LENGTH_SHORT)
+                  .show()
             }
+          }
+        }
     val providers =
-            arrayListOf(
-                    AuthUI.IdpConfig.GoogleBuilder().build(),
-            )
+        arrayListOf(
+            AuthUI.IdpConfig.GoogleBuilder().build(),
+        )
 
     val signInIntent =
-            AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(providers).build()
+        AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(providers).build()
 
     signInLauncher!!.launch(signInIntent)
   }
@@ -109,7 +112,6 @@ class Authentication(activity: ComponentActivity,
       callback(false)
     }
   }
-
 
   private fun setUserInfo(account: GoogleSignInAccount?) {
     this.user.update(

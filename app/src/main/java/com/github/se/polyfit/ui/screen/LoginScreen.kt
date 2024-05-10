@@ -30,15 +30,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.getString
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.se.polyfit.R
 import com.github.se.polyfit.ui.compose.Title
 import com.github.se.polyfit.ui.theme.PrimaryPurple
 
 @Composable
-fun LoginScreen(
-    onClick: () -> Unit
-) {
+fun LoginScreen(onClick: () -> Unit) {
 
   val context = LocalContext.current
 
@@ -48,10 +45,10 @@ fun LoginScreen(
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.testTag("LoginColumn")) {
+            modifier = Modifier.testTag("LoginColumn")) {
               Spacer(Modifier.weight(0.2f))
 
-              Title(Modifier.testTag("LoginTitle"), context.getString(R.string.app_name))
+              Title(context.getString(R.string.app_name))
 
               Spacer(Modifier.weight(0.6f))
 

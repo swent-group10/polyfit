@@ -19,7 +19,7 @@ import com.github.se.polyfit.ui.theme.PrimaryPurple
 val gradiant_blue_pink = Brush.horizontalGradient(listOf(PrimaryPurple, PrimaryPink))
 
 @Composable
-fun Title(modifier: Modifier, text: String) {
+fun Title(text: String) {
   val shape = RoundedCornerShape(35)
 
   Box(

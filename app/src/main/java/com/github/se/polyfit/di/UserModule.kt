@@ -87,5 +87,4 @@ object UserModule {
   fun providePostFirebaseRepository(): PostFirebaseRepository {
     return PostFirebaseRepository()
   }
-
 }

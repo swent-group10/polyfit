@@ -60,9 +60,7 @@ class MainActivity : ComponentActivity() {
                 content = { paddingValues -> OverviewScreen(paddingValues, navController) })
           }
 
-          composable(Route.Register) {
-            LoginScreen { authentication.signIn() }
-          }
+          composable(Route.Register) { LoginScreen { authentication.signIn() } }
           composable(Route.AddMeal + "/{mId}") { backStackEntry ->
             val mealId = backStackEntry.arguments?.getString("mId")
             AddMealFlow(
