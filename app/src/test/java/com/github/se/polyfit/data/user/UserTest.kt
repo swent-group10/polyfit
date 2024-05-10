@@ -119,6 +119,14 @@ class UserTest {
   }
 
   @Test
+  fun `Update user with user object`() {
+    val user = User("1", "Test User", "Test", "User", " invalid email", null)
+    val newUser = User("2", "Test User 2", "Test 2", "User 2", " invalid email 2", null)
+    user.update(newUser)
+    assertEquals(user, newUser)
+  }
+
+  @Test
   fun `User deserialization with invalid map`() {
     val map =
         mapOf(
@@ -128,5 +136,13 @@ class UserTest {
             "email" to " invalid email",
             "photoURL" to "null")
     assertFailsWith<Exception> { User.deserialize(map) }
+  }
+
+  @Test
+  fun `User serialize and deserialize remains unchanged`() {
+    val user = User("1", "Test User", "Test", "User", " invalid email", null)
+    val map = User.serialize(user)
+    val deserializedUser = User.deserialize(map)
+    assertEquals(user, deserializedUser)
   }
 }

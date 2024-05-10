@@ -87,14 +87,11 @@ class PostTest {
 
   @Test
   fun `default method returns expected Post object`() {
-    val post = Post.default()
+    val defaultMeal = Meal.default()
+    val post = Post.default().copy(meal = defaultMeal)
     val expectedPost =
         Post(
-            "testId",
-            "Description",
-            Location(0.0, 0.0, 10.0, "EPFL"),
-            Meal.default(),
-            LocalDate.now())
+            "testId", "Description", Location(0.0, 0.0, 10.0, "EPFL"), defaultMeal, LocalDate.now())
 
     assertEquals(expectedPost, post)
   }
@@ -146,6 +143,7 @@ class PostTest {
 
   @Test
   fun deserializePost() {
+    val defaultMeal = Meal.default()
     val post =
         Post.deserialize(
             mapOf(
@@ -157,7 +155,7 @@ class PostTest {
                         "latitude" to 0.0,
                         "altitude" to 10.0,
                         "name" to "EPFL"),
-                "meal" to Meal.default().serialize(),
+                "meal" to defaultMeal.serialize(),
                 "createdAt" to
                     mapOf(
                         "year" to 2021.toLong(),
@@ -168,13 +166,14 @@ class PostTest {
             "userId",
             "description",
             Location(0.0, 0.0, 10.0, "EPFL"),
-            Meal.default(),
+            defaultMeal,
             LocalDate.of(2021, 10, 10))
     assertEquals(expectedPost, post)
   }
 
   @Test
   fun deserializePostWithDifferentLocation() {
+    val defaultMeal = Meal.default()
     val post =
         Post.deserialize(
             mapOf(
@@ -186,7 +185,7 @@ class PostTest {
                         "latitude" to 20.0,
                         "altitude" to 30.0,
                         "name" to "MIT"),
-                "meal" to Meal.default().serialize(),
+                "meal" to defaultMeal.serialize(),
                 "createdAt" to
                     mapOf(
                         "year" to 2021.toLong(),
@@ -197,13 +196,14 @@ class PostTest {
             "userId",
             "description",
             Location(10.0, 20.0, 30.0, "MIT"),
-            Meal.default(),
+            defaultMeal,
             LocalDate.of(2021, 10, 10))
     assertEquals(expectedPost, post)
   }
 
   @Test
   fun deserializePostWithDifferentUserId() {
+    val defaultMeal = Meal.default()
     val post =
         Post.deserialize(
             mapOf(
@@ -215,7 +215,7 @@ class PostTest {
                         "latitude" to 0.0,
                         "altitude" to 10.0,
                         "name" to "EPFL"),
-                "meal" to Meal.default().serialize(),
+                "meal" to defaultMeal.serialize(),
                 "createdAt" to
                     mapOf(
                         "year" to 2021.toLong(),
@@ -226,13 +226,14 @@ class PostTest {
             "differentUserId",
             "description",
             Location(0.0, 0.0, 10.0, "EPFL"),
-            Meal.default(),
+            defaultMeal,
             LocalDate.of(2021, 10, 10))
     assertEquals(expectedPost, post)
   }
 
   @Test
   fun deserializePostWithDifferentDescription() {
+    val defaultMeal = Meal.default()
     val post =
         Post.deserialize(
             mapOf(
@@ -244,7 +245,7 @@ class PostTest {
                         "latitude" to 0.0,
                         "altitude" to 10.0,
                         "name" to "EPFL"),
-                "meal" to Meal.default().serialize(),
+                "meal" to defaultMeal.serialize(),
                 "createdAt" to
                     mapOf(
                         "year" to 2021.toLong(),
@@ -255,7 +256,7 @@ class PostTest {
             "userId",
             "differentDescription",
             Location(0.0, 0.0, 10.0, "EPFL"),
-            Meal.default(),
+            defaultMeal,
             LocalDate.of(2021, 10, 10))
     assertEquals(expectedPost, post)
   }

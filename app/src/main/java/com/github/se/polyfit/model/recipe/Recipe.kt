@@ -53,7 +53,7 @@ data class Recipe(
       return Recipe(
           641803L,
           "Easy & Delish! ~ Apple Crumble",
-          URL("https://spoonacular.com/recipeImages/Easy---Delish--Apple-Crumble-641803.jpg"),
+          URL("https://picsum.photos/200/300"),
           3,
           3,
           1,
