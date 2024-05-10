@@ -7,9 +7,12 @@ import com.github.se.polyfit.data.remote.firebase.PostFirebaseRepository
 import com.github.se.polyfit.model.post.Location
 import com.github.se.polyfit.model.post.Post
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 @HiltViewModel
-class MapViewModel(private val repository: PostFirebaseRepository = PostFirebaseRepository()) :
+class MapViewModel
+@Inject
+constructor(private val repository: PostFirebaseRepository = PostFirebaseRepository()) :
     ViewModel() {
 
   private val _location = MutableLiveData<Location>()
