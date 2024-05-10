@@ -119,6 +119,14 @@ class UserTest {
   }
 
   @Test
+  fun `Update user with user object`() {
+    val user = User("1", "Test User", "Test", "User", " invalid email", null)
+    val newUser = User("2", "Test User 2", "Test 2", "User 2", " invalid email 2", null)
+    user.update(newUser)
+    assertEquals(user, newUser)
+  }
+
+  @Test
   fun `User deserialization with invalid map`() {
     val map =
         mapOf(

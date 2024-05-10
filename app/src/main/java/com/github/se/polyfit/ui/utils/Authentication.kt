@@ -76,15 +76,10 @@ constructor(
         givenName = account.givenName,
         photoURL = account.photoUrl)
 
-    userFirebaseRepository.getUser(this.user.id).addOnSuccessListener {
-      if (it.isNotNull()) {
+    userFirebaseRepository.getUser(this.user.id).continueWith {
+      if (it.result.isNotNull()) {
         Log.d("AuthenticationCloud", "User already exists, information loaded")
-        this.user.update(
-            email = it?.email!!,
-            displayName = it.displayName,
-            familyName = it.familyName,
-            givenName = it.givenName,
-            photoURL = it.photoURL)
+        this.user.update(user = it.result!!)
       } else {
         userFirebaseRepository.storeUser(this.user)
       }

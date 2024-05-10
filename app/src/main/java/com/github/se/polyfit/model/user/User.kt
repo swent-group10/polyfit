@@ -29,6 +29,16 @@ data class User(
     return serialize(this)
   }
 
+  fun update(user: User) {
+    update(
+        id = user.id,
+        displayName = user.displayName,
+        familyName = user.familyName,
+        givenName = user.givenName,
+        email = user.email,
+        photoURL = user.photoURL)
+  }
+
   fun update(
       id: String = this.id,
       displayName: String? = this.displayName,

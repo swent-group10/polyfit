@@ -19,7 +19,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class UserAuthTest {
-
   private lateinit var mockAccount: GoogleSignInAccount
   private lateinit var authCloud: AuthenticationCloud
   private val user: User = User()
