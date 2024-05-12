@@ -54,7 +54,7 @@ class GeoQueryRepositoryTest {
     val listenerSlot = slot<GeoQueryEventListener>()
     every { mockGeoQuery.addGeoQueryEventListener(capture(listenerSlot)) } answers {}
 
-    repository.queryNearbyPosts(37.7749, -122.4194, 10.0, mockGeoFire)
+    repository.queryNearbyPosts(37.7749, -122.4194, 10.0, {}, geoFire = mockGeoFire)
 
     coVerify(exactly = 1) {
       mockGeoFire.queryAtLocation(
@@ -74,7 +74,7 @@ class GeoQueryRepositoryTest {
           match { it.latitude == 37.7749 && it.longitude == -122.4194 }, eq(10.0))
     } returns mockGeoQuery
 
-    repository.queryNearbyPosts(37.7749, -122.4194, 10.0, mockGeoFire)
+    repository.queryNearbyPosts(37.7749, -122.4194, 10.0, {}, geoFire = mockGeoFire)
 
     coVerify(exactly = 1) {
       mockGeoFire.queryAtLocation(
@@ -94,7 +94,7 @@ class GeoQueryRepositoryTest {
     val listenerSlot = slot<GeoQueryEventListener>()
     every { mockGeoQuery.addGeoQueryEventListener(capture(listenerSlot)) } answers {}
 
-    repository.queryNearbyPosts(37.7749, -122.4194, 10.0, mockGeoFire)
+    repository.queryNearbyPosts(37.7749, -122.4194, 10.0, {}, geoFire = mockGeoFire)
 
     listenerSlot.captured.onKeyEntered("key1", GeoLocation(37.7749, -122.4194))
     listenerSlot.captured.onKeyExited("key1")
@@ -112,7 +112,7 @@ class GeoQueryRepositoryTest {
     val listenerSlot = slot<GeoQueryEventListener>()
     every { mockGeoQuery.addGeoQueryEventListener(capture(listenerSlot)) } answers {}
 
-    repository.queryNearbyPosts(37.7749, -122.4194, 10.0, mockGeoFire)
+    repository.queryNearbyPosts(37.7749, -122.4194, 10.0, {}, geoFire = mockGeoFire)
 
     listenerSlot.captured.onGeoQueryReady()
   }
@@ -129,7 +129,7 @@ class GeoQueryRepositoryTest {
     val listenerSlot = slot<GeoQueryEventListener>()
     every { mockGeoQuery.addGeoQueryEventListener(capture(listenerSlot)) } answers {}
 
-    repository.queryNearbyPosts(37.7749, -122.4194, 10.0, mockGeoFire)
+    repository.queryNearbyPosts(37.7749, -122.4194, 10.0, {}, geoFire = mockGeoFire)
 
     listenerSlot.captured.onGeoQueryError(DatabaseError.fromCode(DatabaseError.UNKNOWN_ERROR))
   }
