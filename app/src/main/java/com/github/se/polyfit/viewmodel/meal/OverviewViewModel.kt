@@ -171,10 +171,10 @@ constructor(
   }
 
   fun getUserName(): String {
-    if (user.displayName != null) {
-      return user.displayName!!
+    return if (user.displayName != null) {
+      user.displayName!!
     } else {
-      return user.email
+      user.email
     }
   }
 }

@@ -1,6 +1,5 @@
 package com.github.se.polyfit.ui.components.scaffold
 
-import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
@@ -75,7 +74,6 @@ fun BottomNavigationBar(
         },
         selected = currentRoute == Route.PostInfo,
         onClick = {
-          Log.d("BottomNavigationBar", "Clicked on map $currentRoute")
           if (currentRoute != Route.PostInfo) {
             navPostInfo()
           }

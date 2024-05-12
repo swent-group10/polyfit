@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.github.se.polyfit.R
 import com.github.se.polyfit.model.meal.MealOccasion
@@ -117,19 +116,4 @@ private fun MealDetailRow(meal: MealOccasion, calories: Double) {
         fontSize = MaterialTheme.typography.bodyLarge.fontSize,
         color = Color.Black)
   }
-}
-
-@Preview
-@Composable
-fun MealTrackerCardPreview() {
-  MealTrackerCard(
-      caloriesGoal = 2000,
-      meals =
-          listOf(
-              MealOccasion.BREAKFAST to 100.0,
-              MealOccasion.LUNCH to 200.0,
-              MealOccasion.DINNER to 300.0),
-      onCreateMealFromPhoto = {},
-      onCreateMealWithoutPhoto = {},
-      onViewRecap = {})
 }

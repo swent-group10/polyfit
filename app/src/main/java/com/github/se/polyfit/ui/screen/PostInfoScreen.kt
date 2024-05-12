@@ -35,10 +35,15 @@ import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.viewmodel.post.ViewPostViewModel
 
 @Composable
-fun PostInfoScreen(navigation: Navigation, navHostController: NavHostController) {
+fun PostInfoScreen(
+    navigation: Navigation,
+    navHostController: NavHostController,
+    viewPostViewModel: ViewPostViewModel = hiltViewModel(),
+) {
   GenericScreen(
       navController = navHostController,
-      content = { PostInfoScreenContent() },
+      content = { PostInfoScreenContent(viewPostViewModel = viewPostViewModel) },
+      modifier = Modifier.testTag("PostInfoScreen"),
       floatingButton = {
         PrimaryButton(
             text = "",
@@ -61,7 +66,7 @@ fun PostInfoScreenContent(
   Scaffold {
     if (isFetching) {
       Box(modifier = Modifier.fillMaxSize().padding(it), contentAlignment = Alignment.Center) {
-        CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+        CircularProgressIndicator(modifier = Modifier.padding(16.dp).testTag("LoadingPost"))
       }
       return@Scaffold
     }

@@ -19,7 +19,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
-class PostInfoScreenTest {
+class PostInfoScreenContentTest {
 
   @get:Rule val composeTestRule = createComposeRule()
 

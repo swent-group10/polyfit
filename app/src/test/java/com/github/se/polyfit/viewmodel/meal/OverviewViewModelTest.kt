@@ -536,4 +536,18 @@ class OverviewViewModelTest {
     // Verify the result
     Assert.assertEquals(meal1, result)
   }
+
+  @Test
+  fun getUserDisplayName() {
+    val result = overviewViewModel.getUserName()
+    Assert.assertEquals(User.testUser().displayName, result)
+  }
+
+  @Test
+  fun getEmailIFDispalyIsNotSet() {
+    val user = User.testUser().apply { displayName = null }
+    val overviewViewModel = OverviewViewModel(mockMealDao, mockSpoonacularApiCaller, user)
+    val result = overviewViewModel.getUserName()
+    Assert.assertEquals(user.email, result)
+  }
 }
