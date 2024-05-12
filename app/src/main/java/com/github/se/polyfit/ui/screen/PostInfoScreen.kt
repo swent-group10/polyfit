@@ -33,45 +33,36 @@ fun PostInfoScreen(
     viewPostViewModel: ViewPostViewModel = hiltViewModel(),
     navigateToCreatePost: () -> Unit
 ) {
-    val posts by viewPostViewModel.posts.collectAsState(posts)
-    val isFetching by viewPostViewModel.isFetching.collectAsState()
+  val posts by viewPostViewModel.posts.collectAsState(posts)
+  val isFetching by viewPostViewModel.isFetching.collectAsState()
 
-    Scaffold {
-
-        if (isFetching) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(it),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(modifier = Modifier.padding(16.dp))
-            }
-            return@Scaffold
-        }
-        if (posts.isEmpty()) {
-            NoPost()
-            return@Scaffold
-        }
-
-        LazyColumn(
-            state = rememberLazyListState(index),
-        ) {
-            items(posts) { post -> PostCard(post = post) }
-        }
+  Scaffold {
+    if (isFetching) {
+      Box(modifier = Modifier.fillMaxSize().padding(it), contentAlignment = Alignment.Center) {
+        CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+      }
+      return@Scaffold
     }
+    if (posts.isEmpty()) {
+      NoPost()
+      return@Scaffold
+    }
+
+    LazyColumn(
+        state = rememberLazyListState(index),
+    ) {
+      items(posts) { post -> PostCard(post = post) }
+    }
+  }
 }
 
 @Composable
 private fun NoPost() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(
-            text = ContextCompat.getString(LocalContext.current, R.string.noPostAvailable),
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.testTag("NoPostText")
-        )
-    }
+  Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Text(
+        text = ContextCompat.getString(LocalContext.current, R.string.noPostAvailable),
+        textAlign = TextAlign.Center,
+        style = MaterialTheme.typography.bodyLarge,
+        modifier = Modifier.testTag("NoPostText"))
+  }
 }
-
-

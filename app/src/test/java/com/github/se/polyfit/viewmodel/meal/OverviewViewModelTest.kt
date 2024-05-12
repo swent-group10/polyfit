@@ -4,10 +4,17 @@ import android.graphics.Bitmap
 import android.util.Log
 import com.github.se.polyfit.data.api.SpoonacularApiCaller
 import com.github.se.polyfit.data.local.dao.MealDao
+import com.github.se.polyfit.model.data.User
+import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
+import com.github.se.polyfit.model.meal.MealOccasion
+import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
+import com.github.se.polyfit.model.nutritionalInformation.Nutrient
+import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.verify
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -24,7 +31,7 @@ class OverviewViewModelTest {
     mockkStatic(Log::class)
     every { Log.e(any(), any()) } returns 0
     every { Log.i(any(), any()) } returns 0
-    overviewViewModel = OverviewViewModel(mockMealDao, mockSpoonacularApiCaller)
+    overviewViewModel = OverviewViewModel(mockMealDao, mockSpoonacularApiCaller, User.testUser())
   }
 
   @Test

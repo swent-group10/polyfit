@@ -55,7 +55,9 @@ class PostInfoScreenTest {
     every { mealViewModel.isComplete } returns MutableStateFlow(true)
     every { viewPostViewModel.posts } returns MutableStateFlow(posts)
 
-    composeTestRule.setContent { PostInfoScreen(posts, viewPostViewModel = viewPostViewModel) }
+    composeTestRule.setContent {
+      PostInfoScreen(posts, viewPostViewModel = viewPostViewModel, navigateToCreatePost = {})
+    }
 
     composeTestRule
         .onNodeWithTag("DescriptionTitle")
@@ -78,7 +80,9 @@ class PostInfoScreenTest {
     val posts = listOf<Post>()
     every { viewPostViewModel.posts } returns MutableStateFlow(posts)
 
-    composeTestRule.setContent { PostInfoScreen(posts, viewPostViewModel = viewPostViewModel) }
+    composeTestRule.setContent {
+      PostInfoScreen(posts, viewPostViewModel = viewPostViewModel, navigateToCreatePost = {})
+    }
 
     composeTestRule
         .onNodeWithTag("NoPostText")

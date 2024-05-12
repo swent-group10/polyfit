@@ -32,87 +32,73 @@ fun BottomNavigationBar(
     navSettings: () -> Unit,
     navMap: () -> Unit,
 ) {
-    val context = LocalContext.current
-    var showingMap by remember { mutableStateOf(false) }
+  val context = LocalContext.current
+  var showingMap by remember { mutableStateOf(false) }
 
+  NavigationBar(
+      modifier = Modifier.testTag("MainBottomBar"),
+      containerColor = MaterialTheme.colorScheme.primaryContainer,
+      contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+  ) {
+    val currentRoute = backStackEntry?.destination?.route
 
-    NavigationBar(
-        modifier = Modifier.testTag("MainBottomBar"),
-        containerColor = MaterialTheme.colorScheme.primaryContainer,
-        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-    ) {
-        val currentRoute = backStackEntry?.destination?.route
-
-        NavigationBarItem(
-            modifier = Modifier.testTag(OverviewTags.overviewHomeBtn),
-            colors =
+    NavigationBarItem(
+        modifier = Modifier.testTag(OverviewTags.overviewHomeBtn),
+        colors =
             NavigationBarItemDefaults.colors(
                 unselectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                selectedIconColor = MaterialTheme.colorScheme.primary
-            ),
-            icon = { Icon(Icons.Default.Home, contentDescription = OverviewTags.overviewHomeIcon) },
-            selected = currentRoute == Route.Home,
-            label = {
-                if (currentRoute == Route.Home) {
-                    Text(
-                        text = context.getString(R.string.home_nav_label),
-                        modifier = Modifier.testTag(OverviewTags.overviewHomeLabel)
-                    )
-                }
-            },
-            onClick = navHome
-        )
+                selectedIconColor = MaterialTheme.colorScheme.primary),
+        icon = { Icon(Icons.Default.Home, contentDescription = OverviewTags.overviewHomeIcon) },
+        selected = currentRoute == Route.Home,
+        label = {
+          if (currentRoute == Route.Home) {
+            Text(
+                text = context.getString(R.string.home_nav_label),
+                modifier = Modifier.testTag(OverviewTags.overviewHomeLabel))
+          }
+        },
+        onClick = navHome)
 
-        NavigationBarItem(
-            modifier = Modifier.testTag(OverviewTags.overviewMapBtn),
-            colors =
+    NavigationBarItem(
+        modifier = Modifier.testTag(OverviewTags.overviewMapBtn),
+        colors =
             NavigationBarItemDefaults.colors(
                 unselectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                selectedIconColor = MaterialTheme.colorScheme.primary
-            ),
-            icon = {
-                Icon(
-                    if (showingMap)
-                        Icons.Default.Menu
-                    else
-                        Icons.Default.LocationOn, contentDescription = OverviewTags.overviewMapIcon
-                )
-            },
-            label = {
-                if (currentRoute == Route.PostInfo)
-                    Text(
-                        if (showingMap) context.getString(R.string.map_nav_label) else context.getString(
-                            R.string.map_nav_posts
-                        ),
-                        Modifier.testTag(OverviewTags.overviewMapLabel)
-                    )
-            },
-            selected = currentRoute == Route.PostInfo,
-            onClick = {
-                showingMap = !showingMap
-                navSearch.invoke()
-            }
-        )
+                selectedIconColor = MaterialTheme.colorScheme.primary),
+        icon = {
+          Icon(
+              if (showingMap) Icons.Default.Menu else Icons.Default.LocationOn,
+              contentDescription = OverviewTags.overviewMapIcon)
+        },
+        label = {
+          if (currentRoute == Route.PostInfo)
+              Text(
+                  if (showingMap) context.getString(R.string.map_nav_label)
+                  else context.getString(R.string.map_nav_posts),
+                  Modifier.testTag(OverviewTags.overviewMapLabel))
+        },
+        selected = currentRoute == Route.PostInfo,
+        onClick = {
+          showingMap = !showingMap
+          navSearch.invoke()
+        })
 
-        NavigationBarItem(
-            modifier = Modifier.testTag(OverviewTags.overviewSettingsBtn),
-            colors =
+    NavigationBarItem(
+        modifier = Modifier.testTag(OverviewTags.overviewSettingsBtn),
+        colors =
             NavigationBarItemDefaults.colors(
                 unselectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                selectedIconColor = MaterialTheme.colorScheme.primary
-            ),
-            icon = {
-                Icon(Icons.Default.Settings, contentDescription = OverviewTags.overviewSettingsIcon)
-            },
-            label = {
-                if (currentRoute == Route.Settings)
-                    Text(
-                        context.getString(R.string.settings),
-                        Modifier.testTag(OverviewTags.overviewSettingsLabel)
-                    )
-            },
-            selected = currentRoute == Route.Settings,
-            onClick = navSettings
-        )
-    }
+                selectedIconColor = MaterialTheme.colorScheme.primary),
+        icon = {
+          Icon(Icons.Default.Settings, contentDescription = OverviewTags.overviewSettingsIcon)
+        },
+        label = {
+          if (currentRoute == Route.Settings)
+              Text(
+                  context.getString(R.string.settings),
+                  Modifier.testTag(OverviewTags.overviewSettingsLabel))
+        },
+        selected = currentRoute == Route.Settings,
+        onClick = navSettings)
+  }
 }

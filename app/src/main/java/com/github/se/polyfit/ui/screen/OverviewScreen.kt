@@ -63,204 +63,167 @@ fun OverviewScreen(
     overviewViewModel: OverviewViewModel = hiltViewModel()
 ) {
 
-    val context = LocalContext.current
-    val navigation = Navigation(navController)
-    var showPictureDialog by remember { mutableStateOf(false) }
-    val isTestEnvironment = System.getProperty("isTestEnvironment") == "true"
+  val context = LocalContext.current
+  val navigation = Navigation(navController)
+  var showPictureDialog by remember { mutableStateOf(false) }
+  val isTestEnvironment = System.getProperty("isTestEnvironment") == "true"
 
-    // State to hold the URI, the image and the bitmap
-    var imageUri by remember { mutableStateOf<Uri?>(null) }
-    val iconExample = BitmapFactory.decodeResource(context.resources, R.drawable.picture_example)
-    var imageBitmap by remember { mutableStateOf(iconExample) }
+  // State to hold the URI, the image and the bitmap
+  var imageUri by remember { mutableStateOf<Uri?>(null) }
+  val iconExample = BitmapFactory.decodeResource(context.resources, R.drawable.picture_example)
+  var imageBitmap by remember { mutableStateOf(iconExample) }
 
-    // Launcher for starting the camera activity
-    val startCamera =
-        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result
-            ->
-            val bitmap = result.data?.extras?.get("data") as? Bitmap
+  // Launcher for starting the camera activity
+  val startCamera =
+      rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result
+        ->
+        val bitmap = result.data?.extras?.get("data") as? Bitmap
+        imageBitmap = bitmap
+
+        showPictureDialog = false
+        val id: String? = runBlocking(Dispatchers.IO) { overviewViewModel.storeMeal(imageBitmap) }
+        navigation.navigateToAddMeal(id)
+      }
+
+  // Launcher for requesting the camera permission
+  val requestPermissionLauncher =
+      rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
+          isGranted: Boolean ->
+        if (isGranted) {
+          // Permission is granted, you can start the camera
+          val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+          try {
+            startCamera.launch(takePictureIntent)
+          } catch (e: Exception) {
+            // Handle the exception if the camera intent cannot be launched
+          }
+        } else {
+          // Permission is denied. Handle the denial appropriately.
+        }
+      }
+
+  // Create a launcher to open gallery
+  val pickImageLauncher =
+      rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri?
+        ->
+        uri?.let {
+          imageUri = uri // Update the UI with the selected image URI
+
+          try {
+            val bitmap = ImageDecoder.decodeBitmap(createSource(context.contentResolver, uri))
             imageBitmap = bitmap
-
-            showPictureDialog = false
-            val id: String? =
-                runBlocking(Dispatchers.IO) { overviewViewModel.storeMeal(imageBitmap) }
-            navigation.navigateToAddMeal(id)
+          } catch (e: Exception) {
+            Log.e(
+                "OverviewScreen",
+                "Error decoding image: $e," + " are you sure the image is a bitmap?")
+          }
         }
+      }
 
-    // Launcher for requesting the camera permission
-    val requestPermissionLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-            if (isGranted) {
-                // Permission is granted, you can start the camera
-                val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                try {
-                    startCamera.launch(takePictureIntent)
-                } catch (e: Exception) {
-                    // Handle the exception if the camera intent cannot be launched
-                }
-            } else {
-                // Permission is denied. Handle the denial appropriately.
-            }
-        }
+  if (showPictureDialog) {
+    PictureDialog(
+        onDismiss = { showPictureDialog = false },
+        onFirstButtonClick = callCamera(context, startCamera, requestPermissionLauncher),
+        onSecondButtonClick = { pickImageLauncher.launch("image/*") },
+        firstButtonName = context.getString(R.string.take_picture_dialog),
+        secondButtonName = context.getString(R.string.import_picture_dialog))
+  }
 
-    // Create a launcher to open gallery
-    val pickImageLauncher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri?
-            ->
-            uri?.let {
-                imageUri = uri // Update the UI with the selected image URI
-
-                try {
-                    val bitmap =
-                        ImageDecoder.decodeBitmap(createSource(context.contentResolver, uri))
-                    imageBitmap = bitmap
-                } catch (e: Exception) {
-                    Log.e(
-                        "OverviewScreen",
-                        "Error decoding image: $e," + " are you sure the image is a bitmap?"
-                    )
-                }
-            }
-        }
-
-    if (showPictureDialog) {
-        PictureDialog(
-            onDismiss = { showPictureDialog = false },
-            onFirstButtonClick = callCamera(context, startCamera, requestPermissionLauncher),
-            onSecondButtonClick = { pickImageLauncher.launch("image/*") },
-            firstButtonName = context.getString(R.string.take_picture_dialog),
-            secondButtonName = context.getString(R.string.import_picture_dialog)
-        )
-    }
-
-    Box(
-        modifier = Modifier
-            .padding(paddingValues)
-            .fillMaxWidth()
-            .testTag("OverviewScreen")
-    ) {
-        LazyColumn(
-            contentPadding = PaddingValues(horizontal = 30.dp, vertical = 20.dp),
-            modifier = Modifier.testTag("OverviewScreenLazyColumn"),
-            horizontalAlignment = Alignment.CenterHorizontally
-
-        ) {
-            item {
-                Text(
-                    text = context.getString(
-                        R.string.welcome_message,
-                        overviewViewModel.getUserName()
-                    ),
-                    fontSize = MaterialTheme.typography.headlineLarge.fontSize,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary,
-                    lineHeight = 30.sp,
-                    modifier = Modifier
-                        .testTag(OverviewTags.overviewWelcome)
-                )
-            }
-            item {
-                MealTrackerCard(
-                    caloriesGoal = 2200,
-                    meals =
+  Box(modifier = Modifier.padding(paddingValues).fillMaxWidth().testTag("OverviewScreen")) {
+    LazyColumn(
+        contentPadding = PaddingValues(horizontal = 30.dp, vertical = 20.dp),
+        modifier = Modifier.testTag("OverviewScreenLazyColumn"),
+        horizontalAlignment = Alignment.CenterHorizontally) {
+          item {
+            Text(
+                text = context.getString(R.string.welcome_message, overviewViewModel.getUserName()),
+                fontSize = MaterialTheme.typography.headlineLarge.fontSize,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary,
+                lineHeight = 30.sp,
+                modifier = Modifier.testTag(OverviewTags.overviewWelcome))
+          }
+          item {
+            MealTrackerCard(
+                caloriesGoal = 2200,
+                meals =
                     listOf(
                         Pair(MealOccasion.BREAKFAST, 300.0),
                         Pair(MealOccasion.LUNCH, 456.0),
-                        Pair(MealOccasion.DINNER, 0.0)
-                    ),
-                    onCreateMealFromPhoto = {
-                        showPictureDialog = true
-                        Log.d("OverviewScreen", "Photo button clicked")
-                    },
-                    onCreateMealWithoutPhoto = navigation::navigateToAddMeal,
-                    onViewRecap = navigation::navigateToDailyRecap
-                )
+                        Pair(MealOccasion.DINNER, 0.0)),
+                onCreateMealFromPhoto = {
+                  showPictureDialog = true
+                  Log.d("OverviewScreen", "Photo button clicked")
+                },
+                onCreateMealWithoutPhoto = navigation::navigateToAddMeal,
+                onViewRecap = navigation::navigateToDailyRecap)
+          }
 
-            }
-
-            item {
-                Box(
-                    modifier =
-                    Modifier
-                        .align(Alignment.Center)
+          item {
+            Box(
+                modifier =
+                    Modifier.align(Alignment.Center)
                         .padding(top = 10.dp)
                         .size(width = 350.dp, height = 300.dp)
                         .testTag("Graph Card")
                         .clickable { navigation.navigateToGraph() },
-
-                    ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .testTag("Graph Card Column")
-                    ) {
-                        Text(
-                            text = "Calories Graph",
-                            style = MaterialTheme.typography.headlineLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.secondary,
-                            modifier =
-                            Modifier
-                                .padding(start = 10.dp, top = 10.dp)
-                                .weight(1f)
-                                .testTag("Graph Card Title")
-                                .clickable { navigation.navigateToGraph() })
-                        Box(
-                            modifier =
-                            Modifier
-                                .fillMaxSize(0.85f)
-                                .align(Alignment.CenterHorizontally)
-                                .testTag("Graph Box")
-                                .clickable { navigation.navigateToGraph() }
-                        ) {
-                            if (!isTestEnvironment) {
-                                LineChart(
-                                    modifier = Modifier
-                                        .testTag("Overview Line Chart")
-                                        .fillMaxSize(),
-                                    lineChartData =
-                                    lineChartData(
-                                        hiltViewModel<GraphViewModel>().DataPoints(),
-                                        hiltViewModel<GraphViewModel>().DateList(),
-                                        DisplayScreen.OVERVIEW
-                                    )
-                                )
-                            } else {
-                                Spacer(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .testTag("LineChartSpacer")
-                                )
-                            }
-                        }
+            ) {
+              Column(modifier = Modifier.fillMaxSize().testTag("Graph Card Column")) {
+                Text(
+                    text = "Calories Graph",
+                    style = MaterialTheme.typography.headlineLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.secondary,
+                    modifier =
+                        Modifier.padding(start = 10.dp, top = 10.dp)
+                            .weight(1f)
+                            .testTag("Graph Card Title")
+                            .clickable { navigation.navigateToGraph() })
+                Box(
+                    modifier =
+                        Modifier.fillMaxSize(0.85f)
+                            .align(Alignment.CenterHorizontally)
+                            .testTag("Graph Box")
+                            .clickable { navigation.navigateToGraph() }) {
+                      if (!isTestEnvironment) {
+                        LineChart(
+                            modifier = Modifier.testTag("Overview Line Chart").fillMaxSize(),
+                            lineChartData =
+                                lineChartData(
+                                    hiltViewModel<GraphViewModel>().DataPoints(),
+                                    hiltViewModel<GraphViewModel>().DateList(),
+                                    DisplayScreen.OVERVIEW))
+                      } else {
+                        Spacer(modifier = Modifier.fillMaxSize().testTag("LineChartSpacer"))
+                      }
                     }
-                }
+              }
             }
+          }
         }
-    }
+  }
 }
-
 
 private fun callCamera(
     context: Context,
     startCamera: ManagedActivityResultLauncher<Intent, ActivityResult>,
     requestPermissionLauncher: ManagedActivityResultLauncher<String, Boolean>
 ): () -> Unit = {
-    // Check if the permission has already been granted
-    when (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)) {
-        PackageManager.PERMISSION_GRANTED -> {
-            // You can use the camera
-            val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            try {
-                startCamera.launch(takePictureIntent)
-            } catch (e: Exception) {
-                // Handle the exception if the camera intent cannot be launched
-                Log.e("HomeScreen", "Error launching camera intent: $e")
-            }
-        }
-
-        else -> {
-            // Request the permission
-            requestPermissionLauncher.launch(Manifest.permission.CAMERA)
-        }
+  // Check if the permission has already been granted
+  when (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)) {
+    PackageManager.PERMISSION_GRANTED -> {
+      // You can use the camera
+      val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+      try {
+        startCamera.launch(takePictureIntent)
+      } catch (e: Exception) {
+        // Handle the exception if the camera intent cannot be launched
+        Log.e("HomeScreen", "Error launching camera intent: $e")
+      }
     }
+    else -> {
+      // Request the permission
+      requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+    }
+  }
 }

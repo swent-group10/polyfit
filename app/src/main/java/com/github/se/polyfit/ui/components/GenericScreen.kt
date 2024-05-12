@@ -22,33 +22,30 @@ fun GenericScreen(
     modifier: Modifier = Modifier,
     floatingButton: @Composable () -> Unit = {}
 ) {
-    val context: Context = LocalContext.current
-    val stackEntry by navController.currentBackStackEntryAsState()
-    Scaffold(
-        modifier = modifier,
-        topBar = { AppTitle() },
-        floatingActionButton = floatingButton,
-        bottomBar = {
-            BottomNavigationBar(
-                stackEntry,
-                { navController.navigate(Route.Home) },
-                { navController.navigate(Route.PostInfo) },
-                showToastMessage(context = context),
-                { navController.navigate(Route.Map) }
-            )
-        },
-        content = content
-    )
+  val context: Context = LocalContext.current
+  val stackEntry by navController.currentBackStackEntryAsState()
+  Scaffold(
+      modifier = modifier,
+      topBar = { AppTitle() },
+      floatingActionButton = floatingButton,
+      bottomBar = {
+        BottomNavigationBar(
+            stackEntry,
+            { navController.navigate(Route.Home) },
+            { navController.navigate(Route.PostInfo) },
+            showToastMessage(context = context),
+            { navController.navigate(Route.Map) })
+      },
+      content = content)
 }
 
 @Composable
 fun showToastMessage(context: Context): () -> Unit {
-    val toast =
-        Toast.makeText(
-            context,
-            context.getString(R.string.toast_message_feature_unavailable),
-            Toast.LENGTH_SHORT
-        )
+  val toast =
+      Toast.makeText(
+          context,
+          context.getString(R.string.toast_message_feature_unavailable),
+          Toast.LENGTH_SHORT)
 
-    return { toast.show() }
+  return { toast.show() }
 }

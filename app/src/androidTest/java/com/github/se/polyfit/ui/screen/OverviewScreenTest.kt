@@ -35,6 +35,7 @@ import com.github.se.polyfit.ui.utils.GraphData
 import com.github.se.polyfit.ui.utils.OverviewTags
 import com.github.se.polyfit.ui.viewModel.DisplayScreen
 import com.github.se.polyfit.ui.viewModel.GraphViewModel
+import com.github.se.polyfit.viewmodel.meal.OverviewViewModel
 import com.github.se.polyfit.viewmodel.post.CreatePostViewModel
 import com.kaspersky.components.composesupport.config.withComposeSupport
 import com.kaspersky.kaspresso.kaspresso.Kaspresso
@@ -66,6 +67,9 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
     val mockPostViewModel: CreatePostViewModel = mockk(relaxed = true)
 
     every { mockPostViewModel.meals.value } returns listOf()
+    val mockkOverviewModule: OverviewViewModel = mockk {}
+
+    every { mockkOverviewModule.getUserName() } returns "It's me Mario"
 
     composeTestRule.setContent {
       val navController = rememberNavController()
@@ -73,7 +77,13 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
         composable(Route.Home) {
           GenericScreen(
               navController = navController,
-              content = { paddingValues -> OverviewScreen(paddingValues, navController, mockk()) })
+              content = { paddingValues ->
+                OverviewScreen(
+                    paddingValues,
+                    navController,
+                    mockkOverviewModule,
+                )
+              })
         }
 
         composable(Route.AddMeal) {
@@ -251,16 +261,6 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
   fun OverviewScreenContent_Displayed() {
     setup()
     ComposeScreen.onComposeScreen<OverviewScreen>(composeTestRule) {
-      secondCard {
-        assertExists()
-        assertIsDisplayed()
-      }
-
-      genericImage {
-        assertExists()
-        assertIsDisplayed()
-      }
-
       calorieCard {
         assertExists()
         assertIsDisplayed()
@@ -310,10 +310,6 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
             .assertIsDisplayed()
 
         composeTestRule.onNodeWithTag("CaloriePerMeal").assertExists().assertIsDisplayed()
-
-        composeTestRule.onNodeWithTag("Number").assertExists().assertIsDisplayed()
-
-        composeTestRule.onNodeWithTag("Goal").assertExists().assertIsDisplayed()
       }
     }
   }
@@ -402,22 +398,5 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
         .performScrollToNode(hasTestTag("Graph Card"))
     composeTestRule.onNodeWithTag("Graph Card").assertHasClickAction().performClick()
     composeTestRule.onNodeWithTag("GraphScreenColumn").assertExists().assertIsDisplayed()
-  }
-
-  @Test
-  fun createAPost() {
-    setup()
-    ComposeScreen.onComposeScreen<OverviewScreen>(composeTestRule) {
-      createAPostButton {
-        assertExists()
-        assertIsDisplayed()
-        assertTextEquals("Create a Post")
-        assertHasClickAction()
-        performClick()
-        assertDoesNotExist()
-      }
-    }
-
-    ComposeScreen.onComposeScreen<CreatePostTopBar>(composeTestRule) { title { assertExists() } }
   }
 }
