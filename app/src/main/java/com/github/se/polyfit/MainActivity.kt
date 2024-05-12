@@ -63,9 +63,7 @@ class MainActivity : ComponentActivity() {
                 mealId = mealId)
           }
 
-          composable(Route.PostInfo) {
-            GenericScreen(navController = navController, content = { PostInfoScreen() })
-          }
+          composable(Route.PostInfo) { PostInfoScreen(navigation, navController) }
 
           composable(Route.CreatePost) {
             CreatePostScreen(navigation::goBack, navigation::navigateToHome)

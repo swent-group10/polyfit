@@ -19,7 +19,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
-class PostInfoScreenTest {
+class PostInfoScreenContentTest {
 
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -55,7 +55,9 @@ class PostInfoScreenTest {
     every { mealViewModel.isComplete } returns MutableStateFlow(true)
     every { viewPostViewModel.posts } returns MutableStateFlow(posts)
 
-    composeTestRule.setContent { PostInfoScreen(posts, viewPostViewModel = viewPostViewModel) }
+    composeTestRule.setContent {
+      PostInfoScreenContent(posts, viewPostViewModel = viewPostViewModel)
+    }
 
     composeTestRule
         .onNodeWithTag("DescriptionTitle")
@@ -78,7 +80,9 @@ class PostInfoScreenTest {
     val posts = listOf<Post>()
     every { viewPostViewModel.posts } returns MutableStateFlow(posts)
 
-    composeTestRule.setContent { PostInfoScreen(posts, viewPostViewModel = viewPostViewModel) }
+    composeTestRule.setContent {
+      PostInfoScreenContent(posts, viewPostViewModel = viewPostViewModel)
+    }
 
     composeTestRule
         .onNodeWithTag("NoPostText")

@@ -20,18 +20,21 @@ fun GenericScreen(
     navController: NavHostController,
     content: @Composable (PaddingValues) -> Unit,
     modifier: Modifier = Modifier,
+    floatingButton: @Composable () -> Unit = {}
 ) {
   val context: Context = LocalContext.current
   val stackEntry by navController.currentBackStackEntryAsState()
   Scaffold(
       modifier = modifier,
       topBar = { AppTitle() },
+      floatingActionButton = floatingButton,
       bottomBar = {
         BottomNavigationBar(
             stackEntry,
             { navController.navigate(Route.Home) },
             { navController.navigate(Route.PostInfo) },
-            showToastMessage(context = context))
+            showToastMessage(context = context),
+            {})
       },
       content = content)
 }
