@@ -27,6 +27,7 @@ import co.yml.charts.ui.linechart.model.LineStyle
 import co.yml.charts.ui.linechart.model.LineType
 import co.yml.charts.ui.linechart.model.ShadowUnderLine
 import com.github.se.polyfit.data.processor.LocalDataProcessor
+import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.components.lineChartData
 import com.github.se.polyfit.ui.flow.AddMealFlow
@@ -61,15 +62,14 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
   @get:Rule val composeTestRule = createComposeRule()
 
   @get:Rule val mockkRule = MockKRule(this)
+  private val mockkOverviewModule: OverviewViewModel =
+      OverviewViewModel(mockk(), mockk(), User.testUser().apply { displayName = "It's me Mario" })
 
   fun setup() {
     val dataProcessor = mockk<LocalDataProcessor>(relaxed = true)
     val mockPostViewModel: CreatePostViewModel = mockk(relaxed = true)
 
     every { mockPostViewModel.meals.value } returns listOf()
-    val mockkOverviewModule: OverviewViewModel = mockk {}
-
-    every { mockkOverviewModule.getUserName() } returns "It's me Mario"
 
     composeTestRule.setContent {
       val navController = rememberNavController()
