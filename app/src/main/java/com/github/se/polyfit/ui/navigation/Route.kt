@@ -20,4 +20,6 @@ object Route {
 
   const val PostInfo = "PostInfo"
   const val CreatePost = "CreatePost"
+
+  const val RecipeRecommendation = "RecipeRecommendation"
 }
