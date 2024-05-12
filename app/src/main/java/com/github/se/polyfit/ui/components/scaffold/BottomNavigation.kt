@@ -67,10 +67,11 @@ fun BottomNavigationBar(
         icon = { Icon(Icons.Default.Menu, contentDescription = OverviewTags.overviewMapIcon) },
         label = {
           if (currentRoute == Route.PostInfo)
-              Text(
-                  if (showingMap) context.getString(R.string.map_nav_label)
-                  else context.getString(R.string.map_nav_posts),
-                  Modifier.testTag(OverviewTags.overviewMapLabel))
+              if (showingMap) context.getString(R.string.map_nav_label)
+              else
+                  Text(
+                      context.getString(R.string.map_nav_posts),
+                      Modifier.testTag(OverviewTags.overviewMapLabel))
         },
         selected = currentRoute == Route.PostInfo,
         onClick = {

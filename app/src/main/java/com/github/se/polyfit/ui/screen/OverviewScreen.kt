@@ -1,9 +1,6 @@
 package com.github.se.polyfit.ui.screen
 
-import android.Manifest
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
@@ -11,9 +8,7 @@ import android.graphics.ImageDecoder.createSource
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
-import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -39,7 +34,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import co.yml.charts.ui.linechart.LineChart
@@ -123,7 +117,8 @@ fun OverviewScreen(
   if (showPictureDialog) {
     PictureDialog(
         onDismiss = { showPictureDialog = false },
-        onFirstButtonClick = callCamera(context, startCamera, requestPermissionLauncher),
+        onFirstButtonClick =
+            overviewViewModel.callCamera(context, startCamera, requestPermissionLauncher),
         onSecondButtonClick = { pickImageLauncher.launch("image/*") },
         firstButtonName = context.getString(R.string.take_picture_dialog),
         secondButtonName = context.getString(R.string.import_picture_dialog))
@@ -201,29 +196,5 @@ fun OverviewScreen(
             }
           }
         }
-  }
-}
-
-private fun callCamera(
-    context: Context,
-    startCamera: ManagedActivityResultLauncher<Intent, ActivityResult>,
-    requestPermissionLauncher: ManagedActivityResultLauncher<String, Boolean>
-): () -> Unit = {
-  // Check if the permission has already been granted
-  when (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)) {
-    PackageManager.PERMISSION_GRANTED -> {
-      // You can use the camera
-      val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-      try {
-        startCamera.launch(takePictureIntent)
-      } catch (e: Exception) {
-        // Handle the exception if the camera intent cannot be launched
-        Log.e("HomeScreen", "Error launching camera intent: $e")
-      }
-    }
-    else -> {
-      // Request the permission
-      requestPermissionLauncher.launch(Manifest.permission.CAMERA)
-    }
   }
 }
