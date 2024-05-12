@@ -25,26 +25,21 @@ fun CalTracker(
     color: Color = Color.Black,
     strokeWidth: Float = 8f
 ) {
-    require(progress >= 0f)
-    var progressValue = progress
+  require(progress >= 0f)
+  var progressValue = progress
 
-    // avoid any potential overflow
-    if (progress > 1f) {
-        progressValue = 1f
-    }
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .fillMaxSize()
-            .testTag(OverviewTags.overviewGoal)
-    ) {
+  // avoid any potential overflow
+  if (progress > 1f) {
+    progressValue = 1f
+  }
+  Box(
+      contentAlignment = Alignment.Center,
+      modifier = Modifier.fillMaxSize().testTag(OverviewTags.overviewGoal)) {
         CircularProgressIndicator(
             progress = {
-                progressValue // Full circle
+              progressValue // Full circle
             },
-            modifier = Modifier
-                .size(200.dp)
-                .testTag(OverviewTags.overviewTrack),
+            modifier = Modifier.size(200.dp).testTag(OverviewTags.overviewTrack),
             trackColor = trackColor,
             color = color,
             strokeWidth = strokeWidth.dp,
@@ -52,18 +47,14 @@ fun CalTracker(
         Text(
             text,
             style =
-            MaterialTheme.typography.headlineSmall.copy(
-                fontSize = 18.sp, color = color, fontWeight = FontWeight.Bold
-            ),
-            modifier = Modifier
-                .align(Alignment.Center)
-                .testTag(OverviewTags.overviewCalorie)
-        )
-    }
+                MaterialTheme.typography.headlineSmall.copy(
+                    fontSize = 18.sp, color = color, fontWeight = FontWeight.Bold),
+            modifier = Modifier.align(Alignment.Center).testTag(OverviewTags.overviewCalorie))
+      }
 }
 
 @Composable
 @Preview
 fun CalTrackerPreview() {
-    CalTracker(.5f, "something")
+  CalTracker(.5f, "something")
 }

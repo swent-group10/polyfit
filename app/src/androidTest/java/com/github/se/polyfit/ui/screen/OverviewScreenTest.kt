@@ -148,7 +148,7 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
               .shouldDrawAxisLineTillEnd(false)
               .backgroundColor(MaterialTheme.colorScheme.background)
               .steps(pointList.size - 1)
-              .labelData { i -> "" }
+              .labelData { _ -> "" }
               .labelAndAxisLinePadding(15.dp)
               .axisLineColor(MaterialTheme.colorScheme.inversePrimary)
               .build()
@@ -159,7 +159,7 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
               .backgroundColor(MaterialTheme.colorScheme.background)
               .labelAndAxisLinePadding(30.dp)
               .axisLineColor(MaterialTheme.colorScheme.inversePrimary)
-              .labelData { i -> "" }
+              .labelData { _ -> "" }
               .build()
               .toString()
 

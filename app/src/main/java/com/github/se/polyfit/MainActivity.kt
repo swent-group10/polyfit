@@ -4,10 +4,6 @@ import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.padding
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -15,7 +11,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.github.se.polyfit.ui.components.GenericScreen
-import com.github.se.polyfit.ui.components.button.PrimaryButton
 import com.github.se.polyfit.ui.flow.AddMealFlow
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.navigation.Route
@@ -67,20 +62,7 @@ class MainActivity : ComponentActivity() {
                 mealId = mealId)
           }
 
-          composable(Route.PostInfo) {
-            GenericScreen(
-                navController = navController,
-                content = {
-                  PostInfoScreen(navigateToCreatePost = navigation::navigateToCreatePost)
-                },
-                floatingButton = {
-                  // technical dept
-                  PrimaryButton(
-                      text = "Create a Post",
-                      onClick = navigation::navigateToCreatePost,
-                      modifier = Modifier.padding(top = 8.dp).testTag("CreateAPost"))
-                })
-          }
+          composable(Route.PostInfo) { PostInfoScreen(navigation, navController) }
 
           composable(Route.CreatePost) {
             CreatePostScreen(navigation::goBack, navigation::navigateToHome)

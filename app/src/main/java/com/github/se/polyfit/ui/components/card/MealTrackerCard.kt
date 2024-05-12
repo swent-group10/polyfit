@@ -51,7 +51,7 @@ private fun CalorieTracker(caloriesGoal: Int, meals: List<Pair<MealOccasion, Dou
   val totalCalories = meals.sumOf { it.second }
   CalTracker(
       progress = totalCalories.toFloat() / caloriesGoal,
-      text = "$totalCalories/$caloriesGoal kcal",
+      text = "$totalCalories/$caloriesGoal  kcal",
       color = Purple40,
       trackColor = GhostPurpe)
 }

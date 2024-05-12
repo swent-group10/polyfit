@@ -34,7 +34,7 @@ fun GenericScreen(
             { navController.navigate(Route.Home) },
             { navController.navigate(Route.PostInfo) },
             showToastMessage(context = context),
-            { navController.navigate(Route.Map) })
+            {})
       },
       content = content)
 }

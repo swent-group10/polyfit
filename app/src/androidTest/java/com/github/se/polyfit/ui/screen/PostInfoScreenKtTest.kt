@@ -56,7 +56,7 @@ class PostInfoScreenTest {
     every { viewPostViewModel.posts } returns MutableStateFlow(posts)
 
     composeTestRule.setContent {
-      PostInfoScreen(posts, viewPostViewModel = viewPostViewModel, navigateToCreatePost = {})
+      PostInfoScreenContent(posts, viewPostViewModel = viewPostViewModel)
     }
 
     composeTestRule
@@ -81,7 +81,7 @@ class PostInfoScreenTest {
     every { viewPostViewModel.posts } returns MutableStateFlow(posts)
 
     composeTestRule.setContent {
-      PostInfoScreen(posts, viewPostViewModel = viewPostViewModel, navigateToCreatePost = {})
+      PostInfoScreenContent(posts, viewPostViewModel = viewPostViewModel)
     }
 
     composeTestRule

@@ -1,8 +1,8 @@
 package com.github.se.polyfit.ui.components.scaffold
 
+import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
@@ -28,7 +28,7 @@ import com.github.se.polyfit.ui.utils.OverviewTags
 fun BottomNavigationBar(
     backStackEntry: NavBackStackEntry?,
     navHome: () -> Unit,
-    navSearch: () -> Unit,
+    navPostInfo: () -> Unit,
     navSettings: () -> Unit,
     navMap: () -> Unit,
 ) {
@@ -57,7 +57,7 @@ fun BottomNavigationBar(
                 modifier = Modifier.testTag(OverviewTags.overviewHomeLabel))
           }
         },
-        onClick = navHome)
+        onClick = { if (currentRoute != Route.Home) navHome() })
 
     NavigationBarItem(
         modifier = Modifier.testTag(OverviewTags.overviewMapBtn),
@@ -65,11 +65,7 @@ fun BottomNavigationBar(
             NavigationBarItemDefaults.colors(
                 unselectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 selectedIconColor = MaterialTheme.colorScheme.primary),
-        icon = {
-          Icon(
-              if (showingMap) Icons.Default.Menu else Icons.Default.LocationOn,
-              contentDescription = OverviewTags.overviewMapIcon)
-        },
+        icon = { Icon(Icons.Default.Menu, contentDescription = OverviewTags.overviewMapIcon) },
         label = {
           if (currentRoute == Route.PostInfo)
               Text(
@@ -79,8 +75,10 @@ fun BottomNavigationBar(
         },
         selected = currentRoute == Route.PostInfo,
         onClick = {
-          showingMap = !showingMap
-          navSearch.invoke()
+          Log.d("BottomNavigationBar", "Clicked on map $currentRoute")
+          if (currentRoute != Route.PostInfo) {
+            navPostInfo()
+          }
         })
 
     NavigationBarItem(

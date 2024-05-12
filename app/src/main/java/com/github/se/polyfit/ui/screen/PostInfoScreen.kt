@@ -6,7 +6,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Create
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -21,17 +25,35 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.github.se.polyfit.R
 import com.github.se.polyfit.model.post.Post
+import com.github.se.polyfit.ui.components.GenericScreen
+import com.github.se.polyfit.ui.components.button.PrimaryButton
 import com.github.se.polyfit.ui.components.postinfo.PostCard
+import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.viewmodel.post.ViewPostViewModel
 
 @Composable
-fun PostInfoScreen(
+fun PostInfoScreen(navigation: Navigation, navHostController: NavHostController) {
+  GenericScreen(
+      navController = navHostController,
+      content = { PostInfoScreenContent() },
+      floatingButton = {
+        PrimaryButton(
+            text = "",
+            icon = { Icon(Icons.Default.Create, contentDescription = "Create a Post") },
+            onClick = navigation::navigateToCreatePost,
+            buttonShape = RoundedCornerShape(100),
+            modifier = Modifier.padding(top = 8.dp).testTag("CreateAPost"))
+      })
+}
+
+@Composable
+fun PostInfoScreenContent(
     posts: List<Post> = listOf(),
     index: Int = 0,
     viewPostViewModel: ViewPostViewModel = hiltViewModel(),
-    navigateToCreatePost: () -> Unit
 ) {
   val posts by viewPostViewModel.posts.collectAsState(posts)
   val isFetching by viewPostViewModel.isFetching.collectAsState()
