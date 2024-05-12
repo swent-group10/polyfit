@@ -15,7 +15,7 @@ constructor(private val spoonacularApiCaller: SpoonacularApiCaller) : ViewModel(
 
   suspend fun recipeFromIngredients(ingredients: List<String>): List<Recipe> {
     val recipesResponse =
-        withContext(Dispatchers.IO) { spoonacularApiCaller.recipeByIngredients(ingredients) }
+        withContext(Dispatchers.Default) { spoonacularApiCaller.recipeByIngredients(ingredients) }
     return recipesResponse.recipes
   }
 
