@@ -1,13 +1,14 @@
 package com.github.se.polyfit
 
-import android.util.Log
 import androidx.lifecycle.Lifecycle
+import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.ui.utils.Authentication
+import com.google.firebase.auth.FirebaseAuth
+import io.mockk.every
 import io.mockk.junit4.MockKRule
 import io.mockk.mockk
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -33,28 +34,24 @@ class MainActivityTest {
     }
   }
 
-  @Ignore("Test not implemented")
+  // @Ignore("Test doesn't work")
   @Test
-  fun testEvent() {
-    val scenario = mMainActivityRule.scenario
+  fun testSignInSignOut() {
+
+    val auth: FirebaseAuth = mockk(relaxed = true)
+    every { auth.currentUser } answers { mockk(relaxed = true) }
+
+    var authentication: Authentication? = null
+    val scenario = ActivityScenario.launch(MainActivity::class.java)
+    scenario.recreate()
 
     scenario.moveToState(Lifecycle.State.CREATED)
-
     scenario.onActivity { activity ->
-      val authentication = Authentication(activity, mockk(relaxed = true))
-      Log.i("Test", "1")
-      authentication.signIn()
-      Log.i("Test", "2")
-      assert(authentication.isAuthenticated())
-      Log.i("Test", "3")
-      authentication.signOut()
-      Log.i("Test", "4")
-      assert(!authentication.isAuthenticated())
-      Log.i("Test", "5")
+      authentication = Authentication(activity, mockk(relaxed = true), mockk(relaxed = true), auth)
+      authentication!!.setCallback({}, 0)
     }
-
-    Log.i("Test", "6")
     scenario.moveToState(Lifecycle.State.STARTED)
-    Log.i("Test", "7")
+
+    assert(authentication!!.isAuthenticated())
   }
 }

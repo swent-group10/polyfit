@@ -51,7 +51,8 @@ class UserAuthTest {
     every { GoogleSignIn.getLastSignedInAccount(any()) } returns mockAccount
 
     // Initialize AuthenticationCloud
-    authentication = Authentication(mockk(relaxed = true), user, mockFirebaseAuth)
+    authentication =
+        Authentication(mockk(relaxed = true), user, mockk(relaxed = true), mockFirebaseAuth)
   }
 
   @AfterTest

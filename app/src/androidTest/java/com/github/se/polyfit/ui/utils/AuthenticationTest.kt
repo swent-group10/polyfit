@@ -54,14 +54,19 @@ class AuthenticationTest {
     // every { firebaseAuth.currentUser } returns if (isLoggedIn) firebaseuser else null
 
     authentication =
-        Authentication(activity = activity, user = user, auth = firebaseAuth, context = context)
+        Authentication(
+            activity = activity,
+            user = user,
+            auth = firebaseAuth,
+            context = context,
+            userFirebaseRepository = mockk(relaxed = true))
   }
 
   @Test
   fun isAuthenticated() {
     val isLoggedIn = true
     // every { firebaseAuth.currentUser } returns if (isLoggedIn) firebaseuser else null
-    authentication = Authentication(activity, user, firebaseAuth, context)
+    authentication = Authentication(activity, user, mockk(), firebaseAuth, context)
     authentication.setCallback({}, 3)
     assert(authentication.isAuthenticated())
   }
@@ -70,7 +75,7 @@ class AuthenticationTest {
   fun signOut() {
     val isLoggedIn = false
     // every { firebaseAuth.currentUser } returns if (isLoggedIn) firebaseuser else null
-    authentication = Authentication(activity, user, firebaseAuth, context)
+    authentication = Authentication(activity, user, mockk(), firebaseAuth, context)
     authentication.setCallback({}, 3)
     // authentication.signIn()
     authentication.signOut()

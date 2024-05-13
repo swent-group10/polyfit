@@ -10,6 +10,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.github.se.polyfit.data.remote.firebase.UserFirebaseRepository
 import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.flow.AddMealFlow
@@ -31,6 +32,7 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
 
   @Inject lateinit var user: User
+  @Inject lateinit var userFirebaseRepository: UserFirebaseRepository
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -45,7 +47,12 @@ class MainActivity : ComponentActivity() {
     controller.systemBarsBehavior =
         WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 
-    val authentication = Authentication(this, user, context = this)
+    val authentication =
+        Authentication(
+            activity = this,
+            user = user,
+            context = this,
+            userFirebaseRepository = userFirebaseRepository)
 
     // TODO: technical debt, next deadline find better way to pass arguments from overview screen
     // to add meal screen

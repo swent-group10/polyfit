@@ -8,10 +8,12 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.core.content.ContextCompat
+import co.yml.charts.common.extensions.isNotNull
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.github.se.polyfit.R
+import com.github.se.polyfit.data.remote.firebase.UserFirebaseRepository
 import com.github.se.polyfit.model.data.User
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -20,11 +22,12 @@ import com.google.firebase.auth.FirebaseAuth
 class Authentication(
     activity: ComponentActivity,
     private val user: User,
+    private val userFirebaseRepository: UserFirebaseRepository,
     private val auth: FirebaseAuth = FirebaseAuth.getInstance(),
     private var context: Context = activity.applicationContext,
 ) {
 
-  private var callback: (() -> Unit)? = null
+  private var callback: (() -> Unit) = { Log.e("Authentication", "Callback not set") }
   private var signInLauncher: ActivityResultLauncher<Intent>? = null
 
   init {
@@ -41,23 +44,10 @@ class Authentication(
         activity.registerForActivityResult(FirebaseAuthUIActivityResultContract()) { res ->
           onSignInResult(res) {
             if (it) {
-              var i: Long = 0
-              var c = callback
-              while (c == null) {
-                c = callback
-                i++
-                Log.w("Authentication", "waiting for callback, should not be stuck here")
-                if (i > 10) {
-                  Log.e("Authentication", "callback not set")
-                  throw Exception("callback not set")
-                }
-              }
-              (callback!!)()
+              (callback)()
               Log.i("Authentication", "onCreate user account: ${auth.currentUser}")
             } else {
-              Log.e("LoginScreen", "Sign in failed")
-
-              // Display a toast message if the sign-in fails to the user
+              Log.e("Authentication", "onCreate user account error in sign in result ")
               Toast.makeText(
                       context,
                       ContextCompat.getString(context, R.string.signInFailed),
@@ -130,8 +120,6 @@ class Authentication(
         givenName = account.givenName,
         photoURL = account.photoUrl)
 
-    // TODO
-    /*
     userFirebaseRepository.getUser(this.user.id).continueWith {
       if (it.result.isNotNull()) {
         Log.d("AuthenticationCloud", "User already exists, information loaded")
@@ -140,6 +128,5 @@ class Authentication(
         userFirebaseRepository.storeUser(this.user)
       }
     }
-     */
   }
 }
