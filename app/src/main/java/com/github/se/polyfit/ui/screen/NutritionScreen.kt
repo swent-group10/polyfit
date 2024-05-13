@@ -104,6 +104,7 @@ private fun BottomBar(
                   modifier = Modifier.width(250.dp).testTag("AddRecipeButton"),
                   text = "Add Recipe",
                   fontSize = 18,
+                  isEnabled = isComplete,
                   color = PrimaryPink)
               Spacer(modifier = Modifier.height(8.dp))
               PrimaryButton(
