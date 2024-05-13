@@ -75,7 +75,7 @@ data class User(
             givenName = map["givenName"] as String,
             email = map["email"] as String,
             photoURL =
-                if (map["photoURL"] != "null") Uri.parse(map["photoURL"] as String) else Uri.EMPTY)
+                if (map["photoURL"] != "null") Uri.parse(map["photoURL"] as String) else null)
       } catch (e: Exception) {
         Log.e("User", "Error deserializing user", e)
         throw IllegalArgumentException("Error deserializing user : $e")
