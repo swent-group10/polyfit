@@ -11,11 +11,11 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkAll
+import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.Timeout
-import kotlin.test.AfterTest
 
 class AuthenticationTest {
 

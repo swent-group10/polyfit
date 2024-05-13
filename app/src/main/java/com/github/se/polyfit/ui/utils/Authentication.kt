@@ -8,7 +8,6 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.core.content.ContextCompat
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
@@ -17,16 +16,12 @@ import com.github.se.polyfit.model.data.User
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.auth.FirebaseAuth
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
-import javax.inject.Singleton
 
-class Authentication
-(
-        activity: ComponentActivity,
-        private val user: User,
-        private val auth: FirebaseAuth = FirebaseAuth.getInstance(),
-        private var context: Context = activity.applicationContext,
+class Authentication(
+    activity: ComponentActivity,
+    private val user: User,
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance(),
+    private var context: Context = activity.applicationContext,
 ) {
 
   private var callback: (() -> Unit)? = null
@@ -104,10 +99,7 @@ class Authentication
     AuthUI.getInstance().signOut(context)
   }
 
-  fun onSignInResult(
-      result: FirebaseAuthUIAuthenticationResult,
-      callback: (Boolean) -> Unit
-  ) {
+  fun onSignInResult(result: FirebaseAuthUIAuthenticationResult, callback: (Boolean) -> Unit) {
     val response = result.idpResponse
     if (result.resultCode == Activity.RESULT_OK) {
       // to get google account info
