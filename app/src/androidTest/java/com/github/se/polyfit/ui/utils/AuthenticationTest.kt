@@ -10,10 +10,12 @@ import com.google.firebase.auth.FirebaseUser
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.unmockkAll
 import kotlin.test.BeforeTest
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.Timeout
+import kotlin.test.AfterTest
 
 class AuthenticationTest {
 
@@ -38,6 +40,11 @@ class AuthenticationTest {
     firebaseuser = mockk<FirebaseUser>(relaxed = true)
 
     context = ApplicationProvider.getApplicationContext<Context>()
+  }
+
+  @AfterTest
+  fun after() {
+    unmockkAll()
   }
 
   @Test

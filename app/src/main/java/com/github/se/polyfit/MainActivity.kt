@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
 
   @Inject lateinit var user: User
 
-  override fun onCreate(savedInstanceState: Bundle?) {
+  public override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
     // hides the system bar

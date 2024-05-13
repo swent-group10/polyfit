@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.core.content.ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
@@ -16,17 +17,16 @@ import com.github.se.polyfit.model.data.User
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.auth.FirebaseAuth
+import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
 class Authentication
-@Inject
-constructor(
-    activity: ComponentActivity,
-    private val user: User,
-    private val auth: FirebaseAuth = FirebaseAuth.getInstance(),
-    private var context: Context = activity.applicationContext,
+(
+        activity: ComponentActivity,
+        private val user: User,
+        private val auth: FirebaseAuth = FirebaseAuth.getInstance(),
+        private var context: Context = activity.applicationContext,
 ) {
 
   private var callback: (() -> Unit)? = null
@@ -82,7 +82,7 @@ constructor(
     signInLauncher!!.launch(signInIntent)
   }
 
-  fun setCallback(callback: () -> Unit, asd: Int) {
+  fun setCallback(callback: () -> Unit, justToHave2ArguementHilt: Int) {
     this.callback = callback
   }
 
