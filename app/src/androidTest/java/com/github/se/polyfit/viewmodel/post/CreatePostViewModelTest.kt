@@ -30,7 +30,8 @@ class CreatePostViewModelTest {
 
   @Before
   fun setup() {
-    viewModel = CreatePostViewModel(mockMealRepository, mockPostFirebaseRepository, mockPostLocationModel)
+    viewModel =
+        CreatePostViewModel(mockMealRepository, mockPostFirebaseRepository, mockPostLocationModel)
   }
 
   @Test
@@ -51,8 +52,6 @@ class CreatePostViewModelTest {
 
     assertEquals(description, viewModel.post.description)
   }
-
-
 
   @Test
   fun setPostStoresPostInRepository() = runTest {

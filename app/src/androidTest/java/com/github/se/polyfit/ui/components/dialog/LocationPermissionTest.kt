@@ -1,6 +1,5 @@
 package com.github.se.polyfit.ui.components.dialog
 
-import android.Manifest
 import androidx.activity.result.ActivityResultLauncher
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -60,7 +59,7 @@ class LocationPermissionTest : TestCase() {
     }
   }
 
- /* @Test
+  /* @Test
   fun approveButtonClicked() {
     ComposeScreen.onComposeScreen<LocationPermissionScreen>(composeTestRule) {
       approveButton { performClick() }

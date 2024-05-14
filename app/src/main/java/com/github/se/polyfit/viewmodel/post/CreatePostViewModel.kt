@@ -14,7 +14,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -71,7 +70,7 @@ constructor(
     }
   }
 
-  fun setInOrder(){
+  fun setInOrder() {
     viewModelScope.launch(Dispatchers.IO) {
       setPostLocation().join()
       setPost()

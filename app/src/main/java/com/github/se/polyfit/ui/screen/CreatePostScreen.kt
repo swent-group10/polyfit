@@ -46,7 +46,6 @@ import com.github.se.polyfit.ui.theme.PrimaryPink
 import com.github.se.polyfit.ui.theme.PrimaryPurple
 import com.github.se.polyfit.ui.theme.SecondaryGrey
 import com.github.se.polyfit.viewmodel.post.CreatePostViewModel
-import kotlinx.coroutines.Dispatchers
 
 @Composable
 fun CreatePostScreen(

@@ -15,68 +15,68 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import junit.framework.TestCase.assertEquals
+import kotlin.test.Test
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
-import kotlin.test.Test
 
 class PostLocationModelTest {
-    private lateinit var model: PostLocationModel
-    private val context = mockk<Context>(relaxed = true)
-    private val fusedLocationClient = mockk<FusedLocationProviderClient>()
-    private val currentLocationRequest = CurrentLocationRequest.Builder()
-        .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
-        .build()
+  private lateinit var model: PostLocationModel
+  private val context = mockk<Context>(relaxed = true)
+  private val fusedLocationClient = mockk<FusedLocationProviderClient>()
+  private val currentLocationRequest =
+      CurrentLocationRequest.Builder().setPriority(Priority.PRIORITY_HIGH_ACCURACY).build()
 
+  @Before
+  fun setUp() {
 
-    @Before
-    fun setUp() {
+    model = PostLocationModel(context)
+  }
 
-        model = PostLocationModel(context)
-    }
+  @Test
+  fun testGetCurrentLocation(): Unit = runTest {
+    mockkStatic(ActivityCompat::class)
+    every { ActivityCompat.checkSelfPermission(context, any()) } returns
+        PackageManager.PERMISSION_GRANTED
 
+    val mockLocation = mockk<Location>(relaxed = true)
+    every { mockLocation.longitude } returns 10.0
+    every { mockLocation.latitude } returns 20.0
+    every { mockLocation.altitude } returns 5.0
 
-    @Test
-    fun testGetCurrentLocation(): Unit = runTest {
-        mockkStatic(ActivityCompat::class)
-        every { ActivityCompat.checkSelfPermission(context, any()) } returns PackageManager.PERMISSION_GRANTED
+    val task = Tasks.forResult(mockLocation)
+    coEvery { fusedLocationClient.getCurrentLocation(currentLocationRequest, any()) } returns task
 
-        val mockLocation = mockk<Location>(relaxed = true)
-        every { mockLocation.longitude } returns 10.0
-        every { mockLocation.latitude } returns 20.0
-        every { mockLocation.altitude } returns 5.0
+    val location = model.currentLocation(fusedLocationClient)
 
-        val task = Tasks.forResult(mockLocation)
-        coEvery { fusedLocationClient.getCurrentLocation(currentLocationRequest, any()) } returns task
+    assertEquals(10.0, location.longitude, 0.001)
+    assertEquals(20.0, location.latitude, 0.001)
+    assertEquals(5.0, location.altitude, 0.001)
+    unmockkStatic(ActivityCompat::class)
+  }
 
-        val location = model.currentLocation(fusedLocationClient)
+  @Test
+  fun testPermissionDenied() = runTest {
+    mockkStatic(ActivityCompat::class)
+    every { ActivityCompat.checkSelfPermission(context, any()) } returns
+        PackageManager.PERMISSION_DENIED
+    every { ActivityCompat.checkSelfPermission(context, any()) } returns
+        PackageManager.PERMISSION_DENIED
 
-        assertEquals(10.0, location.longitude, 0.001)
-        assertEquals(20.0, location.latitude, 0.001)
-        assertEquals(5.0, location.altitude, 0.001)
-        unmockkStatic(ActivityCompat::class)
-    }
+    val location = model.getCurrentLocation()
+    assertEquals(location, com.github.se.polyfit.model.post.Location.default())
 
-    @Test
-    fun testPermissionDenied() = runTest {
-        mockkStatic(ActivityCompat::class)
-        every { ActivityCompat.checkSelfPermission(context, any()) } returns PackageManager.PERMISSION_DENIED
-        every { ActivityCompat.checkSelfPermission(context, any()) } returns PackageManager.PERMISSION_DENIED
+    unmockkStatic(ActivityCompat::class)
+  }
 
-        val location = model.getCurrentLocation()
-        assertEquals(location, com.github.se.polyfit.model.post.Location.default())
+  @Test
+  fun testWithoutGranting() = runTest {
+    mockkStatic(ActivityCompat::class)
+    every { ActivityCompat.checkSelfPermission(context, any()) } returns
+        PackageManager.PERMISSION_DENIED
 
-        unmockkStatic(ActivityCompat::class)
-    }
+    val location = model.checkLocationPermissions()
+    assertEquals(location, com.github.se.polyfit.model.post.Location.default())
 
-    @Test
-    fun testWithoutGranting() = runTest {
-        mockkStatic(ActivityCompat::class)
-        every { ActivityCompat.checkSelfPermission(context, any()) } returns PackageManager.PERMISSION_DENIED
-
-        val location = model.checkLocationPermissions()
-        assertEquals(location, com.github.se.polyfit.model.post.Location.default())
-
-        unmockkStatic(ActivityCompat::class)
-    }
-
+    unmockkStatic(ActivityCompat::class)
+  }
 }

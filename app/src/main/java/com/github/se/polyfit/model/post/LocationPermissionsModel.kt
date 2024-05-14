@@ -8,10 +8,7 @@ import androidx.core.app.ActivityCompat
 
 class LocationPermissionsModel(val context: Context) {
 
-
-
-
-    fun checkLocationPermissions(activity: Activity, locationFunction: () -> Unit) {
+  fun checkLocationPermissions(activity: Activity, locationFunction: () -> Unit) {
     if (ActivityCompat.checkSelfPermission(
         this.context, Manifest.permission.ACCESS_COARSE_LOCATION) !=
         PackageManager.PERMISSION_GRANTED ||
@@ -32,16 +29,11 @@ class LocationPermissionsModel(val context: Context) {
         REQUEST_LOCATION_PERMISSION)
   }
 
-
-
-    companion object {
+  companion object {
     private const val REQUEST_LOCATION_PERMISSION = 1
-
   }
 
-    fun getRequestLocationPermissionValue(): Int {
-        return REQUEST_LOCATION_PERMISSION
-    }
-
-
+  fun getRequestLocationPermissionValue(): Int {
+    return REQUEST_LOCATION_PERMISSION
+  }
 }
