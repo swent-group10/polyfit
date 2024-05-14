@@ -2,7 +2,6 @@ package com.github.se.polyfit.ui.components.dialog
 
 import android.Manifest
 import android.content.Context
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
@@ -56,10 +55,7 @@ fun LocationPermissionDialog(onDeny: () -> Unit, onApprove: () -> Unit) {
       },
       confirmButton = {
         Button(
-            onClick = {
-              Log.d("LocationPermissionDialog", "onClick")
-              permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-            },
+            onClick = { permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION) },
             border = BorderStroke(3.dp, PrimaryPurple),
             shape = RoundedCornerShape(20.dp),
             modifier = Modifier.testTag("ApproveButton"),
