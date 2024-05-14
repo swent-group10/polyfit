@@ -13,8 +13,6 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import java.time.LocalDate
-import kotlin.test.assertFailsWith
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -127,12 +125,5 @@ class CreatePostViewModelTest {
     val result = viewModel.getProtein()
 
     assertEquals(protein.amount, result, 0.1)
-  }
-
-  @Test
-  fun setPostFailed(): Unit = runBlocking {
-    coEvery { mockPostFirebaseRepository.storePost(any()) } throws
-        Exception("Failed to store post in the database")
-    assertFailsWith<Exception> { viewModel.setPost() }
   }
 }

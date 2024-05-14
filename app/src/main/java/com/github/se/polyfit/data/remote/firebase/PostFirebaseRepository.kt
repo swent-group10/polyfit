@@ -1,5 +1,7 @@
 package com.github.se.polyfit.data.remote.firebase
 
+import android.graphics.Bitmap
+import android.net.Uri
 import android.util.Log
 import com.firebase.geofire.GeoFire
 import com.firebase.geofire.GeoLocation
@@ -13,6 +15,9 @@ import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.util.UUID
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -164,6 +169,27 @@ class PostFirebaseRepository(
       val storageRef = pictureDb.getReference("posts/$postKey")
       val listResult = storageRef.listAll().await()
       listResult.items
+    }
+  }
+
+  suspend fun uploadImage(
+      image: Bitmap,
+      //        documentRef: DocumentReference
+  ): Uri? {
+    val baos = ByteArrayOutputStream()
+    image.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+    val data = baos.toByteArray()
+    val stream = ByteArrayInputStream(data)
+
+    val path = "${UUID.randomUUID()}.jpg"
+    val refSource = pictureDb.getReference(path)
+
+    try {
+      val uploadTask = refSource.putStream(stream)
+      return uploadTask.await().storage.downloadUrl.await()
+    } catch (e: Exception) {
+      Log.e("PostFirebaseRepository", "Failed to upload image", e)
+      throw Exception("Error uploading images : ${e.message}", e)
     }
   }
 }

@@ -52,9 +52,11 @@ class PostTest {
             "description" to "description",
             "location" to Location(0.0, 0.0, 10.0, "EPFL"),
             "meal" to meal.serialize(),
-            "createdAt" to LocalDate.now())
+            "createdAt" to LocalDate.now(),
+            "imageDownloadURL" to null.toString())
 
-    assertEquals(expectedMap, post.serialize())
+    val serializedPost = post.serialize()
+    assertEquals(expectedMap, serializedPost)
   }
 
   @Test
@@ -160,7 +162,8 @@ class PostTest {
                     mapOf(
                         "year" to 2021.toLong(),
                         "monthValue" to 10.toLong(),
-                        "dayOfMonth" to 10.toLong())))
+                        "dayOfMonth" to 10.toLong())),
+        )
     val expectedPost =
         Post(
             "userId",
@@ -190,7 +193,8 @@ class PostTest {
                     mapOf(
                         "year" to 2021.toLong(),
                         "monthValue" to 10.toLong(),
-                        "dayOfMonth" to 10.toLong())))
+                        "dayOfMonth" to 10.toLong()),
+                "imageDownloadURL" to null))
     val expectedPost =
         Post(
             "userId",
@@ -220,7 +224,8 @@ class PostTest {
                     mapOf(
                         "year" to 2021.toLong(),
                         "monthValue" to 10.toLong(),
-                        "dayOfMonth" to 10.toLong())))
+                        "dayOfMonth" to 10.toLong()),
+                "imageDownloadURL" to null))
     val expectedPost =
         Post(
             "differentUserId",
