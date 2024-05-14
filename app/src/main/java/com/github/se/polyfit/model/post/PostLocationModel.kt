@@ -1,82 +1,61 @@
 package com.github.se.polyfit.model.post
 
-import android.app.Activity
+import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.util.Log
-import android.view.KeyCharacterMap.UnavailableException
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
-import com.google.android.gms.tasks.Task
+import kotlinx.coroutines.tasks.await
 
-class PostLocationModel(
-    val context: Context,
-    val success: (com.github.se.polyfit.model.post.Location) -> Unit
-) : Activity() {
-  private var fusedLocationClient: FusedLocationProviderClient =
-      LocationServices.getFusedLocationProviderClient(context)
+class PostLocationModel(private val context: Context) {
 
   private val currentLocationRequest =
       CurrentLocationRequest.Builder().setPriority(Priority.PRIORITY_HIGH_ACCURACY).build()
 
-  private val permission = LocationPermissionsModel(context)
-
-  fun getCurrentLocation() {
-    permission.checkLocationPermissions(this) { currentLocation() }
+  suspend fun getCurrentLocation(): com.github.se.polyfit.model.post.Location {
+    return checkLocationPermissions()
   }
 
-  fun currentLocation() {
+  suspend fun currentLocation(
+      query: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
+  ): com.github.se.polyfit.model.post.Location {
+    var locationToSet: com.github.se.polyfit.model.post.Location =
+        com.github.se.polyfit.model.post.Location.default()
+    Log.d("LocationPermissionsModel", "currentLocation")
 
     try {
-      val locationTask: Task<Location> =
-          fusedLocationClient.getCurrentLocation(currentLocationRequest, null)
-      locationTask.addOnSuccessListener { location: Location? ->
-        location?.let {
-          Log.d("Location", "Location: $location")
-          val locationToSet =
-              Location(
-                  longitude = it.longitude,
-                  latitude = it.latitude,
-                  altitude = it.altitude,
-                  name = "")
-          success(locationToSet)
-        }
-      }
+      val location: Location? = query.getCurrentLocation(currentLocationRequest, null).await()
 
-      locationTask.addOnFailureListener { exception ->
-        when (exception) {
-          is SecurityException -> {
-            Toast.makeText(context, "Location permissions are missing", Toast.LENGTH_SHORT).show()
-          }
-          is UnavailableException -> {
-            Toast.makeText(context, "Location services are disabled", Toast.LENGTH_SHORT).show()
-          }
-          else -> {
-            Log.e("Location", "Error getting current location", exception)
-            Toast.makeText(context, "Unable to get current location", Toast.LENGTH_SHORT).show()
-          }
-        }
-      }
+      Log.d("LocationPermissionsModel", "currentLocation: $location")
+      locationToSet =
+          location?.let {
+            com.github.se.polyfit.model.post.Location(
+                longitude = it.longitude, latitude = it.latitude, altitude = it.altitude, name = "")
+          } ?: com.github.se.polyfit.model.post.Location.default()
     } catch (e: SecurityException) {
       Toast.makeText(context, "Location permissions are missing", Toast.LENGTH_SHORT).show()
     }
+    return locationToSet
   }
 
-  override fun onRequestPermissionsResult(
-      requestCode: Int,
-      permissions: Array<out String>,
-      grantResults: IntArray
-  ) {
-    if (requestCode == permission.getRequestLocationPermissionValue()) {
-      if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-        currentLocation()
-      } else {
-        Toast.makeText(context, "Permission has been denied", Toast.LENGTH_SHORT).show()
-      }
+  suspend fun checkLocationPermissions(): com.github.se.polyfit.model.post.Location {
+    Log.d("LocationPermissionsModel", "checkLocationPermissions")
+    if (ActivityCompat.checkSelfPermission(
+        this.context, Manifest.permission.ACCESS_COARSE_LOCATION) !=
+        PackageManager.PERMISSION_GRANTED ||
+        ActivityCompat.checkSelfPermission(
+            this.context, Manifest.permission.ACCESS_FINE_LOCATION) !=
+            PackageManager.PERMISSION_GRANTED) {
+      Log.e("LocationPermissionsModel", "Location permissions not granted")
+
+      return com.github.se.polyfit.model.post.Location.default()
     }
+    return currentLocation()
   }
 }

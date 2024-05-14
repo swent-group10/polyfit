@@ -1,6 +1,5 @@
 package com.github.se.polyfit.viewmodel.post
 
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,6 +14,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -26,11 +27,9 @@ class CreatePostViewModel
 constructor(
     private val mealRepository: MealRepository,
     private val postFirebaseRepository: PostFirebaseRepository,
-    private val postLocationModel : PostLocationModel
+    private val postLocationModel: PostLocationModel,
 ) : ViewModel() {
   private val _post = Post.default()
-
-
 
   val post: UnmodifiablePost
     get() = _post
@@ -65,8 +64,18 @@ constructor(
     _post.createdAt = createdAt
   }
 
-  fun setPostLocation() {
-    postLocation.getCurrentLocation()
+  fun setPostLocation(): Job {
+    return viewModelScope.launch(Dispatchers.IO) {
+      val location = postLocationModel.getCurrentLocation()
+      _post.location = location
+    }
+  }
+
+  fun setInOrder(){
+    viewModelScope.launch(Dispatchers.IO) {
+      setPostLocation().join()
+      setPost()
+    }
   }
 
   fun getCarbs(): Double {

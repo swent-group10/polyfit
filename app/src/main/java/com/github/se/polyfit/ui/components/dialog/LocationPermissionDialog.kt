@@ -1,6 +1,10 @@
 package com.github.se.polyfit.ui.components.dialog
 
+import android.Manifest
 import android.content.Context
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
@@ -8,6 +12,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -20,6 +25,19 @@ import com.github.se.polyfit.ui.theme.PrimaryPurple
 
 @Composable
 fun LocationPermissionDialog(onDeny: () -> Unit, onApprove: () -> Unit) {
+
+  val permissionLauncher =
+      rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
+          isGranted: Boolean ->
+        if (isGranted) {
+          onApprove()
+        } else {
+          onDeny()
+        }
+      }
+
+  DisposableEffect(Unit) { onDispose {} }
+
   val context: Context = LocalContext.current
   AlertDialog(
       onDismissRequest = onDeny,
@@ -38,7 +56,10 @@ fun LocationPermissionDialog(onDeny: () -> Unit, onApprove: () -> Unit) {
       },
       confirmButton = {
         Button(
-            onClick = onApprove,
+            onClick = {
+              Log.d("LocationPermissionDialog", "onClick")
+              permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            },
             border = BorderStroke(3.dp, PrimaryPurple),
             shape = RoundedCornerShape(20.dp),
             modifier = Modifier.testTag("ApproveButton"),
@@ -50,7 +71,7 @@ fun LocationPermissionDialog(onDeny: () -> Unit, onApprove: () -> Unit) {
       },
       dismissButton = {
         Button(
-            onClick = onDeny,
+            onClick = { onDeny() },
             border = BorderStroke(3.dp, PrimaryPurple),
             shape = RoundedCornerShape(20.dp),
             modifier = Modifier.testTag("DenyButton"),

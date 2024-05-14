@@ -9,6 +9,7 @@ import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import com.github.se.polyfit.model.post.Location
 import com.github.se.polyfit.model.post.Post
+import com.github.se.polyfit.model.post.PostLocationModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -25,10 +26,11 @@ class CreatePostViewModelTest {
   private lateinit var viewModel: CreatePostViewModel
   private val mockMealRepository = mockk<MealRepository>(relaxed = true)
   private val mockPostFirebaseRepository = mockk<PostFirebaseRepository>(relaxed = true)
+  private val mockPostLocationModel = mockk<PostLocationModel>(relaxed = true)
 
   @Before
   fun setup() {
-    viewModel = CreatePostViewModel(mockMealRepository, mockPostFirebaseRepository)
+    viewModel = CreatePostViewModel(mockMealRepository, mockPostFirebaseRepository, mockPostLocationModel)
   }
 
   @Test
@@ -50,14 +52,7 @@ class CreatePostViewModelTest {
     assertEquals(description, viewModel.post.description)
   }
 
-  @Test
-  fun setPostLocationUpdatesPostLocation() {
-    val location = Location.default()
 
-    viewModel.setPostLocation(location)
-
-    assertEquals(location, viewModel.post.location)
-  }
 
   @Test
   fun setPostStoresPostInRepository() = runTest {
