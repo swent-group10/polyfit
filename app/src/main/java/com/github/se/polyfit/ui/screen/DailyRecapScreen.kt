@@ -31,45 +31,50 @@ fun DailyRecapScreen(
     navigateTo: (String?) -> Unit,
     dailyRecapViewModel: DailyRecapViewModel = hiltViewModel(),
 ) {
-  val context = LocalContext.current
-  val meals by dailyRecapViewModel.meals.collectAsState()
-  val isFetching by dailyRecapViewModel.isFetching.collectAsState()
-  val noMeals = remember(meals) { meals.isEmpty() }
-  val occasions = MealOccasion.entries.filter { it != MealOccasion.OTHER }
+    val context = LocalContext.current
+    val meals by dailyRecapViewModel.meals.collectAsState()
+    val isFetching by dailyRecapViewModel.isFetching.collectAsState()
+    val noMeals = remember(meals) { meals.isEmpty() }
+    val occasions = MealOccasion.entries.filter { it != MealOccasion.OTHER }
 
-  Scaffold(topBar = { SimpleTopBar("Overview", navigateBack) }) {
-    Column(modifier = Modifier.padding(it).testTag("DailyRecapScreen")) {
-      DateSelector(onConfirm = dailyRecapViewModel::getMealsOnDate, title = "Date")
-      if (isFetching) {
-        CircularProgressIndicator(
-            modifier = Modifier.fillMaxSize().padding(16.dp).testTag("Spinner"))
-      }
-      if (!isFetching && !noMeals) {
-        LazyColumn {
-          items(occasions.size) { index ->
-            val occasion = occasions[index]
-            MealList(
-                meals = meals,
-                occasion = occasion,
-                navigateTo = navigateTo,
-                modifier = Modifier.padding(0.dp, 8.dp))
-          }
-        }
-      } else {
-        Box(
-            modifier = Modifier.fillMaxSize().testTag("NoMealsBox"),
-            contentAlignment = Alignment.Center) {
-              Text(
-                  text = context.getString(R.string.no_recorded_meals),
-                  modifier = Modifier.testTag("NoRecordedMeals"))
+    Scaffold(topBar = { SimpleTopBar("Overview", navigateBack) }) {
+        Column(modifier = Modifier
+            .padding(it)
+            .testTag("DailyRecapScreen")) {
+            DateSelector(onConfirm = dailyRecapViewModel::getMealsOnDate, title = "Date")
+            if (isFetching) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)
+                        .testTag("Spinner")
+                )
             }
-      }
+            if (!isFetching && !noMeals) {
+                LazyColumn {
+                    items(occasions.size) { index ->
+                        val occasion = occasions[index]
+                        MealList(
+                            meals = meals,
+                            occasion = occasion,
+                            navigateTo = navigateTo,
+                            modifier = Modifier.padding(0.dp, 8.dp)
+                        )
+                    }
+                }
+            } else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .testTag("NoMealsBox"),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = context.getString(R.string.no_recorded_meals),
+                        modifier = Modifier.testTag("NoRecordedMeals")
+                    )
+                }
+            }
+        }
     }
-  }
 }
-
-// @Preview
-// @Composable
-// fun DailyRecapScreenPreview() {
-//  DailyRecapScreen(navigateBack = {}, navigateTo = {})
-// }

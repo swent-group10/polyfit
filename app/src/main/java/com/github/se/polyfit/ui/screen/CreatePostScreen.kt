@@ -41,6 +41,7 @@ import com.github.se.polyfit.model.post.Location
 import com.github.se.polyfit.ui.components.button.PrimaryButton
 import com.github.se.polyfit.ui.components.dialog.LocationPermissionDialog
 import com.github.se.polyfit.ui.components.scaffold.CenteredTopBar
+import com.github.se.polyfit.ui.components.scaffold.SimpleTopBar
 import com.github.se.polyfit.ui.components.selector.MealSelector
 import com.github.se.polyfit.ui.components.selector.PictureSelector
 import com.github.se.polyfit.ui.theme.PrimaryPink
@@ -73,8 +74,9 @@ fun CreatePostScreen(
 
   Scaffold(
       topBar = {
-        CenteredTopBar(
-            title = context.getString(R.string.newPostTitle), navigateBack = navigateBack)
+          SimpleTopBar(
+              title = context.getString(R.string.newPostTitle),
+              navigateBack = navigateBack)
       },
       bottomBar = {
         BottomBar(
@@ -152,10 +154,4 @@ private fun BottomBar(onButtonPressed: () -> Unit, postComplete: Boolean) {
               buttonShape = RoundedCornerShape(12.dp))
         }
   }
-}
-
-@Composable
-@Preview
-fun MakePostScreenPreview() {
-  CreatePostScreen()
 }

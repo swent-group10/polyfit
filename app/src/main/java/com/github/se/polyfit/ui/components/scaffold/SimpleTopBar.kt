@@ -8,7 +8,13 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import com.github.se.polyfit.ui.theme.PrimaryPurple
@@ -18,25 +24,37 @@ import com.github.se.polyfit.ui.utils.titleCase
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SimpleTopBar(title: String, navigateBack: () -> Unit) {
-  TopAppBar(
-      title = {
-        Text(
-            title,
-            modifier = Modifier.testTag("${titleCase(title)} Title"),
-            color = MaterialTheme.colorScheme.secondary,
-            fontSize = MaterialTheme.typography.headlineMedium.fontSize)
-      },
-      navigationIcon = {
-        IconButton(
-            onClick = { navigateBack() },
-            content = {
-              Icon(
-                  imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                  contentDescription = "Back",
-                  modifier = Modifier.testTag("BackButton"),
-                  tint = PrimaryPurple)
-            },
-            modifier = Modifier.testTag("BackButton"))
-      },
-      modifier = Modifier.testTag("TopBar"))
+    var goBackClicked by remember { mutableStateOf(false) }
+
+    TopAppBar(
+        title = {
+            Text(
+                title,
+                modifier = Modifier.testTag("${titleCase(title)} Title"),
+                color = MaterialTheme.colorScheme.secondary,
+                fontSize = MaterialTheme.typography.headlineMedium.fontSize
+            )
+        },
+        navigationIcon = {
+            IconButton(
+                onClick = {
+                    if (!goBackClicked) {
+                        goBackClicked = true
+                        navigateBack()
+                    }
+                },
+                content = {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        modifier = Modifier.testTag("BackButton"),
+                        tint = PrimaryPurple
+                    )
+                },
+                modifier = Modifier.testTag("BackButton")
+            )
+        },
+        modifier = Modifier.testTag("TopBar"),
+        scrollBehavior = TopAppBarDefaults.
+    )
 }
