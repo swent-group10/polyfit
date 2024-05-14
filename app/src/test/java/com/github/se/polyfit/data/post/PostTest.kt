@@ -13,13 +13,18 @@ import kotlin.test.assertFails
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 
+@RunWith(RobolectricTestRunner::class)
 class PostTest {
 
   @Before
   fun setup() {
     mockkStatic(Log::class)
     every { Log.e(any<String>(), any<String>(), any()) } returns 0
+    //        mockkStatic(Uri::class)
+    //        every { Uri.parse(anyString()) } returns Uri.parse("null")
   }
 
   @Test
@@ -53,7 +58,7 @@ class PostTest {
             "location" to Location(0.0, 0.0, 10.0, "EPFL"),
             "meal" to meal.serialize(),
             "createdAt" to LocalDate.now(),
-            "imageDownloadURL" to null.toString())
+            "imageDownloadURL" to "")
 
     val serializedPost = post.serialize()
     assertEquals(expectedMap, serializedPost)

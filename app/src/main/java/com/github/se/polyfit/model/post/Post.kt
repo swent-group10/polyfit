@@ -67,7 +67,8 @@ data class Post(
         this["location"] = data.location
         this["meal"] = data.meal.serialize()
         this["createdAt"] = data.createdAt
-        this["imageDownloadURL"] = data.imageDownloadURL.toString()
+        this["imageDownloadURL"] =
+            if (data.imageDownloadURL == null) "" else data.imageDownloadURL.toString()
       }
     }
 
@@ -79,8 +80,12 @@ data class Post(
         val location = Location.deserialize(data["location"] as Map<String, Any>)
         val meal = Meal.deserialize(data["meal"] as Map<String, Any>)
         val createdAt = deserializeLocalDate(data, "createdAt")
+        var imageDownloadURL: Uri? = null
 
-        val imageDownloadURL = Uri.parse(data["imageDownloadURL"] as String)
+        if (data["imageDownloadURL"] is String &&
+            (data["imageDownloadURL"] as String).isNotEmpty()) {
+          imageDownloadURL = Uri.parse(data["imageDownloadURL"] as String)
+        }
 
         val newPost =
             Post(
