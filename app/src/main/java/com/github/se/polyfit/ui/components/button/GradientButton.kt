@@ -50,33 +50,16 @@ fun GradientButton(
     textBold: Boolean = false,
 ) {
   val gradient =
-      if (active) {
-        Brush.horizontalGradient(colors = listOf(GradientButtonPurple, GradientButtonPink))
-      } else {
-        // colors must be of length 2
-        Brush.horizontalGradient(colors = listOf(GradientButtonGrey, GradientButtonGrey))
-      }
+      Brush.horizontalGradient(colors = listOf(GradientButtonPurple, GradientButtonPink)).takeIf {
+        active
+      } ?: Brush.horizontalGradient(colors = listOf(GradientButtonGrey, GradientButtonGrey))
 
   val textColor =
-      if (active) {
-        MaterialTheme.colorScheme.primary
-      } else {
-        MaterialTheme.colorScheme.secondary
-      }
+      MaterialTheme.colorScheme.primary.takeIf { active } ?: MaterialTheme.colorScheme.secondary
 
-  val rounding =
-      if (round) {
-        RoundedCornerShape(50.dp)
-      } else {
-        RoundedCornerShape(20.dp)
-      }
+  val rounding = RoundedCornerShape(50.dp).takeIf { round } ?: RoundedCornerShape(20.dp)
 
-  val buttonModifier =
-      if (round) {
-        Modifier.size(48.dp)
-      } else {
-        Modifier
-      }
+  val buttonModifier = Modifier.size(48.dp).takeIf { round } ?: Modifier
 
   Box(contentAlignment = Alignment.Center, modifier = modifier.padding(4.dp)) {
     Canvas(modifier = Modifier.matchParentSize()) {
@@ -93,13 +76,13 @@ fun GradientButton(
           Row(
               verticalAlignment = Alignment.CenterVertically,
               horizontalArrangement = Arrangement.Center) {
-                if (icon != null) icon()
-                if (text != null) {
+                icon?.invoke()
+                text?.let {
                   Text(
                       text = text,
                       color = textColor,
                       fontSize = TextUnit(16f, TextUnitType.Sp),
-                      fontWeight = if (textBold) FontWeight.ExtraBold else FontWeight.Normal,
+                      fontWeight = FontWeight.ExtraBold.takeIf { textBold } ?: FontWeight.Normal,
                       modifier = Modifier.testTag("ButtonText"))
                 }
               }
