@@ -66,7 +66,7 @@ fun CreatePostScreen(
 
   fun onApprove() {
     isPermissionDialogDisplay = false
-    postViewModel.setPostLocation(Location.default()) // TODO: Include location when ready
+    postViewModel.setPostLocation() // TODO: Include location when ready
     postViewModel.setPost()
     navigateForward()
   }

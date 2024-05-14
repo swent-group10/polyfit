@@ -1,5 +1,6 @@
 package com.github.se.polyfit.viewmodel.post
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,6 +9,7 @@ import com.github.se.polyfit.data.repository.MealRepository
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.post.Location
 import com.github.se.polyfit.model.post.Post
+import com.github.se.polyfit.model.post.PostLocationModel
 import com.github.se.polyfit.model.post.UnmodifiablePost
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
@@ -24,8 +26,11 @@ class CreatePostViewModel
 constructor(
     private val mealRepository: MealRepository,
     private val postFirebaseRepository: PostFirebaseRepository,
+    private val postLocationModel : PostLocationModel
 ) : ViewModel() {
   private val _post = Post.default()
+
+
 
   val post: UnmodifiablePost
     get() = _post
@@ -60,8 +65,8 @@ constructor(
     _post.createdAt = createdAt
   }
 
-  fun setPostLocation(location: Location) {
-    _post.location = location
+  fun setPostLocation() {
+    postLocation.getCurrentLocation()
   }
 
   fun getCarbs(): Double {

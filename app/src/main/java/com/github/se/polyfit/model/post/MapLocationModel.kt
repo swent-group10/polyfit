@@ -1,3 +1,4 @@
+/*
 package com.github.se.polyfit.model.post
 
 import android.Manifest
@@ -16,12 +17,12 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.Task
 
-class LocationModel(val context: Context) : Activity() {
+class MapLocationModel(val context: Context) : Activity() {
   private var fusedLocationClient: FusedLocationProviderClient =
       LocationServices.getFusedLocationProviderClient(context)
 
   private val currentLocationRequest =
-      CurrentLocationRequest.Builder().setPriority(Priority.PRIORITY_HIGH_ACCURACY).build()
+          CurrentLocationRequest.Builder().setPriority(Priority.PRIORITY_HIGH_ACCURACY).build()
 
   private val locationRequestCompat: LocationRequest = LocationRequest.Builder(10000).build()
 
@@ -118,7 +119,6 @@ class LocationModel(val context: Context) : Activity() {
     requestingLocationUpdates = false
   }
 
-  companion object {
-    private const val REQUEST_LOCATION_PERMISSION = 1
-  }
+
 }
+*/
