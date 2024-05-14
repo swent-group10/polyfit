@@ -16,19 +16,23 @@ import com.github.se.polyfit.ui.theme.PrimaryPurple
 @Composable
 fun PrimaryButton(
     onClick: () -> Unit = {},
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.fillMaxWidth(0.5f),
     text: String = "",
     fontSize: Int = 20,
     isEnabled: Boolean = true,
     color: Color = PrimaryPurple,
-    buttonShape: RoundedCornerShape = RoundedCornerShape(50.dp)
+    buttonShape: RoundedCornerShape = RoundedCornerShape(50.dp),
+    icon: @Composable (() -> Unit)? = null
 ) {
   Button(
       onClick = onClick,
       enabled = isEnabled,
-      modifier = modifier.fillMaxWidth(0.5f).testTag("PrimaryButton"),
+      modifier = modifier.testTag("PrimaryButton"),
       shape = buttonShape,
       colors = ButtonDefaults.buttonColors(containerColor = color)) {
-        Text(text, color = Color.White, fontSize = fontSize.sp)
+        if (text.isNotBlank()) {
+          Text(text, color = Color.White, fontSize = fontSize.sp)
+        }
+        icon?.invoke()
       }
 }

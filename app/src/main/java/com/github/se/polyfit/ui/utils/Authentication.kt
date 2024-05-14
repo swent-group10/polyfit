@@ -15,6 +15,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.runBlocking
 
 interface Authentication {
   fun signIn()
@@ -55,7 +56,7 @@ constructor(
     if (result.resultCode == Activity.RESULT_OK) {
       // to get google acount infos
       val account = GoogleSignIn.getLastSignedInAccount(context)
-      setUserInfo(account)
+      runBlocking { setUserInfo(account) }
 
       callback(true)
     } else {

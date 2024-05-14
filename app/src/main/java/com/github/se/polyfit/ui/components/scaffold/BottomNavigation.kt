@@ -11,6 +11,10 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -23,10 +27,13 @@ import com.github.se.polyfit.ui.utils.OverviewTags
 fun BottomNavigationBar(
     backStackEntry: NavBackStackEntry?,
     navHome: () -> Unit,
-    navSearch: () -> Unit,
+    navPostInfo: () -> Unit,
     navSettings: () -> Unit,
+    navMap: () -> Unit,
 ) {
   val context = LocalContext.current
+  var showingMap by remember { mutableStateOf(false) }
+
   NavigationBar(
       modifier = Modifier.testTag("MainBottomBar"),
       containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -49,7 +56,7 @@ fun BottomNavigationBar(
                 modifier = Modifier.testTag(OverviewTags.overviewHomeLabel))
           }
         },
-        onClick = navHome)
+        onClick = { if (currentRoute != Route.Home) navHome() })
 
     NavigationBarItem(
         modifier = Modifier.testTag(OverviewTags.overviewMapBtn),
@@ -60,12 +67,18 @@ fun BottomNavigationBar(
         icon = { Icon(Icons.Default.Menu, contentDescription = OverviewTags.overviewMapIcon) },
         label = {
           if (currentRoute == Route.PostInfo)
-              Text(
-                  context.getString(R.string.map_nav_label),
-                  Modifier.testTag(OverviewTags.overviewMapLabel))
+              if (showingMap) context.getString(R.string.map_nav_label)
+              else
+                  Text(
+                      context.getString(R.string.map_nav_posts),
+                      Modifier.testTag(OverviewTags.overviewMapLabel))
         },
         selected = currentRoute == Route.PostInfo,
-        onClick = navSearch)
+        onClick = {
+          if (currentRoute != Route.PostInfo) {
+            navPostInfo()
+          }
+        })
 
     NavigationBarItem(
         modifier = Modifier.testTag(OverviewTags.overviewSettingsBtn),
