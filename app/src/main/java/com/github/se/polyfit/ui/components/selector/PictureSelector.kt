@@ -31,20 +31,18 @@ import com.github.se.polyfit.ui.theme.PurpleGrey80
 import com.github.se.polyfit.viewmodel.post.CreatePostViewModel
 
 private const val PERMISSION_DENIED_MESSAGE = "Permission denied"
-private const val TAG = "PictureSelector"
 
 @Composable
 fun PictureSelector(modifier: Modifier = Modifier, postViewModel: CreatePostViewModel) {
   val context = LocalContext.current
 
-  var bitmapPicture = remember { mutableStateOf<Bitmap?>(null) }
+  var bitmapPicture = remember { mutableStateOf(postViewModel.getBitMap()) }
 
   val takePicturePreview =
       rememberLauncherForActivityResult(
           contract = ActivityResultContracts.TakePicturePreview(),
           onResult = { bitmap: Bitmap? ->
             if (bitmap != null) {
-              Toast.makeText(context, "Bitmap captured", Toast.LENGTH_SHORT).show()
               bitmapPicture.value = bitmap
               postViewModel.setBitMap(bitmap)
             }
@@ -61,21 +59,22 @@ fun PictureSelector(modifier: Modifier = Modifier, postViewModel: CreatePostView
       }
 
   Box(
-      modifier =
-          modifier.fillMaxWidth().testTag(TAG).clickable {
-            if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) ==
-                PackageManager.PERMISSION_GRANTED) {
-              takePicturePreview.launch(null) // Launch the camera if permission is already granted
-            } else {
-              requestPermission.launch(
-                  Manifest.permission.CAMERA) // Request permission if not already granted
-            }
-          },
+      modifier = modifier.fillMaxWidth().testTag("PictureSelector"),
       contentAlignment = Alignment.Center) {
         Box(
             modifier =
                 Modifier.size(200.dp)
                     .clip(RoundedCornerShape(20.dp))
+                    .clickable {
+                      if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) ==
+                          PackageManager.PERMISSION_GRANTED) {
+                        takePicturePreview.launch(
+                            null) // Launch the camera if permission is already granted
+                      } else {
+                        requestPermission.launch(
+                            Manifest.permission.CAMERA) // Request permission if not already granted
+                      }
+                    }
                     .background(color = PurpleGrey80, shape = RoundedCornerShape(20.dp)),
             contentAlignment = Alignment.Center) {
               if (bitmapPicture.value != null) {

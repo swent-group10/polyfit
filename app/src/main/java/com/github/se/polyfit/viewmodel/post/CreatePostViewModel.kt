@@ -37,6 +37,10 @@ constructor(
     bitmap = newBitmap
   }
 
+  fun getBitMap(): Bitmap? {
+    return bitmap?.copy(bitmap!!.config, false)
+  }
+
   suspend fun getRecentMeals() =
       withContext(Dispatchers.Default) {
         mealRepository.getAllMeals().sortedBy { it.createdAt }.take(5)

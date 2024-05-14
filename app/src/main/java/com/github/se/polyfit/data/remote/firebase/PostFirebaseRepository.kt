@@ -142,16 +142,7 @@ class PostFirebaseRepository(
                 document.data?.let {
                   Post.deserialize(it)?.also { post ->
                     deferredImages.add(
-                        async {
-                          post.listOfURLs = fetchImageReferencesForPost(document.id)
-
-                          post.imageDownloadURL =
-                              post.listOfURLs.map { it.downloadUrl.await() }.first()
-
-                          Log.d("PostFirebase", "download uri : ${post.imageDownloadURL}")
-
-                          return@async
-                        })
+                        async { post.listOfURLs = fetchImageReferencesForPost(document.id) })
                     tempPosts.add(post)
                   }
                 }
@@ -186,7 +177,6 @@ class PostFirebaseRepository(
 
   suspend fun uploadImage(
       image: Bitmap,
-      //        documentRef: DocumentReference
   ): Uri? {
     val baos = ByteArrayOutputStream()
     image.compress(Bitmap.CompressFormat.JPEG, 100, baos)

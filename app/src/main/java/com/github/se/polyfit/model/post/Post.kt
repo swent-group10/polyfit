@@ -64,9 +64,9 @@ data class Post(
       return mutableMapOf<String, Any>().apply {
         this["userId"] = data.userId
         this["description"] = data.description
-        this["location"] = data.location
+        this["location"] = data.location.serialize()
         this["meal"] = data.meal.serialize()
-        this["createdAt"] = data.createdAt
+        this["createdAt"] = serializeLocalDate(data.createdAt)
         this["imageDownloadURL"] =
             if (data.imageDownloadURL == null) "" else data.imageDownloadURL.toString()
       }
@@ -107,6 +107,14 @@ data class Post(
         LocalDate.of(year, month, day)
       } catch (e: Exception) {
         throw Exception("Failed to deserialize LocalDate object", e)
+      }
+    }
+
+    private fun serializeLocalDate(data: LocalDate): Map<String, Any> {
+      return mutableMapOf<String, Any>().apply {
+        this["year"] = data.year.toLong()
+        this["monthValue"] = data.monthValue.toLong()
+        this["dayOfMonth"] = data.dayOfMonth.toLong()
       }
     }
 

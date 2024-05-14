@@ -1,5 +1,6 @@
 package com.github.se.polyfit.viewmodel.post
 
+import android.graphics.Bitmap
 import com.github.se.polyfit.data.remote.firebase.PostFirebaseRepository
 import com.github.se.polyfit.data.repository.MealRepository
 import com.github.se.polyfit.model.ingredient.Ingredient
@@ -13,6 +14,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import java.time.LocalDate
+import kotlin.test.assertNotNull
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -125,5 +127,12 @@ class CreatePostViewModelTest {
     val result = viewModel.getProtein()
 
     assertEquals(protein.amount, result, 0.1)
+  }
+
+  @Test
+  fun setBitMap() {
+    val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+    viewModel.setBitMap(bitmap)
+    assertNotNull(viewModel.getBitMap())
   }
 }

@@ -1,5 +1,6 @@
 package com.github.se.polyfit.ui.screen
 
+import android.graphics.Bitmap
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.data.remote.firebase.PostFirebaseRepository
@@ -39,6 +40,7 @@ class CreatePostTest : TestCase() {
     every { mockNavBack() } just Runs
 
     viewModel = CreatePostViewModel(mockMealRepository, mockPostFirebaseRepository)
+    viewModel.setBitMap(Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888))
     composeTestRule.setContent { CreatePostScreen(mockNavBack, mockNavForward, viewModel) }
   }
 

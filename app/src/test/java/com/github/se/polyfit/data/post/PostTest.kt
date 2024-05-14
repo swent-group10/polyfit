@@ -50,14 +50,23 @@ class PostTest {
   fun `serialize returns correct map`() {
     val meal = Meal.default()
     val post =
-        Post("userId", "description", Location(0.0, 0.0, 10.0, "EPFL"), meal, LocalDate.now())
+        Post(
+            "userId",
+            "description",
+            Location(0.0, 0.0, 10.0, "EPFL"),
+            meal,
+            LocalDate.of(2021, 10, 10))
     val expectedMap =
         mapOf(
             "userId" to "userId",
             "description" to "description",
-            "location" to Location(0.0, 0.0, 10.0, "EPFL"),
+            "location" to Location(0.0, 0.0, 10.0, "EPFL").serialize(),
             "meal" to meal.serialize(),
-            "createdAt" to LocalDate.now(),
+            "createdAt" to
+                mapOf(
+                    "year" to 2021.toLong(),
+                    "monthValue" to 10.toLong(),
+                    "dayOfMonth" to 10.toLong()),
             "imageDownloadURL" to "")
 
     val serializedPost = post.serialize()
@@ -283,5 +292,47 @@ class PostTest {
             "createdAt" to LocalDate.now())
 
     assertFails { Post.deserialize(data) }
+  }
+
+  @Test
+  fun testDeserializeWithUri() {
+    val data =
+        mapOf(
+            "userId" to "someId",
+            "description" to "description",
+            "location" to
+                mapOf("longitude" to 0.0, "latitude" to 0.0, "altitude" to 10.0, "name" to "EPFL"),
+            "meal" to Meal.default().serialize(),
+            "createdAt" to
+                mapOf(
+                    "year" to 2021.toLong(),
+                    "monthValue" to 10.toLong(),
+                    "dayOfMonth" to 10.toLong()),
+            "imageDownloadURL" to "https://www.google.com")
+
+    val post = Post.deserialize(data)
+
+    assertEquals("https://www.google.com", post!!.imageDownloadURL.toString())
+  }
+
+  @Test
+  fun testDeserializeWithEmptyUri() {
+    val data =
+        mapOf(
+            "userId" to "someid",
+            "description" to "description",
+            "location" to
+                mapOf("longitude" to 0.0, "latitude" to 0.0, "altitude" to 10.0, "name" to "EPFL"),
+            "meal" to Meal.default().serialize(),
+            "createdAt" to
+                mapOf(
+                    "year" to 2021.toLong(),
+                    "monthValue" to 10.toLong(),
+                    "dayOfMonth" to 10.toLong()),
+            "imageDownloadURL" to "")
+
+    val post = Post.deserialize(data)
+
+    assertEquals(null, post!!.imageDownloadURL)
   }
 }
