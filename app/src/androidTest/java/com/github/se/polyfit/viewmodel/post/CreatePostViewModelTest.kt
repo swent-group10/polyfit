@@ -13,12 +13,11 @@ import com.github.se.polyfit.model.post.PostLocationModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
-import kotlinx.coroutines.Dispatchers
 import java.time.LocalDate
 import kotlin.test.assertFailsWith
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.Assert.assertEquals
@@ -144,12 +143,8 @@ class CreatePostViewModelTest {
 
     viewModel.setPostLocation().join()
 
-
     assertEquals(mockLocation.latitude, viewModel.post.location.latitude, 0.0001)
     assertEquals(mockLocation.altitude, viewModel.post.location.altitude, 0.0001)
     assertEquals(mockLocation.altitude, viewModel.post.location.altitude, 0.0001)
   }
-
-
-
 }

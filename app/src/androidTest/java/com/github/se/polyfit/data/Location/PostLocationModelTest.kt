@@ -1,5 +1,6 @@
 package com.github.se.polyfit.data.Location
 
+import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
@@ -18,7 +19,6 @@ import junit.framework.TestCase.assertEquals
 import kotlin.test.Test
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
-import android.Manifest
 
 class PostLocationModelTest {
   private lateinit var model: PostLocationModel
@@ -61,7 +61,6 @@ class PostLocationModelTest {
     every { ActivityCompat.checkSelfPermission(context, any()) } returns
         PackageManager.PERMISSION_DENIED
 
-
     val location = model.getCurrentLocation()
     assertEquals(location, com.github.se.polyfit.model.post.Location.default())
 
@@ -72,10 +71,12 @@ class PostLocationModelTest {
   fun testWithoutGranting() = runTest {
     mockkStatic(ActivityCompat::class)
 
-    every { ActivityCompat.checkSelfPermission(context,  Manifest.permission.ACCESS_COARSE_LOCATION) } returns
-        PackageManager.PERMISSION_GRANTED
-    every { ActivityCompat.checkSelfPermission(context,  Manifest.permission.ACCESS_FINE_LOCATION) } returns
-            PackageManager.PERMISSION_DENIED
+    every {
+      ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION)
+    } returns PackageManager.PERMISSION_GRANTED
+    every {
+      ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
+    } returns PackageManager.PERMISSION_DENIED
 
     val location = model.checkLocationPermissions()
     assertEquals(location, com.github.se.polyfit.model.post.Location.default())
