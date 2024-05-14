@@ -152,8 +152,3 @@ private fun BottomBar(onButtonPressed: () -> Unit, postComplete: Boolean) {
   }
 }
 
-@Composable
-@Preview
-fun MakePostScreenPreview() {
-  CreatePostScreen()
-}
