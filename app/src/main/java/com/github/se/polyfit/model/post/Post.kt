@@ -1,6 +1,7 @@
 package com.github.se.polyfit.model.post
 
 import android.graphics.Bitmap
+import android.net.Uri
 import android.util.Log
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
@@ -22,7 +23,8 @@ data class Post(
     override var meal: Meal,
     override var createdAt: LocalDate,
     var listOfImages: List<Bitmap> = emptyList(),
-    var listOfURLs: List<StorageReference> = emptyList()
+    var listOfURLs: List<StorageReference> = emptyList(),
+    var imageDownloadURL: Uri? = null
 ) : UnmodifiablePost {
 
   fun getCarbs(): Nutrient? {
@@ -65,6 +67,7 @@ data class Post(
         this["location"] = data.location
         this["meal"] = data.meal.serialize()
         this["createdAt"] = data.createdAt
+        this["imageDownloadURL"] = data.imageDownloadURL.toString()
       }
     }
 
@@ -76,8 +79,11 @@ data class Post(
         val location = Location.deserialize(data["location"] as Map<String, Any>)
         val meal = Meal.deserialize(data["meal"] as Map<String, Any>)
         val createdAt = deserializeLocalDate(data, "createdAt") ?: LocalDate.now()
+        val imageDownloadURL = Uri.parse(data["imageDownloadURL"] as String)
 
-        val newPost = Post(userId, description, location, meal, createdAt)
+        val newPost =
+            Post(
+                userId, description, location, meal, createdAt, imageDownloadURL = imageDownloadURL)
 
         newPost
       } catch (e: Exception) {

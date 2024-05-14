@@ -162,7 +162,7 @@ android {
         implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
         implementation("io.coil-kt:coil:2.6.0")
         implementation("io.coil-kt:coil-compose:2.6.0")
-
+        implementation("androidx.camera:camera-camera2:1.3.3")
 
         // Kapt
         kapt("androidx.room:room-compiler:2.6.1")
@@ -269,4 +269,9 @@ tasks.register("jacocoTestReport", JacocoReport::class) {
         include("outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec")
         include("outputs/code_coverage/debugAndroidTest/connected/*/coverage.ec")
     })
+}
+dependencies {
+    implementation("androidx.camera:camera-core:1.3.3")
+    implementation("androidx.camera:camera-lifecycle:1.3.3")
+    implementation("androidx.camera:camera-view:1.3.3")
 }

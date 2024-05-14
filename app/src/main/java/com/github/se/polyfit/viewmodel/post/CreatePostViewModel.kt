@@ -1,5 +1,7 @@
 package com.github.se.polyfit.viewmodel.post
 
+import android.graphics.Bitmap
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,7 +17,6 @@ import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 @HiltViewModel
@@ -27,8 +28,14 @@ constructor(
 ) : ViewModel() {
   private val _post = Post.default()
 
+  private var bitmap: Bitmap? = null
+
   val post: UnmodifiablePost
     get() = _post
+
+  fun setBitMap(newBitmap: Bitmap) {
+    bitmap = newBitmap
+  }
 
   suspend fun getRecentMeals() =
       withContext(Dispatchers.Default) {
@@ -77,9 +84,17 @@ constructor(
   }
 
   fun setPost() {
-    runBlocking {
+    // run it in the background would be a better idea
+
+    viewModelScope.launch(Dispatchers.IO) {
       try {
-        postFirebaseRepository.storePost(_post)
+        var imageDownload: Uri? = null
+        if (bitmap != null) {
+          imageDownload = postFirebaseRepository.uploadImage(bitmap!!)
+          Log.d("PstNotSoting", "setPost: $imageDownload")
+        }
+
+        postFirebaseRepository.storePost(_post.apply { imageDownloadURL = imageDownload })
       } catch (e: Exception) {
         Log.e("CreatePostViewModel", "Failed to store post in the database : ${e.message}", e)
         throw Exception("Failed to store post in the database : ${e.message}")

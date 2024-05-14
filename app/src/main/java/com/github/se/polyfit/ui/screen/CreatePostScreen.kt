@@ -31,7 +31,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -81,7 +80,7 @@ fun CreatePostScreen(
             postComplete = postComplete, onButtonPressed = { isPermissionDialogDisplay = true })
       }) {
         LazyColumn(modifier = Modifier.padding(it).testTag("CreatePostScreen")) {
-          item { PictureSelector(modifier = Modifier.padding(top = 10.dp)) }
+          item { PictureSelector(modifier = Modifier.padding(top = 10.dp), postViewModel) }
           item { PostDescription(postViewModel::setPostDescription) }
           item { HorizontalDivider(thickness = 1.dp, color = Color.LightGray) }
           item { MealSelector(selectedMeal, { meal -> selectedMeal = meal }, meals, ::setPostMeal) }
@@ -152,10 +151,4 @@ private fun BottomBar(onButtonPressed: () -> Unit, postComplete: Boolean) {
               buttonShape = RoundedCornerShape(12.dp))
         }
   }
-}
-
-@Composable
-@Preview
-fun MakePostScreenPreview() {
-  CreatePostScreen()
 }
