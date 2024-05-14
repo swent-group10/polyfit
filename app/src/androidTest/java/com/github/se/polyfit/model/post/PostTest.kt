@@ -13,22 +13,17 @@ import kotlin.test.assertFails
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 
-@RunWith(RobolectricTestRunner::class)
 class PostTest {
 
   @Before
   fun setup() {
     mockkStatic(Log::class)
     every { Log.e(any<String>(), any<String>(), any()) } returns 0
-    //        mockkStatic(Uri::class)
-    //        every { Uri.parse(anyString()) } returns Uri.parse("null")
   }
 
   @Test
-  fun `getCarbs returns correct nutrient when present`() {
+  fun getCarbsReturnsCorrectNutrientWhenPresent() {
     val expected = Nutrient("carbohydrates", 100.0, MeasurementUnit.G)
     val meal = Meal.default().apply { nutritionalInformation.update(expected) }
     val post =
@@ -38,7 +33,7 @@ class PostTest {
   }
 
   @Test
-  fun `getCarbs returns null when nutrient not present`() {
+  fun getCarbsReturnsNullWhenNutrientNotPresent() {
     val meal = Meal.default()
     val post =
         Post("userId", "description", Location(0.0, 0.0, 10.0, "EPFL"), meal, LocalDate.now())
@@ -47,7 +42,7 @@ class PostTest {
   }
 
   @Test
-  fun `serialize returns correct map`() {
+  fun serializeReturnsCorrectMap() {
     val meal = Meal.default()
     val post =
         Post(
@@ -74,7 +69,7 @@ class PostTest {
   }
 
   @Test
-  fun `getIngredientCalories returns correct list when nutrients present`() {
+  fun getIngredientCaloriesReturnsCorrectListWhenNutrientsPresent() {
     val nutrient = Nutrient("calories", 100.0, MeasurementUnit.KCAL)
     val meal = Meal.default()
     val ingredient =
@@ -93,7 +88,7 @@ class PostTest {
   }
 
   @Test
-  fun `getIngredientCalories returns empty list when nutrients not present`() {
+  fun getIngredientCaloriesReturnsEmptyListWhenNutrientsNotPresent() {
     val meal = Meal.default()
     val post =
         Post("userId", "description", Location(0.0, 0.0, 10.0, "EPFL"), meal, LocalDate.now())
@@ -102,7 +97,7 @@ class PostTest {
   }
 
   @Test
-  fun `default method returns expected Post object`() {
+  fun defaultMethodReturnsExpectedPostObject() {
     val defaultMeal = Meal.default()
     val post = Post.default().copy(meal = defaultMeal)
     val expectedPost =
@@ -113,7 +108,7 @@ class PostTest {
   }
 
   @Test
-  fun `getIngredientWeight returns correct list`() {
+  fun getIngredientWeightReturnsCorrectList() {
     val meal = Meal.default()
     val post =
         Post("userId", "description", Location(0.0, 0.0, 10.0, "EPFL"), meal, LocalDate.now())
@@ -124,7 +119,7 @@ class PostTest {
   }
 
   @Test
-  fun `getProtein returns correct nutrient when present`() {
+  fun getProteinReturnsCorrectNutrientWhenPresent() {
     val expected = Nutrient("protein", 100.0, MeasurementUnit.G)
     val meal = Meal.default().apply { nutritionalInformation.update(expected) }
     val post =
@@ -134,7 +129,7 @@ class PostTest {
   }
 
   @Test
-  fun `getFat returns correct nutrient when present`() {
+  fun getFatReturnsCorrectNutrientWhenPresent() {
     val expected = Nutrient("fat", 100.0, MeasurementUnit.G)
     val meal = Meal.default().apply { nutritionalInformation.update(expected) }
     val post =
@@ -144,14 +139,14 @@ class PostTest {
   }
 
   @Test
-  fun `testLocationToString`() {
+  fun testLocationToString() {
     val location = Location(0.0, 0.0, 10.0, "EPFL")
     val expectedString = "Location(longitude=0.0, latitude=0.0, altitude=10.0, name=EPFL)"
     assertEquals(expectedString, location.toString())
   }
 
   @Test
-  fun `test default location`() {
+  fun testDefaultLocation() {
     val location = Location.default()
     val expectedLocation = Location(0.0, 0.0, 0.0, "EPFL")
     assertEquals(expectedLocation, location)
@@ -334,5 +329,12 @@ class PostTest {
     val post = Post.deserialize(data)
 
     assertEquals(null, post!!.imageDownloadURL)
+  }
+
+  @Test
+  fun deserializeNormalPost() {
+    val data = Post.default()
+
+    assertEquals(data, Post.deserialize(data.serialize()))
   }
 }
