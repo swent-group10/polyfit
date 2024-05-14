@@ -142,7 +142,16 @@ class PostFirebaseRepository(
                 document.data?.let {
                   Post.deserialize(it)?.also { post ->
                     deferredImages.add(
-                        async { post.listOfURLs = fetchImageReferencesForPost(document.id) })
+                        async {
+                          post.listOfURLs = fetchImageReferencesForPost(document.id)
+
+                          post.imageDownloadURL =
+                              post.listOfURLs.map { it.downloadUrl.await() }.first()
+
+                          Log.d("PostFirebase", "download uri : ${post.imageDownloadURL}")
+
+                          return@async
+                        })
                     tempPosts.add(post)
                   }
                 }
@@ -151,6 +160,9 @@ class PostFirebaseRepository(
 
               synchronized(posts) {
                 posts.addAll(tempPosts)
+                for (post in posts) {
+                  Log.d("PostFirebase", "download uri : ${post.imageDownloadURL}")
+                }
                 completedBatches++
                 if (completedBatches == batches.size) {
                   completion(posts)

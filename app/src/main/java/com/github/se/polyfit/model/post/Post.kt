@@ -80,10 +80,7 @@ data class Post(
         val meal = Meal.deserialize(data["meal"] as Map<String, Any>)
         val createdAt = deserializeLocalDate(data, "createdAt")
 
-        var imageDownloadURL: Uri? = null
-        if (data.containsKey("imageDownloadURL") && data["imageDownloadURL"] != null) {
           imageDownloadURL = Uri.parse(data["imageDownloadURL"] as String)
-        }
 
         val newPost =
             Post(
