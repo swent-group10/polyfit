@@ -13,6 +13,7 @@ import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.asRequestBody
+import org.json.JSONArray
 import org.json.JSONObject
 
 class SpoonacularApiCaller {
@@ -20,6 +21,12 @@ class SpoonacularApiCaller {
   private var API_URL = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/"
   private val IMAGE_ANALYSIS_ENDPOINT = "food/images/analyze"
   private val RECIPE_NUTRITION_ENDPOINT = "recipes/%d/nutritionWidget.json"
+  private var ingredientsParam = ""
+  private val ingredientSeparator = "%2C"
+
+  private val RECIPE_FROM_INGREDIENTS
+    get() =
+        "recipes/findByIngredients?ingredients=$ingredientsParam&number=5&ignorePantry=true&ranking=1"
 
   fun setBaseUrl(baseUrl: String) {
     API_URL = baseUrl
@@ -138,5 +145,27 @@ class SpoonacularApiCaller {
     }
 
     return meal
+  }
+
+  fun recipeByIngredients(ingredients: List<String>): RecipeFromIngredientsResponseAPI {
+    ingredientsParam = ingredients.joinToString(ingredientSeparator)
+    val request =
+        Request.Builder()
+            .url(API_URL + RECIPE_FROM_INGREDIENTS)
+            .get()
+            .addHeader("X-RapidAPI-Key", BuildConfig.X_RapidAPI_Key)
+            .addHeader("X-RapidAPI-Host", BuildConfig.X_RapidAPI_Host)
+            .build()
+
+    val response = client.newCall(request).execute()
+
+    return try {
+      val responseBody = response.body?.string() ?: ""
+      val jsonObject = JSONArray(responseBody)
+      RecipeFromIngredientsResponseAPI.fromJsonObject(jsonObject)
+    } catch (e: Exception) {
+      Log.e("SpoonacularApiCaller", "Error getting recipe from ingredients", e)
+      RecipeFromIngredientsResponseAPI.faillure()
+    }
   }
 }

@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.util.Log
 import com.github.se.polyfit.data.api.SpoonacularApiCaller
 import com.github.se.polyfit.data.local.dao.MealDao
+import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
@@ -30,7 +31,7 @@ class OverviewViewModelTest {
     mockkStatic(Log::class)
     every { Log.e(any(), any()) } returns 0
     every { Log.i(any(), any()) } returns 0
-    overviewViewModel = OverviewViewModel(mockMealDao, mockSpoonacularApiCaller)
+    overviewViewModel = OverviewViewModel(mockMealDao, mockSpoonacularApiCaller, User.testUser())
   }
 
   @Test
@@ -534,5 +535,19 @@ class OverviewViewModelTest {
 
     // Verify the result
     Assert.assertEquals(meal1, result)
+  }
+
+  @Test
+  fun getUserDisplayName() {
+    val result = overviewViewModel.getUserName()
+    Assert.assertEquals(User.testUser().displayName, result)
+  }
+
+  @Test
+  fun getEmailIFDispalyIsNotSet() {
+    val user = User.testUser().apply { displayName = null }
+    val overviewViewModel = OverviewViewModel(mockMealDao, mockSpoonacularApiCaller, user)
+    val result = overviewViewModel.getUserName()
+    Assert.assertEquals(user.email, result)
   }
 }

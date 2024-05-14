@@ -15,6 +15,7 @@ import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import okhttp3.mockwebserver.RecordedRequest
+import org.json.JSONArray
 import org.json.JSONObject
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -52,6 +53,11 @@ class SpoonacularApiCallerTest {
                     .setResponseCode(200)
                     .addHeader("Content-Type", "application/json")
                     .setBody(jsonRecipeNutrition.toString())
+            "/recipes/findByIngredients?ingredients=apple%2Cbanana&number=5&ignorePantry=true&ranking=1" ->
+                MockResponse()
+                    .setResponseCode(200)
+                    .addHeader("Content-Type", "application/json")
+                    .setBody(recipeFromIngredientsReponse.toString())
             "/error" -> MockResponse().setResponseCode(500).setBody("Server error")
             else -> MockResponse().setResponseCode(402).setBody("Not found")
           }
@@ -73,6 +79,8 @@ class SpoonacularApiCallerTest {
                     .addHeader("Content-Type", "application/json")
                     .setBody(jsonRecipeNutrition.toString())
             "/recipes/61867/nutritionWidget.json" -> MockResponse().setResponseCode(300)
+            "/recipes/findByIngredients?ingredients=apple%2Cbanana&number=5&ignorePantry=true&ranking=1" ->
+                MockResponse().setResponseCode(300)
             "/error" -> MockResponse().setResponseCode(500).setBody("Server error")
             else -> MockResponse().setResponseCode(402).setBody("Not found")
           }
@@ -241,10 +249,95 @@ class SpoonacularApiCallerTest {
     assertEquals(expected, actualMeal)
   }
 
+  @Test
+  fun testRecipeByIngredients() {
+    val response = spoonacularApiCaller.recipeByIngredients(listOf("apple", "banana")).recipes
+
+    assert(response.size == 5)
+    assert(response[0].title == "Apple Banana Smoothie")
+    assert(response[0].imageUrl.toString() == "https://spoonacular.com/recipeImages/1-312x231.jpg")
+    assert(response[0].usedIngredients == 2L)
+    assert(response[0].missingIngredients == 1L)
+    assert(response[0].likes == 0L)
+  }
+
+  @Test
+  fun recipeFromIngredients() = runBlocking {
+    val ingredients = listOf("apple", "banana")
+
+    val response = spoonacularApiCaller.recipeByIngredients(ingredients)
+
+    assertEquals(APIResponse.SUCCESS, response.status)
+    assertEquals(5, response.recipes.size)
+    assertEquals(1, response.recipes[0].id)
+    assertEquals("Apple Banana Smoothie", response.recipes[0].title)
+  }
+
+  @Test
+  fun recipeFromIngredientsFaillure() {
+    mockWebServer.dispatcher = faultyDispatcher
+    val ingredients = listOf("apple", "banana")
+    val response = spoonacularApiCaller.recipeByIngredients(ingredients)
+
+    assertEquals(response.status, APIResponse.FAILURE)
+  }
+
   @After
   fun tearDown() {
     mockWebServer.shutdown()
   }
+
+  private val recipeFromIngredientsReponse =
+      JSONArray(
+          """
+        [
+            {
+                "id": 1,
+                "title": "Apple Banana Smoothie",
+                "image": "https://spoonacular.com/recipeImages/1-312x231.jpg",
+                "imageType": "jpg",
+                "usedIngredientCount": 2,
+                "missedIngredientCount": 1,
+                "likes": 0
+            },
+            {
+                "id": 2,
+                "title": "Apple Banana Bread",
+                "image": "https://spoonacular.com/recipeImages/2-312x231.jpg",
+                "imageType": "jpg",
+                "usedIngredientCount": 2,
+                "missedIngredientCount": 1,
+                "likes": 0
+            },
+            {
+                "id": 3,
+                "title": "Apple Banana Muffins",
+                "image": "https://spoonacular.com/recipeImages/3-312x231.jpg",
+                "imageType": "jpg",
+                "usedIngredientCount": 2,
+                "missedIngredientCount": 1,
+                "likes": 0
+            },
+            {
+                "id": 4,
+                "title": "Apple Banana Smoothie",
+                "image": "https://spoonacular.com/recipeImages/4-312x231.jpg",
+                "imageType": "jpg",
+                "usedIngredientCount": 2,
+                "missedIngredientCount": 1,
+                "likes": 0
+            },
+            {
+                "id": 5,
+                "title": "Apple Banana Bread",
+                "image": "https://spoonacular.com/recipeImages/5-312x231.jpg",
+                "imageType": "jpg",
+                "usedIngredientCount": 2,
+                "missedIngredientCount": 1,
+                "likes": 0
+            }
+        ]
+    """)
 
   private val jsonImageAnalysis =
       JSONObject(

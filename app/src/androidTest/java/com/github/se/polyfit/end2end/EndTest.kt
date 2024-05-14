@@ -6,9 +6,6 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.provider.MediaStore
 import android.util.Log
-import androidx.compose.ui.test.assertHasClickAction
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
@@ -21,7 +18,10 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import com.github.se.polyfit.R
+import com.github.se.polyfit.data.api.SpoonacularApiCaller
+import com.github.se.polyfit.data.local.dao.MealDao
 import com.github.se.polyfit.data.processor.LocalDataProcessor
+import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.flow.AddMealFlow
@@ -70,7 +70,10 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
   val grantPermissionRule: GrantPermissionRule =
       GrantPermissionRule.grant(android.Manifest.permission.CAMERA)
 
-  private val overviewViewModel: OverviewViewModel = mockk(relaxed = true)
+  private val mockSpoonacularApiCaller = mockk<SpoonacularApiCaller>(relaxed = true)
+  private val mockDao = mockk<MealDao>(relaxed = true)
+  private val overviewViewModel: OverviewViewModel =
+      OverviewViewModel(mockDao, mockSpoonacularApiCaller, User.testUser())
   private val id = UUID.randomUUID().toString()
 
   @Before
@@ -78,7 +81,8 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
     mockkStatic(Log::class)
     System.setProperty("isTestEnvironment", "true")
 
-    every { overviewViewModel.storeMeal(any()) } returns id
+    every { mockSpoonacularApiCaller.getMealsFromImage(any()) } returns Meal.default()
+    every { mockDao.insert(any<Meal>()) } returns id
   }
 
   @After
