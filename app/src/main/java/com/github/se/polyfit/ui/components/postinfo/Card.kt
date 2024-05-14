@@ -1,5 +1,6 @@
 package com.github.se.polyfit.ui.components.postinfo
 
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -33,12 +34,14 @@ fun PostCard(post: Post) {
 
 @Composable
 private fun ImageCard(modifier: Modifier = Modifier, post: Post) {
+  Log.d("PostCard", "ImageCard : ${post.imageDownloadURL}")
   AsyncImage(
       model =
           ImageRequest.Builder(LocalContext.current)
               .data(post.imageDownloadURL)
               .crossfade(true)
               .build(),
+      error = painterResource(R.drawable.food1),
       placeholder = painterResource(R.drawable.logo),
       contentDescription = stringResource(R.string.description),
       contentScale = ContentScale.Crop,

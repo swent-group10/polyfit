@@ -80,7 +80,7 @@ data class Post(
         val meal = Meal.deserialize(data["meal"] as Map<String, Any>)
         val createdAt = deserializeLocalDate(data, "createdAt")
 
-          imageDownloadURL = Uri.parse(data["imageDownloadURL"] as String)
+        val imageDownloadURL = Uri.parse(data["imageDownloadURL"] as String)
 
         val newPost =
             Post(
