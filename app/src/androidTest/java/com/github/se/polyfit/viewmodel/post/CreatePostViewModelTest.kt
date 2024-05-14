@@ -13,10 +13,14 @@ import com.github.se.polyfit.model.post.PostLocationModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.Dispatchers
 import java.time.LocalDate
 import kotlin.test.assertFailsWith
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -27,9 +31,12 @@ class CreatePostViewModelTest {
   private val mockMealRepository = mockk<MealRepository>(relaxed = true)
   private val mockPostFirebaseRepository = mockk<PostFirebaseRepository>(relaxed = true)
   private val mockPostLocationModel = mockk<PostLocationModel>(relaxed = true)
+  private val postLocationModel = mockk<PostLocationModel>(relaxed = true)
+  private val testDispatcher = UnconfinedTestDispatcher()
 
   @Before
   fun setup() {
+    Dispatchers.setMain(testDispatcher)
     viewModel =
         CreatePostViewModel(mockMealRepository, mockPostFirebaseRepository, mockPostLocationModel)
   }
@@ -129,4 +136,20 @@ class CreatePostViewModelTest {
         Exception("Failed to store post in the database")
     assertFailsWith<Exception> { viewModel.setPost() }
   }
+
+  @Test
+  fun testSetPostLocation() = runTest {
+    val mockLocation = com.github.se.polyfit.model.post.Location(0.0, 0.0, 0.0, "")
+    coEvery { postLocationModel.getCurrentLocation() } returns mockLocation
+
+    viewModel.setPostLocation().join()
+
+
+    assertEquals(mockLocation.latitude, viewModel.post.location.latitude, 0.0001)
+    assertEquals(mockLocation.altitude, viewModel.post.location.altitude, 0.0001)
+    assertEquals(mockLocation.altitude, viewModel.post.location.altitude, 0.0001)
+  }
+
+
+
 }
