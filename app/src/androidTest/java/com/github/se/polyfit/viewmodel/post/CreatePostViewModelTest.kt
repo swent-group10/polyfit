@@ -14,18 +14,13 @@ import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.coVerifyOrder
-import io.mockk.coVerifySequence
 import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import java.time.LocalDate
 import kotlin.test.assertFailsWith
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -38,12 +33,11 @@ class CreatePostViewModelTest {
   private val mockPostLocationModel = mockk<PostLocationModel>(relaxed = true)
   private val postLocationModel = mockk<PostLocationModel>(relaxed = true)
 
-
   @Before
   fun setup() {
 
     viewModel =
-      CreatePostViewModel(mockMealRepository, mockPostFirebaseRepository, mockPostLocationModel)
+        CreatePostViewModel(mockMealRepository, mockPostFirebaseRepository, mockPostLocationModel)
   }
 
   @Test
@@ -94,9 +88,8 @@ class CreatePostViewModelTest {
     val carbs = Nutrient("carbohydrates", 10.0, MeasurementUnit.G)
     val meal = Meal.default()
     meal.addIngredient(
-      Ingredient.default()
-        .copy(nutritionalInformation = NutritionalInformation(mutableListOf(carbs)))
-    )
+        Ingredient.default()
+            .copy(nutritionalInformation = NutritionalInformation(mutableListOf(carbs))))
 
     val post = Post.default().copy(meal = meal)
     viewModel.setPostData(meal = meal)
@@ -111,9 +104,8 @@ class CreatePostViewModelTest {
     val fat = Nutrient("fat", 10.0, MeasurementUnit.G)
     val meal = Meal.default()
     meal.addIngredient(
-      Ingredient.default()
-        .copy(nutritionalInformation = NutritionalInformation(mutableListOf(fat)))
-    )
+        Ingredient.default()
+            .copy(nutritionalInformation = NutritionalInformation(mutableListOf(fat))))
     val post = Post.default().copy(meal = meal)
     viewModel.setPostData(meal = meal)
 
@@ -127,9 +119,8 @@ class CreatePostViewModelTest {
     val protein = Nutrient("protein", 10.0, MeasurementUnit.G)
     val meal = Meal.default()
     meal.addIngredient(
-      Ingredient.default()
-        .copy(nutritionalInformation = NutritionalInformation(mutableListOf(protein)))
-    )
+        Ingredient.default()
+            .copy(nutritionalInformation = NutritionalInformation(mutableListOf(protein))))
 
     viewModel.setPostData(meal = meal)
 
@@ -141,7 +132,7 @@ class CreatePostViewModelTest {
   @Test
   fun setPostFailed(): Unit = runBlocking {
     coEvery { mockPostFirebaseRepository.storePost(any()) } throws
-            Exception("Failed to store post in the database")
+        Exception("Failed to store post in the database")
     assertFailsWith<Exception> { viewModel.setPost() }
   }
 
@@ -159,9 +150,7 @@ class CreatePostViewModelTest {
 
   @Test
   fun testSetInOrder() = runTest {
-    val mockJob = mockk<Job> {
-      coEvery { join() } just Runs
-    }
+    val mockJob = mockk<Job> { coEvery { join() } just Runs }
 
     // Call setInOrder with the mocked job and a dummy function for second
     viewModel.setInOrder(first = mockJob, second = { viewModel.setPost() })
