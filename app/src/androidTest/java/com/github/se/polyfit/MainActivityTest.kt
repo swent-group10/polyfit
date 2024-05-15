@@ -1,5 +1,6 @@
 package com.github.se.polyfit
 
+import android.util.Log
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -8,6 +9,7 @@ import com.google.firebase.auth.FirebaseAuth
 import io.mockk.every
 import io.mockk.junit4.MockKRule
 import io.mockk.mockk
+import java.lang.Thread.sleep
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -27,13 +29,19 @@ class MainActivityTest {
     val auth: FirebaseAuth = mockk(relaxed = true)
     every { auth.currentUser } answers { mockk(relaxed = true) }
 
-    var authentication: Authentication? = null
     val scenario = ActivityScenario.launch(MainActivity::class.java)
 
     scenario.onActivity { activity ->
-      authentication = Authentication(activity, mockk(relaxed = true), mockk(relaxed = true), auth)
-      authentication!!.setCallback({}, 0)
-      assert(authentication!!.isAuthenticated())
+      val authentication =
+          Authentication(activity, mockk(relaxed = true), mockk(relaxed = true), auth)
+      authentication.setCallback({}, 0)
+      var i = 0
+      while (!authentication.isAnswered() && i < 10_000) {
+        sleep(10)
+        Log.i("MainActivityTest", "Waiting for authentication")
+        i++
+      }
+      assert(authentication.isAuthenticated())
     }
   }
 }

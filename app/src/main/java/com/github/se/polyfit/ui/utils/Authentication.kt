@@ -29,6 +29,7 @@ class Authentication(
 
   private var callback: (() -> Unit) = { Log.e("Authentication", "Callback not set") }
   private var signInLauncher: ActivityResultLauncher<Intent>? = null
+  private var isAnswered = false
 
   init {
     initLaunch(activity)
@@ -36,6 +37,7 @@ class Authentication(
 
   private fun initLaunch(activity: ComponentActivity) {
     if (auth.currentUser != null) {
+      isAnswered = true
       setUserInfo(GoogleSignIn.getLastSignedInAccount(context))
       return
     }
@@ -105,6 +107,7 @@ class Authentication(
       }
       callback(false)
     }
+    isAnswered = true
   }
 
   private fun setUserInfo(account: GoogleSignInAccount?) {
@@ -128,5 +131,11 @@ class Authentication(
         userFirebaseRepository.storeUser(this.user)
       }
     }
+  }
+
+  fun isAnswered(): Boolean {
+
+    Log.i("Authentication", "Authentication isAnswered: $isAnswered")
+    return isAnswered
   }
 }
