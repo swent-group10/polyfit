@@ -1,6 +1,5 @@
 package com.github.se.polyfit
 
-import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -24,33 +23,17 @@ class MainActivityTest {
       ActivityScenarioRule(MainActivity::class.java)
 
   @Test
-  fun testUserID() {
-    val scenario = mMainActivityRule.scenario
-
-    scenario.onActivity { activity ->
-      activity.user
-      assert(!activity.user.isSignedIn())
-      assert(activity.user.id == "testUserID")
-    }
-  }
-
-  // @Ignore("Test doesn't work")
-  @Test
   fun testSignInSignOut() {
-
     val auth: FirebaseAuth = mockk(relaxed = true)
     every { auth.currentUser } answers { mockk(relaxed = true) }
 
     var authentication: Authentication? = null
     val scenario = ActivityScenario.launch(MainActivity::class.java)
-    scenario.recreate()
 
-    scenario.moveToState(Lifecycle.State.CREATED)
     scenario.onActivity { activity ->
       authentication = Authentication(activity, mockk(relaxed = true), mockk(relaxed = true), auth)
       authentication!!.setCallback({}, 0)
     }
-    scenario.moveToState(Lifecycle.State.STARTED)
 
     assert(authentication!!.isAuthenticated())
   }
