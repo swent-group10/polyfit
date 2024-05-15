@@ -36,6 +36,7 @@ import com.github.se.polyfit.ui.components.DropDownMenu
 import com.github.se.polyfit.ui.components.button.SortingArrows
 import com.github.se.polyfit.ui.components.lineChartData
 import com.github.se.polyfit.ui.components.scaffold.SimpleTopBar
+import com.github.se.polyfit.ui.utils.GraphData
 import com.github.se.polyfit.ui.viewModel.DisplayScreen
 import com.github.se.polyfit.ui.viewModel.GraphViewModel
 import com.github.se.polyfit.ui.viewModel.SortDirection
@@ -117,29 +118,37 @@ fun FullGraphScreen(
               }
           Spacer(modifier = Modifier.height(5.dp))
           HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.inversePrimary)
-          LazyColumn(modifier = Modifier.fillMaxWidth().weight(1f).testTag("ElementsList")) {
-            items(filteredGraphData) { data ->
-              Spacer(modifier = Modifier.height(5.dp))
-              Row(
-                  modifier = Modifier.fillMaxWidth().testTag("ElementsRow"),
-                  horizontalArrangement = Arrangement.SpaceBetween) {
-                    Column(
-                        horizontalAlignment = Alignment.Start,
-                        modifier = Modifier.padding(start = 4.dp)) {
-                          Text(
-                              text = context.getString(R.string.kcalvalue, data.kCal),
-                              modifier = Modifier.testTag("kcal"))
-                          Text(
-                              text = context.getString(R.string.weightvalue, data.weight),
-                              modifier = Modifier.testTag("weight"))
-                        }
-                    Text(
-                        modifier = Modifier.padding(end = 4.dp).testTag("Date"),
-                        text = context.getString(R.string.datevalue, data.date.toString()))
-                  }
-              HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.inversePrimary)
-            }
-          }
+
+          ListOfElements(
+              filteredGraphData = filteredGraphData,
+              modifier = Modifier.fillMaxWidth().weight(1f).testTag("ElementsList"))
         }
+  }
+}
+
+@Composable
+private fun ListOfElements(filteredGraphData: List<GraphData>, modifier: Modifier) {
+  val context = LocalContext.current
+  LazyColumn(modifier = modifier) {
+    items(filteredGraphData) { data ->
+      Spacer(modifier = Modifier.height(5.dp))
+      Row(
+          modifier = Modifier.fillMaxWidth().testTag("ElementsRow"),
+          horizontalArrangement = Arrangement.SpaceBetween) {
+            Column(
+                horizontalAlignment = Alignment.Start, modifier = Modifier.padding(start = 4.dp)) {
+                  Text(
+                      text = context.getString(R.string.kcalvalue, data.kCal),
+                      modifier = Modifier.testTag("kcal"))
+                  Text(
+                      text = context.getString(R.string.weightvalue, data.weight),
+                      modifier = Modifier.testTag("weight"))
+                }
+            Text(
+                text = context.getString(R.string.datevalue, data.date.toString()),
+                modifier = Modifier.padding(end = 4.dp).testTag("Date"))
+          }
+      HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.inversePrimary)
+    }
   }
 }
