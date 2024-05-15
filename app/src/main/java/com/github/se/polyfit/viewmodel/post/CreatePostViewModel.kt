@@ -33,7 +33,7 @@ constructor(
   val post: UnmodifiablePost
     get() = _post
 
-  fun setBitMap(newBitmap: Bitmap) {
+  fun setBitMap(newBitmap: Bitmap?) {
     bitmap = newBitmap
   }
 

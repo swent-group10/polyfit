@@ -9,11 +9,11 @@ import com.google.firebase.storage.StorageReference
 import java.time.LocalDate
 
 interface UnmodifiablePost {
-    val userId: String
-    val description: String
-    val location: Location
-    val meal: Meal
-    val createdAt: LocalDate
+  val userId: String
+  val description: String
+  val location: Location
+  val meal: Meal
+  val createdAt: LocalDate
 }
 
 data class Post(
@@ -27,107 +27,79 @@ data class Post(
     var imageDownloadURL: Uri = Uri.EMPTY
 ) : UnmodifiablePost {
 
-    fun getCarbs(): Nutrient? {
-        return meal.getNutrient("carbohydrates")
+  fun getCarbs(): Nutrient? {
+    return meal.getNutrient("carbohydrates")
+  }
+
+  fun getFat(): Nutrient? {
+    return meal.getNutrient("fat")
+  }
+
+  fun getProtein(): Nutrient? {
+    return meal.getNutrient("protein")
+  }
+
+  fun serialize(): Map<String, Any> {
+    return serialize(this)
+  }
+
+  // Useful function for the ui
+  fun getIngredientCalories(): List<Pair<String, Nutrient>> {
+    return meal.ingredients.mapNotNull { ingredient ->
+      val nutrient =
+          ingredient.nutritionalInformation.nutrients.firstOrNull { it.nutrientType == "calories" }
+      if (nutrient != null) Pair(ingredient.name, nutrient) else null
+    }
+  }
+
+  // Really useful function for the ui
+  fun getIngredientWeight(): List<Pair<String, Nutrient>> {
+    return meal.ingredients.mapNotNull { ingredient ->
+      Pair(ingredient.name, Nutrient("totalWeight", ingredient.amount, ingredient.unit))
+    }
+  }
+
+  companion object {
+    fun serialize(data: Post): Map<String, Any> {
+      return mutableMapOf<String, Any>().apply {
+        this["userId"] = data.userId
+        this["description"] = data.description
+        this["location"] = data.location.serialize()
+        this["meal"] = data.meal.serialize()
+        this["createdAt"] = data.createdAt.toString()
+        this["imageDownloadURL"] = data.imageDownloadURL
+      }
     }
 
-    fun getFat(): Nutrient? {
-        return meal.getNutrient("fat")
+    fun deserialize(data: Map<String, Any?>): Post? {
+      return try {
+        val userId = data["userId"] as String
+
+        val description = data["description"] as? String ?: ""
+        val location = Location.deserialize(data["location"] as Map<String, Any>)
+        val meal = Meal.deserialize(data["meal"] as Map<String, Any>)
+        val createdAt = LocalDate.parse(data["createdAt"] as String)
+        var imageDownloadURL: Uri = Uri.parse(data["imageDownloadURL"].toString())
+
+        val newPost =
+            Post(
+                userId, description, location, meal, createdAt, imageDownloadURL = imageDownloadURL)
+
+        newPost
+      } catch (e: Exception) {
+        Log.e("Post", "Failed to deserialize Post object: ${e.message}", e)
+        throw IllegalArgumentException("Failed to deserialize Post object", e)
+      }
     }
 
-    fun getProtein(): Nutrient? {
-        return meal.getNutrient("protein")
+    fun default(): Post {
+
+      return Post(
+          userId = "testId",
+          description = "Description",
+          location = Location(0.0, 0.0, 10.0, "EPFL"),
+          meal = Meal.default(),
+          createdAt = LocalDate.now())
     }
-
-    fun serialize(): Map<String, Any> {
-        return serialize(this)
-    }
-
-    // Useful function for the ui
-    fun getIngredientCalories(): List<Pair<String, Nutrient>> {
-        return meal.ingredients.mapNotNull { ingredient ->
-            val nutrient =
-                ingredient.nutritionalInformation.nutrients.firstOrNull { it.nutrientType == "calories" }
-            if (nutrient != null) Pair(ingredient.name, nutrient) else null
-        }
-    }
-
-    // Really useful function for the ui
-    fun getIngredientWeight(): List<Pair<String, Nutrient>> {
-        return meal.ingredients.mapNotNull { ingredient ->
-            Pair(ingredient.name, Nutrient("totalWeight", ingredient.amount, ingredient.unit))
-        }
-    }
-
-    companion object {
-        fun serialize(data: Post): Map<String, Any> {
-            return mutableMapOf<String, Any>().apply {
-                this["userId"] = data.userId
-                this["description"] = data.description
-                this["location"] = data.location.serialize()
-                this["meal"] = data.meal.serialize()
-                this["createdAt"] = serializeLocalDate(data.createdAt)
-                this["imageDownloadURL"] = data.imageDownloadURL
-
-            }
-        }
-
-        fun deserialize(data: Map<String, Any?>): Post? {
-            return try {
-                val userId = data["userId"] as String
-
-                val description = data["description"] as? String ?: ""
-                val location = Location.deserialize(data["location"] as Map<String, Any>)
-                val meal = Meal.deserialize(data["meal"] as Map<String, Any>)
-                val createdAt = deserializeLocalDate(data, "createdAt")
-                var imageDownloadURL: Uri = Uri.parse(data["imageDownloadURL"].toString())
-
-                val newPost =
-                    Post(
-                        userId,
-                        description,
-                        location,
-                        meal,
-                        createdAt,
-                        imageDownloadURL = imageDownloadURL
-                    )
-
-                newPost
-            } catch (e: Exception) {
-                Log.e("Post", "Failed to deserialize Post object: ${e.message}", e)
-                throw IllegalArgumentException("Failed to deserialize Post object", e)
-            }
-        }
-
-        private fun deserializeLocalDate(data: Map<String, Any?>, key: String): LocalDate {
-            return try {
-                val data = data[key] as Map<String, Any>
-                val year = (data["year"] as Long).toInt()
-                val month = (data["monthValue"] as Long).toInt()
-                val day = (data["dayOfMonth"] as Long).toInt()
-                LocalDate.of(year, month, day)
-            } catch (e: Exception) {
-                throw Exception("Failed to deserialize LocalDate object", e)
-            }
-        }
-
-        private fun serializeLocalDate(data: LocalDate): Map<String, Any> {
-            return mutableMapOf<String, Any>().apply {
-                this["year"] = data.year.toLong()
-                this["monthValue"] = data.monthValue.toLong()
-                this["dayOfMonth"] = data.dayOfMonth.toLong()
-            }
-        }
-
-        fun default(): Post {
-
-            return Post(
-                userId = "testId",
-                description = "Description",
-                location = Location(0.0, 0.0, 10.0, "EPFL"),
-                meal = Meal.default(),
-                createdAt = LocalDate.now()
-            )
-        }
-    }
+  }
 }
