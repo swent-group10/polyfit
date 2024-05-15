@@ -55,11 +55,11 @@ class GraphScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withCompos
     // Create a list of dates for the last 7 days including today
     val dates = (0..6).map { today.minusDays(it.toLong()) }
     // Create a baseline list of GraphData with calories set to 0
-    every { dataProcessor.calculateCaloriesSince(LocalDate.now().minusDays(7L)) } returns
+    every { dataProcessor.calculateCaloriesSince(any()) } returns
         listOf(
             DailyCalorieSummary(dates[0], 1000.0),
             DailyCalorieSummary(dates[1], 870.2),
-            DailyCalorieSummary(dates[2], 1689.98),
+            DailyCalorieSummary(dates[2], 1689.9),
             DailyCalorieSummary(dates[3], 1300.0),
             DailyCalorieSummary(dates[4], 1000.0),
             DailyCalorieSummary(dates[5], 2399.3),
@@ -104,6 +104,57 @@ class GraphScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withCompos
   @After
   fun tearDown() {
     unmockkStatic(Log::class)
+  }
+
+  @Test
+  fun testSortingByKcalAscending() {
+    set()
+    composeTestRule
+        .onNodeWithTag("SortingArrow")
+        .assertExists()
+        .assertIsDisplayed()
+        .assertHasClickAction()
+    composeTestRule.waitForIdle()
+    val nodes = composeTestRule.onAllNodesWithTag("kcal")
+    val sortedData =
+        listOf(
+            "870.2 kCal",
+            "1000.0 kCal",
+            "1000.0 kCal",
+            "1300.0 kCal",
+            "1689.9 kCal",
+            "2399.3 kCal",
+            "2438.0 kCal")
+    nodes.assertCountEquals(sortedData.size)
+    sortedData.forEachIndexed { index, kcal ->
+      nodes[index].assertTextContains(kcal, ignoreCase = true)
+    }
+    composeTestRule.onNodeWithContentDescription("ArrowUp").assertExists().assertIsDisplayed()
+    composeTestRule.onNodeWithContentDescription("ArrowDown").assertIsNotDisplayed()
+  }
+
+  @Test
+  fun testSortingByKcalDescending() {
+    set()
+    composeTestRule.onNodeWithTag("SortingArrow").performClick() // Change to ascending
+    composeTestRule.waitForIdle()
+
+    val nodes = composeTestRule.onAllNodesWithTag("kcal")
+    val sortedData =
+        listOf(
+            "2438.0 kCal",
+            "2399.3 kCal",
+            "1689.9 kCal",
+            "1300.0 kCal",
+            "1000.0 kCal",
+            "1000.0 kCal",
+            "870.2 kCal")
+    nodes.assertCountEquals(sortedData.size)
+    sortedData.forEachIndexed { index, kcal ->
+      nodes[index].assertTextContains(kcal, ignoreCase = true)
+    }
+    composeTestRule.onNodeWithContentDescription("ArrowUp").assertDoesNotExist()
+    composeTestRule.onNodeWithContentDescription("ArrowDown").assertExists().assertIsDisplayed()
   }
 
   @Test

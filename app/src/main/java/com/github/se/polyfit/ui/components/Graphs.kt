@@ -26,6 +26,7 @@ fun lineChartData(
     dateList: List<LocalDate>,
     screen: DisplayScreen
 ): LineChartData {
+  val pointListCopy = pointList
   val steps = 10
   val xAxisData =
       AxisData.Builder()
@@ -54,8 +55,8 @@ fun lineChartData(
           .axisLineColor(MaterialTheme.colorScheme.inversePrimary)
           .labelData { i ->
             if (screen == DisplayScreen.GRAPH_SCREEN) {
-              val yMin = pointList.minOf { it.y }.let { (floor(it / 10) * 10).toInt() }
-              val yMax = pointList.maxOf { it.y }.let { (ceil(it / 10) * 10).toInt() }
+              val yMin = pointListCopy.minOf { it.y }.let { (floor(it / 10) * 10).toInt() }
+              val yMax = pointListCopy.maxOf { it.y }.let { (ceil(it / 10) * 10).toInt() }
               val yScale = (yMax - yMin) / steps
               ((i * yScale) + yMin).toFloat().formatToSinglePrecision()
             } else {

@@ -82,7 +82,7 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
                     paddingValues,
                     navController,
                     mockkOverviewModule,
-                )
+                    GraphViewModel(dataProcessor))
               })
         }
 
