@@ -28,7 +28,6 @@ private val LightColorScheme =
 
 @Composable
 fun PolyfitTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     content: @Composable () -> Unit
 ) {
