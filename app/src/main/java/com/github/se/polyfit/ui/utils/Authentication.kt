@@ -29,7 +29,7 @@ class Authentication(
 
   private var callback: (() -> Unit) = { Log.e("Authentication", "Callback not set") }
   private var signInLauncher: ActivityResultLauncher<Intent>? = null
-  // This value is used to be sure the request is received in the test
+  // This value is used to be sure the request is received in the test.
   private var isAnswered = false
 
   init {
