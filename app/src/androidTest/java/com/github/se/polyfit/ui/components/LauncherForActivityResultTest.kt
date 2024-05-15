@@ -2,11 +2,9 @@ package com.github.se.polyfit.ui.components
 
 import android.Manifest
 import androidx.activity.compose.LocalActivityResultRegistryOwner
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.ActivityResultRegistryOwner
 import androidx.activity.result.contract.ActivityResultContract
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,6 +14,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.core.app.ActivityOptionsCompat
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.se.polyfit.ui.components.dialog.launcherForActivityResult
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Rule
@@ -92,10 +91,7 @@ class LauncherForActivityResultTest {
 
   @Composable
   fun TestableLauncherForActivityResult(onDeny: () -> Unit, onApprove: () -> Unit) {
-    val launcher =
-        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
-          if (it) onApprove() else onDeny()
-        }
+    val launcher = launcherForActivityResult(onDeny, onApprove)
     Button(onClick = { launcher.launch(Manifest.permission.ACCESS_FINE_LOCATION) }) {
       Text("Request Permission")
     }
