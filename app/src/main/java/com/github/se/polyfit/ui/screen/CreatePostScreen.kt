@@ -53,102 +53,131 @@ fun CreatePostScreen(
     navigateForward: () -> Unit = {},
     postViewModel: CreatePostViewModel = hiltViewModel()
 ) {
-  val context = LocalContext.current
-  val meals by postViewModel.meals.collectAsState()
-  var isPermissionDialogDisplay by remember { mutableStateOf(false) }
-  var selectedMeal by remember { mutableStateOf(Meal.default()) }
-  val postComplete by remember(selectedMeal) { derivedStateOf { selectedMeal.isComplete() } }
+    val context = LocalContext.current
+    val meals by postViewModel.meals.collectAsState()
+    var isPermissionDialogDisplay by remember { mutableStateOf(false) }
+    var selectedMeal by remember { mutableStateOf(Meal.default()) }
+    val postComplete by remember(selectedMeal) { derivedStateOf { selectedMeal.isComplete() } }
 
-  fun setPostMeal(meal: Meal) {
-    postViewModel.setPostData(meal = meal)
-  }
+    fun setPostMeal(meal: Meal) {
+        postViewModel.setPostData(meal = meal)
+    }
 
-  fun onApprove() {
-    isPermissionDialogDisplay = false
-    postViewModel.setPostLocation(Location.default()) // TODO: Include location when ready
-    postViewModel.setPost()
-    navigateForward()
-  }
+    fun onApprove() {
+        isPermissionDialogDisplay = false
+        postViewModel.setPostLocation(Location.default()) // TODO: Include location when ready
+        postViewModel.setPost()
+        navigateForward()
+    }
 
-  Scaffold(
-      topBar = {
-        CenteredTopBar(
-            title = context.getString(R.string.newPostTitle), navigateBack = navigateBack)
-      },
-      bottomBar = {
-        BottomBar(
-            postComplete = postComplete, onButtonPressed = { isPermissionDialogDisplay = true })
-      }) {
-        LazyColumn(modifier = Modifier.padding(it).testTag("CreatePostScreen")) {
-          item { PictureSelector(modifier = Modifier.padding(top = 10.dp), postViewModel) }
-          item { PostDescription(postViewModel::setPostDescription) }
-          item { HorizontalDivider(thickness = 1.dp, color = Color.LightGray) }
-          item { MealSelector(selectedMeal, { meal -> selectedMeal = meal }, meals, ::setPostMeal) }
+    Scaffold(
+        topBar = {
+            CenteredTopBar(
+                title = context.getString(R.string.newPostTitle), navigateBack = navigateBack
+            )
+        },
+        bottomBar = {
+            BottomBar(
+                postComplete = postComplete, onButtonPressed = { isPermissionDialogDisplay = true })
+        }) {
+        LazyColumn(
+            modifier = Modifier
+                .padding(it)
+                .testTag("CreatePostScreen")
+        ) {
+            item {
+                PictureSelector(
+                    modifier = Modifier.padding(top = 10.dp),
+                    postViewModel::getBitMap,
+                    postViewModel::setBitMap
+                )
+            }
+            item { PostDescription(postViewModel::setPostDescription) }
+            item { HorizontalDivider(thickness = 1.dp, color = Color.LightGray) }
+            item {
+                MealSelector(
+                    selectedMeal,
+                    { meal -> selectedMeal = meal },
+                    meals,
+                    ::setPostMeal
+                )
+            }
         }
 
         if (isPermissionDialogDisplay) {
-          LocationPermissionDialog(
-              onApprove = ::onApprove, onDeny = { isPermissionDialogDisplay = false })
+            LocationPermissionDialog(
+                onApprove = ::onApprove, onDeny = { isPermissionDialogDisplay = false })
         }
-      }
+    }
 }
 
 @Composable
 private fun PostDescription(setPostDescription: (String) -> Unit) {
-  val context = LocalContext.current
-  var descriptionText by remember { mutableStateOf("") }
+    val context = LocalContext.current
+    var descriptionText by remember { mutableStateOf("") }
 
-  TextField(
-      value = descriptionText,
-      onValueChange = {
-        descriptionText = it
-        setPostDescription(it)
-      },
-      modifier = Modifier.fillMaxWidth().heightIn(max = 150.dp).testTag("PostDescription"),
-      textStyle = MaterialTheme.typography.bodyMedium.copy(fontSize = 20.sp),
-      leadingIcon = {
-        Icon(imageVector = Icons.Filled.Edit, contentDescription = "Pen", tint = SecondaryGrey)
-      },
-      placeholder = {
-        Text(
-            text = context.getString(R.string.newPostDescriptionPlaceholder),
-            color = SecondaryGrey,
-            fontSize = 20.sp)
-      },
-      colors =
-          TextFieldDefaults.colors(
-              focusedContainerColor = Color.Transparent,
-              unfocusedContainerColor = Color.Transparent,
-              focusedIndicatorColor = Color.Transparent,
-              unfocusedIndicatorColor = Color.Transparent,
-              cursorColor = PrimaryPurple,
-          ),
-  )
+    TextField(
+        value = descriptionText,
+        onValueChange = {
+            descriptionText = it
+            setPostDescription(it)
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(max = 150.dp)
+            .testTag("PostDescription"),
+        textStyle = MaterialTheme.typography.bodyMedium.copy(fontSize = 20.sp),
+        leadingIcon = {
+            Icon(imageVector = Icons.Filled.Edit, contentDescription = "Pen", tint = SecondaryGrey)
+        },
+        placeholder = {
+            Text(
+                text = context.getString(R.string.newPostDescriptionPlaceholder),
+                color = SecondaryGrey,
+                fontSize = 20.sp
+            )
+        },
+        colors =
+        TextFieldDefaults.colors(
+            focusedContainerColor = Color.Transparent,
+            unfocusedContainerColor = Color.Transparent,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            cursorColor = PrimaryPurple,
+        ),
+    )
 }
 
 @Composable
 private fun BottomBar(onButtonPressed: () -> Unit, postComplete: Boolean) {
-  val context = LocalContext.current
-  Column(
-      modifier =
-          Modifier.background(MaterialTheme.colorScheme.background)
-              .padding(0.dp, 16.dp, 0.dp, 32.dp)
-              .testTag("BottomBar"),
-  ) {
-    Box(
-        modifier = Modifier.fillMaxWidth().testTag("PostBox"),
-        contentAlignment = Alignment.Center) {
-          PrimaryButton(
-              onClick = {
-                onButtonPressed()
-                Log.v("Finished", "Clicked")
-              },
-              text = context.getString(R.string.postButton),
-              fontSize = 24,
-              modifier = Modifier.width(200.dp).testTag("PostButton"),
-              color = PrimaryPink,
-              isEnabled = postComplete,
-              buttonShape = RoundedCornerShape(12.dp))
+    val context = LocalContext.current
+    Column(
+        modifier =
+        Modifier
+            .background(MaterialTheme.colorScheme.background)
+            .padding(0.dp, 16.dp, 0.dp, 32.dp)
+            .testTag("BottomBar"),
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("PostBox"),
+            contentAlignment = Alignment.Center
+        ) {
+            PrimaryButton(
+                onClick = {
+                    onButtonPressed()
+                    Log.v("Finished", "Clicked")
+                },
+                text = context.getString(R.string.postButton),
+                fontSize = 24,
+                modifier = Modifier
+                    .width(200.dp)
+                    .testTag("PostButton"),
+                color = PrimaryPink,
+                isEnabled = postComplete,
+                buttonShape = RoundedCornerShape(12.dp)
+            )
         }
-  }
+    }
 }

@@ -40,4 +40,7 @@
     <string name="about">"About"</string>
     <string name="logout">"Logout"</string>
     <string name="recommendedRecipe">Recommended Recipes</string>
+    <string name="PermissionDenied">Permission denied</string>
+    <string name="TakeToTakePicture">Tap to take a photo</string>
+    <string name="CreatePostImageDesription">Captured image</string>
 </resources>

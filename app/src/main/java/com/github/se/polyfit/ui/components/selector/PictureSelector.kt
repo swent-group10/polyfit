@@ -16,8 +16,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,66 +29,81 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import com.github.se.polyfit.R
 import com.github.se.polyfit.ui.theme.PurpleGrey80
-import com.github.se.polyfit.viewmodel.post.CreatePostViewModel
+import kotlin.reflect.KFunction0
 
-private const val PERMISSION_DENIED_MESSAGE = "Permission denied"
 
 @Composable
-fun PictureSelector(modifier: Modifier = Modifier, postViewModel: CreatePostViewModel) {
-  val context = LocalContext.current
+fun PictureSelector(
+    modifier: Modifier = Modifier,
+    getBitMap: KFunction0<Bitmap?>,
+    setBitmap: (Bitmap) -> Unit
+) {
+    val context = LocalContext.current
 
-  var bitmapPicture = remember { mutableStateOf(postViewModel.getBitMap()) }
+    var bitmapPicture by remember { mutableStateOf(getBitMap()) }
 
-  val takePicturePreview =
-      rememberLauncherForActivityResult(
-          contract = ActivityResultContracts.TakePicturePreview(),
-          onResult = { bitmap: Bitmap? ->
-            if (bitmap != null) {
-              bitmapPicture.value = bitmap
-              postViewModel.setBitMap(bitmap)
+    val takePicturePreview =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.TakePicturePreview(),
+            onResult = { bitmap: Bitmap? ->
+                if (bitmap != null) {
+                    bitmapPicture = bitmap
+                    setBitmap(bitmap)
+                }
+            })
+
+    val requestPermission =
+        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                takePicturePreview.launch(null) // No input needed, directly launches camera for a preview
+            } else {
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.PermissionDenied),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
-          })
-
-  val requestPermission =
-      rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
-          isGranted: Boolean ->
-        if (isGranted) {
-          takePicturePreview.launch(null) // No input needed, directly launches camera for a preview
-        } else {
-          Toast.makeText(context, PERMISSION_DENIED_MESSAGE, Toast.LENGTH_SHORT).show()
         }
-      }
 
-  Box(
-      modifier = modifier.fillMaxWidth().testTag("PictureSelector"),
-      contentAlignment = Alignment.Center) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .testTag("PictureSelector"),
+        contentAlignment = Alignment.Center
+    ) {
         Box(
             modifier =
-                Modifier.size(200.dp)
-                    .clip(RoundedCornerShape(20.dp))
-                    .clickable {
-                      if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) ==
-                          PackageManager.PERMISSION_GRANTED) {
+            Modifier
+                .size(200.dp)
+                .clip(RoundedCornerShape(20.dp))
+                .clickable {
+                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) ==
+                        PackageManager.PERMISSION_GRANTED
+                    ) {
                         takePicturePreview.launch(
-                            null) // Launch the camera if permission is already granted
-                      } else {
+                            null
+                        ) // Launch the camera if permission is already granted
+                    } else {
                         requestPermission.launch(
-                            Manifest.permission.CAMERA) // Request permission if not already granted
-                      }
+                            Manifest.permission.CAMERA
+                        ) // Request permission if not already granted
                     }
-                    .background(color = PurpleGrey80, shape = RoundedCornerShape(20.dp)),
+                }
+                .background(color = PurpleGrey80, shape = RoundedCornerShape(20.dp)),
             contentAlignment = Alignment.Center) {
-              if (bitmapPicture.value != null) {
+            if (bitmapPicture != null) {
                 // Display the bitmap here
                 Image(
-                    bitmap = bitmapPicture.value!!.asImageBitmap(),
+                    bitmap = bitmapPicture!!.asImageBitmap(),
                     contentDescription = "Captured image",
                     modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop)
-              } else {
+                    contentScale = ContentScale.Crop
+                )
+            } else {
                 Text("Tap to take photo")
-              }
             }
-      }
+        }
+    }
 }
