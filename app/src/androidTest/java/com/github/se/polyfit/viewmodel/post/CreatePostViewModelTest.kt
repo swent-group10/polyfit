@@ -16,11 +16,13 @@ import io.mockk.coVerify
 import io.mockk.coVerifyOrder
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.unmockkAll
 import java.time.LocalDate
 import kotlin.test.assertFailsWith
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -38,6 +40,11 @@ class CreatePostViewModelTest {
 
     viewModel =
         CreatePostViewModel(mockMealRepository, mockPostFirebaseRepository, mockPostLocationModel)
+  }
+
+  @After
+  fun tearDown() {
+    unmockkAll()
   }
 
   @Test
@@ -152,10 +159,8 @@ class CreatePostViewModelTest {
   fun testSetInOrder() = runTest {
     val mockJob = mockk<Job> { coEvery { join() } just Runs }
 
-    // Call setInOrder with the mocked job and a dummy function for second
     viewModel.setInOrder(first = mockJob, second = { viewModel.setPost() })
 
-    // Verify that first.join() was called before second() was executed
     coVerifyOrder {
       mockJob.join()
       viewModel.setPost()

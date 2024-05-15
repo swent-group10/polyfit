@@ -2,6 +2,7 @@ package com.github.se.polyfit.ui.components.dialog
 
 import android.Manifest
 import android.content.Context
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
@@ -25,15 +26,7 @@ import com.github.se.polyfit.ui.theme.PrimaryPurple
 @Composable
 fun LocationPermissionDialog(onDeny: () -> Unit, onApprove: () -> Unit) {
 
-  val permissionLauncher =
-      rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
-          isGranted: Boolean ->
-        if (isGranted) {
-          onApprove()
-        } else {
-          onDeny()
-        }
-      }
+  val permissionLauncher = launcherForActivityResult(onDeny, onApprove)
 
   DisposableEffect(Unit) { onDispose {} }
 
@@ -78,4 +71,16 @@ fun LocationPermissionDialog(onDeny: () -> Unit, onApprove: () -> Unit) {
             }
       },
       properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = false))
+}
+
+@Composable
+fun launcherForActivityResult(
+    onDeny: () -> Unit,
+    onApprove: () -> Unit,
+    activityResult: ManagedActivityResultLauncher<String, Boolean> =
+        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
+          if (it) onApprove() else onDeny()
+        }
+): ManagedActivityResultLauncher<String, Boolean> {
+  return activityResult
 }

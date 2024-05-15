@@ -27,12 +27,10 @@ class PostLocationModel(private val context: Context) {
   ): com.github.se.polyfit.model.post.Location {
     var locationToSet: com.github.se.polyfit.model.post.Location =
         com.github.se.polyfit.model.post.Location.default()
-    Log.d("LocationPermissionsModel", "currentLocation")
 
     try {
       val location: Location? = query.getCurrentLocation(currentLocationRequest, null).await()
 
-      Log.d("LocationPermissionsModel", "currentLocation: $location")
       locationToSet =
           location?.let {
             com.github.se.polyfit.model.post.Location(
@@ -41,11 +39,12 @@ class PostLocationModel(private val context: Context) {
     } catch (e: SecurityException) {
       Toast.makeText(context, "Location permissions are missing", Toast.LENGTH_SHORT).show()
     }
+
     return locationToSet
   }
 
   suspend fun checkLocationPermissions(): com.github.se.polyfit.model.post.Location {
-    Log.d("LocationPermissionsModel", "checkLocationPermissions")
+
     if (ActivityCompat.checkSelfPermission(
         this.context, Manifest.permission.ACCESS_COARSE_LOCATION) !=
         PackageManager.PERMISSION_GRANTED ||
@@ -56,6 +55,7 @@ class PostLocationModel(private val context: Context) {
 
       return com.github.se.polyfit.model.post.Location.default()
     }
+
     return currentLocation()
   }
 }
