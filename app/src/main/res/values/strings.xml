@@ -8,7 +8,6 @@
     <string name="dialog_headline">Choose Option</string>
     <string name="home_nav_label">Home</string>
     <string name="map_nav_posts">Posts</string>
-
     <string name="map_nav_label">Map</string>
     <string name="settings">Settings</string>
     <string name="toast_message_feature_unavailable">Not available yet</string>
@@ -43,4 +42,14 @@
     <string name="PermissionDenied">Permission denied</string>
     <string name="TakeToTakePicture">Tap to take a photo</string>
     <string name="CreatePostImageDesription">Captured image</string>
+    <string name="accountSettings">Account Information</string>
+    <string name="accountSettingsCancel">Cancel</string>
+    <string name="accountSettingsSave">Save</string>
+    <string name="accountSettingsDob">Date of Birth</string>
+    <string name="accountSettingsCalorieGoal">Daily Calorie Goal (kCal)</string>
+    <string name="accountSettingsWeight">Weight (kg)</string>
+    <string name="accountSettingsHeight">Height (cm)</string>
+    <string name="accountSettingsLastName">Last Name</string>
+    <string name="accountSettingsFirstName">First Name</string>
+    <string name="accountSettingsDisplayName">Display Name</string>
 </resources>

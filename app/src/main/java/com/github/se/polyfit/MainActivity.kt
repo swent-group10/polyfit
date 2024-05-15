@@ -12,6 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.flow.AddMealFlow
+import com.github.se.polyfit.ui.flow.SettingFlow
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.navigation.Route
 import com.github.se.polyfit.ui.screen.CreatePostScreen
@@ -70,6 +71,10 @@ class MainActivity : ComponentActivity() {
                 goBack = navigation::goBack,
                 goForward = { navigation.goBackTo(Route.DailyRecap) },
                 mealId = mealId)
+          }
+
+          composable(Route.Settings) {
+            GenericScreen(navController = navController, content = { SettingFlow() })
           }
 
           composable(Route.PostInfo) { PostInfoScreen(navigation, navController) }

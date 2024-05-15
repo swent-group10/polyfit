@@ -1,8 +1,9 @@
 package com.github.se.polyfit.ui.components
 
 import android.content.Context
-import android.widget.Toast
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -10,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.github.se.polyfit.R
 import com.github.se.polyfit.ui.components.scaffold.AppTitle
 import com.github.se.polyfit.ui.components.scaffold.BottomNavigationBar
 import com.github.se.polyfit.ui.navigation.Route
@@ -33,19 +33,9 @@ fun GenericScreen(
             stackEntry,
             { navController.navigate(Route.Home) },
             { navController.navigate(Route.PostInfo) },
-            showToastMessage(context = context),
+            { navController.navigate(Route.Settings) },
             {})
-      },
-      content = content)
-}
-
-@Composable
-fun showToastMessage(context: Context): () -> Unit {
-  val toast =
-      Toast.makeText(
-          context,
-          context.getString(R.string.toast_message_feature_unavailable),
-          Toast.LENGTH_SHORT)
-
-  return { toast.show() }
+      }) {
+        Box(modifier = Modifier.padding(it)) { content(it) }
+      }
 }
