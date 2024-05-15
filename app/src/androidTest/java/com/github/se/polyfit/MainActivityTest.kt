@@ -33,8 +33,7 @@ class MainActivityTest {
     scenario.onActivity { activity ->
       authentication = Authentication(activity, mockk(relaxed = true), mockk(relaxed = true), auth)
       authentication!!.setCallback({}, 0)
+      assert(authentication!!.isAuthenticated())
     }
-
-    assert(authentication!!.isAuthenticated())
   }
 }
