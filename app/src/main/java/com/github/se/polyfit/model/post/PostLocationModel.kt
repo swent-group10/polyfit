@@ -28,7 +28,9 @@ class PostLocationModel(private val context: Context) {
     var locationToSet = com.github.se.polyfit.model.post.Location.default()
 
     try {
+      Log.e("PostLocationModel", "Getting current location")
       val location: Location? = query.getCurrentLocation(currentLocationRequest, null).await()
+      Log.e("PostLocationModel", "Location: $location")
 
       locationToSet =
           Location(
