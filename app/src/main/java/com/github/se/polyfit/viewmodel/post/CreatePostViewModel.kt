@@ -70,10 +70,10 @@ constructor(
     }
   }
 
-  fun setInOrder() {
+  fun setInOrder(first: Job = setPostLocation(), second: () -> Unit = ::setPost) {
     viewModelScope.launch(Dispatchers.IO) {
-      setPostLocation().join()
-      setPost()
+      first.join()
+      second()
     }
   }
 
