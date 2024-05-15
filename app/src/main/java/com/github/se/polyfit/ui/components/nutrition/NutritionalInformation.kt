@@ -21,6 +21,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,19 +50,24 @@ fun NutritionalInformation(mealViewModel: MealViewModel) {
       MealName(mealName = meal.name, onNameChange = { mealViewModel.updateMealData(name = it) })
     }
 
-    // At the very least, a meal should always have calories
-    if (calories == null) {
-      item {
-        Text(
-            "No nutritional information available",
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.testTag("NoNutritionalInformation"))
+    when (calories) {
+      null -> {
+        item {
+          Text(
+              "No nutritional information available",
+              style = MaterialTheme.typography.bodyMedium,
+              modifier = Modifier.testTag("NoNutritionalInformation"))
+        }
       }
-    } else {
-      item { NutrientInfo(nutrient = calories, style = MaterialTheme.typography.bodyLarge) }
-      items(nutrients) { nutrient ->
-        if (nutrient != calories) {
-          NutrientInfo(nutrient = nutrient)
+      else -> {
+        item { NutrientInfo(nutrient = calories, style = MaterialTheme.typography.bodyLarge) }
+        items(nutrients) { nutrient ->
+          when (nutrient) {
+            calories -> {}
+            else -> {
+              NutrientInfo(nutrient)
+            }
+          }
         }
       }
     }
@@ -71,15 +77,22 @@ fun NutritionalInformation(mealViewModel: MealViewModel) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MealName(mealName: String, onNameChange: (String) -> Unit) {
-  var textState by remember { mutableStateOf(mealName) }
-  var isEditable by remember { mutableStateOf(false) }
+  var textState = remember { mutableStateOf(mealName) }
+  var isEditable = remember { mutableStateOf(false) }
 
   Column {
     Row(verticalAlignment = Alignment.CenterVertically) {
-      if (isEditable) {
+      EditableIfElse(
+          isEditable,
+          textState,
+          Modifier.testTag("EditMealNameTextField").weight(1f),
+          Modifier.testTag("MealName").align(Alignment.CenterVertically),
+          onNameChange)
+      /*
+      if (isEditable.value) {
         TextField(
-            value = textState,
-            onValueChange = { newValue -> textState = newValue },
+            value = textState.value,
+            onValueChange = { newValue -> textState.value = newValue },
             modifier = Modifier.testTag("EditMealNameTextField").weight(1f),
             singleLine = true,
             colors =
@@ -91,32 +104,31 @@ private fun MealName(mealName: String, onNameChange: (String) -> Unit) {
             keyboardActions =
                 KeyboardActions(
                     onDone = {
-                      onNameChange(textState)
-                      isEditable = false
+                      onNameChange(textState.value)
+                      isEditable.value = false
                     }))
       } else {
         Text(
-            text = textState.ifEmpty { "Enter name here" },
+            text = textState.value.ifEmpty { "Enter name here" },
             color = PrimaryPurple,
             style = MaterialTheme.typography.headlineSmall,
             modifier = Modifier.testTag("MealName").align(Alignment.CenterVertically))
       }
 
-      IconButton(onClick = { isEditable = true }, modifier = Modifier.testTag("EditMealButton")) {
-        Icon(
-            imageVector = Icons.Filled.Edit,
-            contentDescription = "Edit meal name",
-            tint = PrimaryPurple)
-      }
+       */
+
+      IconButton(
+          onClick = { isEditable.value = true }, modifier = Modifier.testTag("EditMealButton")) {
+            Icon(
+                imageVector = Icons.Filled.Edit,
+                contentDescription = "Edit meal name",
+                tint = PrimaryPurple)
+          }
     }
     HorizontalDivider(modifier = Modifier.padding(bottom = 8.dp))
   }
 
-  LaunchedEffect(isEditable) {
-    if (!isEditable) {
-      onNameChange(textState)
-    }
-  }
+  LaunchedEffect(isEditable) { LaunchIfStatement(isEditable, textState, onNameChange) }
 }
 
 @Composable
@@ -134,4 +146,57 @@ private fun NutrientInfo(
             style = style,
             modifier = Modifier.testTag("NutrientAmount"))
       }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun EditableIfElse(
+    isEditable: MutableState<Boolean>,
+    textState: MutableState<String>,
+    modifierIf: Modifier,
+    modifierElse: Modifier,
+    onNameChange: (String) -> Unit
+) {
+
+  when (isEditable.value) {
+    true -> {
+      TextField(
+          value = textState.value,
+          onValueChange = { newValue -> textState.value = newValue },
+          modifier = modifierIf,
+          singleLine = true,
+          colors =
+              TextFieldDefaults.textFieldColors(
+                  focusedIndicatorColor = PrimaryPurple,
+                  cursorColor = Color.Black,
+                  unfocusedIndicatorColor = Color.Transparent),
+          keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+          keyboardActions =
+              KeyboardActions(
+                  onDone = {
+                    onNameChange(textState.value)
+                    isEditable.value = false
+                  }))
+    }
+    false -> {
+      Text(
+          text = textState.value.ifEmpty { "Enter name here" },
+          color = PrimaryPurple,
+          style = MaterialTheme.typography.headlineSmall,
+          modifier = modifierElse)
+    }
+  }
+}
+
+private fun LaunchIfStatement(
+    isEditable: MutableState<Boolean>,
+    textState: MutableState<String>,
+    onNameChange: (String) -> Unit
+) {
+  when (isEditable.value) {
+    true -> {}
+    false -> {
+      onNameChange(textState.value)
+    }
+  }
 }

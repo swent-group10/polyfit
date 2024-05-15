@@ -51,9 +51,7 @@ fun MealTagDialog(
   val allColors = MealTagColor.entries.filter { it != MealTagColor.UNDEFINED }
 
   fun onSave() {
-    if (tag != null) {
-      removeMealTag(tag)
-    }
+    tag?.let { removeMealTag(tag) }
 
     val newTag = MealTag(name, color)
     addMealTag(newTag)
@@ -146,7 +144,7 @@ private fun EditLabel(name: String, onNameChange: (String) -> Unit) {
 
 @Composable
 private fun Title(tag: MealTag?, removeMealTag: (MealTag) -> Unit, closeDialog: () -> Unit) {
-  val title = if (tag == null) "Add a Tag" else "Edit Tag"
+  val title = "Add a Tag".takeIf { tag == null } ?: "Edit Tag"
 
   Row(
       verticalAlignment = Alignment.CenterVertically,
@@ -156,7 +154,7 @@ private fun Title(tag: MealTag?, removeMealTag: (MealTag) -> Unit, closeDialog: 
             style = MaterialTheme.typography.titleLarge,
             color = PurpleGrey40,
             modifier = Modifier.testTag("Title"))
-        if (tag != null) {
+        tag?.let {
           IconButton(
               onClick = {
                 removeMealTag(tag)
