@@ -77,10 +77,8 @@ fun LocationPermissionDialog(onDeny: () -> Unit, onApprove: () -> Unit) {
 fun launcherForActivityResult(
     onDeny: () -> Unit,
     onApprove: () -> Unit,
-    activityResult: ManagedActivityResultLauncher<String, Boolean> =
-        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
-          if (it) onApprove() else onDeny()
-        }
 ): ManagedActivityResultLauncher<String, Boolean> {
-  return activityResult
+  return rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
+    if (it) onApprove() else onDeny()
+  }
 }
