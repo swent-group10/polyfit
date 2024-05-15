@@ -60,10 +60,8 @@ import kotlinx.coroutines.runBlocking
 fun OverviewScreen(
     paddingValues: PaddingValues,
     navController: NavHostController,
-    overviewViewModel: OverviewViewModel = hiltViewModel(),
-    graphViewModel: GraphViewModel = hiltViewModel()
+    overviewViewModel: OverviewViewModel = hiltViewModel()
 ) {
-
   val context = LocalContext.current
   val navigation = Navigation(navController)
   var showPictureDialog by remember { mutableStateOf(false) }
@@ -203,8 +201,8 @@ fun OverviewScreen(
                             modifier = Modifier.testTag("Overview Line Chart").fillMaxSize(),
                             lineChartData =
                                 lineChartData(
-                                    graphViewModel.DataPoints(),
-                                    graphViewModel.DateList(),
+                                    hiltViewModel<GraphViewModel>().DataPoints(),
+                                    hiltViewModel<GraphViewModel>().DateList(),
                                     DisplayScreen.OVERVIEW))
                       } else {
                         Spacer(modifier = Modifier.fillMaxSize().testTag("LineChartSpacer"))
