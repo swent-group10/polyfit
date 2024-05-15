@@ -25,17 +25,17 @@ class PostLocationModel(private val context: Context) {
   suspend fun currentLocation(
       query: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
   ): com.github.se.polyfit.model.post.Location {
-    var locationToSet: com.github.se.polyfit.model.post.Location =
-        com.github.se.polyfit.model.post.Location.default()
+    var locationToSet = com.github.se.polyfit.model.post.Location.default()
 
     try {
       val location: Location? = query.getCurrentLocation(currentLocationRequest, null).await()
 
       locationToSet =
-          location?.let {
-            com.github.se.polyfit.model.post.Location(
-                longitude = it.longitude, latitude = it.latitude, altitude = it.altitude, name = "")
-          } ?: com.github.se.polyfit.model.post.Location.default()
+          Location(
+              longitude = location!!.longitude,
+              latitude = location.latitude,
+              altitude = location.altitude,
+              name = "")
     } catch (e: SecurityException) {
       Toast.makeText(context, "Location permissions are missing", Toast.LENGTH_SHORT).show()
     }
