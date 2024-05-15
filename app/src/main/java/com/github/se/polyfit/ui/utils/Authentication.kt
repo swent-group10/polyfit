@@ -4,15 +4,12 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
-import androidx.core.content.ContextCompat
 import co.yml.charts.common.extensions.isNotNull
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
-import com.github.se.polyfit.R
 import com.github.se.polyfit.data.remote.firebase.UserFirebaseRepository
 import com.github.se.polyfit.model.data.User
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -45,24 +42,9 @@ class Authentication(
     // This init is launched when the user is not signed in
     signInLauncher =
         activity.registerForActivityResult(FirebaseAuthUIActivityResultContract()) { res ->
-          onSignInResult(res) {
-            if (it) {
-              (callback)()
-              Log.i("Authentication", "onCreate user account: ${auth.currentUser}")
-            } else {
-              Log.e("Authentication", "onCreate user account error in sign in result ")
-              Toast.makeText(
-                      context,
-                      ContextCompat.getString(context, R.string.signInFailed),
-                      Toast.LENGTH_SHORT)
-                  .show()
-            }
-          }
+          onSignInResult(res) { if (it) (callback)() }
         }
-    val providers =
-        arrayListOf(
-            AuthUI.IdpConfig.GoogleBuilder().build(),
-        )
+    val providers = arrayListOf(AuthUI.IdpConfig.GoogleBuilder().build())
 
     val signInIntent =
         AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(providers).build()
@@ -76,7 +58,7 @@ class Authentication(
 
   fun isAuthenticated(): Boolean {
     Log.i("Authentication", "isAuthenticated: ${auth.currentUser}")
-    return auth.currentUser != null
+    return auth.currentUser != null && user.isSignedIn()
   }
 
   fun signIn() {
@@ -90,6 +72,8 @@ class Authentication(
 
   fun signOut() {
     AuthUI.getInstance().signOut(context)
+    user.signOut()
+    isAnswered = false
   }
 
   fun onSignInResult(result: FirebaseAuthUIAuthenticationResult, callback: (Boolean) -> Unit) {

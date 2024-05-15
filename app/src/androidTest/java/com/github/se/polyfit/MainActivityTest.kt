@@ -25,7 +25,7 @@ class MainActivityTest {
       ActivityScenarioRule(MainActivity::class.java)
 
   @Test
-  fun testSignInSignOut() {
+  fun testDirectSignIn() {
     val auth: FirebaseAuth = mockk(relaxed = true)
     every { auth.currentUser } answers { mockk(relaxed = true) }
 
@@ -42,6 +42,28 @@ class MainActivityTest {
         i++
       }
       assert(authentication.isAuthenticated())
+    }
+  }
+
+  @Test
+  fun testSignOut() {
+    val auth: FirebaseAuth = mockk(relaxed = true)
+    every { auth.currentUser } answers { mockk(relaxed = true) }
+
+    val scenario = ActivityScenario.launch(MainActivity::class.java)
+
+    scenario.onActivity { activity ->
+      val authentication =
+          Authentication(activity, mockk(relaxed = true), mockk(relaxed = true), auth)
+      authentication.setCallback({}, 0)
+      var i = 0
+      while (!authentication.isAnswered() && i < 10_000) {
+        sleep(10)
+        Log.i("MainActivityTest", "Waiting for authentication")
+        i++
+      }
+      authentication.signOut()
+      assert(!authentication.isAuthenticated())
     }
   }
 }
