@@ -73,7 +73,7 @@ fun RecipeImage(recipe: Recipe, onCardClick: (Recipe) -> Unit) {
               .data(recipe.imageUrl.toString())
               .crossfade(true)
               .build(),
-      placeholder = painterResource(R.drawable.food1),
+      placeholder = painterResource(R.drawable.logo),
       contentDescription = stringResource(R.string.description),
       contentScale = ContentScale.Crop,
       modifier = Modifier.fillMaxSize().clickable { onCardClick(recipe) }.testTag("RecipeImage"))

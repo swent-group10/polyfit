@@ -22,6 +22,7 @@ import com.github.se.polyfit.ui.screen.FullGraphScreen
 import com.github.se.polyfit.ui.screen.LoginScreen
 import com.github.se.polyfit.ui.screen.OverviewScreen
 import com.github.se.polyfit.ui.screen.PostInfoScreen
+import com.github.se.polyfit.ui.screen.RecipeRecommendationScreen
 import com.github.se.polyfit.ui.theme.PolyfitTheme
 import com.github.se.polyfit.ui.utils.Authentication
 import dagger.hilt.android.AndroidEntryPoint
@@ -80,9 +81,7 @@ class MainActivity : ComponentActivity() {
                 mealId = mealId)
           }
 
-          composable(Route.PostInfo) {
-            GenericScreen(navController = navController, content = { PostInfoScreen() })
-          }
+          composable(Route.PostInfo) { PostInfoScreen(navigation, navController) }
 
           composable(Route.CreatePost) {
             CreatePostScreen(navigation::goBack, navigation::navigateToHome)
@@ -93,6 +92,10 @@ class MainActivity : ComponentActivity() {
                 navigateBack = navigation::goBack, navigateTo = navigation::navigateToAddMeal)
           }
           composable(Route.AddMeal) { AddMealFlow(navigation::goBack, navigation::navigateToHome) }
+
+          composable(Route.RecipeRecommendation) {
+            RecipeRecommendationScreen(navController = navController)
+          }
         }
       }
     }

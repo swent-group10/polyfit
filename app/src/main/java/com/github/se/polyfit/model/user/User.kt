@@ -81,5 +81,14 @@ data class User(
         throw IllegalArgumentException("Error deserializing user : $e")
       }
     }
+
+    fun testUser(): User {
+      return User(
+          id = "testId",
+          displayName = "Test User",
+          familyName = "User",
+          givenName = "Test",
+          email = "somethingsomething@google.ze")
+    }
   }
 }
