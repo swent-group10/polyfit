@@ -5,19 +5,24 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import com.github.se.polyfit.R
 import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.ui.components.list.MealList
@@ -36,6 +41,20 @@ fun DailyRecapScreen(
   val isFetching by dailyRecapViewModel.isFetching.collectAsState()
   val noMeals = remember(meals) { meals.isEmpty() }
   val occasions = MealOccasion.entries.filter { it != MealOccasion.OTHER }
+  val lifecycleOwner = LocalLifecycleOwner.current
+
+  // This ensures that when we navigate back after edits, the screen is updated
+  DisposableEffect(lifecycleOwner) {
+    val observer = LifecycleEventObserver { _, event ->
+      if (event == Lifecycle.Event.ON_RESUME) {
+        dailyRecapViewModel.getMealsOnDate()
+      }
+    }
+
+    lifecycleOwner.lifecycle.addObserver(observer)
+
+    onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+  }
 
   Scaffold(topBar = { SimpleTopBar("Overview", navigateBack) }) {
     Column(modifier = Modifier.padding(it).testTag("DailyRecapScreen")) {
@@ -43,19 +62,10 @@ fun DailyRecapScreen(
       if (isFetching) {
         CircularProgressIndicator(
             modifier = Modifier.fillMaxSize().padding(16.dp).testTag("Spinner"))
+        return@Scaffold
       }
-      if (!isFetching && !noMeals) {
-        LazyColumn {
-          items(occasions.size) { index ->
-            val occasion = occasions[index]
-            MealList(
-                meals = meals,
-                occasion = occasion,
-                navigateTo = navigateTo,
-                modifier = Modifier.padding(0.dp, 8.dp))
-          }
-        }
-      } else {
+
+      if (noMeals) {
         Box(
             modifier = Modifier.fillMaxSize().testTag("NoMealsBox"),
             contentAlignment = Alignment.Center) {
@@ -63,6 +73,17 @@ fun DailyRecapScreen(
                   text = context.getString(R.string.no_recorded_meals),
                   modifier = Modifier.testTag("NoRecordedMeals"))
             }
+        return@Scaffold
+      }
+
+      LazyColumn {
+        items(occasions) { occasion ->
+          MealList(
+              meals = meals,
+              occasion = occasion,
+              navigateTo = navigateTo,
+              modifier = Modifier.padding(0.dp, 8.dp))
+        }
       }
     }
   }
