@@ -117,11 +117,16 @@ fun OverviewScreen(
   if (showPictureDialog) {
     PictureDialog(
         onDismiss = { showPictureDialog = false },
-        onFirstButtonClick =
-            overviewViewModel.callCamera(context, startCamera, requestPermissionLauncher),
-        onSecondButtonClick = { pickImageLauncher.launch("image/*") },
-        firstButtonName = context.getString(R.string.take_picture_dialog),
-        secondButtonName = context.getString(R.string.import_picture_dialog))
+        onButtonsClick =
+            listOf(
+                overviewViewModel.callCamera(context, startCamera, requestPermissionLauncher),
+                { pickImageLauncher.launch("image/*") },
+                {}),
+        buttonsName =
+            listOf(
+                context.getString(R.string.take_picture_dialog),
+                context.getString(R.string.import_picture_dialog),
+                context.getString(R.string.scan_picture_dialog)))
   }
 
   Box(modifier = Modifier.padding(paddingValues).fillMaxWidth().testTag("OverviewScreen")) {

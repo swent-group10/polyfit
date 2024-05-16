@@ -55,4 +55,5 @@ class PictureDialogBox(semanticsProvider: SemanticsNodeInteractionsProvider) :
   val column: KNode = child { hasTestTag("PictureDialogColumn") }
   val firstButton: KNode = column.child { hasTestTag("FirstButton") }
   val secondButton: KNode = column.child { hasTestTag("SecondButton") }
+  val thirdButton: KNode = column.child { hasTestTag("ThirdButton") }
 }

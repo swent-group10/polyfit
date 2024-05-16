@@ -5,6 +5,7 @@
     <string name="meal_tracking_headline">Track your meals</string>
     <string name="take_picture_dialog">Take Picture</string>
     <string name="import_picture_dialog">Import Picture</string>
+    <string name="scan_picture_dialog">Scan Picture</string>
     <string name="dialog_headline">Choose Option</string>
     <string name="home_nav_label">Home</string>
     <string name="map_nav_posts">Posts</string>
