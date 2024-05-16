@@ -16,8 +16,9 @@ import androidx.compose.ui.platform.testTag
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(navigateBack: () -> Unit) {
+fun TopBarIngredient(navigateBack: () -> Unit) {
   TopAppBar(
+      modifier = Modifier.testTag("TopBarIngredient"),
       title = {
         Text(
             "Product",
@@ -27,20 +28,20 @@ fun TopBar(navigateBack: () -> Unit) {
       },
       navigationIcon = {
         IconButton(
+            modifier = Modifier.testTag("BackButton"),
             onClick = { navigateBack() },
             content = {
               Icon(
                   imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                   contentDescription = "Back",
-                  modifier = Modifier.testTag("BackButton"),
+                  modifier = Modifier.testTag("BackButtonIcon"),
                   tint = MaterialTheme.colorScheme.outline)
             },
             colors =
                 IconButtonDefaults.iconButtonColors(
                     containerColor = MaterialTheme.colorScheme.background),
-            modifier = Modifier.testTag("BackButton"))
+        )
       },
-      modifier = Modifier.testTag("TopBar"),
       colors =
           TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background))
 }

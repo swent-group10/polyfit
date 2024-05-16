@@ -1,98 +1,242 @@
 package com.github.se.polyfit.ui.screen
 
 import android.util.Log
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.printToString
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.se.polyfit.ui.components.button.FloatingActionButtonIngredients
+import com.github.se.polyfit.ui.components.IngredientsOverview.ListProducts
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.mockk.mockk
+import io.mockk.verify
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import io.mockk.verify
 
 @RunWith(AndroidJUnit4::class)
 class IngredientsOverviewTest {
 
-    @get:Rule
-    val composeTestRule = createComposeRule()
+  val i1 = IngredientsTMP("Apple", 100, 52, 14, 0, 0)
+  val i2 = IngredientsTMP("Banana", 100, 89, 23, 0, 1)
+  val i3 = IngredientsTMP("Carrot", 100, 41, 10, 0, 1)
+  val i4 = IngredientsTMP("Date", 100, 282, 75, 0, 2)
+  val i5 = IngredientsTMP("Eggplant", 100, 25, 6, 0, 1)
 
-    @Test
-    fun displays_tree(){
-        composeTestRule.setContent {
-            FloatingActionButtonIngredients {}
-        }
-        Log.i("abc", "printAllNode  ${composeTestRule.onRoot(useUnmergedTree = true).printToString()}")
+  val l1 = listOf(i1)
+  val l2 = listOf(i1, i2, i3, i4, i5)
+
+  @get:Rule val composeTestRule = createComposeRule()
+
+  @Test
+  fun displays_tree() {
+    composeTestRule.setContent { IngredientsOverview({}, {}, {}, l1) }
+    Log.i("abc", "printAllNode  ${composeTestRule.onRoot(useUnmergedTree = true).printToString()}")
+  }
+
+  @Test
+  fun displays_ingredients_overview() {
+    composeTestRule.setContent { IngredientsOverview({}, {}, {}, l1) }
+
+    ComposeScreen.onComposeScreen<IngredientsOverviewScreen>(composeTestRule) {
+      topBar { assertExists() }
+
+      bottomBar { assertExists() }
+
+      floatingActionButton { assertExists() }
+
+      listProducts { assertExists() }
+    }
+  }
+
+  @Test
+  fun displays_top() {
+    composeTestRule.setContent { IngredientsOverview({}, {}, {}, l1) }
+
+    ComposeScreen.onComposeScreen<IngredientsOverviewTopBar>(composeTestRule) {
+      backButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+      }
+
+      title {
+        assertIsDisplayed()
+        assertTextContains("Product", ignoreCase = true, substring = true)
+      }
+    }
+  }
+
+  @Test
+  fun displays_bottom() {
+    composeTestRule.setContent { IngredientsOverview({}, {}, {}, l1) }
+
+    ComposeScreen.onComposeScreen<IngredientsOverviewBottomBarIngredient>(composeTestRule) {
+      generateButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+      }
+    }
+  }
+
+  @Test
+  fun displays_floating_action_button() {
+    composeTestRule.setContent { IngredientsOverview({}, {}, {}, l1) }
+
+    ComposeScreen.onComposeScreen<FloatingActionButtonIngredientsScreen>(composeTestRule) {
+      assertExists()
+      assertIsDisplayed()
+    }
+  }
+
+  @Test
+  fun displayListProducts() {
+    composeTestRule.setContent { ListProducts(l1, Modifier) }
+    Log.i("abc", "printAllNode2  ${composeTestRule.onRoot(useUnmergedTree = true).printToString()}")
+
+    ComposeScreen.onComposeScreen<ListProductsScreen>(composeTestRule) {
+      card {
+        assertExists()
+        assertIsDisplayed()
+      }
+
+      productName {
+        assertIsDisplayed()
+        assertTextContains("Apple", ignoreCase = true, substring = true)
+      }
+
+      ServingSize { assertIsDisplayed() }
+
+      ServiceSizet1 {
+        assertIsDisplayed()
+        assertTextContains("Serving Size", ignoreCase = true, substring = true)
+      }
+
+      ServiceSizet2 {
+        assertIsDisplayed()
+        assertTextContains("100", ignoreCase = true, substring = true)
+        assertTextContains("g", ignoreCase = true, substring = true)
+      }
+
+      calories { assertIsDisplayed() }
+
+      caloriest1 {
+        assertIsDisplayed()
+        assertTextContains("Calories", ignoreCase = true, substring = true)
+      }
+
+      caloriest2 {
+        assertIsDisplayed()
+        assertTextContains("52", ignoreCase = true, substring = true)
+        assertTextContains("kcal", ignoreCase = true, substring = true)
+      }
+
+      carbs { assertIsDisplayed() }
+
+      carbst1 {
+        assertIsDisplayed()
+        assertTextContains("Carbs", ignoreCase = true, substring = true)
+      }
+
+      carbst2 {
+        assertIsDisplayed()
+        assertTextContains("14", ignoreCase = true, substring = true)
+        assertTextContains("g", ignoreCase = true, substring = true)
+      }
+
+      fat { assertIsDisplayed() }
+
+      fatt1 {
+        assertIsDisplayed()
+        assertTextContains("Fat", ignoreCase = true, substring = true)
+      }
+
+      fatt2 {
+        assertIsDisplayed()
+        assertTextContains("0", ignoreCase = true, substring = true)
+        assertTextContains("g", ignoreCase = true, substring = true)
+      }
+
+      protein { assertIsDisplayed() }
+
+      proteint1 {
+        assertIsDisplayed()
+        assertTextContains("Protein", ignoreCase = true, substring = true)
+      }
+
+      proteint2 {
+        assertIsDisplayed()
+        assertTextContains("0", ignoreCase = true, substring = true)
+        assertTextContains("g", ignoreCase = true, substring = true)
+      }
+    }
+  }
+
+  @Test
+  fun navigates_back_when_top_bar_is_clicked() {
+    val navigateBack: () -> Unit = mockk(relaxed = true)
+    val navigateForward: () -> Unit = mockk(relaxed = true)
+    val onClickFloatingButton: () -> Unit = mockk(relaxed = true)
+    composeTestRule.setContent {
+      IngredientsOverview(navigateBack, navigateForward, onClickFloatingButton, l1)
     }
 
-    @Test
-    fun displays_top() {
-        composeTestRule.setContent {
-            IngredientsOverview({}, {}, {})
-        }
-
-
-        ComposeScreen.onComposeScreen<IngredientsOverviewTopBar>(composeTestRule) {
-            backButton {
-                assertIsDisplayed()
-                assertHasClickAction()
-            }
-        }
+    ComposeScreen.onComposeScreen<IngredientsOverviewTopBar>(composeTestRule) {
+      backButton {
+        assertExists()
+        assertIsDisplayed()
+        assertHasClickAction()
+        performClick()
+      }
     }
 
-    @Test
-    fun displays_bottom() {
-        composeTestRule.setContent {
-            IngredientsOverview({}, {}, {})
-        }
+    verify(exactly = 1) { navigateBack() }
+    verify(exactly = 0) { navigateForward() }
+    verify(exactly = 0) { onClickFloatingButton() }
+  }
 
-
-        ComposeScreen.onComposeScreen<IngredientsOverviewBottomBar>(composeTestRule) {
-            generateButton {
-                assertIsDisplayed()
-                assertHasClickAction()
-            }
-        }
+  @Test
+  fun navigates_forward() {
+    val navigateBack: () -> Unit = mockk(relaxed = true)
+    val navigateForward: () -> Unit = mockk(relaxed = true)
+    val onClickFloatingButton: () -> Unit = mockk(relaxed = true)
+    composeTestRule.setContent {
+      IngredientsOverview(navigateBack, navigateForward, onClickFloatingButton, l1)
     }
 
-    @Test
-    fun navigates_back_when_top_bar_is_clicked() {
-        val navigateBack: () -> Unit = mockk()
-        composeTestRule.setContent {
-            IngredientsOverview(navigateBack, {}, {})
-        }
-
-        composeTestRule.onNode(hasTestTag("TopBar")).performClick()
-
-        verify(exactly = 1) {navigateBack() }
+    ComposeScreen.onComposeScreen<IngredientsOverviewBottomBarIngredient>(composeTestRule) {
+      generateButton {
+        assertExists()
+        assertIsDisplayed()
+        assertHasClickAction()
+        performClick()
+      }
     }
 
-    @Test
-    fun navigates_forward_when_bottom_bar_is_clicked() {
-        val navigateForward: () -> Unit = mockk()
-        composeTestRule.setContent {
-            IngredientsOverview({}, navigateForward, {})
-        }
+    verify(exactly = 0) { navigateBack() }
+    verify(exactly = 1) { navigateForward() }
+    verify(exactly = 0) { onClickFloatingButton() }
+  }
 
-        composeTestRule.onNode(hasTestTag("BottomBar")).performClick()
-
-
-        verify(exactly = 1) {navigateForward() }
+  @Test
+  fun perfom_click_floating_button() {
+    val navigateBack: () -> Unit = mockk(relaxed = true)
+    val navigateForward: () -> Unit = mockk(relaxed = true)
+    val onClickFloatingButton: () -> Unit = mockk(relaxed = true)
+    composeTestRule.setContent {
+      IngredientsOverview(navigateBack, navigateForward, onClickFloatingButton, l1)
     }
 
-    @Test
-    fun performs_action_when_floating_action_button_is_clicked() {
-        val onClickFloatingButton: () -> Unit = mockk()
-        composeTestRule.setContent {
-            IngredientsOverview({}, {}, onClickFloatingButton)
-        }
-
-        composeTestRule.onNode(hasTestTag("FloatingActionButton")).performClick()
-
-        verify(exactly = 1) {onClickFloatingButton() }
+    ComposeScreen.onComposeScreen<IngredientsOverviewScreen>(composeTestRule) {
+      floatingActionButton {
+        assertExists()
+        assertIsDisplayed()
+        assertHasClickAction()
+        performClick()
+      }
     }
+    verify(exactly = 0) { navigateBack() }
+    verify(exactly = 0) { navigateForward() }
+    verify(exactly = 1) { onClickFloatingButton() }
+  }
 }

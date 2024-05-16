@@ -8,9 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
-import com.github.se.polyfit.ui.components.IngredientsOverview.BottomBar
+import com.github.se.polyfit.ui.components.IngredientsOverview.BottomBarIngredient
 import com.github.se.polyfit.ui.components.IngredientsOverview.ListProducts
-import com.github.se.polyfit.ui.components.IngredientsOverview.TopBar
+import com.github.se.polyfit.ui.components.IngredientsOverview.TopBarIngredient
 import com.github.se.polyfit.ui.components.button.FloatingActionButtonIngredients
 import com.github.se.polyfit.ui.theme.PolyfitTheme
 
@@ -30,27 +30,30 @@ val i3 = IngredientsTMP("Carrot", 100, 41, 10, 0, 1)
 val i4 = IngredientsTMP("Date", 100, 282, 75, 0, 2)
 val i5 = IngredientsTMP("Eggplant", 100, 25, 6, 0, 1)
 
-val ListProducts = listOf(i1)
+val listProducts = listOf(i1)
 
 @Preview
 @Composable
 private fun PreviewIngredientsOverview() {
-  PolyfitTheme(darkTheme = false, dynamicColor = false) { IngredientsOverview({}, {}, {}) }
+  PolyfitTheme(darkTheme = false, dynamicColor = false) {
+    IngredientsOverview({}, {}, {}, listProducts = listProducts)
+  }
 }
 
 @Composable
 fun IngredientsOverview(
     navigateBack: () -> Unit,
     navigateForward: () -> Unit,
-    onClickFloatingButton: () -> Unit
+    onClickFloatingButton: () -> Unit,
+    listProducts: List<IngredientsTMP>
 ) {
 
   Scaffold(
-      topBar = { TopBar { navigateBack() } },
-      bottomBar = { BottomBar(navigateForward = navigateForward) },
+      topBar = { TopBarIngredient { navigateBack() } },
+      bottomBar = { BottomBarIngredient(navigateForward = navigateForward) },
       floatingActionButton = { FloatingActionButtonIngredients(onClickFloatingButton) },
       containerColor = MaterialTheme.colorScheme.background,
-      modifier = Modifier.testTag("IngredientsOverviewScalffold")) {
-        ListProducts(ListProducts = ListProducts, Modifier.fillMaxSize().padding(it))
+      modifier = Modifier.testTag("IngredientsOverviewScaffold")) {
+        ListProducts(ListProducts = listProducts, Modifier.fillMaxSize().padding(it))
       }
 }

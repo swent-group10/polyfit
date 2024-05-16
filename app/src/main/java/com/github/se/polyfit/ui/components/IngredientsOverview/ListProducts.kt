@@ -41,31 +41,33 @@ fun ListProducts(ListProducts: List<IngredientsTMP>, modifier: Modifier) {
                     color = MaterialTheme.colorScheme.outline,
                     fontSize = MaterialTheme.typography.headlineMedium.fontSize)
 
-                TextIngredient(value = it.servingSize, text = "Serving Size", unit = "g")
-                TextIngredient(it.calories, "Calories", "kcal")
-                TextIngredient(it.carbs, "Carbs", "g")
-                TextIngredient(it.fat, "Fat", "g")
-                TextIngredient(it.protein, "Protein", "g")
+                TextIngredient(
+                    value = it.servingSize,
+                    text = "Serving Size",
+                    unit = "g",
+                    Modifier.testTag("ServingSize"))
+                TextIngredient(it.calories, "Calories", "kcal", Modifier.testTag("calories"))
+                TextIngredient(it.carbs, "Carbs", "g", Modifier.testTag("carbs"))
+                TextIngredient(it.fat, "Fat", "g", Modifier.testTag("fat"))
+                TextIngredient(it.protein, "Protein", "g", Modifier.testTag("Protein"))
               }
         }
       }
 }
 
 @Composable
-private fun TextIngredient(value: Int, text: String, unit: String) {
-  Row(
-      horizontalArrangement = Arrangement.SpaceBetween,
-      modifier = Modifier.fillMaxWidth().testTag("RowIngredient")) {
-        Text(
-            text = text,
-            modifier = Modifier.padding(16.dp, 2.dp).testTag("TextIngredient"),
-            fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-            fontWeight = FontWeight.Light)
+private fun TextIngredient(value: Int, text: String, unit: String, modifier: Modifier) {
+  Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = modifier.fillMaxWidth()) {
+    Text(
+        text = text,
+        modifier = Modifier.padding(16.dp, 2.dp).testTag("TextIngredient"),
+        fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+        fontWeight = FontWeight.Light)
 
-        Text(
-            text = "$value $unit",
-            modifier = Modifier.padding(16.dp, 2.dp).testTag("TextIngredientValue"),
-            fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-            fontWeight = FontWeight.Light)
-      }
+    Text(
+        text = "$value $unit",
+        modifier = Modifier.padding(16.dp, 2.dp).testTag("TextIngredientValue"),
+        fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+        fontWeight = FontWeight.Light)
+  }
 }

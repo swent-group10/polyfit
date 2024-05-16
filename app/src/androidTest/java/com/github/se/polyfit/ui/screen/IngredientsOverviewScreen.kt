@@ -1,42 +1,70 @@
 package com.github.se.polyfit.ui.screen
 
 import androidx.compose.ui.test.SemanticsNodeInteractionsProvider
-import androidx.compose.ui.test.junit4.createComposeRule
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.github.kakaocup.compose.node.element.KNode
-
-class IngredientsOverviewTopBar(semanticsProvider: SemanticsNodeInteractionsProvider) :
-    ComposeScreen<IngredientsOverviewTopBar>(
-        semanticsProvider = semanticsProvider, viewBuilderAction = { hasTestTag("TopBar") }) {
-
-  val backButton: KNode = child { hasTestTag("BackButton") }
-}
-
-class IngredientsOverviewBottomBar(semanticsProvider: SemanticsNodeInteractionsProvider) :
-    ComposeScreen<IngredientsOverviewBottomBar>(
-        semanticsProvider = semanticsProvider, viewBuilderAction = { hasTestTag("BottomBar") }) {
-
-  val generateButton: KNode = child { hasTestTag("GenerateButton") }
-}
 
 class IngredientsOverviewScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
     ComposeScreen<IngredientsOverviewScreen>(
         semanticsProvider = semanticsProvider,
-        viewBuilderAction = { hasTestTag("IngredientsOverviewScalffold") }) {
+        viewBuilderAction = { hasTestTag("IngredientsOverviewScaffold") }) {
 
-  val listProductColumn: KNode = child { hasTestTag("ListProductColumn") }
+  val topBar: KNode = child { hasTestTag("TopBarIngredient") }
+  val bottomBar: KNode = child { hasTestTag("GenerateBox") }
+  val floatingActionButton: KNode = child { hasTestTag("FloatingButton") }
+  val listProducts: KNode = child { hasTestTag("ListProductColumn") }
 }
 
-class FloatingButtonScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
-        ComposeScreen<FloatingButtonScreen>(
-                semanticsProvider = semanticsProvider, viewBuilderAction = { hasTestTag("FloatingButton") }) {
+class IngredientsOverviewTopBar(semanticsProvider: SemanticsNodeInteractionsProvider) :
+    ComposeScreen<IngredientsOverviewTopBar>(
+        semanticsProvider = semanticsProvider,
+        viewBuilderAction = { hasTestTag("TopBarIngredient") }) {
 
-  val addButton: KNode = child { hasContentDescription("Add Ingredient") }
+  val backButton: KNode = child { hasTestTag("BackButton") }
+  val title: KNode = child { hasTestTag("ProductTitle") }
+  val icon: KNode = backButton.child { hasTestTag("BackButtonIcon") }
 }
 
-class FloatingActionButtonScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
-        ComposeScreen<FloatingActionButtonScreen>(
-                semanticsProvider = semanticsProvider, viewBuilderAction = { hasTestTag("FloatingButton") }) {
+class IngredientsOverviewBottomBarIngredient(semanticsProvider: SemanticsNodeInteractionsProvider) :
+    ComposeScreen<IngredientsOverviewBottomBarIngredient>(
+        semanticsProvider = semanticsProvider, viewBuilderAction = { hasTestTag("GenerateBox") }) {
 
-  val addButton: KNode = child { hasContentDescription("Add Ingredient") }
+  val generateButton: KNode = child { hasTestTag("GenerateButton") }
+}
+
+class FloatingActionButtonIngredientsScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
+    ComposeScreen<FloatingActionButtonIngredientsScreen>(
+        semanticsProvider = semanticsProvider,
+        viewBuilderAction = { hasTestTag("FloatingButton") }) {
+
+  val icon: KNode = child { hasTestTag("AddIcon") }
+}
+
+class ListProductsScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
+    ComposeScreen<ListProductsScreen>(
+        semanticsProvider = semanticsProvider,
+        viewBuilderAction = { hasTestTag("ListProductColumn") }) {
+
+  val card: KNode = child { hasTestTag("ProductCard") }
+  val productName: KNode = card.child { hasTestTag("ProductName") }
+
+  val ServingSize: KNode = card.child { hasTestTag("ServingSize") }
+  val ServiceSizet1: KNode = ServingSize.child { hasTestTag("TextIngredient") }
+  val ServiceSizet2: KNode = ServingSize.child { hasTestTag("TextIngredientValue") }
+
+  val calories: KNode = card.child { hasTestTag("calories") }
+  val caloriest1: KNode = calories.child { hasTestTag("TextIngredient") }
+  val caloriest2: KNode = calories.child { hasTestTag("TextIngredientValue") }
+
+  val carbs: KNode = card.child { hasTestTag("carbs") }
+  val carbst1: KNode = carbs.child { hasTestTag("TextIngredient") }
+  val carbst2: KNode = carbs.child { hasTestTag("TextIngredientValue") }
+
+  val fat: KNode = card.child { hasTestTag("fat") }
+  val fatt1: KNode = fat.child { hasTestTag("TextIngredient") }
+  val fatt2: KNode = fat.child { hasTestTag("TextIngredientValue") }
+
+  val protein: KNode = card.child { hasTestTag("Protein") }
+  val proteint1: KNode = protein.child { hasTestTag("TextIngredient") }
+  val proteint2: KNode = protein.child { hasTestTag("TextIngredientValue") }
 }

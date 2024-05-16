@@ -20,16 +20,17 @@ import com.github.se.polyfit.ui.theme.getGradient
 fun FloatingActionButtonIngredients(onClickFloatingButton: () -> Unit) {
   val shape = CircleShape
   FloatingActionButtonGeneric(
+      modifier =
+          Modifier.border(BorderStroke(2.dp, getGradient(true)), shape).testTag("FloatingButton"),
       onClick = onClickFloatingButton,
       containerColor = MaterialTheme.colorScheme.background,
       shape = shape,
       elevation = FloatingActionButtonDefaults.elevation(0.dp),
-      modifier =
-          Modifier.border(BorderStroke(2.dp, getGradient(true)), shape).testTag("FloatingButton")) {
-        Icon(
-            imageVector = Icons.Default.Add,
-            contentDescription = "Add Ingredient",
-            tint = MaterialTheme.colorScheme.outlineVariant,
-            modifier = Modifier.size(32.dp))
-      }
+  ) {
+    Icon(
+        imageVector = Icons.Default.Add,
+        contentDescription = "Add Ingredient",
+        tint = MaterialTheme.colorScheme.outlineVariant,
+        modifier = Modifier.size(32.dp).testTag("AddIcon"))
+  }
 }

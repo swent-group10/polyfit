@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.github.se.polyfit.ui.components.button.PrimaryButton
 
 @Composable
-fun BottomBar(navigateForward: () -> Unit) {
+fun BottomBarIngredient(navigateForward: () -> Unit) {
   Box(
       modifier =
           Modifier.fillMaxWidth()
