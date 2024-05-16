@@ -1,6 +1,6 @@
 package com.github.se.polyfit.ui.screen
 
-//import the colors PrimaryPink
+// import the colors PrimaryPink
 import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -48,108 +48,97 @@ val MAX_SIZE_RAYON = 2000f
 @Composable
 fun MapScreen(paddingValues: PaddingValues, mapviewMap: MapViewModel = hiltViewModel()) {
 
-    val posts = remember { mutableStateOf(listOf<Post>()) }
-    val currentLocation = remember { mutableStateOf(Location.default()) }
+  val posts = remember { mutableStateOf(listOf<Post>()) }
+  val currentLocation = remember { mutableStateOf(Location.default()) }
 
-    var isCircleShown by remember { mutableStateOf(false) }
+  var isCircleShown by remember { mutableStateOf(false) }
 
-    val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(LatLng(46.5181, 6.5659), 15f)
-    }
-    var sliderPosition by remember { mutableFloatStateOf(MIN_SIZE_RAYON) }
+  val cameraPositionState = rememberCameraPositionState {
+    position = CameraPosition.fromLatLngZoom(LatLng(46.5181, 6.5659), 15f)
+  }
+  var sliderPosition by remember { mutableFloatStateOf(MIN_SIZE_RAYON) }
 
-    LaunchedEffect(currentLocation) {
-        mapviewMap.setLocation(
-            currentLocation.value
-        )
-        mapviewMap.setRadius(500000.0)
-        mapviewMap.listenToPosts()
-        delay(10000) // delay for 3 seconds00) // delay for 3 seconds
-        posts.value = mapviewMap._posts.value!!
-        isCircleShown = true
-        delay(1500) // delay for 3 seconds
-        isCircleShown = false
+  LaunchedEffect(currentLocation) {
+    mapviewMap.setLocation(currentLocation.value)
+    mapviewMap.setRadius(500000.0)
+    mapviewMap.listenToPosts()
+    delay(10000) // delay for 3 seconds00) // delay for 3 seconds
+    posts.value = mapviewMap._posts.value!!
+    isCircleShown = true
+    delay(1500) // delay for 3 seconds
+    isCircleShown = false
+  }
 
+  LaunchedEffect(key1 = mapviewMap) {
+    //        mapviewMap.getAllPost().collect { posts.value = it }
+    Log.i("MapScreen", "MapScreen $posts")
 
-    }
+    currentLocation.value = mapviewMap.getCurrentLocation()
+    cameraPositionState.position =
+        CameraPosition.fromLatLngZoom(
+            LatLng(currentLocation.value.latitude, currentLocation.value.longitude), 15f)
+  }
 
-    LaunchedEffect(key1 = mapviewMap) {
-//        mapviewMap.getAllPost().collect { posts.value = it }
-        Log.i("MapScreen", "MapScreen $posts")
-        
-        currentLocation.value = mapviewMap.getCurrentLocation()
-        cameraPositionState.position = CameraPosition.fromLatLngZoom(
-            LatLng(currentLocation.value.latitude, currentLocation.value.longitude),
-            15f
-        )
-    }
-
-    val m1 = MarkerState(LatLng(46.5181, 6.5659))
-    val m2 = MarkerState(LatLng(46.5183, 6.56))
-    val m3 = MarkerState(LatLng(46.514, 6.566))
-    val listMarker = remember(posts.value) {
+  val m1 = MarkerState(LatLng(46.5181, 6.5659))
+  val m2 = MarkerState(LatLng(46.5183, 6.56))
+  val m3 = MarkerState(LatLng(46.514, 6.566))
+  val listMarker =
+      remember(posts.value) {
         mutableStateListOf<MarkerState>().apply {
-            posts.value?.map { post ->
-                add(MarkerState(LatLng(post.location.latitude, post.location.longitude)))
-            }
+          posts.value?.map { post ->
+            add(MarkerState(LatLng(post.location.latitude, post.location.longitude)))
+          }
 
-            Log.d("MapScreenMarker", "listMarker ${this.toList()}")
+          Log.d("MapScreenMarker", "listMarker ${this.toList()}")
         }
-    }
+      }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValues),
-        contentAlignment = Alignment.BottomStart
-    ) {
+  Box(
+      modifier = Modifier.fillMaxSize().padding(paddingValues),
+      contentAlignment = Alignment.BottomStart) {
         GoogleMap(
             cameraPositionState = cameraPositionState,
-//            properties = MapProperties(isMyLocationEnabled = true)
+            //            properties = MapProperties(isMyLocationEnabled = true)
         ) {
-            Circle(
-                center = LatLng(currentLocation.value.latitude, currentLocation.value.longitude),
-                radius = (sliderPosition).toDouble() + 10, // Make the shadow circle slightly larger
-                strokeColor = Color.Black.copy(alpha = 0.2f) // Use a semi-transparent color for the shadow
-                , visible = isCircleShown
-            )
-            Circle(
-                center = LatLng(currentLocation.value.latitude, currentLocation.value.longitude),
-                radius = (sliderPosition).toDouble(),
-                strokeColor = PrimaryPurple,
-                visible = isCircleShown
-            )
-            listMarker.forEach { markerState ->
-                Marker(
-                    state = markerState,
-                    title = "title",
-                    contentDescription = "description",
-                    onClick = { goToMarker(markerState) })
-            }
-
+          Circle(
+              center = LatLng(currentLocation.value.latitude, currentLocation.value.longitude),
+              radius = (sliderPosition).toDouble() + 10, // Make the shadow circle slightly larger
+              strokeColor =
+                  Color.Black.copy(alpha = 0.2f) // Use a semi-transparent color for the shadow
+              ,
+              visible = isCircleShown)
+          Circle(
+              center = LatLng(currentLocation.value.latitude, currentLocation.value.longitude),
+              radius = (sliderPosition).toDouble(),
+              strokeColor = PrimaryPurple,
+              visible = isCircleShown)
+          listMarker.forEach { markerState ->
+            Marker(
+                state = markerState,
+                title = "title",
+                contentDescription = "description",
+                onClick = { goToMarker(markerState) })
+          }
         }
         Row(modifier = Modifier.padding(end = 64.dp)) {
-            FloatingActionButton(
-                onClick = showToastMessage(LocalContext.current), modifier = Modifier.padding(16.dp)
-            ) {
+          FloatingActionButton(
+              onClick = showToastMessage(LocalContext.current),
+              modifier = Modifier.padding(16.dp)) {
                 Icon(Icons.Filled.Menu, "Go settings")
-            }
+              }
 
-            Slider(
-                value = sliderPosition,
-                onValueChange = { sliderPosition = it },
-                valueRange = MIN_SIZE_RAYON..MAX_SIZE_RAYON,
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .widthIn(10.dp, 200.dp)
-            )
+          Slider(
+              value = sliderPosition,
+              onValueChange = { sliderPosition = it },
+              valueRange = MIN_SIZE_RAYON..MAX_SIZE_RAYON,
+              modifier = Modifier.align(Alignment.CenterVertically).widthIn(10.dp, 200.dp))
         }
-    }
+      }
 }
 
 fun goToMarker(marker: MarkerState): Boolean {
-    // TODO
-    Log.i("MapScreen", "goToMarker $marker")
+  // TODO
+  Log.i("MapScreen", "goToMarker $marker")
 
-    return true
+  return true
 }
