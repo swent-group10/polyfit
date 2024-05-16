@@ -10,6 +10,7 @@ import com.github.se.polyfit.model.post.Location
 import com.github.se.polyfit.model.post.Post
 import com.github.se.polyfit.model.post.PostLocationModel
 import com.github.se.polyfit.model.post.UnmodifiablePost
+import com.google.android.gms.location.CurrentLocationRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
 import javax.inject.Inject
@@ -63,17 +64,17 @@ constructor(
     _post.createdAt = createdAt
   }
 
-  fun setPostLocation(): Job {
-    return viewModelScope.launch(Dispatchers.IO) {
-      val location = postLocationModel.getCurrentLocation()
+  fun initPostLocation(locationRequest: CurrentLocationRequest): Job {
+    return viewModelScope.launch(Dispatchers.Default) {
+      val location = postLocationModel.getCurrentLocation(locationRequest)
       _post.location = location
     }
   }
 
-  fun setInOrder(first: Job = setPostLocation(), second: () -> Unit = ::setPost) {
-    viewModelScope.launch(Dispatchers.IO) {
-      first.join()
-      second()
+  fun setInOrder(locationRequest: CurrentLocationRequest) {
+    viewModelScope.launch(Dispatchers.Default) {
+      initPostLocation(locationRequest).join()
+      setPost()
     }
   }
 

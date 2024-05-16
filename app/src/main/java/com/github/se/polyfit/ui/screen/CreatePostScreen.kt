@@ -45,6 +45,7 @@ import com.github.se.polyfit.ui.theme.PrimaryPink
 import com.github.se.polyfit.ui.theme.PrimaryPurple
 import com.github.se.polyfit.ui.theme.SecondaryGrey
 import com.github.se.polyfit.viewmodel.post.CreatePostViewModel
+import com.google.android.gms.location.CurrentLocationRequest
 
 @Composable
 fun CreatePostScreen(
@@ -62,9 +63,9 @@ fun CreatePostScreen(
     postViewModel.setPostData(meal = meal)
   }
 
-  fun onApprove() {
+  fun onApprove(locationRequest: CurrentLocationRequest) {
     isPermissionDialogDisplay = false
-    postViewModel.setInOrder()
+    postViewModel.setInOrder(locationRequest)
     navigateForward()
   }
 

@@ -22,11 +22,13 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import com.github.se.polyfit.R
 import com.github.se.polyfit.ui.theme.PrimaryPurple
+import com.google.android.gms.location.CurrentLocationRequest
+import com.google.android.gms.location.Priority
 
 @Composable
-fun LocationPermissionDialog(onDeny: () -> Unit, onApprove: () -> Unit) {
+fun LocationPermissionDialog(onDeny: () -> Unit, onApprove: (CurrentLocationRequest) -> Unit) {
 
-  val permissionLauncher = launcherForActivityResult(onDeny, onApprove)
+  val locationPermissionRequest = launcherForActivityResult(onDeny, onApprove)
 
   DisposableEffect(Unit) { onDispose {} }
 
@@ -48,7 +50,12 @@ fun LocationPermissionDialog(onDeny: () -> Unit, onApprove: () -> Unit) {
       },
       confirmButton = {
         Button(
-            onClick = { permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION) },
+            onClick = {
+              locationPermissionRequest.launch(
+                  arrayOf(
+                      Manifest.permission.ACCESS_FINE_LOCATION,
+                      Manifest.permission.ACCESS_COARSE_LOCATION))
+            },
             border = BorderStroke(3.dp, PrimaryPurple),
             shape = RoundedCornerShape(20.dp),
             modifier = Modifier.testTag("ApproveButton"),
@@ -76,9 +83,25 @@ fun LocationPermissionDialog(onDeny: () -> Unit, onApprove: () -> Unit) {
 @Composable
 fun launcherForActivityResult(
     onDeny: () -> Unit,
-    onApprove: () -> Unit,
-): ManagedActivityResultLauncher<String, Boolean> {
-  return rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
-    if (it) onApprove() else onDeny()
+    onApprove: (CurrentLocationRequest) -> Unit,
+): ManagedActivityResultLauncher<Array<String>, Map<String, Boolean>> {
+
+  return rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+      permissions ->
+    when {
+      permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
+        onApprove(
+            CurrentLocationRequest.Builder().setPriority(Priority.PRIORITY_HIGH_ACCURACY).build())
+      }
+      permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
+        onApprove(
+            CurrentLocationRequest.Builder()
+                .setPriority(Priority.PRIORITY_BALANCED_POWER_ACCURACY)
+                .build())
+      }
+      else -> {
+        onDeny()
+      }
+    }
   }
 }

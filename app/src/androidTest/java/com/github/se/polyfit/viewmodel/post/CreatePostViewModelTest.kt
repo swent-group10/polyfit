@@ -10,16 +10,14 @@ import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import com.github.se.polyfit.model.post.Location
 import com.github.se.polyfit.model.post.Post
 import com.github.se.polyfit.model.post.PostLocationModel
-import io.mockk.Runs
+import com.google.android.gms.location.CurrentLocationRequest
+import com.google.android.gms.location.Priority
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.coVerifyOrder
-import io.mockk.just
 import io.mockk.mockk
 import io.mockk.unmockkAll
 import java.time.LocalDate
 import kotlin.test.assertFailsWith
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -146,24 +144,18 @@ class CreatePostViewModelTest {
   @Test
   fun testSetPostLocation() = runTest {
     val mockLocation = com.github.se.polyfit.model.post.Location(0.0, 0.0, 0.0, "")
-    coEvery { postLocationModel.getCurrentLocation() } returns mockLocation
+    coEvery {
+      postLocationModel.getCurrentLocation(
+          CurrentLocationRequest.Builder().setPriority(Priority.PRIORITY_HIGH_ACCURACY).build())
+    } returns mockLocation
 
-    viewModel.setPostLocation().join()
+    viewModel
+        .initPostLocation(
+            CurrentLocationRequest.Builder().setPriority(Priority.PRIORITY_HIGH_ACCURACY).build())
+        .join()
 
     assertEquals(mockLocation.latitude, viewModel.post.location.latitude, 0.0001)
     assertEquals(mockLocation.altitude, viewModel.post.location.altitude, 0.0001)
     assertEquals(mockLocation.altitude, viewModel.post.location.altitude, 0.0001)
-  }
-
-  @Test
-  fun testSetInOrder() = runTest {
-    val mockJob = mockk<Job> { coEvery { join() } just Runs }
-
-    viewModel.setInOrder(first = mockJob, second = { viewModel.setPost() })
-
-    coVerifyOrder {
-      mockJob.join()
-      viewModel.setPost()
-    }
   }
 }

@@ -47,7 +47,10 @@ class PostLocationModelTest {
     val task = Tasks.forResult(mockLocation)
     coEvery { fusedLocationClient.getCurrentLocation(currentLocationRequest, any()) } returns task
 
-    val location = model.currentLocation(fusedLocationClient)
+    val location =
+        model.currentLocation(
+            CurrentLocationRequest.Builder().setPriority(Priority.PRIORITY_HIGH_ACCURACY).build(),
+            fusedLocationClient)
 
     assertEquals(10.0, location.longitude, 0.001)
     assertEquals(20.0, location.latitude, 0.001)
@@ -61,7 +64,9 @@ class PostLocationModelTest {
     every { ActivityCompat.checkSelfPermission(context, any()) } returns
         PackageManager.PERMISSION_DENIED
 
-    val location = model.getCurrentLocation()
+    val location =
+        model.getCurrentLocation(
+            CurrentLocationRequest.Builder().setPriority(Priority.PRIORITY_HIGH_ACCURACY).build())
     assertEquals(location, com.github.se.polyfit.model.post.Location.default())
 
     unmockkStatic(ActivityCompat::class)
@@ -73,12 +78,14 @@ class PostLocationModelTest {
 
     every {
       ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION)
-    } returns PackageManager.PERMISSION_GRANTED
+    } returns PackageManager.PERMISSION_DENIED
     every {
       ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
     } returns PackageManager.PERMISSION_DENIED
 
-    val location = model.checkLocationPermissions()
+    val location =
+        model.checkLocationPermissions(
+            CurrentLocationRequest.Builder().setPriority(Priority.PRIORITY_HIGH_ACCURACY).build())
     assertEquals(location, com.github.se.polyfit.model.post.Location.default())
 
     unmockkStatic(ActivityCompat::class)
