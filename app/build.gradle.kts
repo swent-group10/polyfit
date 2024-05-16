@@ -163,7 +163,7 @@ android {
         implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
         implementation("io.coil-kt:coil:2.6.0")
         implementation("io.coil-kt:coil-compose:2.6.0")
-
+        implementation("androidx.camera:camera-camera2:1.3.3")
 
         // Kapt
         kapt("androidx.room:room-compiler:2.6.1")
@@ -207,7 +207,7 @@ android {
         testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.9.0")
         testImplementation("org.robolectric:robolectric:4.8")
         testImplementation("android.arch.persistence.room:testing:1.1.1")
-
+     
 
         // Debug
         debugImplementation("androidx.compose.ui:ui-tooling")
