@@ -8,11 +8,14 @@ import com.github.se.polyfit.data.repository.MealRepository
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.post.Location
 import com.github.se.polyfit.model.post.Post
+import com.github.se.polyfit.model.post.PostLocationModel
 import com.github.se.polyfit.model.post.UnmodifiablePost
+import com.google.android.gms.location.CurrentLocationRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -24,6 +27,7 @@ class CreatePostViewModel
 constructor(
     private val mealRepository: MealRepository,
     private val postFirebaseRepository: PostFirebaseRepository,
+    private val postLocationModel: PostLocationModel,
 ) : ViewModel() {
   private val _post = Post.default()
 
@@ -60,8 +64,18 @@ constructor(
     _post.createdAt = createdAt
   }
 
-  fun setPostLocation(location: Location) {
-    _post.location = location
+  fun initPostLocation(locationRequest: CurrentLocationRequest): Job {
+    return viewModelScope.launch(Dispatchers.Default) {
+      val location = postLocationModel.getCurrentLocation(locationRequest)
+      _post.location = location
+    }
+  }
+
+  fun setInOrder(locationRequest: CurrentLocationRequest) {
+    viewModelScope.launch(Dispatchers.Default) {
+      initPostLocation(locationRequest).join()
+      setPost()
+    }
   }
 
   fun getCarbs(): Double {

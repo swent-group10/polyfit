@@ -11,6 +11,7 @@ import com.github.se.polyfit.data.remote.firebase.PostFirebaseRepository
 import com.github.se.polyfit.data.remote.firebase.UserFirebaseRepository
 import com.github.se.polyfit.data.repository.MealRepository
 import com.github.se.polyfit.model.data.User
+import com.github.se.polyfit.model.post.PostLocationModel
 import com.github.se.polyfit.ui.utils.AuthenticationCloud
 import com.github.se.polyfit.ui.viewModel.GraphViewModel
 import dagger.Module
@@ -97,5 +98,11 @@ object UserModule {
       userFirebaseRepository: UserFirebaseRepository
   ): AuthenticationCloud {
     return AuthenticationCloud(context, user, userFirebaseRepository)
+  }
+
+  @Provides
+  @Singleton
+  fun providesLocationModel(@ApplicationContext context: Context): PostLocationModel {
+    return PostLocationModel(context)
   }
 }
