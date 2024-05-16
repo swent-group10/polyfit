@@ -3,6 +3,7 @@ package com.github.se.polyfit.ui.flow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -13,7 +14,7 @@ import com.github.se.polyfit.ui.screen.SettingsScreen
 import com.github.se.polyfit.ui.screen.settings.AccountSettingsScreen
 
 @Composable
-fun SettingFlow() {
+fun SettingFlow(modifier: Modifier = Modifier) {
   val navController = rememberNavController()
   val navigation = Navigation(navController)
   val options =
@@ -21,9 +22,12 @@ fun SettingFlow() {
           SettingOption("Account", Icons.Default.Person, navigation::navigateToAccountSettings),
       )
 
-  NavHost(navController = navController, startDestination = Route.SettingsHome) {
-    composable(Route.SettingsHome) { SettingsScreen(settings = options) }
+  NavHost(
+      navController = navController, startDestination = Route.SettingsHome, modifier = modifier) {
+        composable(Route.SettingsHome) { SettingsScreen(settings = options) }
 
-    composable(Route.AccountSettings) { AccountSettingsScreen(navigation::navigateToSettingsHome) }
-  }
+        composable(Route.AccountSettings) {
+          AccountSettingsScreen(navigation::navigateToSettingsHome)
+        }
+      }
 }

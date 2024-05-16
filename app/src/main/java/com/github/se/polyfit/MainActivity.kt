@@ -4,6 +4,8 @@ import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -74,7 +76,11 @@ class MainActivity : ComponentActivity() {
           }
 
           composable(Route.Settings) {
-            GenericScreen(navController = navController, content = { SettingFlow() })
+            GenericScreen(
+                navController = navController,
+                content = { paddingValues ->
+                  SettingFlow(modifier = Modifier.padding(paddingValues))
+                })
           }
 
           composable(Route.PostInfo) { PostInfoScreen(navigation, navController) }

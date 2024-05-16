@@ -1,9 +1,7 @@
 package com.github.se.polyfit.ui.components
 
 import android.content.Context
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -36,6 +34,6 @@ fun GenericScreen(
             { navController.navigate(Route.Settings) },
             {})
       }) {
-        Box(modifier = Modifier.padding(it)) { content(it) }
+        content(it)
       }
 }
