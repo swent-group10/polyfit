@@ -36,7 +36,6 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.Circle
 import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
@@ -59,17 +58,25 @@ fun MapScreen(paddingValues: PaddingValues, mapviewMap: MapViewModel = hiltViewM
     }
     var sliderPosition by remember { mutableFloatStateOf(MIN_SIZE_RAYON) }
 
-    LaunchedEffect(sliderPosition) {
-        
+    LaunchedEffect(currentLocation) {
+        mapviewMap.setLocation(
+            currentLocation.value
+        )
+        mapviewMap.setRadius(500000.0)
+        mapviewMap.listenToPosts()
+        delay(10000) // delay for 3 seconds00) // delay for 3 seconds
+        posts.value = mapviewMap._posts.value!!
         isCircleShown = true
         delay(1500) // delay for 3 seconds
         isCircleShown = false
 
+
     }
 
     LaunchedEffect(key1 = mapviewMap) {
-        mapviewMap.getAllPost().collect { posts.value = it }
+//        mapviewMap.getAllPost().collect { posts.value = it }
         Log.i("MapScreen", "MapScreen $posts")
+        
         currentLocation.value = mapviewMap.getCurrentLocation()
         cameraPositionState.position = CameraPosition.fromLatLngZoom(
             LatLng(currentLocation.value.latitude, currentLocation.value.longitude),
@@ -98,7 +105,7 @@ fun MapScreen(paddingValues: PaddingValues, mapviewMap: MapViewModel = hiltViewM
     ) {
         GoogleMap(
             cameraPositionState = cameraPositionState,
-            properties = MapProperties(isMyLocationEnabled = true)
+//            properties = MapProperties(isMyLocationEnabled = true)
         ) {
             Circle(
                 center = LatLng(currentLocation.value.latitude, currentLocation.value.longitude),

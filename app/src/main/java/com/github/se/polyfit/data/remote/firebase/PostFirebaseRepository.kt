@@ -16,7 +16,6 @@ import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
@@ -130,6 +129,7 @@ class PostFirebaseRepository(
         val batchSize = 10
         val batches = keys.chunked(batchSize)
         var completedBatches = 0
+        Log.d("PostFirebaseRepository", "Keys: $keys")
 
         // Use a batch operation to fetch all posts
         batches.forEach { batch ->
@@ -138,6 +138,7 @@ class PostFirebaseRepository(
                 .get()
                 .addOnSuccessListener { querySnapshot ->
                     CoroutineScope(Dispatchers.Default).launch {
+                        Log.d("PostFirebaseRepository", "QuerySnapshot: $querySnapshot")
                         val tempPosts = mutableListOf<Post>()
                         val deferredImages = mutableListOf<Deferred<Unit>>()
 
@@ -149,13 +150,14 @@ class PostFirebaseRepository(
 //                                            post.listOfURLs =
 //                                                fetchImageReferencesForPost(document.id)
 //                                        })
-//                                    tempPosts.add(post)
+                                    Log.d("PostFirebaseRepository", "Post: $post")
+                                    tempPosts.add(post)
                                 }
                             }
                         }
-                        deferredImages.awaitAll()
 
                         synchronized(posts) {
+                            Log.d("PostFirebaseRepositorySynch", "TempPosts: $tempPosts")
                             posts.addAll(tempPosts)
                             completedBatches++
                             if (completedBatches == batches.size) {
@@ -163,6 +165,8 @@ class PostFirebaseRepository(
                             }
                         }
                     }
+                }.addOnSuccessListener {
+                    Log.d("PostFirebaseRepository", "Successfully fetched posts")
                 }
                 .addOnFailureListener {
                     Log.e("PostFirebaseRepository", "Failed to fetch posts: ${it.message}")

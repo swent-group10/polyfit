@@ -1,5 +1,6 @@
 package com.github.se.polyfit.viewmodel.map
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -25,7 +26,7 @@ class MapViewModel @Inject constructor(
     private val _radius = MutableLiveData<Double>()
     val radius: LiveData<Double> = _radius
 
-    private val _posts = MutableLiveData<List<Post>>()
+    var _posts = MutableLiveData<List<Post>>()
     val posts: LiveData<List<Post>> = _posts
 
     init {
@@ -33,11 +34,17 @@ class MapViewModel @Inject constructor(
     }
 
     fun listenToPosts() {
+
+        assert(_location.value != null)
         repository.queryNearbyPosts(
-            centerLatitude = location.value!!.latitude,
-            centerLongitude = location.value!!.longitude,
+            centerLatitude = _location.value!!.latitude,
+            centerLongitude = _location.value!!.longitude,
             radiusInKm = radius.value!!,
-            completion = { posts -> _posts.postValue(posts) })
+            completion = { posts ->
+                Log.d("MapViewModel", "listenToPosts: $posts")
+                Log.d("MapViewModel", "listenToPosts: ${posts.size}")
+                _posts.postValue(posts)
+            })
     }
 
     fun setRadius(radius: Double) {
@@ -47,11 +54,11 @@ class MapViewModel @Inject constructor(
         } else {
             radiusToSet = radius
         }
-        _radius.postValue(radiusToSet)
+        _radius.value = radiusToSet
     }
 
     fun setLocation(location: Location) {
-        _location.postValue(location)
+        _location.value = location
     }
 
     fun getAllPost(): Flow<List<Post>> {
