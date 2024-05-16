@@ -225,6 +225,11 @@ android {
         androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
 
+        // Google Maps
+        implementation("com.google.android.gms:play-services-maps:18.2.0")
+        implementation("androidx.appcompat:appcompat:1.6.1")
+        implementation("com.google.maps.android:maps-compose:4.3.3")
+
         //Ycharts
         implementation("co.yml:ycharts:2.1.0")
 
