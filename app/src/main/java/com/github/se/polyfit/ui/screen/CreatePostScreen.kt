@@ -31,7 +31,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -40,7 +39,6 @@ import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.post.Location
 import com.github.se.polyfit.ui.components.button.PrimaryButton
 import com.github.se.polyfit.ui.components.dialog.LocationPermissionDialog
-import com.github.se.polyfit.ui.components.scaffold.CenteredTopBar
 import com.github.se.polyfit.ui.components.scaffold.SimpleTopBar
 import com.github.se.polyfit.ui.components.selector.MealSelector
 import com.github.se.polyfit.ui.components.selector.PictureSelector
@@ -74,9 +72,7 @@ fun CreatePostScreen(
 
   Scaffold(
       topBar = {
-          SimpleTopBar(
-              title = context.getString(R.string.newPostTitle),
-              navigateBack = navigateBack)
+        SimpleTopBar(title = context.getString(R.string.newPostTitle), navigateBack = navigateBack)
       },
       bottomBar = {
         BottomBar(
