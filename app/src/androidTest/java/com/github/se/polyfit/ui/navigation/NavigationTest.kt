@@ -46,6 +46,15 @@ class NavigationTest {
   }
 
   @Test
+  fun goBackTo() {
+    route = Route.Home
+    every { navHostController.popBackStack(route, any()) } returns true
+    navigation.goBackTo(Route.Home)
+
+    verify { navHostController.popBackStack(Route.Home, false) }
+  }
+
+  @Test
   fun navigateToAddMeal() {
     route = Route.AddMeal
     every { navHostController.navigate(route) } returns Unit
