@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.github.se.polyfit.ui.screen.IngredientsTMP
@@ -23,44 +24,48 @@ import com.github.se.polyfit.ui.theme.getGradient
 fun ListProducts(ListProducts: List<IngredientsTMP>, modifier: Modifier) {
   val gradient = getGradient(active = true)
 
-  LazyColumn(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-    items(ListProducts) {
-      Card(
-          modifier = Modifier.fillMaxWidth(0.8f).padding(16.dp, 8.dp),
-          colors =
-              CardDefaults.cardColors(
-                  MaterialTheme.colorScheme.background, MaterialTheme.colorScheme.onSurface),
-          border = BorderStroke(2.dp, gradient),
-          elevation = CardDefaults.cardElevation(0.dp)) {
-            Text(
-                text = it.name,
-                modifier = Modifier.padding(32.dp, 8.dp),
-                color = MaterialTheme.colorScheme.outline,
-                fontSize = MaterialTheme.typography.headlineMedium.fontSize)
+  LazyColumn(
+      modifier = modifier.testTag("ListProductColumn"),
+      horizontalAlignment = Alignment.CenterHorizontally) {
+        items(ListProducts) {
+          Card(
+              modifier = Modifier.fillMaxWidth(0.8f).padding(16.dp, 8.dp).testTag("ProductCard"),
+              colors =
+                  CardDefaults.cardColors(
+                      MaterialTheme.colorScheme.background, MaterialTheme.colorScheme.onSurface),
+              border = BorderStroke(2.dp, gradient),
+              elevation = CardDefaults.cardElevation(0.dp)) {
+                Text(
+                    text = it.name,
+                    modifier = Modifier.padding(32.dp, 8.dp).testTag("ProductName"),
+                    color = MaterialTheme.colorScheme.outline,
+                    fontSize = MaterialTheme.typography.headlineMedium.fontSize)
 
-            TextIngredient(value = it.servingSize, text = "Serving Size", unit = "g")
-            TextIngredient(it.calories, "Calories", "kcal")
-            TextIngredient(it.carbs, "Carbs", "g")
-            TextIngredient(it.fat, "Fat", "g")
-            TextIngredient(it.protein, "Protein", "g")
-          }
-    }
-  }
+                TextIngredient(value = it.servingSize, text = "Serving Size", unit = "g")
+                TextIngredient(it.calories, "Calories", "kcal")
+                TextIngredient(it.carbs, "Carbs", "g")
+                TextIngredient(it.fat, "Fat", "g")
+                TextIngredient(it.protein, "Protein", "g")
+              }
+        }
+      }
 }
 
 @Composable
 private fun TextIngredient(value: Int, text: String, unit: String) {
-  Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-    Text(
-        text = text,
-        modifier = Modifier.padding(16.dp, 2.dp),
-        fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-        fontWeight = FontWeight.Light)
+  Row(
+      horizontalArrangement = Arrangement.SpaceBetween,
+      modifier = Modifier.fillMaxWidth().testTag("RowIngredient")) {
+        Text(
+            text = text,
+            modifier = Modifier.padding(16.dp, 2.dp).testTag("TextIngredient"),
+            fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+            fontWeight = FontWeight.Light)
 
-    Text(
-        text = "$value $unit",
-        modifier = Modifier.padding(16.dp, 2.dp),
-        fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-        fontWeight = FontWeight.Light)
-  }
+        Text(
+            text = "$value $unit",
+            modifier = Modifier.padding(16.dp, 2.dp).testTag("TextIngredientValue"),
+            fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+            fontWeight = FontWeight.Light)
+      }
 }

@@ -17,13 +17,13 @@ fun BottomBar(navigateForward: () -> Unit) {
   Box(
       modifier =
           Modifier.fillMaxWidth()
-              .testTag("DoneBox")
+              .testTag("GenerateBox")
               .background(MaterialTheme.colorScheme.surface)
               .padding(16.dp),
       contentAlignment = Alignment.Center) {
         PrimaryButton(
             text = "Generate\nRecipe",
-            modifier = Modifier.align(Alignment.Center),
+            modifier = Modifier.align(Alignment.Center).testTag("GenerateButton"),
             onClick = navigateForward,
             color = MaterialTheme.colorScheme.outline)
       }

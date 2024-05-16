@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.FloatingActionButton as FloatingActionButtonGeneric
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -16,9 +17,9 @@ import androidx.compose.ui.unit.dp
 import com.github.se.polyfit.ui.theme.getGradient
 
 @Composable
-fun FloatingActionButton(onClickFloatingButton: () -> Unit) {
+fun FloatingActionButtonIngredients(onClickFloatingButton: () -> Unit) {
   val shape = CircleShape
-  androidx.compose.material3.FloatingActionButton(
+  FloatingActionButtonGeneric(
       onClick = onClickFloatingButton,
       containerColor = MaterialTheme.colorScheme.background,
       shape = shape,
