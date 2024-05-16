@@ -42,7 +42,7 @@ class CreatePostTest : TestCase() {
     every { mockNavForward() } just Runs
     every { mockNavBack() } just Runs
 
-    viewModel = CreatePostViewModel(mockMealRepository, mockPostFirebaseRepository)
+    viewModel = CreatePostViewModel(mockMealRepository, mockPostFirebaseRepository, mockk())
     viewModel.setBitMap(Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888))
     composeTestRule.setContent { CreatePostScreen(mockNavBack, mockNavForward, viewModel) }
   }
