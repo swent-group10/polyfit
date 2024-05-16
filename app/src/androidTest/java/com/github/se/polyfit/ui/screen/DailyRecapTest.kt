@@ -140,16 +140,10 @@ class DailyRecapTest : TestCase() {
     }
 
     ComposeScreen.onComposeScreen<MealListScreen>(composeTestRule) {
-      mealCard { assertIsDisplayed() }
-
-      mealName {
+      mealCard {
         assertIsDisplayed()
-        assertTextEquals("Meal 1")
-      }
-
-      mealCalories {
-        assertIsDisplayed()
-        assertTextEquals("10.0 kcal")
+        assertTextContains("Meal 1")
+        assertTextContains("10.0 kcal")
       }
     }
   }

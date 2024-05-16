@@ -57,9 +57,10 @@ class MainActivity : ComponentActivity() {
           composable(Route.Register) { LoginScreen(navigation::navigateToHome) }
           composable(Route.AddMeal + "/{mId}") { backStackEntry ->
             val mealId = backStackEntry.arguments?.getString("mId")
+            // If we allow edits from other screens, we will have to modify how we choose goForward
             AddMealFlow(
                 goBack = navigation::goBack,
-                navigateToHome = navigation::navigateToHome,
+                goForward = { navigation.goBackTo(Route.DailyRecap) },
                 mealId = mealId)
           }
 
@@ -73,7 +74,9 @@ class MainActivity : ComponentActivity() {
             DailyRecapScreen(
                 navigateBack = navigation::goBack, navigateTo = navigation::navigateToAddMeal)
           }
-          composable(Route.AddMeal) { AddMealFlow(navigation::goBack, navigation::navigateToHome) }
+          composable(Route.AddMeal) {
+            AddMealFlow(navigation::goBack, { navigation.goBackTo(Route.Home) })
+          }
 
           composable(Route.RecipeRecommendation) {
             RecipeRecommendationScreen(navController = navController)

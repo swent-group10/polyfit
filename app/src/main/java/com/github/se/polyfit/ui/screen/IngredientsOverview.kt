@@ -35,7 +35,7 @@ val listProducts = listOf(i1)
 @Preview
 @Composable
 private fun PreviewIngredientsOverview() {
-  PolyfitTheme(darkTheme = false, dynamicColor = false) {
+  PolyfitTheme {
     IngredientsOverview({}, {}, {}, listProducts = listProducts)
   }
 }
