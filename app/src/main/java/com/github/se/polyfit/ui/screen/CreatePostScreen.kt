@@ -36,7 +36,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.se.polyfit.R
 import com.github.se.polyfit.model.meal.Meal
-import com.github.se.polyfit.model.post.Location
 import com.github.se.polyfit.ui.components.button.PrimaryButton
 import com.github.se.polyfit.ui.components.dialog.LocationPermissionDialog
 import com.github.se.polyfit.ui.components.scaffold.CenteredTopBar
@@ -46,6 +45,7 @@ import com.github.se.polyfit.ui.theme.PrimaryPink
 import com.github.se.polyfit.ui.theme.PrimaryPurple
 import com.github.se.polyfit.ui.theme.SecondaryGrey
 import com.github.se.polyfit.viewmodel.post.CreatePostViewModel
+import com.google.android.gms.location.CurrentLocationRequest
 
 @Composable
 fun CreatePostScreen(
@@ -63,10 +63,9 @@ fun CreatePostScreen(
     postViewModel.setPostData(meal = meal)
   }
 
-  fun onApprove() {
+  fun onApprove(locationRequest: CurrentLocationRequest) {
     isPermissionDialogDisplay = false
-    postViewModel.setPostLocation(Location.default()) // TODO: Include location when ready
-    postViewModel.setPost()
+    postViewModel.setInOrder(locationRequest)
     navigateForward()
   }
 

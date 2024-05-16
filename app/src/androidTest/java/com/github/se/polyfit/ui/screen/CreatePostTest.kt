@@ -11,6 +11,7 @@ import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
+import com.github.se.polyfit.model.post.PostLocationModel
 import com.github.se.polyfit.ui.components.textField.MealInputTextFieldScreen
 import com.github.se.polyfit.viewmodel.post.CreatePostViewModel
 import io.github.kakaocup.compose.node.element.ComposeScreen
@@ -32,6 +33,8 @@ class CreatePostTest : TestCase() {
   val mockNavBack: () -> Unit = mockk()
   private val mockMealRepository = mockk<MealRepository>(relaxed = true)
   private val mockPostFirebaseRepository = mockk<PostFirebaseRepository>(relaxed = true)
+  private val mockPostLocationModel = mockk<PostLocationModel>(relaxed = true)
+
   private lateinit var viewModel: CreatePostViewModel
 
   fun setup(meals: List<Meal> = listOf()) {
