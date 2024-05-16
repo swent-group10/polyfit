@@ -46,6 +46,24 @@ class NavigationTest {
   }
 
   @Test
+  fun navigateToCreatePost() {
+    route = Route.CreatePost
+    every { navHostController.navigate(route) } returns Unit
+    navigation.navigateToCreatePost()
+
+    verify { navHostController.navigate(Route.CreatePost) }
+  }
+
+  @Test
+  fun navigateToSettingsHome() {
+    route = Route.SettingsHome
+    every { navHostController.navigate(route) } returns Unit
+    navigation.navigateToSettingsHome()
+
+    verify { navHostController.navigate(Route.SettingsHome) }
+  }
+
+  @Test
   fun goBackTo() {
     route = Route.Home
     every { navHostController.popBackStack(route, any()) } returns true

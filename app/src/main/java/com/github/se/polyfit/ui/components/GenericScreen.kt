@@ -1,12 +1,10 @@
 package com.github.se.polyfit.ui.components
 
-import android.content.Context
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.github.se.polyfit.ui.components.scaffold.AppTitle
@@ -20,7 +18,6 @@ fun GenericScreen(
     modifier: Modifier = Modifier,
     floatingButton: @Composable () -> Unit = {}
 ) {
-  val context: Context = LocalContext.current
   val stackEntry by navController.currentBackStackEntryAsState()
   Scaffold(
       modifier = modifier,
@@ -33,7 +30,6 @@ fun GenericScreen(
             { navController.navigate(Route.PostInfo) },
             { navController.navigate(Route.Settings) },
             {})
-      }) {
-        content(it)
-      }
+      },
+      content = content)
 }
