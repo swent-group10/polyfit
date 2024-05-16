@@ -12,8 +12,7 @@ import org.junit.Before
 import org.junit.Test
 
 class IngredientTest {
-  private val ingredient =
-      Ingredient("eggs", 1, 1.2, MeasurementUnit.G, NutritionalInformation(mutableListOf()))
+  private val ingredient = Ingredient("eggs", 1, 1.2, MeasurementUnit.G, NutritionalInformation())
 
   @Before
   fun setup() {
@@ -28,7 +27,7 @@ class IngredientTest {
     val expectedMap =
         mapOf(
             "name" to "eggs",
-            "id" to 1,
+            "id" to 1.toLong(),
             "amount" to 1.2,
             "unit" to MeasurementUnit.G.toString(),
             "nutritionalInformation" to
@@ -68,7 +67,7 @@ class IngredientTest {
   @Test
   fun testSerializationDeserializationWithDefaultValues() {
     val ingredientWithDefaultValues =
-        Ingredient("eggs", 1, 1.2, MeasurementUnit.G, NutritionalInformation(mutableListOf()))
+        Ingredient("eggs", 1, 1.2, MeasurementUnit.G, NutritionalInformation())
     // Serialize the Ingredient object
     val serializedIngredient = Ingredient.serialize(ingredientWithDefaultValues)
     // Deserialize the serialized Ingredient object
@@ -90,7 +89,7 @@ class IngredientTest {
     val data =
         mapOf(
             "name" to "eggs",
-            "id" to 1,
+            "id" to 1.toLong(),
             "amount" to 10.2,
             "unit" to MeasurementUnit.G.toString(),
             "nutritionalInformation" to listOf<Map<String, Any>>())

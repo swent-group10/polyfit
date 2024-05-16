@@ -2,22 +2,22 @@ package com.github.se.polyfit.model.nutritionalInformation
 
 import android.util.Log
 
-class NutritionalInformation {
+class NutritionalInformation(nutrientsList: MutableList<Nutrient> = mutableListOf()) {
   val nutrients: MutableList<Nutrient> = mutableListOf()
 
-  constructor(nutrientsList: MutableList<Nutrient>) {
+  init {
     nutrients.addAll(nutrientsList.map { it.deepCopy() })
   }
 
   fun calculateTotalNutrient(nutrientType: String): Double {
-
-    val totalNutrient = nutrients.filter { it.nutrientType == nutrientType }.map { it.amount }.sum()
-
-    return totalNutrient
+    return nutrients
+        .filter { it.nutrientType.equals(nutrientType, ignoreCase = true) }
+        .map { it.amount }
+        .sum()
   }
 
   fun deepCopy(): NutritionalInformation {
-    val newNutritionalInformation = NutritionalInformation(mutableListOf())
+    val newNutritionalInformation = NutritionalInformation()
     nutrients.forEach { newNutritionalInformation.update(it.copy()) }
     return newNutritionalInformation
   }
@@ -73,7 +73,7 @@ class NutritionalInformation {
   }
 
   operator fun plus(other: NutritionalInformation): NutritionalInformation {
-    val newNutritionalInformation = NutritionalInformation(mutableListOf())
+    val newNutritionalInformation = NutritionalInformation()
 
     nutrients.forEach { newNutritionalInformation.update(it) }
     other.nutrients.forEach { newNutritionalInformation.update(it) }
@@ -82,7 +82,7 @@ class NutritionalInformation {
   }
 
   operator fun minus(other: NutritionalInformation): NutritionalInformation {
-    val newNutritionalInformation = NutritionalInformation(mutableListOf())
+    val newNutritionalInformation = NutritionalInformation()
 
     nutrients.forEach { newNutritionalInformation.update(it) }
     other.nutrients.forEach { newNutritionalInformation.update(it * -1.0) }
@@ -100,7 +100,7 @@ class NutritionalInformation {
     }
 
     fun deserialize(data: List<Map<String, Any>>): NutritionalInformation {
-      val nutritionalInformation = NutritionalInformation(mutableListOf())
+      val nutritionalInformation = NutritionalInformation()
       data.forEach {
         try {
 

@@ -5,11 +5,17 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
+import androidx.lifecycle.ViewModel
+import co.yml.charts.common.extensions.isNotNull
+import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
+import com.github.se.polyfit.data.remote.firebase.UserFirebaseRepository
 import com.github.se.polyfit.model.data.User
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.runBlocking
 
 interface Authentication {
   fun signIn()
@@ -19,7 +25,14 @@ interface Authentication {
   fun setSignInLauncher(launcher: ActivityResultLauncher<Intent>)
 }
 
-class AuthenticationCloud @Inject constructor(private val context: Context) : Authentication {
+@HiltViewModel
+class AuthenticationCloud
+@Inject
+constructor(
+    private val context: Context,
+    private val user: User,
+    private val userFirebaseRepository: UserFirebaseRepository
+) : ViewModel(), Authentication {
   private lateinit var signInLauncher: ActivityResultLauncher<Intent>
 
   override fun setSignInLauncher(launcher: ActivityResultLauncher<Intent>) {
@@ -27,12 +40,11 @@ class AuthenticationCloud @Inject constructor(private val context: Context) : Au
   }
 
   override fun signIn() {
-    val gso =
-        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build()
+    val providers = arrayListOf(AuthUI.IdpConfig.GoogleBuilder().build())
 
-    val mGoogleSignInClient = GoogleSignIn.getClient(context, gso)
+    val signInIntent =
+        AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(providers).build()
 
-    val signInIntent = mGoogleSignInClient.signInIntent
     signInLauncher.launch(signInIntent)
   }
 
@@ -40,22 +52,11 @@ class AuthenticationCloud @Inject constructor(private val context: Context) : Au
       result: FirebaseAuthUIAuthenticationResult,
       callback: (Boolean) -> Unit
   ) {
-    Log.i("LoginScreen", "onSignInResult")
     val response = result.idpResponse
-    Log.i("LoginScreen", "response: $response")
     if (result.resultCode == Activity.RESULT_OK) {
-      Log.i("LoginScreen", "User signed in")
       // to get google acount infos
       val account = GoogleSignIn.getLastSignedInAccount(context)
-
-      User.setCurrentUser(
-          User(
-              account?.id!!,
-              account.displayName ?: "",
-              account.familyName ?: "",
-              account.givenName ?: "",
-              account.email!!,
-              account.photoUrl))
+      runBlocking { setUserInfo(account) }
 
       callback(true)
     } else {
@@ -64,6 +65,25 @@ class AuthenticationCloud @Inject constructor(private val context: Context) : Au
         Log.e("LoginScreen", "Error in result firebase authentication: " + "${it.error?.errorCode}")
       }
       callback(false)
+    }
+  }
+
+  private fun setUserInfo(account: GoogleSignInAccount?) {
+    this.user.update(
+        id = account?.id!!,
+        email = account.email!!,
+        displayName = account.displayName,
+        familyName = account.familyName,
+        givenName = account.givenName,
+        photoURL = account.photoUrl)
+
+    userFirebaseRepository.getUser(this.user.id).continueWith {
+      if (it.result.isNotNull()) {
+        Log.d("AuthenticationCloud", "User already exists, information loaded")
+        this.user.update(user = it.result!!)
+      } else {
+        userFirebaseRepository.storeUser(this.user)
+      }
     }
   }
 }

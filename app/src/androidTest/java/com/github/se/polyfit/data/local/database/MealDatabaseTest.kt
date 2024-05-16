@@ -13,6 +13,7 @@ import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import java.time.LocalDate
+import junit.framework.TestCase.assertFalse
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import org.junit.After
@@ -35,12 +36,13 @@ class MealDatabaseTest {
 
   @Test
   fun addMeal() {
+    mealDao.deleteAll()
     val nowTime = LocalDate.now()
     mealDao.insert(
         MealEntity(
             occasion = MealOccasion.BREAKFAST,
             name = "Oatmeal",
-            mealID = 1,
+            id = "TestId",
             mealTemp = 20.0,
             nutritionalInformation =
                 NutritionalInformation(
@@ -54,7 +56,6 @@ class MealDatabaseTest {
                 mutableListOf(
                     Ingredient("Oats", 12, 192.2, MeasurementUnit.G),
                     Ingredient("Milk", 200, 12.0, MeasurementUnit.ML)),
-            firebaseId = "1",
             createdAt = nowTime,
             tags = mutableListOf()))
 
@@ -74,29 +75,6 @@ class MealDatabaseTest {
   }
 
   @Test
-  fun testOneMealDelete() {
-    mealDao.deleteAll()
-
-    mealDao.insert(Meal.default().apply { firebaseId = "aer1" })
-    mealDao.insert(Meal.default())
-
-    mealDao.deleteByFirebaseID("aer1")
-
-    assertEquals(mealDao.getAllMeals().size, 1)
-  }
-
-  @Test
-  fun getMealByFirebaseID() {
-    mealDao.deleteAll()
-    val meal = Meal.default().apply { firebaseId = "aer1" }
-    mealDao.insert(meal)
-
-    val mealFromDB = mealDao.getMealByFirebaseID("aer1")
-
-    assertEquals(meal, mealFromDB)
-  }
-
-  @Test
   fun getAllIngredients() {
     val ingredientList =
         mutableListOf(
@@ -107,18 +85,9 @@ class MealDatabaseTest {
         Meal(
             name = "Oatmeal",
             occasion = MealOccasion.BREAKFAST,
-            mealID = 1,
+            id = "TestId",
             mealTemp = 20.0,
-            nutritionalInformation =
-                NutritionalInformation(
-                    mutableListOf(
-                        Nutrient("calories", 100.0, MeasurementUnit.UG),
-                        Nutrient("protein", 10.0, MeasurementUnit.G),
-                        Nutrient("carbs", 20.0, MeasurementUnit.G),
-                        Nutrient("fat", 5.0, MeasurementUnit.ML)),
-                ),
             ingredients = ingredientList,
-            firebaseId = "1",
             createdAt = LocalDate.now())
     mealDao.insert(MealEntity.toMealEntity(meal))
 
@@ -126,6 +95,72 @@ class MealDatabaseTest {
 
     assertEquals(ingredients.size, 2)
     assertContains(ingredients, ingredientList.first())
+  }
+
+  @Test
+  fun testGetAllMealsFromACertainDate() {
+    mealDao.deleteAll()
+
+    val meal = createMeal("Oatmeal", "1", LocalDate.now())
+    val meal2 = createMeal("Chocolate", "2", LocalDate.now())
+    val meal3 = createMeal("Lobster", "3", LocalDate.now().minusWeeks(1))
+
+    mealDao.insert(meal)
+    mealDao.insert(meal2)
+    mealDao.insert(meal3)
+
+    val meals = mealDao.getMealsCreatedOnOrAfterDate(LocalDate.now())
+
+    assert(meals.size == 2)
+    assert(meals.contains(meal))
+    assert(meals.contains(meal2))
+    assertFalse(meals.contains(meal3))
+
+    val newMeals = mealDao.getMealsCreatedOnOrAfterDate(LocalDate.now().minusMonths(1))
+
+    assert(newMeals.contains(meal3))
+  }
+
+  @Test
+  fun testGetMealByDatabaseID() {
+    mealDao.deleteAll()
+    val meal = createMeal("Oatmeal", "1", LocalDate.now())
+    val id = mealDao.insert(meal)
+    val mealFromDB = mealDao.getMealById(id)
+    assertEquals(meal, mealFromDB)
+  }
+
+  @Test
+  fun testDeleteByDatabaseID() {
+    mealDao.deleteAll()
+    val meal = createMeal("Oatmeal", "1", LocalDate.now())
+    val id = mealDao.insert(meal)
+    mealDao.deleteById(id)
+    val mealFromDB = mealDao.getMealById(id)
+    assertEquals(null, mealFromDB)
+  }
+
+  private fun createMeal(name: String, id: String, createdAt: LocalDate): Meal {
+    return Meal(
+        name = name,
+        occasion = MealOccasion.BREAKFAST,
+        id = id,
+        mealTemp = 20.0,
+        ingredients =
+            mutableListOf(
+                Ingredient(
+                    "Oats",
+                    12,
+                    192.2,
+                    MeasurementUnit.G,
+                    NutritionalInformation(
+                        mutableListOf(
+                            Nutrient("calories", 100.0, MeasurementUnit.UG),
+                            Nutrient("protein", 10.0, MeasurementUnit.G),
+                            Nutrient("carbs", 20.0, MeasurementUnit.G),
+                            Nutrient("fat", 5.0, MeasurementUnit.ML)))),
+                Ingredient("Milk", 200, 12.0, MeasurementUnit.ML)),
+        createdAt = createdAt)
   }
 
   @After

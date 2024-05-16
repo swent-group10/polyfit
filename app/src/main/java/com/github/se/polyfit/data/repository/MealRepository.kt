@@ -2,11 +2,13 @@ package com.github.se.polyfit.data.repository
 
 import android.content.Context
 import android.net.ConnectivityManager
+import android.util.Log
 import com.github.se.polyfit.data.local.dao.MealDao
 import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
 import com.google.firebase.firestore.DocumentReference
+import java.time.LocalDate
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
@@ -16,8 +18,8 @@ import kotlinx.coroutines.withContext
 class MealRepository(
     private val context: Context,
     private val mealFirebaseRepository: MealFirebaseRepository,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.Default,
     private val mealDao: MealDao,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.Default,
     private val checkConnectivity: ConnectivityChecker = ConnectivityChecker(context)
 ) {
   private var isDataOutdated = false
@@ -29,46 +31,59 @@ class MealRepository(
    * @return the DocumentReference of the stored meal returns null if not connected to internet
    */
   suspend fun storeMeal(meal: Meal): DocumentReference? {
+    Log.d("MealRepository", "Storing meal: $meal")
+    var returnVal: DocumentReference? = null
     return withContext(dispatcher) {
-      if (checkConnectivity.checkConnection()) {
-        if (isDataOutdated) {
-          updateFirebase()
-          isDataOutdated = false
-          mealDao.insert(meal)
-          return@withContext mealFirebaseRepository.storeMeal(meal).await()
+      try {
+        if (checkConnectivity.checkConnection()) {
+          if (isDataOutdated) {
+            updateFirebase()
+            isDataOutdated = false
+          }
+          returnVal = mealFirebaseRepository.storeMeal(meal).await()
         } else {
-
-          val documentReference = mealFirebaseRepository.storeMeal(meal).await()
-          mealDao.insert(meal)
-          return@withContext documentReference
+          isDataOutdated = true
         }
-      } else {
-        isDataOutdated = true
+
         mealDao.insert(meal)
-        return@withContext null
+        return@withContext returnVal
+      } catch (e: Exception) {
+        Log.e("MealRepository", "Failed to store meal: ${e.message}")
+        throw Exception("Failed to store meal: ${e.message}")
       }
     }
   }
 
-  suspend fun getMeal(firebaseID: String): Meal? {
-    return mealDao.getMealByFirebaseID(firebaseID)
+  fun getMealById(mealId: String): Meal? {
+    return mealDao.getMealById(mealId)
   }
 
-  suspend fun getAllMeals(): List<Meal> {
+  fun getAllMeals(): List<Meal> {
     return mealDao.getAllMeals()
   }
 
-  suspend fun deleteMeal(firebaseID: String) {
+  suspend fun getMealsOnDate(date: LocalDate): List<Meal> {
+    return withContext(this.dispatcher) { mealDao.getMealsCreatedOnDate(date) }
+  }
+
+  suspend fun deleteMeal(id: String) {
     if (checkConnectivity.checkConnection()) {
       if (isDataOutdated) {
         updateFirebase()
         isDataOutdated = false
       }
-      withContext(dispatcher) { mealFirebaseRepository.deleteMeal(firebaseID).await() }
+      withContext(dispatcher) {
+        try {
+          mealFirebaseRepository.deleteMeal(id).await()
+        } catch (e: Exception) {
+          Log.e("MealRepository", "Failed to delete meal: ${e.message}")
+          throw Exception("Failed to delete meal: ${e.message}")
+        }
+      }
     } else {
       isDataOutdated = true
     }
-    mealDao.deleteByFirebaseID(firebaseID)
+    withContext(dispatcher) { mealDao.deleteById(id) }
   }
 
   /** Returns a list of unique ingredients */
@@ -79,20 +94,24 @@ class MealRepository(
   private suspend fun updateFirebase() {
     withContext(dispatcher) {
       mealDao.getAllMeals().forEach {
-        if (it != null) {
+        try {
           mealFirebaseRepository.storeMeal(it)
+        } catch (e: Exception) {
+          Log.e("MealRepository", "Failed to store meal: ${e.message}")
+          throw Exception("Failed to store meal: ${e.message}")
         }
       }
     }
   }
-}
 
-class ConnectivityChecker(private val context: Context) {
-  fun checkConnection(): Boolean {
-    val connectivityManager =
-        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-    val currentNetwork = connectivityManager.activeNetwork
+  class ConnectivityChecker(private val context: Context) {
+    fun checkConnection(): Boolean {
+      val connectivityManager =
+          context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+      val currentNetwork = connectivityManager.activeNetwork
 
-    return currentNetwork != null
+      Log.d("ConnectivityChecker", "Current network: $currentNetwork")
+      return currentNetwork != null
+    }
   }
 }
