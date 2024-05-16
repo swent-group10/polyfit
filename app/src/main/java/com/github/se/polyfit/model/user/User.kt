@@ -85,8 +85,6 @@ data class User(
 
   companion object {
     fun serialize(user: User): Map<String, Any?> {
-      Log.v("User", "Serializing user: $user")
-
       // To serialize/store, they must have atleast id, email, and names.
       val result =
           mutableMapOf<String, Any?>(
@@ -109,7 +107,7 @@ data class User(
       return result
     }
 
-    fun deserialize(map: Map<String, Any>): User {
+    fun deserialize(map: Map<String, Any?>): User {
       return try {
         User(
             id = map["id"] as String,
