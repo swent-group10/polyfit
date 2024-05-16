@@ -1,22 +1,15 @@
 package com.github.se.polyfit.ui.screen
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.github.se.polyfit.ui.components.IngredientsOverview.ListProducts
-import com.github.se.polyfit.ui.theme.PolyfitTheme
 import com.github.se.polyfit.ui.components.IngredientsOverview.TopBar
-
+import com.github.se.polyfit.ui.theme.PolyfitTheme
 
 // TODO THIS CLASS IS TEMPORARY, REMOVE IT WHEN DOING THE VIEWMODEL
 data class IngredientsTMP(
@@ -39,7 +32,7 @@ private val ListProducts = listOf(i1, i2, i3, i4, i5)
 @Preview
 @Composable
 private fun PreviewIngredientsOverview() {
-  PolyfitTheme(darkTheme = false, dynamicColor = false) { IngredientsOverview() }
+  PolyfitTheme(darkTheme = true, dynamicColor = false) { IngredientsOverview() }
 }
 
 @Composable
@@ -51,14 +44,15 @@ fun IngredientsOverview(
 
   Scaffold(
       topBar = { TopBar { navigateBack() } },
-      bottomBar = { com.github.se.polyfit.ui.components.IngredientsOverview.BottomBar(navigateForward = navigateForward) },
-      floatingActionButton = { com.github.se.polyfit.ui.components.button.FloatingActionButton(onClickFloatingButton) },
+      bottomBar = {
+        com.github.se.polyfit.ui.components.IngredientsOverview.BottomBar(
+            navigateForward = navigateForward)
+      },
+      floatingActionButton = {
+        com.github.se.polyfit.ui.components.button.FloatingActionButton(onClickFloatingButton)
+      },
       containerColor = MaterialTheme.colorScheme.background,
   ) {
     ListProducts(ListProducts = ListProducts, Modifier.fillMaxSize().padding(it))
   }
 }
-
-
-
-

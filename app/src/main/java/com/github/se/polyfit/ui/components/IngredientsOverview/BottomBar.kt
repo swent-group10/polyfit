@@ -15,16 +15,16 @@ import com.github.se.polyfit.ui.components.button.PrimaryButton
 @Composable
 fun BottomBar(navigateForward: () -> Unit) {
   Box(
-          modifier =
+      modifier =
           Modifier.fillMaxWidth()
-                  .testTag("DoneBox")
-                  .background(MaterialTheme.colorScheme.surface)
-                  .padding(16.dp),
-          contentAlignment = Alignment.Center) {
-    PrimaryButton(
+              .testTag("DoneBox")
+              .background(MaterialTheme.colorScheme.surface)
+              .padding(16.dp),
+      contentAlignment = Alignment.Center) {
+        PrimaryButton(
             text = "Generate\nRecipe",
             modifier = Modifier.align(Alignment.Center),
             onClick = navigateForward,
             color = MaterialTheme.colorScheme.outline)
-  }
+      }
 }

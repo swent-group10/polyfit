@@ -19,16 +19,16 @@ import com.github.se.polyfit.ui.theme.getGradient
 fun FloatingActionButton(onClickFloatingButton: () -> Unit) {
   val shape = CircleShape
   androidx.compose.material3.FloatingActionButton(
-          onClick = onClickFloatingButton,
-          containerColor = MaterialTheme.colorScheme.background,
-          shape = shape,
-          elevation = FloatingActionButtonDefaults.elevation(0.dp),
-          modifier =
+      onClick = onClickFloatingButton,
+      containerColor = MaterialTheme.colorScheme.background,
+      shape = shape,
+      elevation = FloatingActionButtonDefaults.elevation(0.dp),
+      modifier =
           Modifier.border(BorderStroke(2.dp, getGradient(true)), shape).testTag("FloatingButton")) {
-    Icon(
+        Icon(
             imageVector = Icons.Default.Add,
             contentDescription = "Add Ingredient",
             tint = MaterialTheme.colorScheme.outlineVariant,
             modifier = Modifier.size(32.dp))
-  }
+      }
 }
