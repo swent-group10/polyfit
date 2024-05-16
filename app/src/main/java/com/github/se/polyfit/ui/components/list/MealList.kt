@@ -1,6 +1,7 @@
 package com.github.se.polyfit.ui.components.list
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -64,8 +65,7 @@ fun MealList(
 
 @Composable
 private fun MealCard(meal: Meal, editMeal: () -> Unit) {
-  /* TODO: Add meal flow will need to be adapted, Modifier.clickable { editMeal() } */
-  Surface(color = Color.White, modifier = Modifier.testTag("MealCard")) {
+  Surface(color = Color.White, modifier = Modifier.clickable { editMeal() }.testTag("MealCard")) {
     Column {
       Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
         Text(

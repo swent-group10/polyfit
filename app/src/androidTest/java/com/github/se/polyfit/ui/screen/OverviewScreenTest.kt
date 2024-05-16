@@ -83,7 +83,7 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
         }
 
         composable(Route.AddMeal) {
-          AddMealFlow(goBack = {}, navigateToHome = {}, mealId = null, mockk(relaxed = true))
+          AddMealFlow(goBack = {}, goForward = {}, mealId = null, mockk(relaxed = true))
         }
         composable(Route.Graph) {
           FullGraphScreen(goBack = {}, viewModel = GraphViewModel(dataProcessor))

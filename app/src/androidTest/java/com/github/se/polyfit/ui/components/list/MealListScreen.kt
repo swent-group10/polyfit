@@ -12,6 +12,4 @@ class MealListScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
   val totalCalories: KNode = onNode { hasTestTag("TotalCalories") }
 
   val mealCard: KNode = onNode { hasTestTag("MealCard") }
-  val mealName: KNode = onNode { hasTestTag("MealName") }
-  val mealCalories: KNode = onNode { hasTestTag("MealCalories") }
 }

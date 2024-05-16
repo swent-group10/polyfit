@@ -15,7 +15,7 @@ import com.github.se.polyfit.viewmodel.meal.MealViewModel
 @Composable
 fun AddMealFlow(
     goBack: () -> Unit,
-    navigateToHome: () -> Unit,
+    goForward: () -> Unit,
     mealId: String? = null,
     mealViewModel: MealViewModel = hiltViewModel<MealViewModel>(),
 ) {
@@ -40,7 +40,7 @@ fun AddMealFlow(
       NutritionScreen(
           mealViewModel = mealViewModel,
           navigateBack = { navigation.goBack() },
-          navigateForward = { navigateToHome() })
+          navigateForward = { goForward() })
     }
   }
 }
