@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.se.polyfit.ui.theme.PrimaryPurple
@@ -31,7 +32,7 @@ fun PrimaryButton(
       shape = buttonShape,
       colors = ButtonDefaults.buttonColors(containerColor = color)) {
         if (text.isNotBlank()) {
-          Text(text, color = Color.White, fontSize = fontSize.sp)
+          Text(text, color = Color.White, fontSize = fontSize.sp, textAlign = TextAlign.Center)
         }
         icon?.invoke()
       }

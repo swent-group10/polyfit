@@ -226,7 +226,7 @@ val PurpleGrey80 = Color(0xFFCCC2DC)
 val Pink80 = Color(0xFFEFB8C8)
 
 val DarkOutiline = Color(0xFFFF7538)
-val DarkOutilineVariant = Color(0xFFE86100)
+val DarkOutilineVariant = Color(0xFFFF4F00)
 
 val Purple40 = Color(0xFF6650a4)
 val PurpleGrey40 = Color(0xFF625b71)

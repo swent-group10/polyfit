@@ -42,6 +42,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.github.se.polyfit.ui.components.button.PrimaryButton
 import com.github.se.polyfit.ui.theme.PolyfitTheme
 import com.github.se.polyfit.ui.theme.PrimaryPurple
 import com.github.se.polyfit.ui.theme.getGradient
@@ -67,8 +68,8 @@ private val ListProducts = listOf(i1, i2, i3, i4, i5)
 
 @Preview
 @Composable
-fun PreviewIngredientsOverview() {
-  PolyfitTheme(darkTheme = false, dynamicColor = false) { IngredientsOverview() }
+private fun PreviewIngredientsOverview() {
+  PolyfitTheme(darkTheme = true, dynamicColor = false) { IngredientsOverview() }
 }
 
 @Composable
@@ -107,7 +108,7 @@ private fun TopBar(navigateBack: () -> Unit) {
                   imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                   contentDescription = "Back",
                   modifier = Modifier.testTag("BackButton"),
-                  tint = outlineLight)
+                  tint = MaterialTheme.colorScheme.outline)
             },
             colors =
                 IconButtonDefaults.iconButtonColors(
@@ -149,7 +150,7 @@ private fun ListProducts(ListProducts: List<IngredientsTMP>, modifier: Modifier)
 }
 
 @Composable
-fun TextIngredient(value: Int, text: String, unit: String) {
+private fun TextIngredient(value: Int, text: String, unit: String) {
   Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
     Text(
         text = text,
@@ -185,7 +186,6 @@ private fun FloatingActionButton(onClickFloatingButton: () -> Unit) {
 
 @Composable
 private fun BottomBar(navigateForward: () -> Unit) {
-
   Box(
       modifier =
           Modifier.fillMaxWidth()
@@ -201,31 +201,3 @@ private fun BottomBar(navigateForward: () -> Unit) {
       }
 }
 
-@Composable
-fun PrimaryButton(
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit = {},
-    text: String = "",
-    fontSize: Int = 20,
-    isEnabled: Boolean = true,
-    color: Color = PrimaryPurple,
-    buttonShape: RoundedCornerShape = RoundedCornerShape(50.dp),
-    icon: @Composable (() -> Unit)? = null
-) {
-  Button(
-      onClick = onClick,
-      enabled = isEnabled,
-      modifier = modifier.testTag("PrimaryButton"),
-      shape = buttonShape,
-      colors = ButtonDefaults.buttonColors(containerColor = color)) {
-        if (text.isNotBlank()) {
-          Text(
-              text,
-              color = Color.White,
-              fontSize = fontSize.sp,
-              textAlign = TextAlign.Center,
-              modifier = Modifier.padding(40.dp, 0.dp))
-        }
-        icon?.invoke()
-      }
-}
