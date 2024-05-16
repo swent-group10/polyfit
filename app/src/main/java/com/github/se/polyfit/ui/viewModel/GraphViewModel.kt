@@ -65,12 +65,9 @@ class GraphViewModel @Inject constructor(private val dataProcessor: LocalDataPro
     updateSort(SortPoints.KCAL, SortDirection.ASCENDING)
   }
 
-  private fun fetchCaloriesData(numDays: Int = 7) {
+  fun fetchCaloriesData(numDays: Int = 7) {
     viewModelScope.launch(Dispatchers.IO) {
-      val today = LocalDate.now()
-      val dates = (0 ..< numDays).map { today.minusDays(it.toLong()) }
-      val baselineGraphData =
-          dates.map { GraphData(kCal = 0.0, date = it, weight = 0.0) }.toMutableList()
+      val baselineGraphData = initGraphData()
 
       val actualData =
           dataProcessor.calculateCaloriesSince(LocalDate.now().minusDays(numDays.toLong())).map {
@@ -83,8 +80,13 @@ class GraphViewModel @Inject constructor(private val dataProcessor: LocalDataPro
           baselineGraphData[index] = data
         }
       }
-      _graphData.postValue(baselineGraphData)
+      updateGraphData(baselineGraphData)
     }
+  }
+
+  fun updateGraphData(graphDataList: List<GraphData>) {
+    _graphData.postValue(graphDataList)
+    filterAndSortData()
   }
 
   fun initGraphData(): MutableList<GraphData> {
@@ -97,13 +99,13 @@ class GraphViewModel @Inject constructor(private val dataProcessor: LocalDataPro
   }
 
   fun onSearchTextChanges(text: String) {
-    _searchText.value = text
+    _searchText.postValue(text)
     filterAndSortData()
   }
 
   fun updateSort(attribute: SortPoints, direction: SortDirection = SortDirection.ASCENDING) {
-    _sortDirection.value = direction
-    _sortedPoints.value = attribute
+    _sortDirection.postValue(direction)
+    _sortedPoints.postValue(attribute)
     filterAndSortData()
   }
 
@@ -118,7 +120,7 @@ class GraphViewModel @Inject constructor(private val dataProcessor: LocalDataPro
     val text = _searchText.value ?: ""
     val data = _graphData.value ?: emptyList()
     if (data.isEmpty()) {
-      _filteredGraphData.value = emptyList()
+      _filteredGraphData.postValue(emptyList())
       return
     }
 

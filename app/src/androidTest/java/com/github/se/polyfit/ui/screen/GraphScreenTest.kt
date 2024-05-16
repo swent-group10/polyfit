@@ -31,6 +31,7 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit4.MockKRule
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.spyk
 import io.mockk.unmockkStatic
 import io.mockk.verify
 import java.time.LocalDate
@@ -38,7 +39,9 @@ import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.runTest
 import org.junit.*
 import org.junit.runner.RunWith
 
@@ -49,7 +52,13 @@ class GraphScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withCompos
 
   @RelaxedMockK lateinit var mockNav: Navigation
 
-  fun set() {
+  private fun fetchData(viewModel: GraphViewModel) {
+    val baselineGraphData =
+        (0..6).map { i -> GraphData(mockData[i].kCal, mockData[i].date, mockData[i].weight) }
+    viewModel.updateGraphData(baselineGraphData)
+  }
+
+  private fun mockingAndSettingContent() {
     val dataProcessor = mockk<LocalDataProcessor>(relaxed = true)
     val today = LocalDate.now()
     // Create a list of dates for the last 7 days including today
@@ -64,34 +73,39 @@ class GraphScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withCompos
             DailyCalorieSummary(dates[4], 1000.0),
             DailyCalorieSummary(dates[5], 2399.3),
             DailyCalorieSummary(dates[6], 2438.0))
-    composeTestRule.setContent {
-      FullGraphScreen(viewModel = GraphViewModel(dataProcessor), goBack = mockNav::goBack)
-    }
+
+    val viewModel = spyk(GraphViewModel(dataProcessor))
+    every { viewModel.fetchCaloriesData() } returns fetchData(viewModel = viewModel)
+
+    // Mock the filteredGraphData LiveData
+
+    composeTestRule.setContent { FullGraphScreen(viewModel = viewModel, goBack = mockNav::goBack) }
   }
 
   private val mockData =
       listOf(
           GraphData(kCal = 1000.0, LocalDate.of(2024, 3, 11), weight = 45.0),
           GraphData(kCal = 870.2, LocalDate.of(2024, 3, 12), weight = 330.0),
-          GraphData(kCal = 1689.98, LocalDate.of(2024, 3, 13), weight = 78.0),
+          GraphData(kCal = 1689.9, LocalDate.of(2024, 3, 13), weight = 78.0),
           GraphData(kCal = 1300.0, LocalDate.of(2024, 3, 14), weight = 65.9),
           GraphData(kCal = 1000.0, LocalDate.of(2024, 3, 15), weight = 35.0),
           GraphData(kCal = 2399.3, LocalDate.of(2024, 3, 16), weight = 78.0),
           GraphData(kCal = 2438.0, LocalDate.of(2024, 3, 17), weight = 80.2))
 
-  fun DateList(): List<LocalDate> {
+  private fun dateList(): List<LocalDate> {
     val dateList: MutableList<LocalDate> = mutableListOf()
     mockData.forEach { data -> dateList.add(data.date) }
     return dateList.toList()
   }
 
-  fun DataToPoints(): List<Point> {
+  private fun dataToPoints(): List<Point> {
     val data = mockData
     return data.mapIndexed { index, graphData ->
       Point(x = index.toFloat(), y = graphData.kCal.toFloat())
     }
   }
 
+  @OptIn(ExperimentalCoroutinesApi::class)
   @Before
   fun setup() {
     System.setProperty("isTestEnvironment", "true")
@@ -108,13 +122,14 @@ class GraphScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withCompos
 
   @Test
   fun testSortingByKcalAscending() {
-    set()
+    mockingAndSettingContent()
     composeTestRule
         .onNodeWithTag("SortingArrow")
         .assertExists()
         .assertIsDisplayed()
         .assertHasClickAction()
     composeTestRule.waitForIdle()
+    composeTestRule.waitUntil(5000L, { true })
     val nodes = composeTestRule.onAllNodesWithTag("kcal")
     val sortedData =
         listOf(
@@ -135,7 +150,7 @@ class GraphScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withCompos
 
   @Test
   fun testSortingByKcalDescending() {
-    set()
+    mockingAndSettingContent()
     composeTestRule.onNodeWithTag("SortingArrow").performClick() // Change to ascending
     composeTestRule.waitForIdle()
 
@@ -158,11 +173,58 @@ class GraphScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withCompos
   }
 
   @Test
+  fun testSortingByWeightAscending() {
+    mockingAndSettingContent()
+    composeTestRule
+        .onNodeWithTag("GraphDataSortingMenu")
+        .assertExists()
+        .assertIsDisplayed()
+        .performClick()
+    composeTestRule.onNodeWithTag("DropdownTab").assertIsDisplayed()
+    composeTestRule.onNodeWithText("WEIGHT").performClick()
+    composeTestRule.waitForIdle()
+
+    val nodes = composeTestRule.onAllNodesWithTag("weight")
+    val sortedWeight =
+        listOf("35.0 lbs", "45.0 lbs", "65.9 lbs", "78.0 lbs", "78.0 lbs", "80.2 lbs", "330.0 lbs")
+    nodes.assertCountEquals(sortedWeight.size)
+    sortedWeight.forEachIndexed { index, weight ->
+      nodes[index].assertTextContains(weight, ignoreCase = true)
+    }
+    composeTestRule.onNodeWithContentDescription("ArrowUp").assertExists().assertIsDisplayed()
+    composeTestRule.onNodeWithContentDescription("ArrowDown").assertDoesNotExist()
+  }
+
+  @Test
+  fun testSortingByWeightDescending() {
+    mockingAndSettingContent()
+    composeTestRule
+        .onNodeWithTag("GraphDataSortingMenu")
+        .assertExists()
+        .assertIsDisplayed()
+        .performClick()
+    composeTestRule.onNodeWithTag("DropdownTab").assertIsDisplayed()
+    composeTestRule.onNodeWithText("WEIGHT").performClick()
+    composeTestRule.onNodeWithTag("SortingArrow").performClick()
+    composeTestRule.waitForIdle()
+
+    val nodes = composeTestRule.onAllNodesWithTag("weight")
+    val sortedWeightsDescending =
+        listOf("330.0 lbs", "80.2 lbs", "78.0 lbs", "78.0 lbs", "65.9 lbs", "45.0 lbs", "35.0 lbs")
+    nodes.assertCountEquals(sortedWeightsDescending.size)
+    sortedWeightsDescending.forEachIndexed { index, weight ->
+      nodes[index].assertTextContains(weight, ignoreCase = true)
+    }
+    composeTestRule.onNodeWithContentDescription("ArrowUp").assertDoesNotExist()
+    composeTestRule.onNodeWithContentDescription("ArrowDown").assertExists().assertIsDisplayed()
+  }
+
+  @Test
   fun graphParameters() {
     composeTestRule.setContent {
       // Define a mock ViewModel or required data setup here
-      val pointList = DataToPoints() // Assuming this can be accessed here
-      val dateList = DateList() // Assuming this can be accessed here
+      val pointList = dataToPoints() // Assuming this can be accessed here
+      val dateList = dateList() // Assuming this can be accessed here
       val screen = MutableStateFlow(DisplayScreen.GRAPH_SCREEN)
       val steps = 10
       // Invoke the composable to render the chart with test data
@@ -244,7 +306,7 @@ class GraphScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withCompos
 
   @Test
   fun lazyListAndItemsDisplayed() {
-    set()
+    mockingAndSettingContent()
     composeTestRule.onNodeWithTag("ElementsList").assertExists().assertIsDisplayed()
     val nodes = composeTestRule.onAllNodesWithTag("ElementsRow")
     assertFalse(nodes.fetchSemanticsNodes().isEmpty(), "No nodes with tag 'ElemetsRow' found")
@@ -259,7 +321,7 @@ class GraphScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withCompos
 
   @Test
   fun itemCaloriesDisplayed() {
-    set()
+    mockingAndSettingContent()
 
     val nodes = composeTestRule.onAllNodesWithTag("kcal")
     assertFalse(nodes.fetchSemanticsNodes().isEmpty(), "No nodes with tag 'kcal' found")
@@ -274,7 +336,7 @@ class GraphScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withCompos
 
   @Test
   fun itemWeightDisplayed() {
-    set()
+    mockingAndSettingContent()
 
     val nodes = composeTestRule.onAllNodesWithTag("weight")
     assertFalse(nodes.fetchSemanticsNodes().isEmpty(), "No nodes with tag 'weight' found")
@@ -289,7 +351,7 @@ class GraphScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withCompos
 
   @Test
   fun itemDateDisplayed() {
-    set()
+    mockingAndSettingContent()
 
     val nodes = composeTestRule.onAllNodesWithTag("Date")
     assertFalse(nodes.fetchSemanticsNodes().isEmpty(), "No nodes with tag 'Date' found")
@@ -304,7 +366,7 @@ class GraphScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withCompos
 
   @Test
   fun topBarDisplayed() {
-    set()
+    mockingAndSettingContent()
 
     composeTestRule.onNodeWithTag("Calories Per Day Title").assertExists().assertIsDisplayed()
     composeTestRule
@@ -316,7 +378,7 @@ class GraphScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withCompos
 
   @Test
   fun topBarBackFuntionning() {
-    set()
+    mockingAndSettingContent()
     composeTestRule.onNodeWithTag("BackButton").performClick()
     verify { mockNav.goBack() }
     confirmVerified(mockNav)
@@ -324,7 +386,7 @@ class GraphScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withCompos
 
   @Test
   fun graphSpotReserved() {
-    set()
+    mockingAndSettingContent()
 
     composeTestRule.onNodeWithTag("GraphScreenColumn").assertExists().assertIsDisplayed()
     composeTestRule.onNodeWithTag("LineChart").assertDoesNotExist()
@@ -333,7 +395,7 @@ class GraphScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withCompos
 
   @Test
   fun searchBarShownAndWriteable() {
-    set()
+    mockingAndSettingContent()
 
     composeTestRule.onNodeWithTag("GraphScreenSearchBar").assertExists().assertIsDisplayed()
     composeTestRule.onNodeWithTag("GraphScreenSearchBar").performTextInput("1000")
@@ -342,7 +404,7 @@ class GraphScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withCompos
 
   @Test
   fun searchBarFiltersCorrectly() {
-    set()
+    mockingAndSettingContent()
 
     composeTestRule.onNodeWithTag("GraphScreenSearchBar").performTextInput("1000")
     composeTestRule.waitForIdle()
@@ -356,8 +418,8 @@ class GraphScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withCompos
   }
 
   @Test
-  fun dropdownMenuInteraction() {
-    set()
+  fun dropdownMenuInteraction() = runTest {
+    mockingAndSettingContent()
 
     composeTestRule.onNodeWithTag("GraphDataSortingMenu").assertExists().assertIsDisplayed()
     composeTestRule

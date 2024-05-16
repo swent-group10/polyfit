@@ -89,6 +89,7 @@ fun FullGraphScreen(
                 searchText?.let {
                   OutlinedTextField(
                       value = it,
+                      singleLine = true,
                       onValueChange = viewModel::onSearchTextChanges,
                       modifier = Modifier.fillMaxWidth(0.35f).testTag("GraphScreenSearchBar"),
                       placeholder = { Text(text = "Search") },
@@ -141,7 +142,10 @@ private fun ListOfElements(filteredGraphData: List<GraphData>, modifier: Modifie
                       text = context.getString(R.string.kcalvalue, data.kCal),
                       modifier = Modifier.testTag("kcal"))
                   Text(
-                      text = context.getString(R.string.weightvalue, data.weight),
+                      text =
+                          context.getString(R.string.weightvalue, data.weight).takeIf {
+                            data.weight > 0.0
+                          } ?: "",
                       modifier = Modifier.testTag("weight"))
                 }
             Text(
