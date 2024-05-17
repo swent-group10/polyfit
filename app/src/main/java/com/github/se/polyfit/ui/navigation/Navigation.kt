@@ -16,6 +16,10 @@ class Navigation(private val navHostController: NavHostController) {
     navigateTo(Route.Graph)
   }
 
+  fun navigateToEditMeal(mealDatabaseId: String) {
+    navigateTo(Route.EditMeal + "/$mealDatabaseId")
+  }
+
   fun navigateToHome() {
     navigateTo(Route.Home)
   }
@@ -46,6 +50,14 @@ class Navigation(private val navHostController: NavHostController) {
 
   fun navigateToCreatePost() {
     navigateTo(Route.CreatePost)
+  }
+
+  fun navigateToSettingsHome() {
+    navigateTo(Route.SettingsHome)
+  }
+
+  fun navigateToAccountSettings() {
+    navigateTo(Route.AccountSettings)
   }
 
   private fun navigateTo(route: String) {

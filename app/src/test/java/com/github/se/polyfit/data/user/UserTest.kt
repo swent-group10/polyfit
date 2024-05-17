@@ -67,7 +67,7 @@ class UserTest {
     assertEquals("Test", map["familyName"])
     assertEquals("User", map["givenName"])
     assertEquals(" invalid email", map["email"])
-    assertEquals("null", map["photoURL"])
+    assertEquals(null, map["photoURL"])
   }
 
   @Test
@@ -79,7 +79,7 @@ class UserTest {
     assertEquals("Test", map["familyName"])
     assertEquals("User", map["givenName"])
     assertEquals(" invalid email", map["email"])
-    assertEquals("null", map["photoURL"])
+    assertEquals(null, map["photoURL"])
   }
 
   @Test
@@ -127,14 +127,22 @@ class UserTest {
   }
 
   @Test
-  fun `User deserialization with invalid map`() {
+  fun `User deserialization with missing ID`() {
+    // Invalid if no email or ID
     val map =
         mapOf(
-            "id" to "null",
             "familyName" to "Test",
             "givenName" to "User",
             "email" to " invalid email",
             "photoURL" to "null")
+    assertFailsWith<Exception> { User.deserialize(map) }
+  }
+
+  @Test
+  fun `User deserialization with missing email`() {
+    // Invalid if no email or ID
+    val map =
+        mapOf("id" to "1", "familyName" to "Test", "givenName" to "User", "photoURL" to "null")
     assertFailsWith<Exception> { User.deserialize(map) }
   }
 
