@@ -1,5 +1,6 @@
 package com.github.se.polyfit.model.post
 
+import android.net.Uri
 import android.util.Log
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
@@ -23,7 +24,7 @@ class PostTest {
   }
 
   @Test
-  fun `getCarbs returns correct nutrient when present`() {
+  fun getCarbsReturnsCorrectNutrientWhenPresent() {
     val expected = Nutrient("carbohydrates", 100.0, MeasurementUnit.G)
     val meal = Meal.default().apply { nutritionalInformation.update(expected) }
     val post =
@@ -33,7 +34,7 @@ class PostTest {
   }
 
   @Test
-  fun `getCarbs returns null when nutrient not present`() {
+  fun getCarbsReturnsNullWhenNutrientNotPresent() {
     val meal = Meal.default()
     val post =
         Post("userId", "description", Location(0.0, 0.0, 10.0, "EPFL"), meal, LocalDate.now())
@@ -42,23 +43,30 @@ class PostTest {
   }
 
   @Test
-  fun `serialize returns correct map`() {
+  fun serializeReturnsCorrectMap() {
     val meal = Meal.default()
     val post =
-        Post("userId", "description", Location(0.0, 0.0, 10.0, "EPFL"), meal, LocalDate.now())
+        Post(
+            "userId",
+            "description",
+            Location(0.0, 0.0, 10.0, "EPFL"),
+            meal,
+            LocalDate.of(2021, 10, 10))
     val expectedMap =
         mapOf(
             "userId" to "userId",
             "description" to "description",
-            "location" to Location(0.0, 0.0, 10.0, "EPFL"),
+            "location" to Location(0.0, 0.0, 10.0, "EPFL").serialize(),
             "meal" to meal.serialize(),
-            "createdAt" to LocalDate.now())
+            "createdAt" to LocalDate.of(2021, 10, 10).toString(),
+            "imageDownloadURL" to Uri.EMPTY)
 
-    assertEquals(expectedMap, post.serialize())
+    val serializedPost = post.serialize()
+    assertEquals(expectedMap, serializedPost)
   }
 
   @Test
-  fun `getIngredientCalories returns correct list when nutrients present`() {
+  fun getIngredientCaloriesReturnsCorrectListWhenNutrientsPresent() {
     val nutrient = Nutrient("calories", 100.0, MeasurementUnit.KCAL)
     val meal = Meal.default()
     val ingredient =
@@ -77,7 +85,7 @@ class PostTest {
   }
 
   @Test
-  fun `getIngredientCalories returns empty list when nutrients not present`() {
+  fun getIngredientCaloriesReturnsEmptyListWhenNutrientsNotPresent() {
     val meal = Meal.default()
     val post =
         Post("userId", "description", Location(0.0, 0.0, 10.0, "EPFL"), meal, LocalDate.now())
@@ -86,7 +94,7 @@ class PostTest {
   }
 
   @Test
-  fun `default method returns expected Post object`() {
+  fun defaultMethodReturnsExpectedPostObject() {
     val defaultMeal = Meal.default()
     val post = Post.default().copy(meal = defaultMeal)
     val expectedPost =
@@ -97,7 +105,7 @@ class PostTest {
   }
 
   @Test
-  fun `getIngredientWeight returns correct list`() {
+  fun getIngredientWeightReturnsCorrectList() {
     val meal = Meal.default()
     val post =
         Post("userId", "description", Location(0.0, 0.0, 10.0, "EPFL"), meal, LocalDate.now())
@@ -108,7 +116,7 @@ class PostTest {
   }
 
   @Test
-  fun `getProtein returns correct nutrient when present`() {
+  fun getProteinReturnsCorrectNutrientWhenPresent() {
     val expected = Nutrient("protein", 100.0, MeasurementUnit.G)
     val meal = Meal.default().apply { nutritionalInformation.update(expected) }
     val post =
@@ -118,7 +126,7 @@ class PostTest {
   }
 
   @Test
-  fun `getFat returns correct nutrient when present`() {
+  fun getFatReturnsCorrectNutrientWhenPresent() {
     val expected = Nutrient("fat", 100.0, MeasurementUnit.G)
     val meal = Meal.default().apply { nutritionalInformation.update(expected) }
     val post =
@@ -128,14 +136,14 @@ class PostTest {
   }
 
   @Test
-  fun `testLocationToString`() {
+  fun testLocationToString() {
     val location = Location(0.0, 0.0, 10.0, "EPFL")
     val expectedString = "Location(longitude=0.0, latitude=0.0, altitude=10.0, name=EPFL)"
     assertEquals(expectedString, location.toString())
   }
 
   @Test
-  fun `test default location`() {
+  fun testDefaultLocation() {
     val location = Location.default()
     val expectedLocation = Location(0.0, 0.0, 0.0, "EPFL")
     assertEquals(expectedLocation, location)
@@ -156,11 +164,9 @@ class PostTest {
                         "altitude" to 10.0,
                         "name" to "EPFL"),
                 "meal" to defaultMeal.serialize(),
-                "createdAt" to
-                    mapOf(
-                        "year" to 2021.toLong(),
-                        "monthValue" to 10.toLong(),
-                        "dayOfMonth" to 10.toLong())))
+                "createdAt" to LocalDate.of(2021, 10, 10).toString(),
+                "imageDownloadURL" to Uri.EMPTY),
+        )
     val expectedPost =
         Post(
             "userId",
@@ -186,11 +192,8 @@ class PostTest {
                         "altitude" to 30.0,
                         "name" to "MIT"),
                 "meal" to defaultMeal.serialize(),
-                "createdAt" to
-                    mapOf(
-                        "year" to 2021.toLong(),
-                        "monthValue" to 10.toLong(),
-                        "dayOfMonth" to 10.toLong())))
+                "createdAt" to LocalDate.of(2021, 10, 10).toString(),
+                "imageDownloadURL" to Uri.EMPTY))
     val expectedPost =
         Post(
             "userId",
@@ -216,11 +219,8 @@ class PostTest {
                         "altitude" to 10.0,
                         "name" to "EPFL"),
                 "meal" to defaultMeal.serialize(),
-                "createdAt" to
-                    mapOf(
-                        "year" to 2021.toLong(),
-                        "monthValue" to 10.toLong(),
-                        "dayOfMonth" to 10.toLong())))
+                "createdAt" to LocalDate.of(2021, 10, 10).toString(),
+                "imageDownloadURL" to Uri.EMPTY))
     val expectedPost =
         Post(
             "differentUserId",
@@ -246,11 +246,8 @@ class PostTest {
                         "altitude" to 10.0,
                         "name" to "EPFL"),
                 "meal" to defaultMeal.serialize(),
-                "createdAt" to
-                    mapOf(
-                        "year" to 2021.toLong(),
-                        "monthValue" to 10.toLong(),
-                        "dayOfMonth" to 10.toLong())))
+                "createdAt" to LocalDate.of(2021, 10, 10).toString(),
+                "imageDownloadURL" to Uri.EMPTY))
     val expectedPost =
         Post(
             "userId",
@@ -273,5 +270,46 @@ class PostTest {
             "createdAt" to LocalDate.now())
 
     assertFails { Post.deserialize(data) }
+  }
+
+  @Test
+  fun testDeserializeWithUri() {
+    val data =
+        mapOf(
+            "userId" to "someId",
+            "description" to "description",
+            "location" to
+                mapOf("longitude" to 0.0, "latitude" to 0.0, "altitude" to 10.0, "name" to "EPFL"),
+            "meal" to Meal.default().serialize(),
+            "createdAt" to LocalDate.now().toString(),
+            "imageDownloadURL" to Uri.parse("https://www.google.com"))
+
+    val post = Post.deserialize(data)
+
+    assertEquals("https://www.google.com", post!!.imageDownloadURL.toString())
+  }
+
+  @Test
+  fun testDeserializeWithEmptyUri() {
+    val data =
+        mapOf(
+            "userId" to "someid",
+            "description" to "description",
+            "location" to
+                mapOf("longitude" to 0.0, "latitude" to 0.0, "altitude" to 10.0, "name" to "EPFL"),
+            "meal" to Meal.default().serialize(),
+            "createdAt" to LocalDate.now().toString(),
+            "imageDownloadURL" to Uri.EMPTY)
+
+    val post = Post.deserialize(data)
+
+    assertEquals(Uri.EMPTY, post!!.imageDownloadURL)
+  }
+
+  @Test
+  fun deserializeNormalPost() {
+    val data = Post.default()
+
+    assertEquals(data, Post.deserialize(data.serialize()))
   }
 }

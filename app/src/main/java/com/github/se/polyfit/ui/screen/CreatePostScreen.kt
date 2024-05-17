@@ -79,7 +79,12 @@ fun CreatePostScreen(
             postComplete = postComplete, onButtonPressed = { isPermissionDialogDisplay = true })
       }) {
         LazyColumn(modifier = Modifier.padding(it).testTag("CreatePostScreen")) {
-          item { PictureSelector(modifier = Modifier.padding(top = 10.dp)) }
+          item {
+            PictureSelector(
+                modifier = Modifier.padding(top = 10.dp),
+                postViewModel::getBitMap,
+                postViewModel::setBitMap)
+          }
           item { PostDescription(postViewModel::setPostDescription) }
           item { HorizontalDivider(thickness = 1.dp, color = Color.LightGray) }
           item { MealSelector(selectedMeal, { meal -> selectedMeal = meal }, meals, ::setPostMeal) }
