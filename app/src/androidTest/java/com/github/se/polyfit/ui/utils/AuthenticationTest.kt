@@ -73,15 +73,16 @@ class AuthenticationTest {
   @Test
   fun signIn() {
     var isLoggedIn = false
-    every { firebaseAuth.currentUser } answers {
-      if (isLoggedIn) {
-        isLoggedIn = false
-        firebaseuser
-      } else {
-        isLoggedIn = true
-        null
-      }
-    }
+    every { firebaseAuth.currentUser } answers
+        {
+          if (isLoggedIn) {
+            isLoggedIn = false
+            firebaseuser
+          } else {
+            isLoggedIn = true
+            null
+          }
+        }
 
     authentication = Authentication(activity, user, mockk(), firebaseAuth, context)
     authentication.setCallback({}, 3)
