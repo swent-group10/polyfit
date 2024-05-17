@@ -69,9 +69,13 @@ class GraphViewModel @Inject constructor(private val dataProcessor: LocalDataPro
     viewModelScope.launch(Dispatchers.IO) {
       val baselineGraphData = initGraphData()
 
+      val weightPerDay = dataProcessor.getWeightSince(LocalDate.now().minusDays(numDays.toLong()))
+      val weightMap = weightPerDay.associateBy { it.date }
+
       val actualData =
           dataProcessor.calculateCaloriesSince(LocalDate.now().minusDays(numDays.toLong())).map {
-            GraphData(kCal = it.totalCalories, date = it.date, weight = 0.0)
+            val weight = weightMap[it.date]?.totalWeight?.amount ?: 0.0
+            GraphData(kCal = it.totalCalories, date = it.date, weight = weight)
           }
 
       actualData.forEach { data ->

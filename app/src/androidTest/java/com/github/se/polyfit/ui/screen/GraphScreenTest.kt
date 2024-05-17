@@ -16,7 +16,10 @@ import co.yml.charts.ui.linechart.model.LineStyle
 import co.yml.charts.ui.linechart.model.LineType
 import co.yml.charts.ui.linechart.model.ShadowUnderLine
 import com.github.se.polyfit.data.processor.DailyCalorieSummary
+import com.github.se.polyfit.data.processor.DailyWeightSummary
 import com.github.se.polyfit.data.processor.LocalDataProcessor
+import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
+import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.ui.components.lineChartData
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.utils.GraphData
@@ -31,7 +34,6 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit4.MockKRule
 import io.mockk.mockk
 import io.mockk.mockkStatic
-import io.mockk.spyk
 import io.mockk.unmockkStatic
 import io.mockk.verify
 import java.time.LocalDate
@@ -74,12 +76,22 @@ class GraphScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withCompos
             DailyCalorieSummary(dates[5], 2399.3),
             DailyCalorieSummary(dates[6], 2438.0))
 
-    val viewModel = spyk(GraphViewModel(dataProcessor))
-    every { viewModel.fetchCaloriesData() } returns fetchData(viewModel = viewModel)
+    every { dataProcessor.getWeightSince(any()) } returns
+        listOf(
+            DailyWeightSummary(dates[0], Nutrient("", mockData[0].weight, MeasurementUnit.G)),
+            DailyWeightSummary(dates[1], Nutrient("", mockData[1].weight, MeasurementUnit.G)),
+            DailyWeightSummary(dates[2], Nutrient("", mockData[2].weight, MeasurementUnit.G)),
+            DailyWeightSummary(dates[3], Nutrient("", mockData[3].weight, MeasurementUnit.G)),
+            DailyWeightSummary(dates[4], Nutrient("", mockData[4].weight, MeasurementUnit.G)),
+            DailyWeightSummary(dates[5], Nutrient("", mockData[5].weight, MeasurementUnit.G)),
+            DailyWeightSummary(dates[6], Nutrient("", mockData[6].weight, MeasurementUnit.G)),
+        )
 
     // Mock the filteredGraphData LiveData
 
-    composeTestRule.setContent { FullGraphScreen(viewModel = viewModel, goBack = mockNav::goBack) }
+    composeTestRule.setContent {
+      FullGraphScreen(viewModel = GraphViewModel(dataProcessor), goBack = mockNav::goBack)
+    }
   }
 
   private val mockData =
@@ -185,8 +197,7 @@ class GraphScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withCompos
     composeTestRule.waitForIdle()
 
     val nodes = composeTestRule.onAllNodesWithTag("weight")
-    val sortedWeight =
-        listOf("35.0 lbs", "45.0 lbs", "65.9 lbs", "78.0 lbs", "78.0 lbs", "80.2 lbs", "330.0 lbs")
+    val sortedWeight = listOf("35.0 g", "45.0 g", "65.9 g", "78.0 g", "78.0 g", "80.2 g", "330.0 g")
     nodes.assertCountEquals(sortedWeight.size)
     sortedWeight.forEachIndexed { index, weight ->
       nodes[index].assertTextContains(weight, ignoreCase = true)
@@ -210,7 +221,7 @@ class GraphScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withCompos
 
     val nodes = composeTestRule.onAllNodesWithTag("weight")
     val sortedWeightsDescending =
-        listOf("330.0 lbs", "80.2 lbs", "78.0 lbs", "78.0 lbs", "65.9 lbs", "45.0 lbs", "35.0 lbs")
+        listOf("330.0 g", "80.2 g", "78.0 g", "78.0 g", "65.9 g", "45.0 g", "35.0 g")
     nodes.assertCountEquals(sortedWeightsDescending.size)
     sortedWeightsDescending.forEachIndexed { index, weight ->
       nodes[index].assertTextContains(weight, ignoreCase = true)
