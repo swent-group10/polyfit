@@ -7,12 +7,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.tooling.preview.Preview
 import com.github.se.polyfit.ui.components.IngredientsOverview.BottomBarIngredient
 import com.github.se.polyfit.ui.components.IngredientsOverview.ListProducts
 import com.github.se.polyfit.ui.components.IngredientsOverview.TopBarIngredient
 import com.github.se.polyfit.ui.components.button.FloatingActionButtonIngredients
-import com.github.se.polyfit.ui.theme.PolyfitTheme
 
 // TODO THIS CLASS IS TEMPORARY, REMOVE IT WHEN DOING THE VIEWMODEL
 data class IngredientsTMP(
@@ -24,11 +22,7 @@ data class IngredientsTMP(
     val protein: Int
 )
 
-val i1 = IngredientsTMP("Apple", 100, 52, 14, 0, 0)
-val i2 = IngredientsTMP("Banana", 100, 89, 23, 0, 1)
-val i3 = IngredientsTMP("Carrot", 100, 41, 10, 0, 1)
-val i4 = IngredientsTMP("Date", 100, 282, 75, 0, 2)
-val i5 = IngredientsTMP("Eggplant", 100, 25, 6, 0, 1)
+/*val i1 = IngredientsTMP("Apple", 100, 52, 14, 0, 0)
 
 val listProducts = listOf(i1)
 
@@ -39,6 +33,7 @@ private fun PreviewIngredientsOverview() {
     IngredientsOverview({}, {}, {}, listProducts = listProducts)
   }
 }
+ */
 
 @Composable
 fun IngredientsOverview(
@@ -54,6 +49,6 @@ fun IngredientsOverview(
       floatingActionButton = { FloatingActionButtonIngredients(onClickFloatingButton) },
       containerColor = MaterialTheme.colorScheme.background,
       modifier = Modifier.testTag("IngredientsOverviewScaffold")) {
-        ListProducts(ListProducts = listProducts, Modifier.fillMaxSize().padding(it))
+        ListProducts(listProducts = listProducts, Modifier.fillMaxSize().padding(it))
       }
 }

@@ -14,20 +14,23 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.github.se.polyfit.R
 import com.github.se.polyfit.ui.screen.IngredientsTMP
 import com.github.se.polyfit.ui.theme.getGradient
 
 @Composable
-fun ListProducts(ListProducts: List<IngredientsTMP>, modifier: Modifier) {
+fun ListProducts(listProducts: List<IngredientsTMP>, modifier: Modifier) {
   val gradient = getGradient(active = true)
+  val context = LocalContext.current
 
   LazyColumn(
       modifier = modifier.testTag("ListProductColumn"),
       horizontalAlignment = Alignment.CenterHorizontally) {
-        items(ListProducts) {
+        items(listProducts) {
           Card(
               modifier = Modifier.fillMaxWidth(0.8f).padding(16.dp, 8.dp).testTag("ProductCard"),
               colors =
@@ -46,10 +49,20 @@ fun ListProducts(ListProducts: List<IngredientsTMP>, modifier: Modifier) {
                     text = "Serving Size",
                     unit = "g",
                     Modifier.testTag("ServingSize"))
-                TextIngredient(it.calories, "Calories", "kcal", Modifier.testTag("calories"))
-                TextIngredient(it.carbs, "Carbs", "g", Modifier.testTag("carbs"))
-                TextIngredient(it.fat, "Fat", "g", Modifier.testTag("fat"))
-                TextIngredient(it.protein, "Protein", "g", Modifier.testTag("Protein"))
+                TextIngredient(
+                    it.calories,
+                    context.getString(R.string.Calories),
+                    "kcal",
+                    Modifier.testTag("calories"))
+                TextIngredient(
+                    it.carbs, context.getString(R.string.Carbs), "g", Modifier.testTag("carbs"))
+                TextIngredient(
+                    it.fat, context.getString(R.string.Fat), "g", Modifier.testTag("fat"))
+                TextIngredient(
+                    it.protein,
+                    context.getString(R.string.Protein),
+                    "g",
+                    Modifier.testTag("Protein"))
               }
         }
       }

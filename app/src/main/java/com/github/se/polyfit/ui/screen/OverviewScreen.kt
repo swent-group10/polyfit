@@ -107,9 +107,7 @@ fun OverviewScreen(
             val bitmap = ImageDecoder.decodeBitmap(createSource(context.contentResolver, uri))
             imageBitmap = bitmap
           } catch (e: Exception) {
-            Log.e(
-                "OverviewScreen",
-                "Error decoding image: $e," + " are you sure the image is a bitmap?")
+            Log.e("OverviewScreen", "Error decoding image: $e, are you sure the image is a bitmap?")
           }
         }
       }

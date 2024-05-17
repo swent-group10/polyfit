@@ -44,4 +44,8 @@
     <string name="PermissionDenied">Permission denied</string>
     <string name="TakeToTakePicture">Tap to take a photo</string>
     <string name="CreatePostImageDesription">Captured image</string>
+    <string name="Calories">"Calories"</string>
+    <string name="Protein">"Protein"</string>
+    <string name="Carbs">"Carbs"</string>
+    <string name="Fat">"Fat"</string>
 </resources>
