@@ -64,6 +64,17 @@ class NavigationTest {
   }
 
   @Test
+  fun navigateToEditMeal() {
+    val mealDatabaseId = "1"
+    route = Route.EditMeal + "/$mealDatabaseId"
+    every { navHostController.navigate(route) } returns Unit
+
+    navigation.navigateToEditMeal(mealDatabaseId)
+
+    verify { navHostController.navigate(route) }
+  }
+
+  @Test
   fun navigateToAddMealWithIdNull() {
     route = Route.AddMeal
     every { navHostController.navigate(any<String>()) } returns Unit
