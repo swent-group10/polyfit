@@ -23,14 +23,14 @@ import com.github.se.polyfit.ui.screen.IngredientsTMP
 import com.github.se.polyfit.ui.theme.getGradient
 
 @Composable
-fun ListProducts(listProducts: List<IngredientsTMP>, modifier: Modifier) {
+fun ListProducts(listIngredients: List<IngredientsTMP>, modifier: Modifier) {
   val gradient = getGradient(active = true)
   val context = LocalContext.current
 
   LazyColumn(
       modifier = modifier.testTag("ListProductColumn"),
       horizontalAlignment = Alignment.CenterHorizontally) {
-        items(listProducts) {
+        items(listIngredients) { ingredient ->
           Card(
               modifier = Modifier.fillMaxWidth(0.8f).padding(16.dp, 8.dp).testTag("ProductCard"),
               colors =
@@ -39,27 +39,30 @@ fun ListProducts(listProducts: List<IngredientsTMP>, modifier: Modifier) {
               border = BorderStroke(2.dp, gradient),
               elevation = CardDefaults.cardElevation(0.dp)) {
                 Text(
-                    text = it.name,
+                    text = ingredient.name,
                     modifier = Modifier.padding(32.dp, 8.dp).testTag("ProductName"),
                     color = MaterialTheme.colorScheme.outline,
                     fontSize = MaterialTheme.typography.headlineMedium.fontSize)
 
                 TextIngredient(
-                    value = it.servingSize,
+                    value = ingredient.servingSize,
                     text = "Serving Size",
                     unit = "g",
                     Modifier.testTag("ServingSize"))
                 TextIngredient(
-                    it.calories,
+                    ingredient.calories,
                     context.getString(R.string.Calories),
                     "kcal",
                     Modifier.testTag("calories"))
                 TextIngredient(
-                    it.carbs, context.getString(R.string.Carbs), "g", Modifier.testTag("carbs"))
+                    ingredient.carbs,
+                    context.getString(R.string.Carbs),
+                    "g",
+                    Modifier.testTag("carbs"))
                 TextIngredient(
-                    it.fat, context.getString(R.string.Fat), "g", Modifier.testTag("fat"))
+                    ingredient.fat, context.getString(R.string.Fat), "g", Modifier.testTag("fat"))
                 TextIngredient(
-                    it.protein,
+                    ingredient.protein,
                     context.getString(R.string.Protein),
                     "g",
                     Modifier.testTag("Protein"))

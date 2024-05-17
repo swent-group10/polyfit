@@ -6,11 +6,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import com.github.se.polyfit.R
 import com.github.se.polyfit.ui.components.IngredientsOverview.BottomBarIngredient
 import com.github.se.polyfit.ui.components.IngredientsOverview.ListProducts
-import com.github.se.polyfit.ui.components.IngredientsOverview.TopBarIngredient
 import com.github.se.polyfit.ui.components.button.FloatingActionButtonIngredients
+import com.github.se.polyfit.ui.components.scaffold.SimpleTopBar
 
 // TODO THIS CLASS IS TEMPORARY, REMOVE IT WHEN DOING THE VIEWMODEL
 data class IngredientsTMP(
@@ -42,13 +44,14 @@ fun IngredientsOverview(
     onClickFloatingButton: () -> Unit,
     listProducts: List<IngredientsTMP>
 ) {
+  val context = LocalContext.current
 
   Scaffold(
-      topBar = { TopBarIngredient { navigateBack() } },
+      topBar = { SimpleTopBar(title = context.getString(R.string.Product)) { navigateBack() } },
       bottomBar = { BottomBarIngredient(navigateForward = navigateForward) },
       floatingActionButton = { FloatingActionButtonIngredients(onClickFloatingButton) },
       containerColor = MaterialTheme.colorScheme.background,
       modifier = Modifier.testTag("IngredientsOverviewScaffold")) {
-        ListProducts(listProducts = listProducts, Modifier.fillMaxSize().padding(it))
+        ListProducts(listIngredients = listProducts, Modifier.fillMaxSize().padding(it))
       }
 }

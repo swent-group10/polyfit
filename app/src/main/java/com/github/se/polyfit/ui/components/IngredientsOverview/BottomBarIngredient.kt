@@ -8,12 +8,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import com.github.se.polyfit.R
 import com.github.se.polyfit.ui.components.button.PrimaryButton
 
 @Composable
 fun BottomBarIngredient(navigateForward: () -> Unit) {
+  val context = LocalContext.current
   Box(
       modifier =
           Modifier.fillMaxWidth()
@@ -22,7 +26,7 @@ fun BottomBarIngredient(navigateForward: () -> Unit) {
               .padding(16.dp),
       contentAlignment = Alignment.Center) {
         PrimaryButton(
-            text = "Generate\nRecipe",
+            text = ContextCompat.getString(context, R.string.GenerateRecipe),
             modifier = Modifier.align(Alignment.Center).testTag("GenerateButton"),
             onClick = navigateForward,
             color = MaterialTheme.colorScheme.outline)

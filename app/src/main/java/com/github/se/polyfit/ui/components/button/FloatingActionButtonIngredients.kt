@@ -29,7 +29,7 @@ fun FloatingActionButtonIngredients(onClickFloatingButton: () -> Unit) {
   ) {
     Icon(
         imageVector = Icons.Default.Add,
-        contentDescription = "Add Ingredient",
+        contentDescription = "Add Icon",
         tint = MaterialTheme.colorScheme.outlineVariant,
         modifier = Modifier.size(32.dp).testTag("AddIcon"))
   }

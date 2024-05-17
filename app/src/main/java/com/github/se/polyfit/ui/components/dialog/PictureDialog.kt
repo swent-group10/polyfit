@@ -26,7 +26,7 @@ fun PictureDialog(
     onButtonsClick: List<() -> Unit>,
     buttonsName: List<String>,
 ) {
-  assert(buttonsName.size == onButtonsClick.size)
+  require(buttonsName.size == onButtonsClick.size)
   val context = LocalContext.current
   AlertDialog(
       onDismissRequest = onDismiss,

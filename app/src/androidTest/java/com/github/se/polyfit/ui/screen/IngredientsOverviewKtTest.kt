@@ -55,6 +55,8 @@ class IngredientsOverviewTest {
     composeTestRule.setContent { IngredientsOverview({}, {}, {}, l1) }
 
     ComposeScreen.onComposeScreen<IngredientsOverviewTopBar>(composeTestRule) {
+      assertExists()
+      assertIsDisplayed()
       backButton {
         assertIsDisplayed()
         assertHasClickAction()

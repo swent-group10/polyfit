@@ -9,20 +9,28 @@ class IngredientsOverviewScreen(semanticsProvider: SemanticsNodeInteractionsProv
         semanticsProvider = semanticsProvider,
         viewBuilderAction = { hasTestTag("IngredientsOverviewScaffold") }) {
 
-  val topBar: KNode = child { hasTestTag("TopBarIngredient") }
+  val topBar: KNode = child { hasTestTag("TopBar") }
   val bottomBar: KNode = child { hasTestTag("GenerateBox") }
   val floatingActionButton: KNode = child { hasTestTag("FloatingButton") }
   val listProducts: KNode = child { hasTestTag("ListProductColumn") }
 }
 
-class IngredientsOverviewTopBar(semanticsProvider: SemanticsNodeInteractionsProvider) :
-    ComposeScreen<IngredientsOverviewTopBar>(
+class IngredientsOverviewTopBarOld(semanticsProvider: SemanticsNodeInteractionsProvider) :
+    ComposeScreen<IngredientsOverviewTopBarOld>(
         semanticsProvider = semanticsProvider,
         viewBuilderAction = { hasTestTag("TopBarIngredient") }) {
 
   val backButton: KNode = child { hasTestTag("BackButton") }
   val title: KNode = child { hasTestTag("ProductTitle") }
   val icon: KNode = backButton.child { hasTestTag("BackButtonIcon") }
+}
+
+class IngredientsOverviewTopBar(semanticsProvider: SemanticsNodeInteractionsProvider) :
+    ComposeScreen<IngredientsOverviewTopBar>(
+        semanticsProvider = semanticsProvider, viewBuilderAction = { hasTestTag("TopBar") }) {
+
+  val title: KNode = child { hasTestTag("Product Title") }
+  val backButton: KNode = child { hasTestTag("BackButton") }
 }
 
 class IngredientsOverviewBottomBarIngredient(semanticsProvider: SemanticsNodeInteractionsProvider) :

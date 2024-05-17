@@ -33,7 +33,7 @@ fun SimpleTopBar(title: String, navigateBack: () -> Unit) {
               Icon(
                   imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                   contentDescription = "Back",
-                  modifier = Modifier.testTag("BackButton"),
+                  modifier = Modifier.testTag("BackButtonIcon"),
                   tint = PrimaryPurple)
             },
             modifier = Modifier.testTag("BackButton"))
