@@ -46,6 +46,33 @@ class NavigationTest {
   }
 
   @Test
+  fun navigateToCreatePost() {
+    route = Route.CreatePost
+    every { navHostController.navigate(route) } returns Unit
+    navigation.navigateToCreatePost()
+
+    verify { navHostController.navigate(Route.CreatePost) }
+  }
+
+  @Test
+  fun navigateToSettingsHome() {
+    route = Route.SettingsHome
+    every { navHostController.navigate(route) } returns Unit
+    navigation.navigateToSettingsHome()
+
+    verify { navHostController.navigate(Route.SettingsHome) }
+  }
+
+  @Test
+  fun goBackTo() {
+    route = Route.Home
+    every { navHostController.popBackStack(route, any()) } returns true
+    navigation.goBackTo(Route.Home)
+
+    verify { navHostController.popBackStack(Route.Home, false) }
+  }
+
+  @Test
   fun navigateToAddMeal() {
     route = Route.AddMeal
     every { navHostController.navigate(route) } returns Unit
@@ -61,6 +88,17 @@ class NavigationTest {
     navigation.navigateToNutrition()
 
     verify { navHostController.navigate(Route.Nutrition) }
+  }
+
+  @Test
+  fun navigateToEditMeal() {
+    val mealDatabaseId = "1"
+    route = Route.EditMeal + "/$mealDatabaseId"
+    every { navHostController.navigate(route) } returns Unit
+
+    navigation.navigateToEditMeal(mealDatabaseId)
+
+    verify { navHostController.navigate(route) }
   }
 
   @Test
