@@ -82,7 +82,6 @@ class AddMealFlowTest {
       composeTestRule.onNodeWithText("Enter an Ingredient...").performTextInput("apple")
       composeTestRule.onNodeWithTag("NutritionSizeInput Calories").performTextInput("1")
       composeTestRule.onNodeWithTag("NutritionSizeInput Total Weight").performTextInput("1")
-      composeTestRule.onNodeWithTag("NutritionSizeInput Total Weight").performImeAction()
       finishAddIngredientButton { performClick() }
     }
 
@@ -107,7 +106,6 @@ class AddMealFlowTest {
       composeTestRule.onNodeWithText("Enter an Ingredient...").performTextInput("apple")
       composeTestRule.onNodeWithTag("NutritionSizeInput Calories").performTextInput("1")
       composeTestRule.onNodeWithTag("NutritionSizeInput Total Weight").performTextInput("1")
-      composeTestRule.onNodeWithTag("NutritionSizeInput Total Weight").performImeAction()
       finishAddIngredientButton { performClick() }
     }
 
