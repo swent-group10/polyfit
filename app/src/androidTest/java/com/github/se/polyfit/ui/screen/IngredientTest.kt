@@ -9,7 +9,6 @@ import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.data.repository.MealRepository
@@ -170,8 +169,6 @@ class IngredientTest : TestCase() {
       composeTestRule.onNodeWithTag("NutritionSizeInput Calories").performTextInput("1")
 
       composeTestRule.onNodeWithTag("NutritionSizeInput Total Weight").performTextInput("1")
-
-      composeTestRule.onNodeWithTag("NutritionSizeInput Total Weight").performImeAction()
 
       finishAddIngredientButton {
         assertIsDisplayed()
