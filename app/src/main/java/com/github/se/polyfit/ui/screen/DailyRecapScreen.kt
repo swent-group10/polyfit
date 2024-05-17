@@ -33,7 +33,7 @@ import com.github.se.polyfit.viewmodel.dailyRecap.DailyRecapViewModel
 @Composable
 fun DailyRecapScreen(
     navigateBack: () -> Unit,
-    navigateTo: (String?) -> Unit,
+    navigateTo: (String) -> Unit,
     dailyRecapViewModel: DailyRecapViewModel = hiltViewModel(),
 ) {
   val context = LocalContext.current
