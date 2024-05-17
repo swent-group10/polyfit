@@ -90,9 +90,11 @@ fun OverviewScreen(
             startCamera.launch(takePictureIntent)
           } catch (e: Exception) {
             // Handle the exception if the camera intent cannot be launched
+            Log.e("OverviewScreen", "Error launching camera: $e")
           }
         } else {
           // Permission is denied. Handle the denial appropriately.
+          Log.w("OverviewScreen", "Camera permission denied")
         }
       }
 
