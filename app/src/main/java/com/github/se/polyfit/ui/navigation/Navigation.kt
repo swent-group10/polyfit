@@ -52,6 +52,14 @@ class Navigation(private val navHostController: NavHostController) {
     navigateTo(Route.CreatePost)
   }
 
+  fun navigateToSettingsHome() {
+    navigateTo(Route.SettingsHome)
+  }
+
+  fun navigateToAccountSettings() {
+    navigateTo(Route.AccountSettings)
+  }
+
   private fun navigateTo(route: String) {
     Log.i("Navigation", "Navigating to $route")
     navHostController.navigate(route)

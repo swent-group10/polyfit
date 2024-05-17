@@ -4,6 +4,8 @@ import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -12,6 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.flow.AddMealFlow
+import com.github.se.polyfit.ui.flow.SettingFlow
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.navigation.Route
 import com.github.se.polyfit.ui.screen.CreatePostScreen
@@ -70,6 +73,14 @@ class MainActivity : ComponentActivity() {
                 goBack = navigation::goBack,
                 goForward = { navigation.goBackTo(Route.DailyRecap) },
                 mealId = mealId)
+          }
+
+          composable(Route.Settings) {
+            GenericScreen(
+                navController = navController,
+                content = { paddingValues ->
+                  SettingFlow(modifier = Modifier.padding(paddingValues))
+                })
           }
 
           composable(Route.PostInfo) { PostInfoScreen(navigation, navController) }
