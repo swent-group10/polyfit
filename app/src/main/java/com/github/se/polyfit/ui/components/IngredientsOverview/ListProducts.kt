@@ -46,7 +46,7 @@ fun ListProducts(listIngredients: List<IngredientsTMP>, modifier: Modifier) {
 
                 TextIngredient(
                     value = ingredient.servingSize,
-                    text = "Serving Size",
+                    text = context.getString(R.string.ServingSize),
                     unit = "g",
                     Modifier.testTag("ServingSize"))
                 TextIngredient(
