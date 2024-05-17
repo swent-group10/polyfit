@@ -34,8 +34,8 @@ fun PrimaryButton(
   Button(
       onClick = {
         if (!pressed) {
-          onClick()
           pressed = true
+          onClick()
         }
       },
       enabled = isEnabled,
