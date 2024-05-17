@@ -22,6 +22,7 @@ import com.github.se.polyfit.data.api.SpoonacularApiCaller
 import com.github.se.polyfit.data.local.dao.MealDao
 import com.github.se.polyfit.data.processor.LocalDataProcessor
 import com.github.se.polyfit.model.data.User
+import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.flow.AddMealFlow
@@ -106,6 +107,7 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
     mealViewModel.setMealData(Meal.default())
 
     val mockMeal = Meal.default()
+    mockMeal.addIngredient(Ingredient.default())
     every { mealViewModel.meal } returns MutableStateFlow(mockMeal)
 
     composeTestRule.setContent {

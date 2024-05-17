@@ -28,6 +28,7 @@ import co.yml.charts.ui.linechart.model.LineType
 import co.yml.charts.ui.linechart.model.ShadowUnderLine
 import com.github.se.polyfit.data.processor.LocalDataProcessor
 import com.github.se.polyfit.model.data.User
+import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.components.lineChartData
 import com.github.se.polyfit.ui.flow.AddMealFlow
@@ -36,6 +37,7 @@ import com.github.se.polyfit.ui.utils.GraphData
 import com.github.se.polyfit.ui.utils.OverviewTags
 import com.github.se.polyfit.ui.viewModel.DisplayScreen
 import com.github.se.polyfit.ui.viewModel.GraphViewModel
+import com.github.se.polyfit.viewmodel.meal.MealViewModel
 import com.github.se.polyfit.viewmodel.meal.OverviewViewModel
 import com.github.se.polyfit.viewmodel.post.CreatePostViewModel
 import com.kaspersky.components.composesupport.config.withComposeSupport
@@ -68,7 +70,9 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
   fun setup() {
     val dataProcessor = mockk<LocalDataProcessor>(relaxed = true)
     val mockPostViewModel: CreatePostViewModel = mockk(relaxed = true)
+    val mockMealViewModel: MealViewModel = mockk(relaxed = true)
 
+    every { mockMealViewModel.meal.value } returns Meal.default()
     every { mockPostViewModel.meals.value } returns listOf()
 
     composeTestRule.setContent {
@@ -87,7 +91,7 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
         }
 
         composable(Route.AddMeal) {
-          AddMealFlow(goBack = {}, goForward = {}, mealId = null, mockk(relaxed = true))
+          AddMealFlow(goBack = {}, goForward = {}, mealId = null, mockMealViewModel)
         }
         composable(Route.Graph) {
           FullGraphScreen(goBack = {}, viewModel = GraphViewModel(dataProcessor))
