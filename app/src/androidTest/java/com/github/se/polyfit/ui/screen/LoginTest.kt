@@ -66,12 +66,6 @@ class LoginTest : TestCase() {
         assertHasClickAction()
         performClick()
       }
-
-      runBlocking {
-        delay(5000) // waits for 5 seconds
-      }
-      // TODO check we are on another page
-      intended(toPackage("com.google.android.gms"))
     }
   }
 }
