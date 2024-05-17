@@ -57,7 +57,6 @@ class Authentication(
   }
 
   fun isAuthenticated(): Boolean {
-    Log.i("Authentication", "isAuthenticated: ${firebaseAuth.currentUser}")
     return firebaseAuth.currentUser != null || user.isSignedIn()
   }
 

@@ -1,5 +1,6 @@
 package com.github.se.polyfit.ui.screen
 
+import android.graphics.Bitmap
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.data.remote.firebase.PostFirebaseRepository
@@ -10,6 +11,7 @@ import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
+import com.github.se.polyfit.model.post.PostLocationModel
 import com.github.se.polyfit.ui.components.textField.MealInputTextFieldScreen
 import com.github.se.polyfit.viewmodel.post.CreatePostViewModel
 import io.github.kakaocup.compose.node.element.ComposeScreen
@@ -31,6 +33,8 @@ class CreatePostTest : TestCase() {
   val mockNavBack: () -> Unit = mockk()
   private val mockMealRepository = mockk<MealRepository>(relaxed = true)
   private val mockPostFirebaseRepository = mockk<PostFirebaseRepository>(relaxed = true)
+  private val mockPostLocationModel = mockk<PostLocationModel>(relaxed = true)
+
   private lateinit var viewModel: CreatePostViewModel
 
   fun setup(meals: List<Meal> = listOf()) {
@@ -38,7 +42,8 @@ class CreatePostTest : TestCase() {
     every { mockNavForward() } just Runs
     every { mockNavBack() } just Runs
 
-    viewModel = CreatePostViewModel(mockMealRepository, mockPostFirebaseRepository)
+    viewModel = CreatePostViewModel(mockMealRepository, mockPostFirebaseRepository, mockk())
+    viewModel.setBitMap(Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888))
     composeTestRule.setContent { CreatePostScreen(mockNavBack, mockNavForward, viewModel) }
   }
 

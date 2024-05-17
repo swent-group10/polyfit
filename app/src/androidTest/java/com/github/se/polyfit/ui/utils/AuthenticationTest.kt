@@ -44,21 +44,6 @@ class AuthenticationTest {
   }
 
   @Test
-  fun noCallBack() {
-
-    val isLoggedIn = false
-    // every { firebaseAuth.currentUser } returns if (isLoggedIn) firebaseuser else null
-
-    authentication =
-        Authentication(
-            activity = activity,
-            user = user,
-            firebaseAuth = firebaseAuth,
-            context = context,
-            userFirebaseRepository = mockk(relaxed = true))
-  }
-
-  @Test
   fun isAuthenticated() {
     var isLoggedIn = false
     every { firebaseAuth.currentUser } answers
