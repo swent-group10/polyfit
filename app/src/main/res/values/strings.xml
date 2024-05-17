@@ -5,6 +5,7 @@
     <string name="meal_tracking_headline">Track your meals</string>
     <string name="take_picture_dialog">Take Picture</string>
     <string name="import_picture_dialog">Import Picture</string>
+    <string name="scan_picture_dialog">Scan Picture</string>
     <string name="dialog_headline">Choose Option</string>
     <string name="home_nav_label">Home</string>
     <string name="map_nav_posts">Posts</string>
@@ -38,10 +39,17 @@
     <string name="privacyPolicy">"Privacy Policy"</string>
     <string name="about">"About"</string>
     <string name="logout">"Logout"</string>
+    <string name="GenerateRecipe">"Generate\nRecipe"</string>
+    <string name="Product">"Product"</string>
     <string name="recommendedRecipe">Recommended Recipes</string>
     <string name="PermissionDenied">Permission denied</string>
     <string name="TakeToTakePicture">Tap to take a photo</string>
     <string name="CreatePostImageDesription">Captured image</string>
+    <string name="ServingSize">"Serving Size</string>
+    <string name="Calories">"Calories"</string>
+    <string name="Protein">"Protein"</string>
+    <string name="Carbs">"Carbs"</string>
+    <string name="Fat">"Fat"</string>
     <string name="accountSettings">Account Information</string>
     <string name="accountSettingsCancel">Cancel</string>
     <string name="accountSettingsSave">Save</string>
