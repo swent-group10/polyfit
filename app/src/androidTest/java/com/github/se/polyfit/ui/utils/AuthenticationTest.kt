@@ -69,4 +69,23 @@ class AuthenticationTest {
     authentication.signOut()
     assert(!authentication.isAuthenticated())
   }
+
+  @Test
+  fun signIn() {
+    var isLoggedIn = false
+    every { firebaseAuth.currentUser } answers {
+      if (isLoggedIn) {
+        isLoggedIn = false
+        firebaseuser
+      } else {
+        isLoggedIn = true
+        null
+      }
+    }
+
+    authentication = Authentication(activity, user, mockk(), firebaseAuth, context)
+    authentication.setCallback({}, 3)
+    authentication.signIn()
+    assert(authentication.isAuthenticated())
+  }
 }
