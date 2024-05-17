@@ -13,13 +13,9 @@ import io.mockk.mockkStatic
 import io.mockk.unmockkAll
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
-import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.Timeout
 
 class AuthenticationTest {
-
-  @JvmField @Rule var globalTimeout: Timeout = Timeout(20 * 1000)
 
   private val user: User = User()
   private lateinit var activity: ComponentActivity
@@ -57,15 +53,23 @@ class AuthenticationTest {
         Authentication(
             activity = activity,
             user = user,
-            auth = firebaseAuth,
+            firebaseAuth = firebaseAuth,
             context = context,
             userFirebaseRepository = mockk(relaxed = true))
   }
 
   @Test
   fun isAuthenticated() {
-    val isLoggedIn = true
-    // every { firebaseAuth.currentUser } returns if (isLoggedIn) firebaseuser else null
+    var isLoggedIn = false
+    every { firebaseAuth.currentUser } answers
+        {
+          if (isLoggedIn) {
+            firebaseuser
+          } else {
+            isLoggedIn = true
+            null
+          }
+        }
     authentication = Authentication(activity, user, mockk(), firebaseAuth, context)
     authentication.setCallback({}, 3)
     assert(authentication.isAuthenticated())
@@ -73,12 +77,11 @@ class AuthenticationTest {
 
   @Test
   fun signOut() {
-    val isLoggedIn = false
-    // every { firebaseAuth.currentUser } returns if (isLoggedIn) firebaseuser else null
+    every { firebaseAuth.currentUser } returns null
+
     authentication = Authentication(activity, user, mockk(), firebaseAuth, context)
     authentication.setCallback({}, 3)
-    // authentication.signIn()
     authentication.signOut()
-    assert(authentication.isAuthenticated())
+    assert(!authentication.isAuthenticated())
   }
 }

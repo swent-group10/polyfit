@@ -20,7 +20,7 @@ class Authentication(
     activity: ComponentActivity,
     private val user: User,
     private val userFirebaseRepository: UserFirebaseRepository,
-    private val auth: FirebaseAuth = FirebaseAuth.getInstance(),
+    private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance(),
     private var context: Context = activity.applicationContext,
 ) {
 
@@ -34,7 +34,7 @@ class Authentication(
   }
 
   private fun initLaunch(activity: ComponentActivity) {
-    if (auth.currentUser != null) {
+    if (firebaseAuth.currentUser != null) {
       isAnswered = true
       setUserInfo(GoogleSignIn.getLastSignedInAccount(context))
       return
@@ -57,8 +57,8 @@ class Authentication(
   }
 
   fun isAuthenticated(): Boolean {
-    Log.i("Authentication", "isAuthenticated: ${auth.currentUser}")
-    return auth.currentUser != null && user.isSignedIn()
+    Log.i("Authentication", "isAuthenticated: ${firebaseAuth.currentUser}")
+    return firebaseAuth.currentUser != null || user.isSignedIn()
   }
 
   fun signIn() {

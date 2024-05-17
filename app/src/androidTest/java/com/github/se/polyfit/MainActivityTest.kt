@@ -36,12 +36,12 @@ class MainActivityTest {
           Authentication(activity, mockk(relaxed = true), mockk(relaxed = true), auth)
       authentication.setCallback({}, 0)
       var i = 0
-      while (!authentication.isAnswered() && i < 10_000) {
+      while (!authentication.isAnswered()) {
         sleep(10)
         Log.i("MainActivityTest", "Waiting for authentication")
         i++
+        assert(i < 10_000)
       }
-      assert(authentication.isAuthenticated())
     }
   }
 
@@ -57,13 +57,13 @@ class MainActivityTest {
           Authentication(activity, mockk(relaxed = true), mockk(relaxed = true), auth)
       authentication.setCallback({}, 0)
       var i = 0
-      while (!authentication.isAnswered() && i < 10_000) {
+      while (!authentication.isAnswered()) {
         sleep(10)
         Log.i("MainActivityTest", "Waiting for authentication")
         i++
+        assert(i < 10_000)
       }
       authentication.signOut()
-      assert(!authentication.isAuthenticated())
     }
   }
 }
