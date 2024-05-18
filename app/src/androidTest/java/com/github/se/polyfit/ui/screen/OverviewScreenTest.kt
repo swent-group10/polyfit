@@ -389,6 +389,21 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
         .assertIsDisplayed()
   }
 
+  @Test
+  fun testImportButton() {
+    setup()
+    ComposeScreen.onComposeScreen<CalorieCard>(composeTestRule) {
+      composeTestRule.onNodeWithTag(OverviewTags.overviewPictureBtn).performClick()
+    }
+
+    composeTestRule
+        .onNodeWithTag("1Button")
+        .assertExists()
+        .assertIsDisplayed()
+        .assertHasClickAction()
+        .performClick()
+  }
+
   @OptIn(ExperimentalTestApi::class)
   @Test
   fun graphScreenAccessed() {

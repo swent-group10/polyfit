@@ -1,7 +1,10 @@
 package com.github.se.polyfit.viewmodel.meal
 
+import android.content.Context
 import android.graphics.Bitmap
+import android.net.Uri
 import android.util.Log
+import androidx.test.core.app.ApplicationProvider
 import com.github.se.polyfit.data.api.SpoonacularApiCaller
 import com.github.se.polyfit.data.local.dao.MealDao
 import com.github.se.polyfit.model.data.User
@@ -15,6 +18,9 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.verify
+import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertNull
+import junit.framework.TestCase.assertTrue
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -25,9 +31,13 @@ class OverviewViewModelTest {
   private val mockSpoonacularApiCaller: SpoonacularApiCaller = mockk()
 
   private lateinit var overviewViewModel: OverviewViewModel
+  private lateinit var context: Context
 
   @Before
   fun setup() {
+
+    context = ApplicationProvider.getApplicationContext()
+
     mockkStatic(Log::class)
     every { Log.e(any(), any()) } returns 0
     every { Log.i(any(), any()) } returns 0
@@ -549,5 +559,26 @@ class OverviewViewModelTest {
     val overviewViewModel = OverviewViewModel(mockMealDao, mockSpoonacularApiCaller, user)
     val result = overviewViewModel.getUserName()
     Assert.assertEquals(user.email, result)
+  }
+
+  @Test
+  fun uriToBitmap_returnsBitmap() {
+    val uri = Uri.parse("android.resource://com.github.se.polyfit/drawable/picture_example")
+    val bitmap = overviewViewModel.uriToBitmap(context, uri)
+    assertTrue(bitmap is Bitmap)
+  }
+
+  @Test
+  fun handleSelectedImage_withUri_returnsString() {
+    val uri = Uri.parse("android.resource://com.github.se.polyfit/drawable/picture_example")
+    every { overviewViewModel.storeMeal(any()) } returns "1"
+    val result = overviewViewModel.handleSelectedImage(context, uri, overviewViewModel)
+    assertEquals("1", result)
+  }
+
+  @Test
+  fun handleSelectedImage_withoutUri_returnsNull() {
+    val result = overviewViewModel.handleSelectedImage(context, null, overviewViewModel)
+    assertNull(result)
   }
 }
