@@ -50,7 +50,7 @@ class MainActivity : ComponentActivity() {
         val navController = rememberNavController()
         val navigation = Navigation(navController)
         NavHost(navController = navController, startDestination = Route.Register) {
-          composable(Route.Graph) { FullGraphScreen(goBack = navigation::goBack) }
+          composable(Route.Graph) { FullGraphScreen(goBack = navigation::navigateToHome) }
           composable(Route.Home) {
             GenericScreen(
                 navController = navController,
