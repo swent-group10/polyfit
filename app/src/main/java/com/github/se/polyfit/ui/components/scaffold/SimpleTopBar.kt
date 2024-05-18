@@ -22,36 +22,31 @@ import com.github.se.polyfit.ui.utils.titleCase
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SimpleTopBar(title: String, navigateBack: () -> Unit) {
-    var goBackClicked by remember { mutableStateOf(false) }
-    TopAppBar(
-        title = {
-            Text(
-                title,
-                modifier = Modifier.testTag("${titleCase(title)} Title"),
-                color = MaterialTheme.colorScheme.secondary,
-                fontSize = MaterialTheme.typography.headlineMedium.fontSize
-            )
-        },
-        navigationIcon = {
-            IconButton(
-                onClick = {
-                    if (!goBackClicked) {
-                        navigateBack()
-                        goBackClicked = true
-
-                    }
-                },
-                content = {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back",
-                        modifier = Modifier.testTag("BackButtonIcon"),
-                        tint = PrimaryPurple
-                    )
-                },
-                modifier = Modifier.testTag("BackButton")
-            )
-        },
-        modifier = Modifier.testTag("TopBar")
-    )
+  var goBackClicked by remember { mutableStateOf(false) }
+  TopAppBar(
+      title = {
+        Text(
+            title,
+            modifier = Modifier.testTag("${titleCase(title)} Title"),
+            color = MaterialTheme.colorScheme.secondary,
+            fontSize = MaterialTheme.typography.headlineMedium.fontSize)
+      },
+      navigationIcon = {
+        IconButton(
+            onClick = {
+              if (!goBackClicked) {
+                navigateBack()
+                goBackClicked = true
+              }
+            },
+            content = {
+              Icon(
+                  imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                  contentDescription = "Back",
+                  modifier = Modifier.testTag("BackButtonIcon"),
+                  tint = PrimaryPurple)
+            },
+            modifier = Modifier.testTag("BackButton"))
+      },
+      modifier = Modifier.testTag("TopBar"))
 }

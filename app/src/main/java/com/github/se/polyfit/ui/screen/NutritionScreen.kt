@@ -42,57 +42,51 @@ fun NutritionScreen(
     navigateBack: () -> Unit,
     navigateForward: () -> Unit
 ) {
-    val isComplete by mealViewModel.isComplete.collectAsState()
+  val isComplete by mealViewModel.isComplete.collectAsState()
 
-    Scaffold(
-        topBar = { TopBar(navigateBack = navigateBack) },
-        bottomBar = {
-            BottomBar(
-                setMeal = mealViewModel::setMeal,
-                isComplete = isComplete,
-                navigateForward = navigateForward,
-                updateMealData = mealViewModel::setMealCreatedAt
-            )
-        }) { innerPadding ->
+  Scaffold(
+      topBar = { TopBar(navigateBack = navigateBack) },
+      bottomBar = {
+        BottomBar(
+            setMeal = mealViewModel::setMeal,
+            isComplete = isComplete,
+            navigateForward = navigateForward,
+            updateMealData = mealViewModel::setMealCreatedAt)
+      }) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) { NutritionalInformation(mealViewModel) }
-    }
+      }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TopBar(navigateBack: () -> Unit) {
-    var goBackCliked by remember { mutableStateOf(false) }
-    TopAppBar(
-        title = {
-            Text(
-                "Nutrition Facts",
-                modifier = Modifier.testTag("Title"),
-                color = MaterialTheme.colorScheme.secondary,
-                style = MaterialTheme.typography.headlineMedium
-            )
-        },
-        navigationIcon = {
-            IconButton(
-                onClick = {
-                    if (!goBackCliked) {
-                        navigateBack()
-                        goBackCliked = true
-
-                    }
-                },
-                content = {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back",
-                        modifier = Modifier.testTag("BackButton"),
-                        tint = PrimaryPurple
-                    )
-                },
-                modifier = Modifier.testTag("BackButton")
-            )
-        },
-        modifier = Modifier.testTag("TopBar")
-    )
+  var goBackCliked by remember { mutableStateOf(false) }
+  TopAppBar(
+      title = {
+        Text(
+            "Nutrition Facts",
+            modifier = Modifier.testTag("Title"),
+            color = MaterialTheme.colorScheme.secondary,
+            style = MaterialTheme.typography.headlineMedium)
+      },
+      navigationIcon = {
+        IconButton(
+            onClick = {
+              if (!goBackCliked) {
+                navigateBack()
+                goBackCliked = true
+              }
+            },
+            content = {
+              Icon(
+                  imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                  contentDescription = "Back",
+                  modifier = Modifier.testTag("BackButton"),
+                  tint = PrimaryPurple)
+            },
+            modifier = Modifier.testTag("BackButton"))
+      },
+      modifier = Modifier.testTag("TopBar"))
 }
 
 @Composable
@@ -102,49 +96,38 @@ private fun BottomBar(
     navigateForward: () -> Unit,
     updateMealData: (createdAt: LocalDate) -> Unit
 ) {
-    BottomAppBar(
-        modifier = Modifier
-            .height(128.dp)
-            .testTag("BottomBar"), containerColor = Color.Transparent
-    ) {
+  BottomAppBar(
+      modifier = Modifier.height(128.dp).testTag("BottomBar"), containerColor = Color.Transparent) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .testTag("ButtonColumn"),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            PrimaryButton(
-                onClick = {
+            modifier = Modifier.fillMaxWidth().testTag("ButtonColumn"),
+            horizontalAlignment = Alignment.CenterHorizontally) {
+              PrimaryButton(
+                  onClick = {
                     Log.v("Add Recipe", "Clicked")
                     navigateForward()
                     // Set the date of the meal to the minimum value to set a default value
                     // who will not be on the data we see.
                     updateMealData(LocalDate.MIN)
                     setMeal()
-                },
-                modifier = Modifier
-                    .width(250.dp)
-                    .testTag("AddRecipeButton"),
-                text = "Add Recipe",
-                fontSize = 18,
-                isEnabled = isComplete,
-                color = PrimaryPink
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            PrimaryButton(
-                onClick = {
+                  },
+                  modifier = Modifier.width(250.dp).testTag("AddRecipeButton"),
+                  text = "Add Recipe",
+                  fontSize = 18,
+                  isEnabled = isComplete,
+                  color = PrimaryPink)
+              Spacer(modifier = Modifier.height(8.dp))
+              PrimaryButton(
+                  onClick = {
                     Log.v("Add to Diary", "Clicked")
                     navigateForward()
                     setMeal()
-                },
-                modifier = Modifier
-                    .width(250.dp)
-                    .testTag("AddToDiaryButton"),
-                text = "Add to Diary",
-                fontSize = 18,
-                isEnabled = isComplete,
-                color = PrimaryPurple,
-            )
-        }
-    }
+                  },
+                  modifier = Modifier.width(250.dp).testTag("AddToDiaryButton"),
+                  text = "Add to Diary",
+                  fontSize = 18,
+                  isEnabled = isComplete,
+                  color = PrimaryPurple,
+              )
+            }
+      }
 }
