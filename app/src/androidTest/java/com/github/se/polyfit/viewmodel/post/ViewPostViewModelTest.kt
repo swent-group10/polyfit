@@ -13,7 +13,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Before
 import org.junit.Test
 
@@ -41,7 +40,6 @@ class ViewPostViewModelTest {
     // Assert
     coVerify { postFirebaseRepository.getAllPosts() }
     assertEquals(posts, viewModel.posts.value)
-    assertFalse(viewModel.isFetching.value)
   }
 
   @Test

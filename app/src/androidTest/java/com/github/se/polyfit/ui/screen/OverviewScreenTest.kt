@@ -15,6 +15,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -29,6 +30,7 @@ import co.yml.charts.ui.linechart.model.ShadowUnderLine
 import com.github.se.polyfit.data.processor.LocalDataProcessor
 import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.model.meal.Meal
+import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.components.lineChartData
 import com.github.se.polyfit.ui.flow.AddMealFlow
@@ -64,8 +66,14 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
   @get:Rule val composeTestRule = createComposeRule()
 
   @get:Rule val mockkRule = MockKRule(this)
+
+  private val mockkDataProcessor: LocalDataProcessor = mockk(relaxed = true)
   private val mockkOverviewModule: OverviewViewModel =
-      OverviewViewModel(mockk(), mockk(), User.testUser().apply { displayName = "It's me Mario" })
+      OverviewViewModel(
+          mockk(),
+          mockk(),
+          User.testUser().apply { displayName = "It's me Mario" },
+          mockkDataProcessor)
 
   fun setup() {
     val dataProcessor = mockk<LocalDataProcessor>(relaxed = true)
@@ -74,6 +82,18 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
 
     every { mockMealViewModel.meal.value } returns Meal.default()
     every { mockPostViewModel.meals.value } returns listOf()
+    every { mockkDataProcessor.getCaloriesPerMealOccasionTodayLiveData() } returns
+        MutableLiveData(
+            listOf(
+                Pair(MealOccasion.BREAKFAST, 100.0),
+                Pair(MealOccasion.LUNCH, 200.0),
+                Pair(MealOccasion.DINNER, 300.0)))
+
+    every { mockkDataProcessor.getCaloriesPerMealOccasionToday() } returns
+        mapOf(
+            MealOccasion.BREAKFAST to 100.0,
+            MealOccasion.LUNCH to 200.0,
+            MealOccasion.DINNER to 300.0)
 
     composeTestRule.setContent {
       val navController = rememberNavController()
