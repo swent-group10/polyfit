@@ -60,4 +60,6 @@
     <string name="accountSettingsLastName">Last Name</string>
     <string name="accountSettingsFirstName">First Name</string>
     <string name="accountSettingsDisplayName">Display Name</string>
+    <string name="noMealsFound">No recorded meals</string>
+    <string name="addMealButton">Add a Meal</string>
 </resources>

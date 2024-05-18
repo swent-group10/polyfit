@@ -20,6 +20,7 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.verify
 import junit.framework.TestCase
 import kotlin.test.Test
 import org.junit.Rule
@@ -31,6 +32,7 @@ class CreatePostTest : TestCase() {
 
   val mockNavForward: () -> Unit = mockk()
   val mockNavBack: () -> Unit = mockk()
+  val mockNavAddMeal: () -> Unit = mockk()
   private val mockMealRepository = mockk<MealRepository>(relaxed = true)
   private val mockPostFirebaseRepository = mockk<PostFirebaseRepository>(relaxed = true)
   private val mockPostLocationModel = mockk<PostLocationModel>(relaxed = true)
@@ -41,14 +43,38 @@ class CreatePostTest : TestCase() {
     coEvery { mockMealRepository.getAllMeals() } returns meals
     every { mockNavForward() } just Runs
     every { mockNavBack() } just Runs
+    every { mockNavAddMeal() } just Runs
 
     viewModel = CreatePostViewModel(mockMealRepository, mockPostFirebaseRepository, mockk())
     viewModel.setBitMap(Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888))
-    composeTestRule.setContent { CreatePostScreen(mockNavBack, mockNavForward, viewModel) }
+    composeTestRule.setContent {
+      CreatePostScreen(mockNavBack, mockNavForward, mockNavAddMeal, viewModel)
+    }
   }
 
-  fun everythingIsDisplayed() {
+  @Test
+  fun addMealButtonWhenNoMeal() {
     setup()
+    ComposeScreen.onComposeScreen<CreatePostAddMeal>(composeTestRule) {
+      noMealsFound {
+        assertExists()
+        assertIsDisplayed()
+      }
+
+      addMealButton {
+        assertExists()
+        assertIsDisplayed()
+        assertHasClickAction()
+        performClick()
+      }
+    }
+    verify { mockNavAddMeal() }
+  }
+
+  @Test
+  fun everythingIsDisplayed() {
+    val meal = Meal(MealOccasion.DINNER, "eggs", "1", 102.2)
+    setup(listOf(meal))
     ComposeScreen.onComposeScreen<CreatePostScreen>(composeTestRule) {
       pictureSelector {
         assertExists()
