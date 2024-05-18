@@ -14,6 +14,14 @@ class CreatePostScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
   val mealSelector: KNode = child { hasTestTag("MealSelector") }
 }
 
+class CreatePostAddMeal(semanticsProvider: SemanticsNodeInteractionsProvider) :
+    ComposeScreen<CreatePostAddMeal>(
+        semanticsProvider = semanticsProvider, viewBuilderAction = { hasTestTag("CreateMeal") }) {
+
+  val noMealsFound: KNode = child { hasTestTag("NoMealsFound") }
+  val addMealButton: KNode = child { hasTestTag("AddMealButton") }
+}
+
 class CreatePostTopBar(semanticsProvider: SemanticsNodeInteractionsProvider) :
     ComposeScreen<CreatePostTopBar>(
         semanticsProvider = semanticsProvider, viewBuilderAction = { hasTestTag("TopBar") }) {

@@ -105,7 +105,7 @@ class MealSelectorTest : TestCase() {
       mealSelectorRow {
         assertIsDisplayed()
         assertTextContains("eggs")
-        assertTextContains("1.0 kcal")
+        assertTextContains("1.0 kCal")
       }
 
       carbs { assertIsDisplayed() }
