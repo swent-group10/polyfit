@@ -1,7 +1,10 @@
 package com.github.se.polyfit.ui.screen
 
 import android.graphics.Bitmap
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.data.remote.firebase.PostFirebaseRepository
 import com.github.se.polyfit.data.repository.MealRepository
@@ -153,6 +156,10 @@ class CreatePostTest : TestCase() {
         assertIsDisplayed()
         assertIsEnabled()
       }
+    }
+
+    ComposeScreen.onComposeScreen<CreatePostBottomBar>(composeTestRule) {
+      composeTestRule.onNodeWithTag("BackButton").assertExists().assertIsDisplayed().performClick()
     }
   }
 }
