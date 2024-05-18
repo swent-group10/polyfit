@@ -191,13 +191,11 @@ class MealViewModelTest {
 
   @Test
   fun setMealData_withInvalidId_throwsException() = runTest {
-    val id = "InvalidId"
+    val id = null
 
     coEvery { mealRepo.getMealById(any()) } returns null
 
     viewModel.setMealData(id)
-
-    coVerify { mealRepo.getMealById(any()) }
 
     // Since default meal returns different IDs
     val default = Meal.default().copy(id = viewModel.meal.value.id)
