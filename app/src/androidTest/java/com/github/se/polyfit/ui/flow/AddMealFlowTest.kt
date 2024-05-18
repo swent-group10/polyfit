@@ -3,7 +3,6 @@ package com.github.se.polyfit.ui.flow
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performTextInput
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -82,7 +81,6 @@ class AddMealFlowTest {
       composeTestRule.onNodeWithText("Enter an Ingredient...").performTextInput("apple")
       composeTestRule.onNodeWithTag("NutritionSizeInput Calories").performTextInput("1")
       composeTestRule.onNodeWithTag("NutritionSizeInput Total Weight").performTextInput("1")
-      composeTestRule.onNodeWithTag("NutritionSizeInput Total Weight").performImeAction()
       finishAddIngredientButton { performClick() }
     }
 
@@ -107,7 +105,6 @@ class AddMealFlowTest {
       composeTestRule.onNodeWithText("Enter an Ingredient...").performTextInput("apple")
       composeTestRule.onNodeWithTag("NutritionSizeInput Calories").performTextInput("1")
       composeTestRule.onNodeWithTag("NutritionSizeInput Total Weight").performTextInput("1")
-      composeTestRule.onNodeWithTag("NutritionSizeInput Total Weight").performImeAction()
       finishAddIngredientButton { performClick() }
     }
 

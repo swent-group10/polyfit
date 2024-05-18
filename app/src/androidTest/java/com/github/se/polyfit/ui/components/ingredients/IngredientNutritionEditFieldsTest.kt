@@ -83,7 +83,6 @@ class IngredientNutritionEditFieldsTest : TestCase() {
         assertTextContains("0.0")
         performTextClearance()
         performTextInput("1")
-        performImeAction()
         assertTextContains("1.0")
       }
       caloriesInput {
@@ -91,14 +90,13 @@ class IngredientNutritionEditFieldsTest : TestCase() {
         assertTextContains("0.0")
         performTextClearance()
         performTextInput("1")
-        assertTextContains("1")
+        assertTextContains("1.0")
       }
       carbsInput {
         assertIsDisplayed()
         assertTextContains("0.0")
         performTextClearance()
         performTextInput("1")
-        performImeAction()
         assertTextContains("1.0")
       }
       caloriesInput { assertTextContains("1.0") }
@@ -107,7 +105,6 @@ class IngredientNutritionEditFieldsTest : TestCase() {
         assertTextContains("0.0")
         performTextClearance()
         performTextInput("1")
-        performImeAction()
         assertTextContains("1.0")
       }
       proteinInput {
@@ -115,7 +112,6 @@ class IngredientNutritionEditFieldsTest : TestCase() {
         assertTextContains("0.0")
         performTextClearance()
         performTextInput("1")
-        performImeAction()
         assertTextContains("1.0")
       }
 
