@@ -3,11 +3,11 @@ package com.github.se.polyfit.model.nutritionalInformation
 import android.util.Log
 import io.mockk.every
 import io.mockk.mockkStatic
+import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
-import kotlin.test.assertEquals
 
 class NutrientTest {
 
@@ -19,13 +19,13 @@ class NutrientTest {
   }
 
   @Test
-  fun overrideOnToStringWorks(){
+  fun overrideOnToStringWorks() {
     val nutrient = Nutrient("fats", 100.0, MeasurementUnit.G)
     assertEquals("fats :  100.0 G", nutrient.toString())
   }
 
   @Test
-  fun `plus function in companion object works on same nutrient types and unit`(){
+  fun `plus function in companion object works on same nutrient types and unit`() {
     val nutrient1 = Nutrient("fats", 100.0, MeasurementUnit.G)
     val nutrient2 = Nutrient("fats", 100.0, MeasurementUnit.G)
 
@@ -35,16 +35,14 @@ class NutrientTest {
   }
 
   @Test
-  fun `companion object plus function doesn't work on different nutrient types`(){
+  fun `companion object plus function doesn't work on different nutrient types`() {
     val nutrient1 = Nutrient("Protein", 10.0, MeasurementUnit.G)
     val nutrient2 = Nutrient("Carbohydrate", 20.0, MeasurementUnit.G)
 
-    val exception = assertFailsWith<IllegalArgumentException>{
-      Nutrient.plus(nutrient1, nutrient2)
-    }
+    val exception =
+        assertFailsWith<IllegalArgumentException> { Nutrient.plus(nutrient1, nutrient2) }
     assertEquals("Nutrient types do not match", exception.message)
   }
-
 
   @Test
   fun `test adding two nutrients with different units`() {
@@ -54,7 +52,8 @@ class NutrientTest {
 
     // Convert 0.1 pounds to grams manually for expected result
     val convertedAmountInGrams = 0.1 * 453.592
-    val expectedAmountInGrams = roundToTwoDecimalPlaces(100.0 + convertedAmountInGrams) // 100 + 45.3592
+    val expectedAmountInGrams =
+        roundToTwoDecimalPlaces(100.0 + convertedAmountInGrams) // 100 + 45.3592
 
     // Add the nutrients using the plus function
     val result = Nutrient.plus(nutrient1, nutrient2)
@@ -68,7 +67,6 @@ class NutrientTest {
   private fun roundToTwoDecimalPlaces(value: Double): Double {
     return kotlin.math.round(value * 100) / 100.0
   }
-
 
   @Test
   fun nutrientSerializationAndDeserialization() {
