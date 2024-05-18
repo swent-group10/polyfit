@@ -36,6 +36,7 @@ class LocalDataProcessor @Inject constructor(private val mealDao: MealDao) {
       val mealValues =
           meals
               .toMutableList()
+              .filter { it.isComplete() && it.occasion != MealOccasion.OTHER }
               .groupBy { it.occasion }
               .mapValues { (_, meals) -> meals.sumOf { it.calculateTotalCalories() } }
               .toList()
