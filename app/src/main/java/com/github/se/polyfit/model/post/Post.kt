@@ -1,6 +1,7 @@
 package com.github.se.polyfit.model.post
 
 import android.graphics.Bitmap
+import android.net.Uri
 import android.util.Log
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
@@ -22,7 +23,8 @@ data class Post(
     override var meal: Meal,
     override var createdAt: LocalDate,
     var listOfImages: List<Bitmap> = emptyList(),
-    var listOfURLs: List<StorageReference> = emptyList()
+    var listOfURLs: List<StorageReference> = emptyList(),
+    var imageDownloadURL: Uri = Uri.EMPTY
 ) : UnmodifiablePost {
 
   fun getCarbs(): Nutrient? {
@@ -62,9 +64,10 @@ data class Post(
       return mutableMapOf<String, Any>().apply {
         this["userId"] = data.userId
         this["description"] = data.description
-        this["location"] = data.location
+        this["location"] = data.location.serialize()
         this["meal"] = data.meal.serialize()
-        this["createdAt"] = data.createdAt
+        this["createdAt"] = data.createdAt.toString()
+        this["imageDownloadURL"] = data.imageDownloadURL
       }
     }
 
@@ -75,26 +78,17 @@ data class Post(
         val description = data["description"] as? String ?: ""
         val location = Location.deserialize(data["location"] as Map<String, Any>)
         val meal = Meal.deserialize(data["meal"] as Map<String, Any>)
-        val createdAt = deserializeLocalDate(data, "createdAt") ?: LocalDate.now()
+        val createdAt = LocalDate.parse(data["createdAt"] as String)
+        var imageDownloadURL: Uri = Uri.parse(data["imageDownloadURL"].toString())
 
-        val newPost = Post(userId, description, location, meal, createdAt)
+        val newPost =
+            Post(
+                userId, description, location, meal, createdAt, imageDownloadURL = imageDownloadURL)
 
         newPost
       } catch (e: Exception) {
         Log.e("Post", "Failed to deserialize Post object: ${e.message}", e)
         throw IllegalArgumentException("Failed to deserialize Post object", e)
-      }
-    }
-
-    private fun deserializeLocalDate(data: Map<String, Any?>, key: String): LocalDate {
-      return try {
-        val data = data[key] as Map<String, Any>
-        val year = (data["year"] as Long).toInt()
-        val month = (data["monthValue"] as Long).toInt()
-        val day = (data["dayOfMonth"] as Long).toInt()
-        LocalDate.of(year, month, day)
-      } catch (e: Exception) {
-        throw Exception("Failed to deserialize LocalDate object", e)
       }
     }
 
