@@ -23,6 +23,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,7 +55,7 @@ import kotlinx.coroutines.runBlocking
 fun OverviewScreen(
     paddingValues: PaddingValues,
     navController: NavHostController,
-    overviewViewModel: OverviewViewModel = hiltViewModel()
+    overviewViewModel: OverviewViewModel = hiltViewModel(),
 ) {
 
   val context = LocalContext.current
@@ -66,6 +67,12 @@ fun OverviewScreen(
   var imageUri by remember { mutableStateOf<Uri?>(null) }
   val iconExample = BitmapFactory.decodeResource(context.resources, R.drawable.picture_example)
   var imageBitmap by remember { mutableStateOf(iconExample) }
+
+  var mealSummary by remember { mutableStateOf(listOf<Pair<MealOccasion, Double>>()) }
+
+  LaunchedEffect(Unit) {
+    overviewViewModel.getCaloriesPerMealOccasionTodayLiveData().observeForever { mealSummary = it }
+  }
 
   // Launcher for starting the camera activity
   val startCamera =
@@ -145,12 +152,8 @@ fun OverviewScreen(
           }
           item {
             MealTrackerCard(
-                caloriesGoal = 2200,
-                meals =
-                    listOf(
-                        Pair(MealOccasion.BREAKFAST, 300.0),
-                        Pair(MealOccasion.LUNCH, 456.0),
-                        Pair(MealOccasion.DINNER, 0.0)),
+                caloriesGoal = overviewViewModel.getCaloryGoal(),
+                meals = mealSummary,
                 onCreateMealFromPhoto = {
                   showPictureDialog = true
                   Log.d("OverviewScreen", "Photo button clicked")

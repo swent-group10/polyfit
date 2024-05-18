@@ -1,5 +1,6 @@
 package com.github.se.polyfit.data.local.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -36,6 +37,9 @@ interface MealDao {
 
   @Query("SELECT * FROM MEALTABLE WHERE createdAt >= :date ")
   fun getMealsCreatedOnOrAfterDate(date: LocalDate): List<Meal>
+
+  @Query("SELECT * FROM MEALTABLE WHERE createdAt >= :date ")
+  fun getMealsCreatedOnOrAfterDateLiveData(date: LocalDate): LiveData<List<Meal>>
 
   @Query("SELECT * FROM MEALTABLE WHERE createdAt == :date ")
   fun getMealsCreatedOnDate(date: LocalDate): List<Meal>
