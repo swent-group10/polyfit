@@ -15,6 +15,7 @@ class LocalDataProcessor @Inject constructor(private val mealDao: MealDao) {
   fun calculateCaloriesSince(sinceDate: LocalDate): List<DailyCalorieSummary> {
     return mealDao
         .getMealsCreatedOnOrAfterDate(sinceDate)
+        .filter { it.isComplete() && it.occasion != MealOccasion.OTHER }
         .groupBy { it.createdAt }
         .map { (date, meals) ->
           DailyCalorieSummary(date, meals.sumOf { it.calculateTotalCalories() })
