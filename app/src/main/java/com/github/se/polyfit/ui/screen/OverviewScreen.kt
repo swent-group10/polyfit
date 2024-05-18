@@ -8,7 +8,9 @@ import android.graphics.ImageDecoder.createSource
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -79,6 +81,21 @@ fun OverviewScreen(
         navigation.navigateToAddMeal(id)
       }
 
+  val pickMedia =
+      rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        showPictureDialog = false
+        var id: String? = null
+        runBlocking(Dispatchers.IO) {
+          id =
+              overviewViewModel.handleSelectedImage(
+                  context,
+                  uri,
+                  overviewViewModel,
+              )
+        }
+        navigation.navigateToAddMeal(id)
+      }
+
   // Launcher for requesting the camera permission
   val requestPermissionLauncher =
       rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
@@ -120,8 +137,13 @@ fun OverviewScreen(
         onButtonsClick =
             listOf(
                 overviewViewModel.callCamera(context, startCamera, requestPermissionLauncher),
-                { pickImageLauncher.launch("image/*") },
-                {}),
+                {
+                  pickMedia.launch(
+                      PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                },
+                {
+                  Toast.makeText(context, "Feature not yet implemented", Toast.LENGTH_SHORT).show()
+                }),
         buttonsName =
             listOf(
                 context.getString(R.string.take_picture_dialog),

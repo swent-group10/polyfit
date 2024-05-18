@@ -5,18 +5,22 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.result.ActivityResult
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
+import com.github.se.polyfit.R
 import com.github.se.polyfit.data.api.SpoonacularApiCaller
 import com.github.se.polyfit.data.local.dao.MealDao
 import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 @HiltViewModel
@@ -206,6 +210,31 @@ constructor(
         // Request the permission
         requestPermissionLauncher.launch(Manifest.permission.CAMERA)
       }
+    }
+  }
+
+  fun uriToBitmap(context: Context, uri: Uri): Bitmap? {
+    return context.contentResolver
+        .openInputStream(uri)
+        ?.use { inputStream ->
+          ByteArrayOutputStream().apply { inputStream.copyTo(this) }.toByteArray()
+        }
+        ?.let { BitmapFactory.decodeByteArray(it, 0, it.size) }
+  }
+
+  fun handleSelectedImage(
+      context: Context,
+      uri: Uri?,
+      overviewViewModel: OverviewViewModel,
+  ): String? {
+    if (uri != null) {
+      val imageBitmap =
+          uriToBitmap(context, uri)
+              ?: BitmapFactory.decodeResource(context.resources, R.drawable.picture_example)
+      return overviewViewModel.storeMeal(imageBitmap)
+    } else {
+      Log.d("PhotoPicker", "No media selected")
+      return null
     }
   }
 }
