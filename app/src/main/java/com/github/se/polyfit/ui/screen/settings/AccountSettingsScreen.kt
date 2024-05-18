@@ -1,10 +1,10 @@
 package com.github.se.polyfit.ui.screen.settings
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ButtonDefaults
@@ -77,92 +77,106 @@ private fun AccountSettings(
     mutableStateOf(if (user.calorieGoal > 0) user.calorieGoal.toString() else "")
   }
 
-  Column(modifier = modifier.padding(horizontal = 16.dp).testTag("AccountSettingsScreen")) {
-    TextField(
-        value = user.displayName ?: "",
-        placeholder = { Text(getString(context, R.string.accountSettingsDisplayName)) },
-        label = { Text(getString(context, R.string.accountSettingsDisplayName)) },
-        onValueChange = accountSettingsViewModel::updateDisplayName,
-        singleLine = true,
-        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).testTag("DisplayName"))
-    TextField(
-        value = user.givenName ?: "",
-        placeholder = { Text(getString(context, R.string.accountSettingsFirstName)) },
-        label = { Text(getString(context, R.string.accountSettingsFirstName)) },
-        onValueChange = accountSettingsViewModel::updateFirstName,
-        singleLine = true,
-        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).testTag("FirstName"))
-    TextField(
-        value = user.familyName ?: "",
-        placeholder = { Text(getString(context, R.string.accountSettingsLastName)) },
-        label = { Text(getString(context, R.string.accountSettingsLastName)) },
-        onValueChange = accountSettingsViewModel::updateLastName,
-        singleLine = true,
-        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).testTag("LastName"))
-    TextField(
-        value = height,
-        placeholder = { Text(getString(context, R.string.accountSettingsHeight)) },
-        label = { Text(getString(context, R.string.accountSettingsHeight)) },
-        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-        singleLine = true,
-        onValueChange = {
-          val update = it.toLongOrNull()
-          height =
-              when {
-                update == null || update <= 0 -> ""
-                else -> update.toString()
-              }
-          accountSettingsViewModel.updateHeight(
-              when {
-                update.isNotNull() && update!! > 0 -> update
-                else -> null
-              })
-        },
-        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).testTag("Height"))
-    TextField(
-        value = weight,
-        placeholder = { Text(getString(context, R.string.accountSettingsWeight)) },
-        label = { Text(getString(context, R.string.accountSettingsWeight)) },
-        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-        singleLine = true,
-        onValueChange = {
-          val update = it.toDoubleOrNull()
-          weight =
-              when {
-                update.isNotNull() && update!! <= 0 -> ""
-                update.isNotNull() -> update.toString()
-                else -> weight
-              }
-          accountSettingsViewModel.updateWeight(
-              when {
-                update.isNotNull() && update!! > 0 -> update
-                else -> null
-              })
-        },
-        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).testTag("Weight"))
-    TextField(
-        value = calorieGoal,
-        placeholder = { Text(getString(context, R.string.accountSettingsCalorieGoal)) },
-        label = { Text(getString(context, R.string.accountSettingsCalorieGoal)) },
-        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-        singleLine = true,
-        onValueChange = {
-          val update = it.toLongOrNull()
-          calorieGoal =
-              when {
-                update == null || update <= 0 -> ""
-                else -> update.toString()
-              }
-          accountSettingsViewModel.updateCalorieGoal(update ?: 0)
-        },
-        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).testTag("CalorieGoal"))
+  LazyColumn(modifier = modifier.padding(horizontal = 16.dp).testTag("AccountSettingsScreen")) {
+    item {
+      TextField(
+          value = user.displayName ?: "",
+          placeholder = { Text(getString(context, R.string.accountSettingsDisplayName)) },
+          label = { Text(getString(context, R.string.accountSettingsDisplayName)) },
+          onValueChange = accountSettingsViewModel::updateDisplayName,
+          singleLine = true,
+          modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).testTag("DisplayName"))
+    }
+    item {
+      TextField(
+          value = user.givenName ?: "",
+          placeholder = { Text(getString(context, R.string.accountSettingsFirstName)) },
+          label = { Text(getString(context, R.string.accountSettingsFirstName)) },
+          onValueChange = accountSettingsViewModel::updateFirstName,
+          singleLine = true,
+          modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).testTag("FirstName"))
+    }
+    item {
+      TextField(
+          value = user.familyName ?: "",
+          placeholder = { Text(getString(context, R.string.accountSettingsLastName)) },
+          label = { Text(getString(context, R.string.accountSettingsLastName)) },
+          onValueChange = accountSettingsViewModel::updateLastName,
+          singleLine = true,
+          modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).testTag("LastName"))
+    }
+    item {
+      TextField(
+          value = height,
+          placeholder = { Text(getString(context, R.string.accountSettingsHeight)) },
+          label = { Text(getString(context, R.string.accountSettingsHeight)) },
+          keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+          singleLine = true,
+          onValueChange = {
+            val update = it.toLongOrNull()
+            height =
+                when {
+                  update == null || update <= 0 -> ""
+                  else -> update.toString()
+                }
+            accountSettingsViewModel.updateHeight(
+                when {
+                  update.isNotNull() && update!! > 0 -> update
+                  else -> null
+                })
+          },
+          modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).testTag("Height"))
+    }
+    item {
+      TextField(
+          value = weight,
+          placeholder = { Text(getString(context, R.string.accountSettingsWeight)) },
+          label = { Text(getString(context, R.string.accountSettingsWeight)) },
+          keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+          singleLine = true,
+          onValueChange = {
+            val update = it.toDoubleOrNull()
+            weight =
+                when {
+                  update.isNotNull() && update!! <= 0 -> ""
+                  update.isNotNull() -> update.toString()
+                  else -> weight
+                }
+            accountSettingsViewModel.updateWeight(
+                when {
+                  update.isNotNull() && update!! > 0 -> update
+                  else -> null
+                })
+          },
+          modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).testTag("Weight"))
+    }
+    item {
+      TextField(
+          value = calorieGoal,
+          placeholder = { Text(getString(context, R.string.accountSettingsCalorieGoal)) },
+          label = { Text(getString(context, R.string.accountSettingsCalorieGoal)) },
+          keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+          singleLine = true,
+          onValueChange = {
+            val update = it.toLongOrNull()
+            calorieGoal =
+                when {
+                  update == null || update <= 0 -> ""
+                  else -> update.toString()
+                }
+            accountSettingsViewModel.updateCalorieGoal(update ?: 0)
+          },
+          modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).testTag("CalorieGoal"))
+    }
 
-    DateSelector(
-        onConfirm = accountSettingsViewModel::updateDob,
-        title = getString(context, R.string.accountSettingsDob),
-        titleStyle = MaterialTheme.typography.titleMedium,
-        inputDate = user.dob,
-        modifier = Modifier.padding(vertical = 8.dp))
+    item {
+      DateSelector(
+          onConfirm = accountSettingsViewModel::updateDob,
+          title = getString(context, R.string.accountSettingsDob),
+          titleStyle = MaterialTheme.typography.titleMedium,
+          inputDate = user.dob,
+          modifier = Modifier.padding(vertical = 8.dp))
+    }
 
     // TODO: Add interface to set dietary preferences
   }
