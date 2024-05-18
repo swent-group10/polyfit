@@ -17,6 +17,9 @@ data class GraphData(val kCal: Double, val date: LocalDate, val weight: Double) 
             "$kCal ${date.dayOfMonth} ${date.monthValue} ${date.year}",
             "${date.dayOfMonth} ${date.monthValue}",
             "${date.dayOfMonth} ${date.monthValue} ${date.year}",
+            "$weight",
+            "$weight ${date.dayOfMonth} ${date.monthValue}",
+            "$weight ${date.dayOfMonth} ${date.monthValue} ${date.year}",
         )
 
     return matchingCombinations.any { it.contains(query, ignoreCase = true) }
