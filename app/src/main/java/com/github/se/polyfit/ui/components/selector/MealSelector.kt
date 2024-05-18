@@ -82,7 +82,7 @@ fun MealSelector(
                   modifier = Modifier.weight(1f),
               )
               Text(
-                  text = "${selectedMeal.calculateTotalCalories()} kcal",
+                  text = "${selectedMeal.calculateTotalCalories().roundTwoDecimal()} kcal",
                   fontSize = 20.sp,
                   modifier = Modifier.weight(1f).padding(end = 20.dp),
                   textAlign = TextAlign.End,
