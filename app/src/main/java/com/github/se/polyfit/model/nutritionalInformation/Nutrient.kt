@@ -74,6 +74,18 @@ data class Nutrient(val nutrientType: String, val amount: Double, val unit: Meas
         throw IllegalArgumentException("Failed to deserialize Nutrient object ", e)
       }
     }
+
+    fun plus(nutrient1: Nutrient, nutrient2: Nutrient): Nutrient {
+      return if (nutrient1.nutrientType != nutrient2.nutrientType) {
+        throw IllegalArgumentException("Nutrient types do not match")
+      } else if (nutrient1.unit == nutrient2.unit) {
+        Nutrient(nutrient1.nutrientType, nutrient1.amount + nutrient2.amount, nutrient1.unit)
+      } else {
+        val convertedAmount =
+            MeasurementUnit.unitConversion(nutrient2.unit, nutrient1.unit, nutrient2.amount)
+        Nutrient(nutrient1.nutrientType, nutrient1.amount + convertedAmount, nutrient1.unit)
+      }
+    }
   }
 
   /**

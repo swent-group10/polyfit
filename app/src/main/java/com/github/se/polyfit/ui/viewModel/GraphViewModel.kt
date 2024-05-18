@@ -1,6 +1,5 @@
 package com.github.se.polyfit.ui.viewModel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -46,57 +45,57 @@ class GraphViewModel @Inject constructor(private val dataProcessor: LocalDataPro
   private val _sortedPoints = MutableLiveData(SortPoints.KCAL)
 
   private val _sortDirection = MutableLiveData(SortDirection.ASCENDING)
+  val sortDirection: LiveData<SortDirection> = _sortDirection
 
   private val _searchText = MutableLiveData("")
   val searchText: LiveData<String> = _searchText
 
   private val _graphData = MediatorLiveData<List<GraphData>>()
-  val graphData = _graphData
+  val graphData: LiveData<List<GraphData>> = _graphData
+
+  private val _filteredGraphData = MediatorLiveData<List<GraphData>>()
+  val filteredGraphData: LiveData<List<GraphData>> = _filteredGraphData
 
   init {
     fetchCaloriesData()
+    _filteredGraphData.addSource(_graphData) { filterAndSortData() }
+    _filteredGraphData.addSource(_searchText) { filterAndSortData() }
+    _filteredGraphData.addSource(_sortedPoints) { filterAndSortData() }
+    _filteredGraphData.addSource(_sortDirection) { filterAndSortData() }
+    updateSort(SortPoints.KCAL, SortDirection.ASCENDING)
   }
 
-  private fun fetchCaloriesData(numDays: Int = 7) {
+  fun fetchCaloriesData(numDays: Int = 7) {
     viewModelScope.launch(Dispatchers.IO) {
-      val today = LocalDate.now()
-      // Create a list of dates for the last 7 days including today
-      val dates = (0 ..< numDays).map { today.minusDays(it.toLong()) }
-      // Create a baseline list of GraphData with calories set to 0
-      val baselineGraphData =
-          dates.map { GraphData(kCal = 0.0, date = it, weight = 0.0) }.toMutableList()
+      val baselineGraphData = initGraphData()
 
-      Log.d("ViewModelTest", "Fetching Data...")
-      // Fetch data from the processor
+      val weightPerDay = dataProcessor.getWeightSince(LocalDate.now().minusDays(numDays.toLong()))
+      val weightMap = weightPerDay.associateBy { it.date }
+
       val actualData =
           dataProcessor.calculateCaloriesSince(LocalDate.now().minusDays(numDays.toLong())).map {
-            GraphData(
-                kCal = it.totalCalories,
-                date = it.date,
-                weight = 0.0) // Assuming no weight data available
+            val weight = weightMap[it.date]?.totalWeight?.amount ?: 0.0
+            GraphData(kCal = it.totalCalories, date = it.date, weight = weight)
           }
 
-      Log.d("ViewModelTest", "Fetched Data : $actualData")
-
-      // Replace baseline data with actual data where available
       actualData.forEach { data ->
         val index = baselineGraphData.indexOfFirst { it.date == data.date }
         if (index != -1) {
           baselineGraphData[index] = data
         }
       }
-      Log.d("ViewModelTest", "Data output : $baselineGraphData")
-
-      // Post the combined data to LiveData
-      _graphData.postValue(baselineGraphData)
+      updateGraphData(baselineGraphData)
     }
+  }
+
+  fun updateGraphData(graphDataList: List<GraphData>) {
+    _graphData.postValue(graphDataList)
+    filterAndSortData()
   }
 
   fun initGraphData(): MutableList<GraphData> {
     val today = LocalDate.now()
-    // Create a list of dates for the last 7 days including today
     val dates = (0..6).map { today.minusDays(it.toLong()) }
-    // Create a baseline list of GraphData with calories set to 0
     val baselineGraphData =
         dates.map { GraphData(kCal = 0.0, date = it, weight = 0.0) }.toMutableList()
 
@@ -104,38 +103,41 @@ class GraphViewModel @Inject constructor(private val dataProcessor: LocalDataPro
   }
 
   fun onSearchTextChanges(text: String) {
-    _searchText.value = text
-    _graphData.value = filterAndSortData()
+    _searchText.postValue(text)
+    filterAndSortData()
   }
 
-  fun updateSort(attribute: SortPoints) {
-    _sortedPoints.value = attribute
-    _graphData.value = filterAndSortData()
+  fun updateSort(attribute: SortPoints, direction: SortDirection = SortDirection.ASCENDING) {
+    _sortDirection.postValue(direction)
+    _sortedPoints.postValue(attribute)
+    filterAndSortData()
   }
 
-  private fun updateGraphData(): LiveData<List<GraphData>> {
-    val result = MediatorLiveData<List<GraphData>>()
-    result.addSource(_searchText) { result.value = filterAndSortData() }
-    result.addSource(_graphData) { result.value = filterAndSortData() }
-    result.addSource(_sortedPoints) { result.value = filterAndSortData() }
-    result.addSource(_sortDirection) { result.value = filterAndSortData() }
-    return result
+  fun inverseDirection(direction: SortDirection): SortDirection {
+    return when (direction) {
+      SortDirection.ASCENDING -> SortDirection.DESCENDING
+      SortDirection.DESCENDING -> SortDirection.ASCENDING
+    }
   }
 
-  private fun filterAndSortData(): List<GraphData> {
+  private fun filterAndSortData() {
     val text = _searchText.value ?: ""
     val data = _graphData.value ?: emptyList()
-    if (data.isEmpty()) return emptyList()
+    if (data.isEmpty()) {
+      _filteredGraphData.postValue(emptyList())
+      return
+    }
+
     val attribute = _sortedPoints.value ?: SortPoints.KCAL
     val direction = _sortDirection.value ?: SortDirection.ASCENDING
 
     var filteredData =
-        if (text.isBlank()) data
-        else
-            data.filter {
-              Log.d("FilterTest", "Filtering data : ${it.kCal} contains text : $text")
-              it.doesMatchSearchQuery(text)
-            }
+        if (text.isBlank()) {
+          data
+        } else {
+          data.filter { it.doesMatchSearchQuery(text) }
+        }
+
     filteredData =
         when (attribute) {
           SortPoints.KCAL ->
@@ -145,8 +147,8 @@ class GraphViewModel @Inject constructor(private val dataProcessor: LocalDataPro
               if (direction == SortDirection.ASCENDING) filteredData.sortedBy { it.weight }
               else filteredData.sortedByDescending { it.weight }
         }
-    Log.d("FilterTest", "Filtered Data: $filteredData")
-    return filteredData
+    val finalData = filteredData.filter { it.kCal > 0 }
+    _filteredGraphData.postValue(finalData)
   }
 
   fun DataPoints(): List<Point> {

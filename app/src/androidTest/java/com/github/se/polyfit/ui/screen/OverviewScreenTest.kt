@@ -102,11 +102,7 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
           GenericScreen(
               navController = navController,
               content = { paddingValues ->
-                OverviewScreen(
-                    paddingValues,
-                    navController,
-                    mockkOverviewModule,
-                )
+                OverviewScreen(paddingValues, navController, mockkOverviewModule)
               })
         }
 

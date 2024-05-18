@@ -19,7 +19,7 @@
     <string name="signGoogle">"Sign in with Google"</string>
     <string name="graphScreenTitle">Calories Per Day</string>
     <string name="kcalvalue">%1$.1f kCal</string>
-    <string name="weightvalue">%1$.1f lbs</string>
+    <string name="weightvalue">%1$.1f g</string>
     <string name="datevalue">%1$s</string>
     <string name="noPostAvailable">"Unfortunately there is no post\navailable around you"</string>
     <string name="description">"Description"</string>
@@ -60,4 +60,6 @@
     <string name="accountSettingsLastName">Last Name</string>
     <string name="accountSettingsFirstName">First Name</string>
     <string name="accountSettingsDisplayName">Display Name</string>
+    <string name="noMealsFound">No recorded meals</string>
+    <string name="addMealButton">Add a Meal</string>
 </resources>

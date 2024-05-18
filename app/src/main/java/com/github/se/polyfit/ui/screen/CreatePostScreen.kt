@@ -2,8 +2,10 @@ package com.github.se.polyfit.ui.screen
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -51,6 +53,7 @@ import com.google.android.gms.location.CurrentLocationRequest
 fun CreatePostScreen(
     navigateBack: () -> Unit = {},
     navigateForward: () -> Unit = {},
+    navigateToAddMeal: () -> Unit = {},
     postViewModel: CreatePostViewModel = hiltViewModel()
 ) {
   val context = LocalContext.current
@@ -78,6 +81,11 @@ fun CreatePostScreen(
         BottomBar(
             postComplete = postComplete, onButtonPressed = { isPermissionDialogDisplay = true })
       }) {
+        if (meals.isEmpty()) {
+          CreateMeal(navigateToAddMeal, Modifier.padding(it))
+          return@Scaffold
+        }
+
         LazyColumn(modifier = Modifier.padding(it).testTag("CreatePostScreen")) {
           item {
             PictureSelector(
@@ -94,6 +102,27 @@ fun CreatePostScreen(
           LocationPermissionDialog(
               onApprove = ::onApprove, onDeny = { isPermissionDialogDisplay = false })
         }
+      }
+}
+
+@Composable
+private fun CreateMeal(navigateToAddMeal: () -> Unit, modifier: Modifier = Modifier) {
+  val context = LocalContext.current
+  Column(
+      modifier = modifier.fillMaxSize().testTag("CreateMeal"),
+      verticalArrangement = Arrangement.Center,
+      horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = context.getString(R.string.noMealsFound),
+            color = SecondaryGrey,
+            fontSize = 20.sp,
+            modifier = Modifier.padding(top = 16.dp, bottom = 8.dp).testTag("NoMealsFound"))
+        PrimaryButton(
+            text = context.getString(R.string.addMealButton),
+            onClick = navigateToAddMeal,
+            color = PrimaryPink,
+            fontSize = 24,
+            modifier = Modifier.padding(bottom = 16.dp).testTag("AddMealButton"))
       }
 }
 
