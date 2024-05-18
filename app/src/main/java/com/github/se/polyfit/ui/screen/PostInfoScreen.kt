@@ -1,6 +1,7 @@
 package com.github.se.polyfit.ui.screen
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -42,7 +43,9 @@ fun PostInfoScreen(
 ) {
   GenericScreen(
       navController = navHostController,
-      content = { PostInfoScreenContent(viewPostViewModel = viewPostViewModel) },
+      content = { it ->
+        PostInfoScreenContent(viewPostViewModel = viewPostViewModel, padding = it)
+      },
       modifier = Modifier.testTag("PostInfoScreen"),
       floatingButton = {
         PrimaryButton(
@@ -58,12 +61,13 @@ fun PostInfoScreen(
 fun PostInfoScreenContent(
     posts: List<Post> = listOf(),
     index: Int = 0,
+    padding: PaddingValues = PaddingValues(),
     viewPostViewModel: ViewPostViewModel = hiltViewModel(),
 ) {
   val posts by viewPostViewModel.posts.collectAsState(posts)
   val isFetching by viewPostViewModel.isFetching.collectAsState()
 
-  Scaffold {
+  Scaffold(modifier = Modifier.padding(padding)) {
     if (isFetching) {
       Box(modifier = Modifier.fillMaxSize().padding(it), contentAlignment = Alignment.Center) {
         CircularProgressIndicator(modifier = Modifier.padding(16.dp).testTag("LoadingPost"))
