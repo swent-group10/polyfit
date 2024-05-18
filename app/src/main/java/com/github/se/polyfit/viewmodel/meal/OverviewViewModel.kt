@@ -10,9 +10,11 @@ import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.result.ActivityResult
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.github.se.polyfit.data.api.SpoonacularApiCaller
 import com.github.se.polyfit.data.local.dao.MealDao
+import com.github.se.polyfit.data.processor.LocalDataProcessor
 import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
@@ -25,7 +27,8 @@ class OverviewViewModel
 constructor(
     private val mealDao: MealDao,
     private val spoonacularApiCaller: SpoonacularApiCaller,
-    private val user: User
+    private val user: User,
+    private val localDataProcessor: LocalDataProcessor
 ) : ViewModel() {
 
   fun storeMeal(imageBitmap: Bitmap?): String? {
@@ -207,5 +210,14 @@ constructor(
         requestPermissionLauncher.launch(Manifest.permission.CAMERA)
       }
     }
+  }
+
+  fun getCaloriesPerMealOccasionTodayLiveData(): LiveData<List<Pair<MealOccasion, Double>>> {
+
+    return localDataProcessor.getCaloriesPerMealOccasionTodayLiveData()
+  }
+
+  fun getCaloryGoal(): Long {
+    return user.calorieGoal
   }
 }

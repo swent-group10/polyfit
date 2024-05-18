@@ -31,7 +31,8 @@ class OverviewViewModelTest {
     mockkStatic(Log::class)
     every { Log.e(any(), any()) } returns 0
     every { Log.i(any(), any()) } returns 0
-    overviewViewModel = OverviewViewModel(mockMealDao, mockSpoonacularApiCaller, User.testUser())
+    overviewViewModel =
+        OverviewViewModel(mockMealDao, mockSpoonacularApiCaller, User.testUser(), mockk())
   }
 
   @Test
@@ -546,7 +547,7 @@ class OverviewViewModelTest {
   @Test
   fun getEmailIFDispalyIsNotSet() {
     val user = User.testUser().apply { displayName = null }
-    val overviewViewModel = OverviewViewModel(mockMealDao, mockSpoonacularApiCaller, user)
+    val overviewViewModel = OverviewViewModel(mockMealDao, mockSpoonacularApiCaller, user, mockk())
     val result = overviewViewModel.getUserName()
     Assert.assertEquals(user.email, result)
   }
