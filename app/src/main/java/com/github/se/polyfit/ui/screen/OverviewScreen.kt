@@ -13,15 +13,21 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -58,7 +64,6 @@ fun OverviewScreen(
     navController: NavHostController,
     overviewViewModel: OverviewViewModel = hiltViewModel()
 ) {
-
   val context = LocalContext.current
   val navigation = Navigation(navController)
   var showPictureDialog by remember { mutableStateOf(false) }
@@ -191,16 +196,27 @@ fun OverviewScreen(
                         .clickable { navigation.navigateToGraph() },
             ) {
               Column(modifier = Modifier.fillMaxSize().testTag("Graph Card Column")) {
-                Text(
-                    text = "Calories Graph",
-                    style = MaterialTheme.typography.headlineLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.secondary,
-                    modifier =
-                        Modifier.padding(start = 10.dp, top = 10.dp)
-                            .weight(1f)
-                            .testTag("Graph Card Title")
-                            .clickable { navigation.navigateToGraph() })
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(5.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween) {
+                      Text(
+                          text = "Calories Graph",
+                          style = MaterialTheme.typography.headlineLarge,
+                          fontWeight = FontWeight.Bold,
+                          color = MaterialTheme.colorScheme.secondary,
+                          modifier =
+                              Modifier.padding(start = 10.dp, top = 10.dp)
+                                  .weight(1f)
+                                  .testTag("Graph Card Title")
+                                  .clickable { navigation.navigateToGraph() })
+
+                      Icon(
+                          imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                          contentDescription = "rightArrow",
+                          modifier =
+                              Modifier.align(Alignment.CenterVertically).padding(top = 10.dp))
+                    }
+                HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 2.dp)
                 Box(
                     modifier =
                         Modifier.fillMaxSize(0.85f)
