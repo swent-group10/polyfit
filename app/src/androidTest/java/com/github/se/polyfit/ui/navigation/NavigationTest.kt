@@ -110,4 +110,13 @@ class NavigationTest {
 
     verify { navHostController.navigate(Route.AddMeal) }
   }
+
+  @Test
+  fun navigateToPostInfo() {
+    route = Route.PostInfo
+    every { navHostController.navigate(route) } returns Unit
+    navigation.navigateToPostInfo()
+
+    verify { navHostController.navigate(Route.PostInfo) }
+  }
 }

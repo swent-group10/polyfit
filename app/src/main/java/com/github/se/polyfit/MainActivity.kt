@@ -87,7 +87,7 @@ class MainActivity : ComponentActivity() {
 
           composable(Route.CreatePost) {
             CreatePostScreen(
-                navigation::goBack, navigation::navigateToHome, navigation::navigateToAddMeal)
+                navigation::goBack, navigation::navigateToPostInfo, navigation::navigateToAddMeal)
           }
 
           composable(Route.DailyRecap) {
