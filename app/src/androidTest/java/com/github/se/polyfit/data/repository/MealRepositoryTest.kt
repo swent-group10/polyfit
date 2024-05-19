@@ -5,7 +5,6 @@ import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
 import com.github.se.polyfit.data.repository.MealRepository
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
-import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.DocumentReference
 import io.mockk.coEvery
@@ -43,18 +42,11 @@ class MealRepositoryTest {
   @Test
   fun storeMeal_whenConnectionAvailableAndDataNotOutdated_storesMealInFirebaseAndLocalDb() =
       runTest {
-        val meal =
-            Meal(
-                MealOccasion.DINNER,
-                "name",
-                1,
-                12.0,
-                NutritionalInformation(mutableListOf()),
-                mutableListOf())
+        val meal = Meal(MealOccasion.DINNER, "name", "1", 12.0, mutableListOf())
         val documentReference = mockk<DocumentReference>()
         coEvery { mealFirebaseRepository.storeMeal(meal) } returns
             Tasks.forResult(documentReference)
-        coEvery { mealDao.insert(any<Meal>()) } returns 109
+        coEvery { mealDao.insert(any<Meal>()) } returns "109"
         coEvery { checkConnectivity.checkConnection() } returns true
 
         val result = mealRepository.storeMeal(meal)
@@ -64,15 +56,8 @@ class MealRepositoryTest {
 
   @Test
   fun storeMeal_whenConnectionNotAvailable_storesMealInLocalDbOnly() = runTest {
-    val meal =
-        Meal(
-            MealOccasion.DINNER,
-            "name",
-            1,
-            12.0,
-            NutritionalInformation(mutableListOf()),
-            mutableListOf())
-    coEvery { mealDao.insert(any<Meal>()) } returns 109
+    val meal = Meal(MealOccasion.DINNER, "name", "1", 12.0, mutableListOf())
+    coEvery { mealDao.insert(any<Meal>()) } returns "109"
     coEvery { checkConnectivity.checkConnection() } returns false
 
     val result = mealRepository.storeMeal(meal)
@@ -82,27 +67,30 @@ class MealRepositoryTest {
 
   @Test
   fun getMeal() = runTest {
-    every { mealDao.getMealByFirebaseID(any()) } returns Meal.default()
+    val default = Meal.default()
+    every { mealDao.getMealById(any()) } returns default
 
-    val result = mealRepository.getMealByFirebaseID("1")
+    val result = mealRepository.getMealById("1")
 
-    assertEquals(Meal.default(), result)
+    assertEquals(default, result)
   }
 
   @Test
   fun getAllMeals() = runTest {
-    every { mealDao.getAllMeals() } returns listOf(Meal.default(), Meal.default())
+    val meal1 = Meal.default()
+    val meal2 = Meal.default()
+    every { mealDao.getAllMeals() } returns listOf(meal1, meal2)
 
     val result = mealRepository.getAllMeals()
 
-    assertEquals(listOf(Meal.default(), Meal.default()), result)
+    assertEquals(listOf(meal1, meal2), result)
   }
 
   @Test
   fun deleteMeal_whenConnectionAvailableAndDataNotOutdated_deletesMealFromFirebaseAndLocalDb() =
       runTest {
         coEvery { mealFirebaseRepository.deleteMeal("1") } returns Tasks.forResult(Unit)
-        coEvery { mealDao.deleteByFirebaseID("1") } returns Unit
+        coEvery { mealDao.deleteById("1") } returns Unit
         coEvery { checkConnectivity.checkConnection() } returns true
 
         mealRepository.deleteMeal("1")
@@ -111,7 +99,7 @@ class MealRepositoryTest {
   @Test
   fun outdateddata() = runTest {
     coEvery { checkConnectivity.checkConnection() } returns false
-    coEvery { mealDao.insert(any<Meal>()) } returns 109
+    coEvery { mealDao.insert(any<Meal>()) } returns "109"
     val docId = mealRepository.storeMeal(Meal.default())
 
     assertEquals(null, docId)
@@ -142,7 +130,7 @@ class MealRepositoryTest {
     val mockDoc = mockk<DocumentReference>()
     coEvery { mealFirebaseRepository.storeMeal(any()) } returns Tasks.forResult(mockDoc)
     coEvery { mealDao.getAllMeals() } returns listOf(Meal.default())
-    coEvery { mealDao.insert(any<Meal>()) } returns 109
+    coEvery { mealDao.insert(any<Meal>()) } returns "109"
 
     mealRepository.storeMeal(Meal.default())
     val result = mealRepository.storeMeal(Meal.default())
@@ -170,8 +158,8 @@ class MealRepositoryTest {
     coEvery { mealFirebaseRepository.deleteMeal(any()) } returns Tasks.forResult(Unit)
     coEvery { mealFirebaseRepository.storeMeal(any()) } returns Tasks.forResult(mockDoc)
     coEvery { mealDao.getAllMeals() } returns listOf(Meal.default())
-    coEvery { mealDao.insert(any<Meal>()) } returns 109
-    coEvery { mealDao.deleteByFirebaseID(any()) } returns Unit
+    coEvery { mealDao.insert(any<Meal>()) } returns "109"
+    coEvery { mealDao.deleteById(any()) } returns Unit
 
     mealRepository.storeMeal(Meal.default())
     val result = mealRepository.storeMeal(Meal.default())
@@ -182,9 +170,10 @@ class MealRepositoryTest {
   }
 
   @Test
-  fun getMealByFirebaseID() = runTest {
-    every { mealDao.getMealByFirebaseID(any()) } returns Meal.default()
-    val result = mealRepository.getMealByFirebaseID("1")
-    assertEquals(Meal.default(), result)
+  fun getMealById() = runTest {
+    val default = Meal.default()
+    every { mealDao.getMealById(any()) } returns default
+    val result = mealRepository.getMealById("1")
+    assertEquals(default, result)
   }
 }

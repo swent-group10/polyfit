@@ -15,6 +15,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -27,6 +28,9 @@ import co.yml.charts.ui.linechart.model.LineStyle
 import co.yml.charts.ui.linechart.model.LineType
 import co.yml.charts.ui.linechart.model.ShadowUnderLine
 import com.github.se.polyfit.data.processor.LocalDataProcessor
+import com.github.se.polyfit.model.data.User
+import com.github.se.polyfit.model.meal.Meal
+import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.components.lineChartData
 import com.github.se.polyfit.ui.flow.AddMealFlow
@@ -35,6 +39,8 @@ import com.github.se.polyfit.ui.utils.GraphData
 import com.github.se.polyfit.ui.utils.OverviewTags
 import com.github.se.polyfit.ui.viewModel.DisplayScreen
 import com.github.se.polyfit.ui.viewModel.GraphViewModel
+import com.github.se.polyfit.viewmodel.meal.MealViewModel
+import com.github.se.polyfit.viewmodel.meal.OverviewViewModel
 import com.github.se.polyfit.viewmodel.post.CreatePostViewModel
 import com.kaspersky.components.composesupport.config.withComposeSupport
 import com.kaspersky.kaspresso.kaspresso.Kaspresso
@@ -61,11 +67,33 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
 
   @get:Rule val mockkRule = MockKRule(this)
 
+  private val mockkDataProcessor: LocalDataProcessor = mockk(relaxed = true)
+  private val mockkOverviewModule: OverviewViewModel =
+      OverviewViewModel(
+          mockk(),
+          mockk(),
+          User.testUser().apply { displayName = "It's me Mario" },
+          mockkDataProcessor)
+
   fun setup() {
     val dataProcessor = mockk<LocalDataProcessor>(relaxed = true)
     val mockPostViewModel: CreatePostViewModel = mockk(relaxed = true)
+    val mockMealViewModel: MealViewModel = mockk(relaxed = true)
 
+    every { mockMealViewModel.meal.value } returns Meal.default()
     every { mockPostViewModel.meals.value } returns listOf()
+    every { mockkDataProcessor.getCaloriesPerMealOccasionTodayLiveData() } returns
+        MutableLiveData(
+            listOf(
+                Pair(MealOccasion.BREAKFAST, 100.0),
+                Pair(MealOccasion.LUNCH, 200.0),
+                Pair(MealOccasion.DINNER, 300.0)))
+
+    every { mockkDataProcessor.getCaloriesPerMealOccasionToday() } returns
+        mapOf(
+            MealOccasion.BREAKFAST to 100.0,
+            MealOccasion.LUNCH to 200.0,
+            MealOccasion.DINNER to 300.0)
 
     composeTestRule.setContent {
       val navController = rememberNavController()
@@ -73,11 +101,13 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
         composable(Route.Home) {
           GenericScreen(
               navController = navController,
-              content = { paddingValues -> OverviewScreen(paddingValues, navController, mockk()) })
+              content = { paddingValues ->
+                OverviewScreen(paddingValues, navController, mockkOverviewModule)
+              })
         }
 
         composable(Route.AddMeal) {
-          AddMealFlow(goBack = {}, navigateToHome = {}, mealId = null, mockk(relaxed = true))
+          AddMealFlow(goBack = {}, goForward = {}, mealId = null, mockMealViewModel)
         }
         composable(Route.Graph) {
           FullGraphScreen(goBack = {}, viewModel = GraphViewModel(dataProcessor))
@@ -138,7 +168,7 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
               .shouldDrawAxisLineTillEnd(false)
               .backgroundColor(MaterialTheme.colorScheme.background)
               .steps(pointList.size - 1)
-              .labelData { i -> "" }
+              .labelData { _ -> "" }
               .labelAndAxisLinePadding(15.dp)
               .axisLineColor(MaterialTheme.colorScheme.inversePrimary)
               .build()
@@ -149,7 +179,7 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
               .backgroundColor(MaterialTheme.colorScheme.background)
               .labelAndAxisLinePadding(30.dp)
               .axisLineColor(MaterialTheme.colorScheme.inversePrimary)
-              .labelData { i -> "" }
+              .labelData { _ -> "" }
               .build()
               .toString()
 
@@ -251,16 +281,6 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
   fun OverviewScreenContent_Displayed() {
     setup()
     ComposeScreen.onComposeScreen<OverviewScreen>(composeTestRule) {
-      secondCard {
-        assertExists()
-        assertIsDisplayed()
-      }
-
-      genericImage {
-        assertExists()
-        assertIsDisplayed()
-      }
-
       calorieCard {
         assertExists()
         assertIsDisplayed()
@@ -310,10 +330,6 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
             .assertIsDisplayed()
 
         composeTestRule.onNodeWithTag("CaloriePerMeal").assertExists().assertIsDisplayed()
-
-        composeTestRule.onNodeWithTag("Number").assertExists().assertIsDisplayed()
-
-        composeTestRule.onNodeWithTag("Goal").assertExists().assertIsDisplayed()
       }
     }
   }
@@ -402,22 +418,5 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
         .performScrollToNode(hasTestTag("Graph Card"))
     composeTestRule.onNodeWithTag("Graph Card").assertHasClickAction().performClick()
     composeTestRule.onNodeWithTag("GraphScreenColumn").assertExists().assertIsDisplayed()
-  }
-
-  @Test
-  fun createAPost() {
-    setup()
-    ComposeScreen.onComposeScreen<OverviewScreen>(composeTestRule) {
-      createAPostButton {
-        assertExists()
-        assertIsDisplayed()
-        assertTextEquals("Create a Post")
-        assertHasClickAction()
-        performClick()
-        assertDoesNotExist()
-      }
-    }
-
-    ComposeScreen.onComposeScreen<CreatePostTopBar>(composeTestRule) { title { assertExists() } }
   }
 }

@@ -1,5 +1,9 @@
 package com.github.se.polyfit.viewmodel.dailyRecap
 
+import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.se.polyfit.data.repository.MealRepository
@@ -22,16 +26,21 @@ class DailyRecapViewModel @Inject constructor(private val mealRepository: MealRe
   private val _isFetching: MutableStateFlow<Boolean> = MutableStateFlow(false)
   val isFetching: StateFlow<Boolean> = _isFetching
 
+  var date: LocalDate by mutableStateOf(LocalDate.now())
+
   init {
-    getMealsOnDate(LocalDate.now())
+    getMealsOnDate()
   }
 
-  fun getMealsOnDate(date: LocalDate) {
+  fun getMealsOnDate(newDate: LocalDate = date) {
+    date = newDate
+
     viewModelScope.launch {
       _isFetching.value = true
 
       val newMeals = mealRepository.getMealsOnDate(date).filter { it.isComplete() }
       withContext(Dispatchers.Main) {
+        Log.v("new meals", newMeals.toString())
         _meals.value = newMeals
       } // FYI: UI updates only on Main Thread
 

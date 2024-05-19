@@ -11,14 +11,14 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.ui.components.GradientBox
-import com.github.se.polyfit.ui.navigation.Navigation
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.kakaocup.compose.node.element.ComposeScreen
-import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit4.MockKRule
+import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -30,8 +30,6 @@ class PrimaryButtonTest : TestCase() {
   @get:Rule val composeTestRule = createComposeRule()
 
   @get:Rule val mockkRule = MockKRule(this)
-
-  @RelaxedMockK lateinit var mockNav: Navigation
 
   @Before
   fun setup() {
@@ -78,5 +76,25 @@ class PrimaryButtonTest : TestCase() {
       verify { Log.v("Button", "Clicked") }
       composeTestRule.onNodeWithText("Hello World").assertIsDisplayed()
     }
+  }
+
+  @Test
+  fun onClickOnlyWorksOnce() = runTest {
+    val onClick = mockk<() -> Unit>(relaxed = true)
+
+    composeTestRule.setContent {
+      PrimaryButton(
+          onClick = onClick,
+          text = "Hello World",
+      )
+    }
+    ComposeScreen.onComposeScreen<GradientBox>(composeTestRule) {
+      composeTestRule.onNodeWithTag("PrimaryButton").assertIsDisplayed()
+      composeTestRule.onNodeWithTag("PrimaryButton").assertHasClickAction()
+      composeTestRule.onNodeWithTag("PrimaryButton").performClick()
+      composeTestRule.onNodeWithTag("PrimaryButton").performClick()
+    }
+
+    verify(exactly = 1) { onClick() }
   }
 }

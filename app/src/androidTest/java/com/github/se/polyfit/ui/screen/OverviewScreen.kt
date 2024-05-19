@@ -18,9 +18,8 @@ class OverviewScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
         viewBuilderAction = { hasTestTag("OverviewScreen") }) {
   val lazyColumn: KNode = child { hasTestTag("OverviewScreenLazyColumn") }
   val welcomeMessage: KNode = lazyColumn.child { hasTestTag(OverviewTags.overviewWelcome) }
+
   val calorieCard: KNode = lazyColumn.child { hasTestTag(OverviewTags.overviewMain) }
-  val secondCard: KNode = lazyColumn.child { hasTestTag("SecondCard") }
-  val genericImage: KNode = secondCard.child { hasTestTag("GenericPicture") }
   val createAPostButton: KNode = lazyColumn.child { hasTestTag("CreateAPost") }
 }
 
@@ -54,6 +53,7 @@ class PictureDialogBox(semanticsProvider: SemanticsNodeInteractionsProvider) :
   val title: KNode = row.child { hasTestTag("PictureDialogTitle") }
 
   val column: KNode = child { hasTestTag("PictureDialogColumn") }
-  val firstButton: KNode = column.child { hasTestTag("FirstButton") }
-  val secondButton: KNode = column.child { hasTestTag("SecondButton") }
+  val firstButton: KNode = column.child { hasTestTag("0Button") }
+  val secondButton: KNode = column.child { hasTestTag("1Button") }
+  val thirdButton: KNode = column.child { hasTestTag("2Button") }
 }

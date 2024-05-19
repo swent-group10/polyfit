@@ -45,7 +45,6 @@ class DailyRecapTest : TestCase() {
                 date to
                     listOf(
                         Meal(
-                            mealID = 1,
                             name = "Meal 1",
                             ingredients =
                                 mutableListOf(
@@ -65,13 +64,11 @@ class DailyRecapTest : TestCase() {
                                     MealTag("And yet another long", MealTagColor.LAVENDER),
                                     MealTag(
                                         "And yet another long long", MealTagColor.BRIGHTORANGE)),
-                            occasion = MealOccasion.BREAKFAST,
-                            nutritionalInformation = NutritionalInformation(mutableListOf())),
+                            occasion = MealOccasion.BREAKFAST),
                     ),
                 LocalDate.now().minusDays(1) to
                     listOf(
                         Meal(
-                            mealID = 2,
                             name = "Meal 2",
                             ingredients =
                                 mutableListOf(
@@ -91,8 +88,7 @@ class DailyRecapTest : TestCase() {
                                     MealTag("And yet another long", MealTagColor.LAVENDER),
                                     MealTag(
                                         "And yet another long long", MealTagColor.BRIGHTORANGE)),
-                            occasion = MealOccasion.BREAKFAST,
-                            nutritionalInformation = NutritionalInformation(mutableListOf())),
+                            occasion = MealOccasion.BREAKFAST),
                     ))
 
         every { getMealsOnDate(any()) } answers
@@ -107,12 +103,12 @@ class DailyRecapTest : TestCase() {
 
   fun setContent(
       navigateBack: () -> Unit = mockNav::goBack,
-      navigateTo: () -> Unit = mockNav::navigateToAddMeal,
+      navigateTo: (String?) -> Unit = mockNav::navigateToAddMeal,
       viewModel: DailyRecapViewModel = this.viewModel,
       isFetching: Boolean = false
   ) {
     every { viewModel.isFetching.value } returns isFetching
-    composeTestRule.setContent { DailyRecapScreen(navigateBack, navigateTo, viewModel, mockk()) }
+    composeTestRule.setContent { DailyRecapScreen(navigateBack, navigateTo, viewModel) }
   }
 
   @Test
@@ -144,14 +140,10 @@ class DailyRecapTest : TestCase() {
     }
 
     ComposeScreen.onComposeScreen<MealListScreen>(composeTestRule) {
-      mealCard { assertIsDisplayed() }
-      mealName {
+      mealCard {
         assertIsDisplayed()
-        assertTextEquals("Meal 1")
-      }
-      mealCalories {
-        assertIsDisplayed()
-        assertTextEquals("10.0 kcal")
+        assertTextContains("Meal 1")
+        assertTextContains("10.0 kcal")
       }
     }
   }

@@ -1,6 +1,7 @@
 package com.github.se.polyfit.ui.hiltModule
 
 import android.content.Context
+import com.github.se.polyfit.data.remote.firebase.UserFirebaseRepository
 import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.ui.utils.Authentication
 import com.github.se.polyfit.ui.utils.AuthenticationCloud
@@ -14,7 +15,11 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 @InstallIn(ViewModelComponent::class)
 object AuthModule {
   @Provides
-  fun provideAuthentication(@ApplicationContext context: Context, user: User): Authentication {
-    return AuthenticationCloud(context, user)
+  fun provideAuthentication(
+      @ApplicationContext context: Context,
+      user: User,
+      userFirebaseRepository: UserFirebaseRepository
+  ): Authentication {
+    return AuthenticationCloud(context, user, userFirebaseRepository)
   }
 }

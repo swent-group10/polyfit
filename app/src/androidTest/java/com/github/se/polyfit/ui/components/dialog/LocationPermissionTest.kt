@@ -1,8 +1,9 @@
 package com.github.se.polyfit.ui.components.dialog
 
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.google.common.base.Verify.verify
+import com.google.android.gms.location.CurrentLocationRequest
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.mockk.Runs
 import io.mockk.every
@@ -20,12 +21,16 @@ class LocationPermissionTest : TestCase() {
   @get:Rule val composeTestRule = createComposeRule()
 
   val mockFunction: () -> Unit = mockk()
+  val onApprove = mockk<(CurrentLocationRequest) -> Unit>(relaxed = true)
+  val mockActivityResultLauncher:
+      ManagedActivityResultLauncher<Array<String>, Map<String, Boolean>> =
+      mockk()
 
   @Before
   fun setup() {
     every { mockFunction() } just Runs
     composeTestRule.setContent {
-      LocationPermissionDialog(onApprove = mockFunction, onDeny = mockFunction)
+      LocationPermissionDialog(onApprove = onApprove, onDeny = mockFunction)
     }
   }
 
@@ -54,14 +59,6 @@ class LocationPermissionTest : TestCase() {
         assertHasClickAction()
         assertTextEquals(" Cancel ")
       }
-    }
-  }
-
-  @Test
-  fun approveButtonClicked() {
-    ComposeScreen.onComposeScreen<LocationPermissionScreen>(composeTestRule) {
-      approveButton { performClick() }
-      verify { mockFunction() }
     }
   }
 

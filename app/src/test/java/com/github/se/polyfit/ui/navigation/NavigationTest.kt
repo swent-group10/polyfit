@@ -26,7 +26,7 @@ class NavigationTest {
 
   @Test
   fun navigateToAddMeal_withMealDatabaseId_navigatesToCorrectRoute() {
-    val mealDatabaseId = 1L
+    val mealDatabaseId = "1L"
     val expectedRoute = Route.AddMeal + "/$mealDatabaseId"
     every { navHostController.navigate(expectedRoute) } just Runs
 
@@ -82,5 +82,15 @@ class NavigationTest {
     navigation.goBack()
 
     verify { navHostController.popBackStack() }
+  }
+
+  @Test
+  fun testNavigateTopPostList() {
+    val expectedRoute = Route.PostInfo
+    every { navHostController.navigate(expectedRoute) } just Runs
+
+    navigation.navigateToPostList()
+
+    verify { navHostController.navigate(expectedRoute) }
   }
 }

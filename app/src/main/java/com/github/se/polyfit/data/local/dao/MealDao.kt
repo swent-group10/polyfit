@@ -1,5 +1,6 @@
 package com.github.se.polyfit.data.local.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -24,31 +25,26 @@ interface MealDao {
     return meals.flatMap { it.ingredients }
   }
 
-  @Insert(onConflict = OnConflictStrategy.REPLACE) fun insert(meal: MealEntity): Long
+  @Insert(onConflict = OnConflictStrategy.REPLACE) fun insert(meal: MealEntity)
 
   // Converts the Meal object to a MealEntity and inserts it into the database.
   // Returns the ID of the inserted meal.
-  fun insert(meal: Meal): Long {
-    return insert(MealEntity.toMealEntity(meal))
-  }
-
-  @Query("SELECT * FROM MealTable WHERE firebaseId = :id LIMIT 1 ")
-  fun getMealEntityByFirebaseID(id: String): MealEntity?
-
-  fun getMealByFirebaseID(id: String): Meal? {
-    val meal = getMealEntityByFirebaseID(id)
-    return meal?.toMeal()
+  fun insert(meal: Meal): String {
+    val mealEntity = MealEntity.toMealEntity(meal)
+    insert(mealEntity)
+    return mealEntity.id
   }
 
   @Query("SELECT * FROM MEALTABLE WHERE createdAt >= :date ")
   fun getMealsCreatedOnOrAfterDate(date: LocalDate): List<Meal>
 
   @Query("SELECT * FROM MEALTABLE WHERE createdAt == :date ")
+  fun getMealsCreatedOnDateLiveData(date: LocalDate): LiveData<List<Meal>>
+
+  @Query("SELECT * FROM MEALTABLE WHERE createdAt == :date ")
   fun getMealsCreatedOnDate(date: LocalDate): List<Meal>
 
-  @Query("DELETE FROM MealTable WHERE firebaseId = :id") fun deleteByFirebaseID(id: String)
-
-  @Query("DELETE FROM MealTable WHERE id = :id") fun deleteByDatabaseID(id: Long)
+  @Query("DELETE FROM MealTable WHERE id = :id") fun deleteById(id: String)
 
   @Query("DELETE FROM MealTable") fun deleteAll()
 
@@ -57,9 +53,9 @@ interface MealDao {
    * between meals who do not have yet a firebase ID
    */
   @Query("SELECT * FROM MealTable WHERE id = :id LIMIT 1 ")
-  fun getMealEntityByDatabaseID(id: Long): MealEntity?
+  fun getMealEntityById(id: String): MealEntity?
 
-  fun getMealByDatabaseID(id: Long): Meal? {
-    return getMealEntityByDatabaseID(id)?.toMeal()
+  fun getMealById(id: String): Meal? {
+    return getMealEntityById(id)?.toMeal()
   }
 }

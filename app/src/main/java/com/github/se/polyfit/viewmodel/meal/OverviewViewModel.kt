@@ -1,10 +1,21 @@
 package com.github.se.polyfit.viewmodel.meal
 
+import android.Manifest
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.provider.MediaStore
 import android.util.Log
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.result.ActivityResult
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.github.se.polyfit.data.api.SpoonacularApiCaller
 import com.github.se.polyfit.data.local.dao.MealDao
+import com.github.se.polyfit.data.processor.LocalDataProcessor
+import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,10 +24,14 @@ import javax.inject.Inject
 @HiltViewModel
 class OverviewViewModel
 @Inject
-constructor(private val mealDao: MealDao, private val spoonacularApiCaller: SpoonacularApiCaller) :
-    ViewModel() {
+constructor(
+    private val mealDao: MealDao,
+    private val spoonacularApiCaller: SpoonacularApiCaller,
+    private val user: User,
+    private val localDataProcessor: LocalDataProcessor
+) : ViewModel() {
 
-  fun storeMeal(imageBitmap: Bitmap?): Long? {
+  fun storeMeal(imageBitmap: Bitmap?): String? {
     if (imageBitmap == null) {
       Log.e("OverviewViewModel", "Image is null")
       return null
@@ -34,8 +49,8 @@ constructor(private val mealDao: MealDao, private val spoonacularApiCaller: Spoo
     }
   }
 
-  fun deleteByDBId(mealDatabaseId: Long) {
-    mealDao.deleteByDatabaseID(mealDatabaseId)
+  fun deleteById(mealDatabaseId: String) {
+    mealDao.deleteById(mealDatabaseId)
   }
 
   fun getMealsByCalorieRange(minCalories: Double, maxCalories: Double): List<Meal> {
@@ -164,5 +179,45 @@ constructor(private val mealDao: MealDao, private val spoonacularApiCaller: Spoo
 
     // Return the meal with the lowest calories
     return lowestCalorieMeal
+  }
+
+  fun getUserName(): String {
+    return when {
+      user.displayName != null -> user.displayName!!
+      else -> user.email
+    }
+  }
+
+  fun callCamera(
+      context: Context,
+      startCamera: ManagedActivityResultLauncher<Intent, ActivityResult>,
+      requestPermissionLauncher: ManagedActivityResultLauncher<String, Boolean>
+  ): () -> Unit = {
+    // Check if the permission has already been granted
+    when (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)) {
+      PackageManager.PERMISSION_GRANTED -> {
+        // You can use the camera
+        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        try {
+          startCamera.launch(takePictureIntent)
+        } catch (e: Exception) {
+          // Handle the exception if the camera intent cannot be launched
+          Log.e("HomeScreen", "Error launching camera intent: $e")
+        }
+      }
+      else -> {
+        // Request the permission
+        requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+      }
+    }
+  }
+
+  fun getCaloriesPerMealOccasionTodayLiveData(): LiveData<List<Pair<MealOccasion, Double>>> {
+
+    return localDataProcessor.getCaloriesPerMealOccasionTodayLiveData()
+  }
+
+  fun getCaloryGoal(): Long {
+    return user.calorieGoal
   }
 }

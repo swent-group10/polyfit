@@ -21,6 +21,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,6 +34,7 @@ import com.github.se.polyfit.ui.components.nutrition.NutritionalInformation
 import com.github.se.polyfit.ui.theme.PrimaryPink
 import com.github.se.polyfit.ui.theme.PrimaryPurple
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
+import java.time.LocalDate
 
 @Composable
 fun NutritionScreen(
@@ -46,7 +50,8 @@ fun NutritionScreen(
         BottomBar(
             setMeal = mealViewModel::setMeal,
             isComplete = isComplete,
-            navigateForward = navigateForward)
+            navigateForward = navigateForward,
+            updateMealData = mealViewModel::setMealCreatedAt)
       }) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) { NutritionalInformation(mealViewModel) }
       }
@@ -55,6 +60,7 @@ fun NutritionScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TopBar(navigateBack: () -> Unit) {
+  var goBackCliked by remember { mutableStateOf(false) }
   TopAppBar(
       title = {
         Text(
@@ -65,7 +71,12 @@ private fun TopBar(navigateBack: () -> Unit) {
       },
       navigationIcon = {
         IconButton(
-            onClick = { navigateBack() },
+            onClick = {
+              if (!goBackCliked) {
+                goBackCliked = true
+                navigateBack()
+              }
+            },
             content = {
               Icon(
                   imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -79,17 +90,30 @@ private fun TopBar(navigateBack: () -> Unit) {
 }
 
 @Composable
-private fun BottomBar(setMeal: () -> Unit, isComplete: Boolean, navigateForward: () -> Unit) {
+private fun BottomBar(
+    setMeal: () -> Unit,
+    isComplete: Boolean,
+    navigateForward: () -> Unit,
+    updateMealData: (createdAt: LocalDate) -> Unit
+) {
   BottomAppBar(
       modifier = Modifier.height(128.dp).testTag("BottomBar"), containerColor = Color.Transparent) {
         Column(
             modifier = Modifier.fillMaxWidth().testTag("ButtonColumn"),
             horizontalAlignment = Alignment.CenterHorizontally) {
               PrimaryButton(
-                  onClick = { Log.v("Add Recipe", "Clicked") },
+                  onClick = {
+                    Log.v("Add Recipe", "Clicked")
+                    navigateForward()
+                    // Set the date of the meal to the minimum value to set a default value
+                    // who will not be on the data we see.
+                    updateMealData(LocalDate.MIN)
+                    setMeal()
+                  },
                   modifier = Modifier.width(250.dp).testTag("AddRecipeButton"),
                   text = "Add Recipe",
                   fontSize = 18,
+                  isEnabled = isComplete,
                   color = PrimaryPink)
               Spacer(modifier = Modifier.height(8.dp))
               PrimaryButton(

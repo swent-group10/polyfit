@@ -2,8 +2,10 @@ package com.github.se.polyfit.ui.screen
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -31,13 +33,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.se.polyfit.R
 import com.github.se.polyfit.model.meal.Meal
-import com.github.se.polyfit.model.post.Location
 import com.github.se.polyfit.ui.components.button.PrimaryButton
 import com.github.se.polyfit.ui.components.dialog.LocationPermissionDialog
 import com.github.se.polyfit.ui.components.scaffold.CenteredTopBar
@@ -47,11 +47,13 @@ import com.github.se.polyfit.ui.theme.PrimaryPink
 import com.github.se.polyfit.ui.theme.PrimaryPurple
 import com.github.se.polyfit.ui.theme.SecondaryGrey
 import com.github.se.polyfit.viewmodel.post.CreatePostViewModel
+import com.google.android.gms.location.CurrentLocationRequest
 
 @Composable
 fun CreatePostScreen(
     navigateBack: () -> Unit = {},
     navigateForward: () -> Unit = {},
+    navigateToAddMeal: () -> Unit = {},
     postViewModel: CreatePostViewModel = hiltViewModel()
 ) {
   val context = LocalContext.current
@@ -64,10 +66,9 @@ fun CreatePostScreen(
     postViewModel.setPostData(meal = meal)
   }
 
-  fun onApprove() {
+  fun onApprove(locationRequest: CurrentLocationRequest) {
     isPermissionDialogDisplay = false
-    postViewModel.setPostLocation(Location.default()) // TODO: Include location when ready
-    postViewModel.setPost()
+    postViewModel.setInOrder(locationRequest)
     navigateForward()
   }
 
@@ -80,8 +81,18 @@ fun CreatePostScreen(
         BottomBar(
             postComplete = postComplete, onButtonPressed = { isPermissionDialogDisplay = true })
       }) {
+        if (meals.isEmpty()) {
+          CreateMeal(navigateToAddMeal, Modifier.padding(it))
+          return@Scaffold
+        }
+
         LazyColumn(modifier = Modifier.padding(it).testTag("CreatePostScreen")) {
-          item { PictureSelector(modifier = Modifier.padding(top = 10.dp)) }
+          item {
+            PictureSelector(
+                modifier = Modifier.padding(top = 10.dp),
+                postViewModel::getBitMap,
+                postViewModel::setBitMap)
+          }
           item { PostDescription(postViewModel::setPostDescription) }
           item { HorizontalDivider(thickness = 1.dp, color = Color.LightGray) }
           item { MealSelector(selectedMeal, { meal -> selectedMeal = meal }, meals, ::setPostMeal) }
@@ -91,6 +102,27 @@ fun CreatePostScreen(
           LocationPermissionDialog(
               onApprove = ::onApprove, onDeny = { isPermissionDialogDisplay = false })
         }
+      }
+}
+
+@Composable
+private fun CreateMeal(navigateToAddMeal: () -> Unit, modifier: Modifier = Modifier) {
+  val context = LocalContext.current
+  Column(
+      modifier = modifier.fillMaxSize().testTag("CreateMeal"),
+      verticalArrangement = Arrangement.Center,
+      horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = context.getString(R.string.noMealsFound),
+            color = SecondaryGrey,
+            fontSize = 20.sp,
+            modifier = Modifier.padding(top = 16.dp, bottom = 8.dp).testTag("NoMealsFound"))
+        PrimaryButton(
+            text = context.getString(R.string.addMealButton),
+            onClick = navigateToAddMeal,
+            color = PrimaryPink,
+            fontSize = 24,
+            modifier = Modifier.padding(bottom = 16.dp).testTag("AddMealButton"))
       }
 }
 
@@ -152,10 +184,4 @@ private fun BottomBar(onButtonPressed: () -> Unit, postComplete: Boolean) {
               buttonShape = RoundedCornerShape(12.dp))
         }
   }
-}
-
-@Composable
-@Preview
-fun MakePostScreenPreview() {
-  CreatePostScreen()
 }

@@ -67,7 +67,7 @@ class UserTest {
     assertEquals("Test", map["familyName"])
     assertEquals("User", map["givenName"])
     assertEquals(" invalid email", map["email"])
-    assertEquals("null", map["photoURL"])
+    assertEquals(null, map["photoURL"])
   }
 
   @Test
@@ -79,7 +79,7 @@ class UserTest {
     assertEquals("Test", map["familyName"])
     assertEquals("User", map["givenName"])
     assertEquals(" invalid email", map["email"])
-    assertEquals("null", map["photoURL"])
+    assertEquals(null, map["photoURL"])
   }
 
   @Test
@@ -119,14 +119,38 @@ class UserTest {
   }
 
   @Test
-  fun `User deserialization with invalid map`() {
+  fun `Update user with user object`() {
+    val user = User("1", "Test User", "Test", "User", " invalid email", null)
+    val newUser = User("2", "Test User 2", "Test 2", "User 2", " invalid email 2", null)
+    user.update(newUser)
+    assertEquals(user, newUser)
+  }
+
+  @Test
+  fun `User deserialization with missing ID`() {
+    // Invalid if no email or ID
     val map =
         mapOf(
-            "id" to "null",
             "familyName" to "Test",
             "givenName" to "User",
             "email" to " invalid email",
             "photoURL" to "null")
     assertFailsWith<Exception> { User.deserialize(map) }
+  }
+
+  @Test
+  fun `User deserialization with missing email`() {
+    // Invalid if no email or ID
+    val map =
+        mapOf("id" to "1", "familyName" to "Test", "givenName" to "User", "photoURL" to "null")
+    assertFailsWith<Exception> { User.deserialize(map) }
+  }
+
+  @Test
+  fun `User serialize and deserialize remains unchanged`() {
+    val user = User("1", "Test User", "Test", "User", " invalid email", null)
+    val map = User.serialize(user)
+    val deserializedUser = User.deserialize(map)
+    assertEquals(user, deserializedUser)
   }
 }

@@ -1,8 +1,10 @@
 package com.github.se.polyfit.ui.components.list
 
 import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
@@ -16,7 +18,6 @@ import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.mockk.junit4.MockKRule
-import io.mockk.mockk
 import kotlin.test.Test
 import org.junit.Rule
 import org.junit.runner.RunWith
@@ -31,9 +32,9 @@ class MealListTest : TestCase() {
   fun setContent(
       meals: List<Meal> = emptyList(),
       occasion: MealOccasion = MealOccasion.BREAKFAST,
-      navigateTo: () -> Unit = {}
+      navigateTo: (String?) -> Unit = {}
   ) {
-    composeTestRule.setContent { MealList(meals, occasion, navigateTo, mealViewModel = mockk()) }
+    composeTestRule.setContent { MealList(meals, occasion, navigateTo) }
   }
 
   @Test
@@ -71,36 +72,26 @@ class MealListTest : TestCase() {
   private val meal1 =
       Meal(
           name = "Meal 1",
-          mealID = 1,
           ingredients = mutableListOf(ingredient),
           tags = tags,
-          occasion = MealOccasion.BREAKFAST,
-          nutritionalInformation = NutritionalInformation(mutableListOf()))
+          occasion = MealOccasion.BREAKFAST)
 
   private val meal2 =
       Meal(
           name = "Meal 2",
-          mealID = 2,
           ingredients = mutableListOf(ingredient),
           tags = tags,
-          occasion = MealOccasion.BREAKFAST,
-          nutritionalInformation = NutritionalInformation(mutableListOf()))
+          occasion = MealOccasion.BREAKFAST)
 
   @Test
   fun oneMealDisplays() {
     setContent(meals = listOf(meal1))
 
     ComposeScreen.onComposeScreen<MealListScreen>(composeTestRule) {
-      mealCard { assertIsDisplayed() }
-
-      mealName {
+      mealCard {
         assertIsDisplayed()
-        assertTextEquals("Meal 1")
-      }
-
-      mealCalories {
-        assertIsDisplayed()
-        assertTextEquals("10.0 kcal")
+        assertTextContains("Meal 1")
+        assertTextContains("10.0 kcal")
       }
 
       totalCalories {
@@ -108,7 +99,7 @@ class MealListTest : TestCase() {
         assertTextEquals("10.0")
       }
 
-      mealTagList { assertIsDisplayed() }
+      composeTestRule.onNodeWithTag("MealTagList", true).assertIsDisplayed()
     }
   }
 

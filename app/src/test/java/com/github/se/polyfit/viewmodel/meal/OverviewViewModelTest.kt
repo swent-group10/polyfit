@@ -4,6 +4,8 @@ import android.graphics.Bitmap
 import android.util.Log
 import com.github.se.polyfit.data.api.SpoonacularApiCaller
 import com.github.se.polyfit.data.local.dao.MealDao
+import com.github.se.polyfit.model.data.User
+import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
@@ -29,7 +31,8 @@ class OverviewViewModelTest {
     mockkStatic(Log::class)
     every { Log.e(any(), any()) } returns 0
     every { Log.i(any(), any()) } returns 0
-    overviewViewModel = OverviewViewModel(mockMealDao, mockSpoonacularApiCaller)
+    overviewViewModel =
+        OverviewViewModel(mockMealDao, mockSpoonacularApiCaller, User.testUser(), mockk())
   }
 
   @Test
@@ -37,8 +40,8 @@ class OverviewViewModelTest {
     val bitmap: Bitmap = mockk()
     val meal: Meal = mockk()
     every { mockSpoonacularApiCaller.getMealsFromImage(bitmap) } returns meal
-    every { mockMealDao.insert(meal) } returns 1
-    Assert.assertEquals(1.toLong(), overviewViewModel.storeMeal(bitmap))
+    every { mockMealDao.insert(meal) } returns "1"
+    Assert.assertEquals("1", overviewViewModel.storeMeal(bitmap))
   }
 
   @Test
@@ -50,14 +53,14 @@ class OverviewViewModelTest {
 
   @Test
   fun deleteByDBId_deletesMeal() {
-    val id = 1L
-    every { mockMealDao.deleteByDatabaseID(id) } returns Unit
+    val id = "1L"
+    every { mockMealDao.deleteById(id) } returns Unit
 
     // Call the method under test
-    overviewViewModel.deleteByDBId(id)
+    overviewViewModel.deleteById(id)
 
     // Verify that the method was called with the correct parameters
-    verify { mockMealDao.deleteByDatabaseID(id) }
+    verify { mockMealDao.deleteById(id) }
   }
 
   @Test
@@ -65,29 +68,48 @@ class OverviewViewModelTest {
     // Prepare the meals
     val meal1 =
         Meal(
-            mealID = 1,
-            nutritionalInformation =
-                NutritionalInformation(
-                    mutableListOf(Nutrient("calories", 100.0, MeasurementUnit.KCAL))),
             name = "Meal 1",
-            occasion = MealOccasion.BREAKFAST)
+            occasion = MealOccasion.BREAKFAST,
+            ingredients =
+                mutableListOf(
+                    Ingredient(
+                        name = "ingredient1",
+                        id = 0,
+                        amount = 10.0,
+                        unit = MeasurementUnit.G,
+                        nutritionalInformation =
+                            NutritionalInformation(
+                                mutableListOf(Nutrient("calories", 100.0, MeasurementUnit.KCAL))))))
     val meal2 =
         Meal(
-            mealID = 2,
-            nutritionalInformation =
-                NutritionalInformation(
-                    mutableListOf(Nutrient("calories", 200.0, MeasurementUnit.KCAL))),
             name = "Meal 2",
-            occasion = MealOccasion.LUNCH)
+            occasion = MealOccasion.LUNCH,
+            ingredients =
+                mutableListOf(
+                    Ingredient(
+                        name = "ingredient1",
+                        id = 0,
+                        amount = 10.0,
+                        unit = MeasurementUnit.G,
+                        nutritionalInformation =
+                            NutritionalInformation(
+                                mutableListOf(Nutrient("calories", 200.0, MeasurementUnit.KCAL))))))
 
     val meal3 =
         Meal(
-            mealID = 3,
-            nutritionalInformation =
-                NutritionalInformation(
-                    mutableListOf(Nutrient("calories", 300.0, MeasurementUnit.KCAL))),
             name = "Meal 3",
-            occasion = MealOccasion.DINNER)
+            occasion = MealOccasion.DINNER,
+            ingredients =
+                mutableListOf(
+                    Ingredient(
+                        name = "ingredient1",
+                        id = 0,
+                        amount = 10.0,
+                        unit = MeasurementUnit.G,
+                        nutritionalInformation =
+                            NutritionalInformation(
+                                mutableListOf(Nutrient("calories", 300.0, MeasurementUnit.KCAL))))))
+
     val allMeals = listOf(meal1, meal2, meal3)
 
     // Mock the getAllMeals function in the dao
@@ -135,30 +157,9 @@ class OverviewViewModelTest {
   @Test
   fun getMealsByOccasion_returnsCorrectMeals() {
     // Prepare the meals
-    val meal1 =
-        Meal(
-            mealID = 1,
-            name = "Breakfast Meal",
-            occasion = MealOccasion.BREAKFAST,
-            nutritionalInformation =
-                NutritionalInformation(
-                    mutableListOf(Nutrient("calories", 100.0, MeasurementUnit.KCAL))))
-    val meal2 =
-        Meal(
-            mealID = 2,
-            name = "Lunch Meal",
-            occasion = MealOccasion.LUNCH,
-            nutritionalInformation =
-                NutritionalInformation(
-                    mutableListOf(Nutrient("calories", 100.0, MeasurementUnit.KCAL))))
-    val meal3 =
-        Meal(
-            mealID = 3,
-            name = "Dinner Meal",
-            occasion = MealOccasion.DINNER,
-            nutritionalInformation =
-                NutritionalInformation(
-                    mutableListOf(Nutrient("calories", 100.0, MeasurementUnit.KCAL))))
+    val meal1 = Meal(name = "Breakfast Meal", occasion = MealOccasion.BREAKFAST)
+    val meal2 = Meal(name = "Lunch Meal", occasion = MealOccasion.LUNCH)
+    val meal3 = Meal(name = "Dinner Meal", occasion = MealOccasion.DINNER)
     val allMeals = listOf(meal1, meal2, meal3)
 
     // Mock the getAllMeals function in the dao
@@ -175,30 +176,9 @@ class OverviewViewModelTest {
   @Test
   fun getMealsByOccasion_noMatchingMeals() {
     // Prepare the meals
-    val meal1 =
-        Meal(
-            mealID = 1,
-            name = "Breakfast Meal",
-            occasion = MealOccasion.BREAKFAST,
-            nutritionalInformation =
-                NutritionalInformation(
-                    mutableListOf(Nutrient("calories", 100.0, MeasurementUnit.KCAL))))
-    val meal2 =
-        Meal(
-            mealID = 2,
-            name = "Lunch Meal",
-            occasion = MealOccasion.LUNCH,
-            nutritionalInformation =
-                NutritionalInformation(
-                    mutableListOf(Nutrient("calories", 100.0, MeasurementUnit.KCAL))))
-    val meal3 =
-        Meal(
-            mealID = 3,
-            name = "Dinner Meal",
-            occasion = MealOccasion.DINNER,
-            nutritionalInformation =
-                NutritionalInformation(
-                    mutableListOf(Nutrient("calories", 100.0, MeasurementUnit.KCAL))))
+    val meal1 = Meal(name = "Breakfast Meal", occasion = MealOccasion.BREAKFAST)
+    val meal2 = Meal(name = "Lunch Meal", occasion = MealOccasion.LUNCH)
+    val meal3 = Meal(name = "Dinner Meal", occasion = MealOccasion.DINNER)
     val allMeals = listOf(meal1, meal2, meal3)
 
     // Mock the getAllMeals function in the dao
@@ -216,28 +196,47 @@ class OverviewViewModelTest {
     // Prepare the meals
     val meal1 =
         Meal(
-            mealID = 1,
             name = "Chicken Salad",
             occasion = MealOccasion.BREAKFAST,
-            nutritionalInformation =
-                NutritionalInformation(
-                    mutableListOf(Nutrient("calories", 150.0, MeasurementUnit.KCAL))))
+            ingredients =
+                mutableListOf(
+                    Ingredient(
+                        name = "ingredient1",
+                        id = 0,
+                        amount = 10.0,
+                        unit = MeasurementUnit.G,
+                        nutritionalInformation =
+                            NutritionalInformation(
+                                mutableListOf(Nutrient("calories", 150.0, MeasurementUnit.KCAL))))))
     val meal2 =
         Meal(
-            mealID = 2,
             name = "Beef Stew",
             occasion = MealOccasion.LUNCH,
-            nutritionalInformation =
-                NutritionalInformation(
-                    mutableListOf(Nutrient("calories", 250.0, MeasurementUnit.KCAL))))
+            ingredients =
+                mutableListOf(
+                    Ingredient(
+                        name = "ingredient1",
+                        id = 0,
+                        amount = 10.0,
+                        unit = MeasurementUnit.G,
+                        nutritionalInformation =
+                            NutritionalInformation(
+                                mutableListOf(Nutrient("calories", 250.0, MeasurementUnit.KCAL))))))
     val meal3 =
         Meal(
-            mealID = 3,
             name = "Chicken Soup",
             occasion = MealOccasion.DINNER,
-            nutritionalInformation =
-                NutritionalInformation(
-                    mutableListOf(Nutrient("calories", 350.0, MeasurementUnit.KCAL))))
+            ingredients =
+                mutableListOf(
+                    Ingredient(
+                        name = "ingredient1",
+                        id = 0,
+                        amount = 10.0,
+                        unit = MeasurementUnit.G,
+                        nutritionalInformation =
+                            NutritionalInformation(
+                                mutableListOf(Nutrient("calories", 350.0, MeasurementUnit.KCAL))))))
+
     val allMeals = listOf(meal1, meal2, meal3)
 
     // Mock the getAllMeals function in the dao
@@ -258,28 +257,47 @@ class OverviewViewModelTest {
     // Prepare the meals
     val meal1 =
         Meal(
-            mealID = 1,
             name = "Chicken Salad",
             occasion = MealOccasion.BREAKFAST,
-            nutritionalInformation =
-                NutritionalInformation(
-                    mutableListOf(Nutrient("calories", 150.0, MeasurementUnit.KCAL))))
+            ingredients =
+                mutableListOf(
+                    Ingredient(
+                        name = "ingredient1",
+                        id = 0,
+                        amount = 10.0,
+                        unit = MeasurementUnit.G,
+                        nutritionalInformation =
+                            NutritionalInformation(
+                                mutableListOf(Nutrient("calories", 150.0, MeasurementUnit.KCAL))))))
     val meal2 =
         Meal(
-            mealID = 2,
             name = "Beef Stew",
             occasion = MealOccasion.LUNCH,
-            nutritionalInformation =
-                NutritionalInformation(
-                    mutableListOf(Nutrient("calories", 250.0, MeasurementUnit.KCAL))))
+            ingredients =
+                mutableListOf(
+                    Ingredient(
+                        name = "ingredient1",
+                        id = 0,
+                        amount = 10.0,
+                        unit = MeasurementUnit.G,
+                        nutritionalInformation =
+                            NutritionalInformation(
+                                mutableListOf(Nutrient("calories", 250.0, MeasurementUnit.KCAL))))))
     val meal3 =
         Meal(
-            mealID = 3,
             name = "Chicken Soup",
             occasion = MealOccasion.DINNER,
-            nutritionalInformation =
-                NutritionalInformation(
-                    mutableListOf(Nutrient("calories", 350.0, MeasurementUnit.KCAL))))
+            ingredients =
+                mutableListOf(
+                    Ingredient(
+                        name = "ingredient1",
+                        id = 0,
+                        amount = 10.0,
+                        unit = MeasurementUnit.G,
+                        nutritionalInformation =
+                            NutritionalInformation(
+                                mutableListOf(Nutrient("calories", 350.0, MeasurementUnit.KCAL))))))
+
     val allMeals = listOf(meal1, meal2, meal3)
 
     // Mock the getAllMeals function in the dao
@@ -298,28 +316,47 @@ class OverviewViewModelTest {
     // Prepare the meals
     val meal1 =
         Meal(
-            mealID = 1,
-            occasion = MealOccasion.BREAKFAST,
             name = "Chicken Salad",
-            nutritionalInformation =
-                NutritionalInformation(
-                    mutableListOf(Nutrient("calories", 150.0, MeasurementUnit.KCAL))))
+            occasion = MealOccasion.BREAKFAST,
+            ingredients =
+                mutableListOf(
+                    Ingredient(
+                        name = "ingredient1",
+                        id = 0,
+                        amount = 10.0,
+                        unit = MeasurementUnit.G,
+                        nutritionalInformation =
+                            NutritionalInformation(
+                                mutableListOf(Nutrient("calories", 150.0, MeasurementUnit.KCAL))))))
     val meal2 =
         Meal(
-            mealID = 2,
             name = "Beef Stew",
-            occasion = MealOccasion.BREAKFAST,
-            nutritionalInformation =
-                NutritionalInformation(
-                    mutableListOf(Nutrient("calories", 250.0, MeasurementUnit.KCAL))))
+            occasion = MealOccasion.LUNCH,
+            ingredients =
+                mutableListOf(
+                    Ingredient(
+                        name = "ingredient1",
+                        id = 0,
+                        amount = 10.0,
+                        unit = MeasurementUnit.G,
+                        nutritionalInformation =
+                            NutritionalInformation(
+                                mutableListOf(Nutrient("calories", 250.0, MeasurementUnit.KCAL))))))
     val meal3 =
         Meal(
-            mealID = 3,
             name = "Chicken Soup",
-            occasion = MealOccasion.BREAKFAST,
-            nutritionalInformation =
-                NutritionalInformation(
-                    mutableListOf(Nutrient("calories", 350.0, MeasurementUnit.KCAL))))
+            occasion = MealOccasion.DINNER,
+            ingredients =
+                mutableListOf(
+                    Ingredient(
+                        name = "ingredient1",
+                        id = 0,
+                        amount = 10.0,
+                        unit = MeasurementUnit.G,
+                        nutritionalInformation =
+                            NutritionalInformation(
+                                mutableListOf(Nutrient("calories", 350.0, MeasurementUnit.KCAL))))))
+
     val allMeals = listOf(meal1, meal2, meal3)
 
     // Mock the getAllMeals function in the dao
@@ -348,28 +385,47 @@ class OverviewViewModelTest {
     // Prepare the meals
     val meal1 =
         Meal(
-            mealID = 1,
             name = "Chicken Salad",
             occasion = MealOccasion.BREAKFAST,
-            nutritionalInformation =
-                NutritionalInformation(
-                    mutableListOf(Nutrient("calories", 150.0, MeasurementUnit.KCAL))))
+            ingredients =
+                mutableListOf(
+                    Ingredient(
+                        name = "ingredient1",
+                        id = 0,
+                        amount = 10.0,
+                        unit = MeasurementUnit.G,
+                        nutritionalInformation =
+                            NutritionalInformation(
+                                mutableListOf(Nutrient("calories", 150.0, MeasurementUnit.KCAL))))))
     val meal2 =
         Meal(
-            mealID = 2,
             name = "Beef Stew",
             occasion = MealOccasion.LUNCH,
-            nutritionalInformation =
-                NutritionalInformation(
-                    mutableListOf(Nutrient("calories", 250.0, MeasurementUnit.KCAL))))
+            ingredients =
+                mutableListOf(
+                    Ingredient(
+                        name = "ingredient1",
+                        id = 0,
+                        amount = 10.0,
+                        unit = MeasurementUnit.G,
+                        nutritionalInformation =
+                            NutritionalInformation(
+                                mutableListOf(Nutrient("calories", 250.0, MeasurementUnit.KCAL))))))
     val meal3 =
         Meal(
-            mealID = 3,
             name = "Chicken Soup",
             occasion = MealOccasion.DINNER,
-            nutritionalInformation =
-                NutritionalInformation(
-                    mutableListOf(Nutrient("calories", 350.0, MeasurementUnit.KCAL))))
+            ingredients =
+                mutableListOf(
+                    Ingredient(
+                        name = "ingredient1",
+                        id = 0,
+                        amount = 10.0,
+                        unit = MeasurementUnit.G,
+                        nutritionalInformation =
+                            NutritionalInformation(
+                                mutableListOf(Nutrient("calories", 350.0, MeasurementUnit.KCAL))))))
+
     val allMeals = listOf(meal1, meal2, meal3)
 
     // Mock the getAllMeals function in the dao
@@ -388,28 +444,46 @@ class OverviewViewModelTest {
     // Prepare the meals
     val meal1 =
         Meal(
-            mealID = 1,
-            occasion = MealOccasion.BREAKFAST,
             name = "Chicken Salad",
-            nutritionalInformation =
-                NutritionalInformation(
-                    mutableListOf(Nutrient("calories", 150.0, MeasurementUnit.KCAL))))
+            occasion = MealOccasion.BREAKFAST,
+            ingredients =
+                mutableListOf(
+                    Ingredient(
+                        name = "ingredient1",
+                        id = 0,
+                        amount = 10.0,
+                        unit = MeasurementUnit.G,
+                        nutritionalInformation =
+                            NutritionalInformation(
+                                mutableListOf(Nutrient("calories", 150.0, MeasurementUnit.KCAL))))))
     val meal2 =
         Meal(
-            mealID = 2,
-            occasion = MealOccasion.BREAKFAST,
             name = "Beef Stew",
-            nutritionalInformation =
-                NutritionalInformation(
-                    mutableListOf(Nutrient("calories", 250.0, MeasurementUnit.KCAL))))
+            occasion = MealOccasion.LUNCH,
+            ingredients =
+                mutableListOf(
+                    Ingredient(
+                        name = "ingredient1",
+                        id = 0,
+                        amount = 10.0,
+                        unit = MeasurementUnit.G,
+                        nutritionalInformation =
+                            NutritionalInformation(
+                                mutableListOf(Nutrient("calories", 250.0, MeasurementUnit.KCAL))))))
     val meal3 =
         Meal(
-            mealID = 3,
             name = "Chicken Soup",
-            occasion = MealOccasion.BREAKFAST,
-            nutritionalInformation =
-                NutritionalInformation(
-                    mutableListOf(Nutrient("calories", 100.0, MeasurementUnit.KCAL))))
+            occasion = MealOccasion.DINNER,
+            ingredients =
+                mutableListOf(
+                    Ingredient(
+                        name = "ingredient1",
+                        id = 0,
+                        amount = 10.0,
+                        unit = MeasurementUnit.G,
+                        nutritionalInformation =
+                            NutritionalInformation(
+                                mutableListOf(Nutrient("calories", 100.0, MeasurementUnit.KCAL))))))
     val allMeals = listOf(meal1, meal2, meal3)
 
     // Mock the getAllMeals function in the dao
@@ -439,11 +513,18 @@ class OverviewViewModelTest {
     // Prepare the meals
     val meal1 =
         Meal(
-            mealID = 1,
             occasion = MealOccasion.BREAKFAST,
             name = "Chicken Salad",
-            nutritionalInformation =
-                NutritionalInformation(mutableListOf(Nutrient("fat", 150.0, MeasurementUnit.G))))
+            ingredients =
+                mutableListOf(
+                    Ingredient(
+                        name = "ingredient1",
+                        id = 0,
+                        amount = 10.0,
+                        unit = MeasurementUnit.G,
+                        nutritionalInformation =
+                            NutritionalInformation(
+                                mutableListOf(Nutrient("calories", 100.0, MeasurementUnit.KCAL))))))
 
     val allMeals = listOf(meal1)
 
@@ -455,5 +536,19 @@ class OverviewViewModelTest {
 
     // Verify the result
     Assert.assertEquals(meal1, result)
+  }
+
+  @Test
+  fun getUserDisplayName() {
+    val result = overviewViewModel.getUserName()
+    Assert.assertEquals(User.testUser().displayName, result)
+  }
+
+  @Test
+  fun getEmailIFDispalyIsNotSet() {
+    val user = User.testUser().apply { displayName = null }
+    val overviewViewModel = OverviewViewModel(mockMealDao, mockSpoonacularApiCaller, user, mockk())
+    val result = overviewViewModel.getUserName()
+    Assert.assertEquals(user.email, result)
   }
 }

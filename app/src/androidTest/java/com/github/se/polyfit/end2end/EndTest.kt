@@ -6,9 +6,6 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.provider.MediaStore
 import android.util.Log
-import androidx.compose.ui.test.assertHasClickAction
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
@@ -21,7 +18,11 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import com.github.se.polyfit.R
+import com.github.se.polyfit.data.api.SpoonacularApiCaller
+import com.github.se.polyfit.data.local.dao.MealDao
 import com.github.se.polyfit.data.processor.LocalDataProcessor
+import com.github.se.polyfit.model.data.User
+import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.flow.AddMealFlow
@@ -51,6 +52,7 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
+import java.util.UUID
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.After
 import org.junit.Before
@@ -69,14 +71,21 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
   val grantPermissionRule: GrantPermissionRule =
       GrantPermissionRule.grant(android.Manifest.permission.CAMERA)
 
-  private val overviewViewModel: OverviewViewModel = mockk(relaxed = true)
+  private val mockSpoonacularApiCaller = mockk<SpoonacularApiCaller>(relaxed = true)
+  private val mockDao = mockk<MealDao>(relaxed = true)
+  private val mockDataProcessor: LocalDataProcessor = mockk(relaxed = true)
+  private val overviewViewModel: OverviewViewModel =
+      OverviewViewModel(mockDao, mockSpoonacularApiCaller, User.testUser(), mockDataProcessor)
+  private val id = UUID.randomUUID().toString()
 
   @Before
   fun SettingUp() {
     mockkStatic(Log::class)
     System.setProperty("isTestEnvironment", "true")
 
-    every { overviewViewModel.storeMeal(any()) } returns 1L
+    every { mockDataProcessor.getCaloriesPerMealOccasionToday() } returns mapOf()
+    every { mockSpoonacularApiCaller.getMealsFromImage(any()) } returns Meal.default()
+    every { mockDao.insert(any<Meal>()) } returns id
   }
 
   @After
@@ -100,6 +109,7 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
     mealViewModel.setMealData(Meal.default())
 
     val mockMeal = Meal.default()
+    mockMeal.addIngredient(Ingredient.default())
     every { mealViewModel.meal } returns MutableStateFlow(mockMeal)
 
     composeTestRule.setContent {
@@ -118,7 +128,7 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
         }
         composable(Route.CreatePost) { CreatePostScreen(postViewModel = mockPostViewModel) }
         composable(Route.AddMeal + "/{mId}") { backStackEntry ->
-          val mealId = backStackEntry.arguments?.getString("mId")?.toLong()
+          val mealId = backStackEntry.arguments?.getString("mId")
           AddMealFlow({}, {}, mealId = mealId, mealViewModel)
         }
       }
