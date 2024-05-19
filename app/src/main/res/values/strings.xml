@@ -62,4 +62,6 @@
     <string name="accountSettingsDisplayName">Display Name</string>
     <string name="noMealsFound">No recorded meals</string>
     <string name="addMealButton">Add a Meal</string>
+    <string name="confirmSignout">Are you sure you want to sign out?</string>
+    <string name="signout">Sign Out</string>
 </resources>
