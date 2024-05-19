@@ -8,6 +8,7 @@ import android.graphics.ImageDecoder.createSource
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -133,7 +134,11 @@ fun OverviewScreen(
             listOf(
                 overviewViewModel.callCamera(context, startCamera, requestPermissionLauncher),
                 { pickImageLauncher.launch("image/*") },
-                {}),
+                {
+                  Toast.makeText(
+                          context, context.getString(R.string.PermissionDenied), Toast.LENGTH_SHORT)
+                      .show()
+                }),
         buttonsName =
             listOf(
                 context.getString(R.string.take_picture_dialog),
