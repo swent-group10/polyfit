@@ -64,11 +64,4 @@ class IngredientsList(semanticsProvider: SemanticsNodeInteractionsProvider) :
   // get all the elements with test tag ingredient
   private val ingredient: KNode = child { hasTestTag("Ingredient") }
   val ingredientButton: KNode = ingredient.child { hasTestTag("GradientButton") }
-
-  private val potentialIngredient: KNode = child { hasTestTag("PotentialIngredient") }
-  val potentialIngredientButton: KNode = potentialIngredient.child { hasTestTag("GradientButton") }
-
-  private val morePotentialIngredients: KNode = child { hasTestTag("MoreIngredientsButton") }
-  val morePotentialIngredientsButton: KNode =
-      morePotentialIngredients.child { hasTestTag("GradientButton") }
 }

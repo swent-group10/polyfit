@@ -9,6 +9,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
@@ -18,6 +22,7 @@ import com.github.se.polyfit.ui.utils.titleCase
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CenteredTopBar(title: String, titleColor: Color = PrimaryPurple, navigateBack: () -> Unit) {
+  var isBackClicked by remember { mutableStateOf(false) }
   CenterAlignedTopAppBar(
       title = {
         Text(
@@ -28,7 +33,12 @@ fun CenteredTopBar(title: String, titleColor: Color = PrimaryPurple, navigateBac
       },
       navigationIcon = {
         IconButton(
-            onClick = { navigateBack() },
+            onClick = {
+              if (!isBackClicked) {
+                isBackClicked = true
+                navigateBack()
+              }
+            },
             content = {
               Icon(
                   imageVector = Icons.AutoMirrored.Filled.ArrowBack,

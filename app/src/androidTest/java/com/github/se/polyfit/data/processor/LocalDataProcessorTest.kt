@@ -1,5 +1,7 @@
 package com.github.se.polyfit.data.processor
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.MutableLiveData
 import com.github.se.polyfit.data.local.dao.MealDao
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
@@ -11,6 +13,8 @@ import io.mockk.every
 import io.mockk.mockk
 import java.time.LocalDate
 import kotlin.test.assertEquals
+import kotlinx.coroutines.test.runTest
+import org.junit.Rule
 import org.junit.Test
 
 class LocalDataProcessorTest {
@@ -18,8 +22,10 @@ class LocalDataProcessorTest {
   private val localDataProcessor = LocalDataProcessor(mockMealDao)
   private val mealList = createSampleMeals()
 
+  @get:Rule val instantTaskExecutorRule = InstantTaskExecutorRule()
+
   @Test
-  fun `get calories for today's occasions`() {
+  fun getCaloriesForTodaysOccasions() {
     every { mockMealDao.getMealsCreatedOnOrAfterDate(LocalDate.now()) } returns mealList
     val result = localDataProcessor.getCaloriesPerMealOccasionToday()
     assertEquals(100.0, result[MealOccasion.BREAKFAST])
@@ -29,7 +35,7 @@ class LocalDataProcessorTest {
   }
 
   @Test
-  fun `returns zero calories for each meal occasion when no meals today`() {
+  fun returnsZeroCaloriesForEachMealOccasionWhenNoMealsToday() {
     every { mockMealDao.getMealsCreatedOnOrAfterDate(LocalDate.now()) } returns emptyList()
     val result = localDataProcessor.getCaloriesPerMealOccasionToday()
     assertEquals(0.0, result[MealOccasion.BREAKFAST])
@@ -39,7 +45,7 @@ class LocalDataProcessorTest {
   }
 
   @Test
-  fun `calculates calories correctly when multiple meals for the same occasion today`() {
+  fun calculatesCaloriesCorrectlyWhenMultipleMealsForTheSameOccasionToday() {
     val meals =
         listOf(
             createCustomMeal(MealOccasion.BREAKFAST, 100.0),
@@ -53,7 +59,7 @@ class LocalDataProcessorTest {
   }
 
   @Test
-  fun `returns correct daily calorie summaries for last month`() {
+  fun returnsCorrectDailyCalorieSummariesForLastMonth() {
     val meals =
         listOf(
             createCustomMeal(date = LocalDate.now().minusMonths(1), calories = 100.0),
@@ -68,7 +74,7 @@ class LocalDataProcessorTest {
   }
 
   @Test
-  fun `returns correct daily calorie summaries for last week`() {
+  fun returnsCorrectDailyCalorieSummariesForLastWeek() {
     val meals =
         listOf(
             createCustomMeal(date = LocalDate.now().minusWeeks(1), calories = 100.0),
@@ -80,6 +86,18 @@ class LocalDataProcessorTest {
     assertEquals(100.0, result[0].totalCalories)
     assertEquals(200.0, result[1].totalCalories)
     assertEquals(300.0, result[2].totalCalories)
+  }
+
+  @Test
+  fun getCaloriesLiveData() = runTest {
+    val meals = createSampleMeals()
+    every { mockMealDao.getMealsCreatedOnDateLiveData(any()) } returns MutableLiveData(meals)
+
+    val result = localDataProcessor.getCaloriesPerMealOccasionTodayLiveData()
+    assertEquals(100.0, result.value?.find { it.first == MealOccasion.BREAKFAST }?.second)
+    assertEquals(200.0, result.value?.find { it.first == MealOccasion.LUNCH }?.second)
+    assertEquals(300.0, result.value?.find { it.first == MealOccasion.DINNER }?.second)
+    assertEquals(400.0, result.value?.find { it.first == MealOccasion.SNACK }?.second)
   }
 
   private fun createSampleMeals() =

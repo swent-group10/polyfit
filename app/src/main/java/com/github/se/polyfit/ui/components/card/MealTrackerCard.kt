@@ -27,7 +27,7 @@ import com.github.se.polyfit.ui.utils.OverviewTags
 
 @Composable
 fun MealTrackerCard(
-    caloriesGoal: Int,
+    caloriesGoal: Long,
     meals: List<Pair<MealOccasion, Double>>,
     onCreateMealFromPhoto: () -> Unit,
     onCreateMealWithoutPhoto: () -> Unit,
@@ -46,7 +46,7 @@ fun MealTrackerCard(
 }
 
 @Composable
-private fun CalorieTracker(caloriesGoal: Int, meals: List<Pair<MealOccasion, Double>>) {
+private fun CalorieTracker(caloriesGoal: Long, meals: List<Pair<MealOccasion, Double>>) {
   val totalCalories = meals.sumOf { it.second }
   CalTracker(
       progress = totalCalories.toFloat() / caloriesGoal,

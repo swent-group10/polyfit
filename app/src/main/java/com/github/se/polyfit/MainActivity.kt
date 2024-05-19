@@ -4,6 +4,8 @@ import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -12,6 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.flow.AddMealFlow
+import com.github.se.polyfit.ui.flow.SettingFlow
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.navigation.Route
 import com.github.se.polyfit.ui.screen.CreatePostScreen
@@ -48,6 +51,7 @@ class MainActivity : ComponentActivity() {
         val navController = rememberNavController()
         val navigation = Navigation(navController)
         NavHost(navController = navController, startDestination = Route.Register) {
+
           composable(Route.Map) {
             GenericScreen(
                 navController = navController,
@@ -55,7 +59,9 @@ class MainActivity : ComponentActivity() {
                   MapScreen(paddingValues, { navController.navigate(Route.PostInfo) })
                 })
           }
-          composable(Route.Graph) { FullGraphScreen(goBack = navigation::goBack) }
+
+          composable(Route.Graph) { FullGraphScreen(goBack = navigation::navigateToHome) }
+
           composable(Route.Home) {
             GenericScreen(
                 navController = navController,
@@ -65,6 +71,14 @@ class MainActivity : ComponentActivity() {
           composable(Route.Register) { LoginScreen(navigation::navigateToHome) }
           composable(Route.AddMeal + "/{mId}") { backStackEntry ->
             val mealId = backStackEntry.arguments?.getString("mId")
+            AddMealFlow(
+                goBack = navigation::goBack,
+                goForward = { navigation.goBackTo(Route.Home) },
+                mealId = mealId)
+          }
+
+          composable(Route.EditMeal + "/{mId}") { backStackEntry ->
+            val mealId = backStackEntry.arguments?.getString("mId")
             // If we allow edits from other screens, we will have to modify how we choose goForward
             AddMealFlow(
                 goBack = navigation::goBack,
@@ -72,15 +86,24 @@ class MainActivity : ComponentActivity() {
                 mealId = mealId)
           }
 
+          composable(Route.Settings) {
+            GenericScreen(
+                navController = navController,
+                content = { paddingValues ->
+                  SettingFlow(modifier = Modifier.padding(paddingValues))
+                })
+          }
+
           composable(Route.PostInfo) { PostInfoScreen(navigation, navController) }
 
           composable(Route.CreatePost) {
-            CreatePostScreen(navigation::goBack, navigation::navigateToHome)
+            CreatePostScreen(
+                navigation::goBack, navigation::navigateToPostList, navigation::navigateToAddMeal)
           }
 
           composable(Route.DailyRecap) {
             DailyRecapScreen(
-                navigateBack = navigation::goBack, navigateTo = navigation::navigateToAddMeal)
+                navigateBack = navigation::goBack, navigateTo = navigation::navigateToEditMeal)
           }
           composable(Route.AddMeal) {
             AddMealFlow(navigation::goBack, { navigation.goBackTo(Route.Home) })

@@ -18,8 +18,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -40,6 +43,7 @@ fun IngredientScreen(
 ) {
 
   val showAddIngredDialog = remember { mutableStateOf(false) }
+  val enabled = mealViewModel.meal.collectAsState().value.ingredients.isNotEmpty()
 
   fun goBackAndReset() {
     navigateBack()
@@ -50,7 +54,8 @@ fun IngredientScreen(
       bottomBar = {
         BottomBar(
             onClickAddIngred = { showAddIngredDialog.value = true },
-            navigateForward = navigateForward)
+            navigateForward = navigateForward,
+            enabled = enabled)
       }) {
         IngredientList(it, mealViewModel)
         if (showAddIngredDialog.value) {
@@ -62,7 +67,7 @@ fun IngredientScreen(
 }
 
 @Composable
-private fun BottomBar(onClickAddIngred: () -> Unit, navigateForward: () -> Unit) {
+private fun BottomBar(onClickAddIngred: () -> Unit, navigateForward: () -> Unit, enabled: Boolean) {
   Column(
       modifier =
           Modifier.background(MaterialTheme.colorScheme.background)
@@ -96,6 +101,7 @@ private fun BottomBar(onClickAddIngred: () -> Unit, navigateForward: () -> Unit)
                 Log.v("Finished", "Clicked")
               },
               text = "Done",
+              isEnabled = enabled,
               fontSize = 24,
               modifier = Modifier.width(200.dp).testTag("DoneButton"))
         }
@@ -105,6 +111,7 @@ private fun BottomBar(onClickAddIngred: () -> Unit, navigateForward: () -> Unit)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TopBar(navigateBack: () -> Unit) {
+  var wasClicked by remember { mutableStateOf(false) }
   TopAppBar(
       title = {
         Text(
@@ -115,7 +122,12 @@ private fun TopBar(navigateBack: () -> Unit) {
       },
       navigationIcon = {
         IconButton(
-            onClick = { navigateBack() },
+            onClick = {
+              if (!wasClicked) {
+                navigateBack()
+                wasClicked = true
+              }
+            },
             content = {
               Icon(
                   imageVector = Icons.AutoMirrored.Filled.ArrowBack,

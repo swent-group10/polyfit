@@ -29,7 +29,7 @@ import com.github.se.polyfit.ui.theme.PurpleGrey40
 fun MealList(
     meals: List<Meal>,
     occasion: MealOccasion,
-    navigateTo: (String?) -> Unit,
+    navigateTo: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
   val filteredMeals = meals.filter { it.occasion == occasion }

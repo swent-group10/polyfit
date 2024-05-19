@@ -8,12 +8,20 @@ class Navigation(private val navHostController: NavHostController) {
     navHostController.popBackStack()
   }
 
+  fun navigateToPostList() {
+    navigateTo(Route.PostInfo)
+  }
+
   fun goBackTo(route: String) {
     navHostController.popBackStack(route, inclusive = false)
   }
 
   fun navigateToGraph() {
     navigateTo(Route.Graph)
+  }
+
+  fun navigateToEditMeal(mealDatabaseId: String) {
+    navigateTo(Route.EditMeal + "/$mealDatabaseId")
   }
 
   fun navigateToHome() {
@@ -46,6 +54,14 @@ class Navigation(private val navHostController: NavHostController) {
 
   fun navigateToCreatePost() {
     navigateTo(Route.CreatePost)
+  }
+
+  fun navigateToSettingsHome() {
+    navigateTo(Route.SettingsHome)
+  }
+
+  fun navigateToAccountSettings() {
+    navigateTo(Route.AccountSettings)
   }
 
   private fun navigateTo(route: String) {
