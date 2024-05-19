@@ -145,13 +145,13 @@ class GraphScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withCompos
     val nodes = composeTestRule.onAllNodesWithTag("kcal")
     val sortedData =
         listOf(
-            "870.2 kCal",
-            "1000.0 kCal",
-            "1000.0 kCal",
-            "1300.0 kCal",
-            "1689.9 kCal",
-            "2399.3 kCal",
-            "2438.0 kCal")
+            "870.20 kCal",
+            "1000.00 kCal",
+            "1000.00 kCal",
+            "1300.00 kCal",
+            "1689.90 kCal",
+            "2399.30 kCal",
+            "2438.00 kCal")
     nodes.assertCountEquals(sortedData.size)
     sortedData.forEachIndexed { index, kcal ->
       nodes[index].assertTextContains(kcal, ignoreCase = true)
@@ -169,13 +169,13 @@ class GraphScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withCompos
     val nodes = composeTestRule.onAllNodesWithTag("kcal")
     val sortedData =
         listOf(
-            "2438.0 kCal",
-            "2399.3 kCal",
-            "1689.9 kCal",
-            "1300.0 kCal",
-            "1000.0 kCal",
-            "1000.0 kCal",
-            "870.2 kCal")
+            "2438.00 kCal",
+            "2399.30 kCal",
+            "1689.90 kCal",
+            "1300.00 kCal",
+            "1000.00 kCal",
+            "1000.00 kCal",
+            "870.20 kCal")
     nodes.assertCountEquals(sortedData.size)
     sortedData.forEachIndexed { index, kcal ->
       nodes[index].assertTextContains(kcal, ignoreCase = true)
@@ -197,7 +197,8 @@ class GraphScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withCompos
     composeTestRule.waitForIdle()
 
     val nodes = composeTestRule.onAllNodesWithTag("weight")
-    val sortedWeight = listOf("35.0 g", "45.0 g", "65.9 g", "78.0 g", "78.0 g", "80.2 g", "330.0 g")
+    val sortedWeight =
+        listOf("35.00 g", "45.00 g", "65.90 g", "78.00 g", "78.00 g", "80.20 g", "330.00 g")
     nodes.assertCountEquals(sortedWeight.size)
     sortedWeight.forEachIndexed { index, weight ->
       nodes[index].assertTextContains(weight, ignoreCase = true)
@@ -221,7 +222,7 @@ class GraphScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withCompos
 
     val nodes = composeTestRule.onAllNodesWithTag("weight")
     val sortedWeightsDescending =
-        listOf("330.0 g", "80.2 g", "78.0 g", "78.0 g", "65.9 g", "45.0 g", "35.0 g")
+        listOf("330.00 g", "80.20 g", "78.00 g", "78.00 g", "65.90 g", "45.00 g", "35.00 g")
     nodes.assertCountEquals(sortedWeightsDescending.size)
     sortedWeightsDescending.forEachIndexed { index, weight ->
       nodes[index].assertTextContains(weight, ignoreCase = true)
@@ -421,7 +422,7 @@ class GraphScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withCompos
     composeTestRule.waitForIdle()
     // Assert only the matching GraphData elements are displayed
     composeTestRule
-        .onAllNodesWithText("1000.0 kCal", ignoreCase = true)
+        .onAllNodesWithText("1000.00 kCal", ignoreCase = true)
         .assertCountEquals(2) // Assuming two entries match this
 
     composeTestRule.onNodeWithTag("GraphScreenSearchBar").performTextInput("5000")
