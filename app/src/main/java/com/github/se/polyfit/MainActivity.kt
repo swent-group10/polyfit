@@ -21,6 +21,7 @@ import com.github.se.polyfit.ui.screen.CreatePostScreen
 import com.github.se.polyfit.ui.screen.DailyRecapScreen
 import com.github.se.polyfit.ui.screen.FullGraphScreen
 import com.github.se.polyfit.ui.screen.LoginScreen
+import com.github.se.polyfit.ui.screen.MapScreen
 import com.github.se.polyfit.ui.screen.OverviewScreen
 import com.github.se.polyfit.ui.screen.PostInfoScreen
 import com.github.se.polyfit.ui.screen.RecipeRecommendationScreen
@@ -50,7 +51,16 @@ class MainActivity : ComponentActivity() {
         val navController = rememberNavController()
         val navigation = Navigation(navController)
         NavHost(navController = navController, startDestination = Route.Register) {
+          composable(Route.Map) {
+            GenericScreen(
+                navController = navController,
+                content = { paddingValues ->
+                  MapScreen(paddingValues, { navController.navigate(Route.PostInfo) })
+                })
+          }
+
           composable(Route.Graph) { FullGraphScreen(goBack = navigation::navigateToHome) }
+
           composable(Route.Home) {
             GenericScreen(
                 navController = navController,
