@@ -35,8 +35,8 @@ fun CenteredTopBar(title: String, titleColor: Color = PrimaryPurple, navigateBac
         IconButton(
             onClick = {
               if (!isBackClicked) {
-                navigateBack()
                 isBackClicked = true
+                navigateBack()
               }
             },
             content = {

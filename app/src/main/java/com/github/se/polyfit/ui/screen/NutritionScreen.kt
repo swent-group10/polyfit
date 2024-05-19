@@ -73,8 +73,8 @@ private fun TopBar(navigateBack: () -> Unit) {
         IconButton(
             onClick = {
               if (!goBackCliked) {
-                navigateBack()
                 goBackCliked = true
+                navigateBack()
               }
             },
             content = {

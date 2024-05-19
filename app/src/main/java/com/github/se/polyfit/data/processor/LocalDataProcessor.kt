@@ -1,5 +1,6 @@
 package com.github.se.polyfit.data.processor
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
 import com.github.se.polyfit.data.local.dao.MealDao
@@ -29,7 +30,8 @@ class LocalDataProcessor @Inject constructor(private val mealDao: MealDao) {
   }
 
   fun getCaloriesPerMealOccasionTodayLiveData(): LiveData<List<Pair<MealOccasion, Double>>> {
-    return mealDao.getMealsCreatedOnOrAfterDateLiveData(LocalDate.now()).map { meals ->
+    Log.d("LocalDataProcessor", "${LocalDate.now()}")
+    return mealDao.getMealsCreatedOnDateLiveData(LocalDate.now()).map { meals ->
       val allOccasion =
           MealOccasion.values().toList().filter { it != MealOccasion.OTHER }.map { Pair(it, 0.0) }
 
@@ -40,6 +42,8 @@ class LocalDataProcessor @Inject constructor(private val mealDao: MealDao) {
               .groupBy { it.occasion }
               .mapValues { (_, meals) -> meals.sumOf { it.calculateTotalCalories() } }
               .toList()
+
+      Log.d("LocalDataProcessor", "mealValues: $mealValues")
 
       allOccasion.map {
         val (occasion, _) = it

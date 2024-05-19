@@ -155,11 +155,17 @@ class CreatePostTest : TestCase() {
         assertExists()
         assertIsDisplayed()
         assertIsEnabled()
-      }
-    }
 
-    ComposeScreen.onComposeScreen<CreatePostBottomBar>(composeTestRule) {
-      composeTestRule.onNodeWithTag("BackButton").assertExists().assertIsDisplayed().performClick()
+        composeTestRule
+            .onNodeWithTag("BackButton")
+            .assertExists()
+            .assertIsDisplayed()
+            .performClick()
+            .performClick()
+
+        // count the number of times a function is called mockNavForward
+        verify(exactly = 1) { mockNavBack() }
+      }
     }
   }
 }

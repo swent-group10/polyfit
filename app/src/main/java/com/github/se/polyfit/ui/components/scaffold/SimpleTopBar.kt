@@ -35,8 +35,8 @@ fun SimpleTopBar(title: String, navigateBack: () -> Unit) {
         IconButton(
             onClick = {
               if (!goBackClicked) {
-                navigateBack()
                 goBackClicked = true
+                navigateBack()
               }
             },
             content = {
