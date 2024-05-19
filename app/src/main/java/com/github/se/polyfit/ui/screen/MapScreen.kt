@@ -24,12 +24,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.se.polyfit.model.post.Location
 import com.github.se.polyfit.model.post.Post
-
 import com.github.se.polyfit.ui.theme.PrimaryPurple
 import com.github.se.polyfit.viewmodel.map.MapViewModel
 import com.google.android.gms.maps.model.CameraPosition
@@ -143,11 +141,9 @@ fun MapScreen(
               }
             }
         Row(modifier = Modifier.padding(end = 64.dp)) {
-          FloatingActionButton(
-              onClick = {},
-              modifier = Modifier.padding(16.dp)) {
-                Icon(Icons.Filled.Menu, "Go settings")
-              }
+          FloatingActionButton(onClick = {}, modifier = Modifier.padding(16.dp)) {
+            Icon(Icons.Filled.Menu, "Go settings")
+          }
 
           Slider(
               value = sliderPosition,
