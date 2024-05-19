@@ -58,13 +58,18 @@ fun SettingFlow(
   val options =
       listOf(
           SettingOption("Account", Icons.Default.Person, navigation::navigateToAccountSettings),
-          SettingOption(context.getString(R.string.signout), Icons.AutoMirrored.Default.ExitToApp, ::openSignoutDialog))
+          SettingOption(
+              context.getString(R.string.signout),
+              Icons.AutoMirrored.Default.ExitToApp,
+              ::openSignoutDialog))
 
   NavHost(
       navController = navController, startDestination = Route.SettingsHome, modifier = modifier) {
         composable(Route.SettingsHome) {
           SettingsScreen(settings = options)
-          if (signoutDialog) { SignoutDialog({ signoutDialog = false }, ::signOut) }
+          if (signoutDialog) {
+            SignoutDialog({ signoutDialog = false }, ::signOut)
+          }
         }
 
         composable(Route.AccountSettings) {
@@ -80,17 +85,19 @@ private fun SignoutDialog(closeDialog: () -> Unit, signOut: () -> Unit) {
   Dialog(onDismissRequest = closeDialog) {
     GradientBox {
       Column(
-        modifier = Modifier.fillMaxWidth().padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-      ) {
-        Text(context.getString(R.string.confirmSignout))
-        PrimaryButton(text = context.getString(R.string.signout), onClick = signOut, modifier = Modifier.testTag("SignoutButton"))
-        PrimaryButton(
-          text = context.getString(R.string.denyRequest),
-          color = PrimaryPink,
-          onClick = closeDialog,
-          modifier = Modifier.testTag("DenyButton"))
-      }
+          modifier = Modifier.fillMaxWidth().padding(16.dp),
+          horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(context.getString(R.string.confirmSignout))
+            PrimaryButton(
+                text = context.getString(R.string.signout),
+                onClick = signOut,
+                modifier = Modifier.testTag("SignoutButton"))
+            PrimaryButton(
+                text = context.getString(R.string.denyRequest),
+                color = PrimaryPink,
+                onClick = closeDialog,
+                modifier = Modifier.testTag("DenyButton"))
+          }
     }
   }
 }
