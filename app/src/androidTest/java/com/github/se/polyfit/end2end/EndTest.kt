@@ -73,8 +73,9 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
 
   private val mockSpoonacularApiCaller = mockk<SpoonacularApiCaller>(relaxed = true)
   private val mockDao = mockk<MealDao>(relaxed = true)
+  private val mockDataProcessor: LocalDataProcessor = mockk(relaxed = true)
   private val overviewViewModel: OverviewViewModel =
-      OverviewViewModel(mockDao, mockSpoonacularApiCaller, User.testUser())
+      OverviewViewModel(mockDao, mockSpoonacularApiCaller, User.testUser(), mockDataProcessor)
   private val id = UUID.randomUUID().toString()
 
   @Before
@@ -82,6 +83,7 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
     mockkStatic(Log::class)
     System.setProperty("isTestEnvironment", "true")
 
+    every { mockDataProcessor.getCaloriesPerMealOccasionToday() } returns mapOf()
     every { mockSpoonacularApiCaller.getMealsFromImage(any()) } returns Meal.default()
     every { mockDao.insert(any<Meal>()) } returns id
   }
