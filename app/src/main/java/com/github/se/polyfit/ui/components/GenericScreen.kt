@@ -30,7 +30,6 @@ fun GenericScreen(
             { navController.navigate(Route.PostInfo) },
             { navController.navigate(Route.Settings) },
             { navController.navigate(Route.Map) })
-
       },
       content = content)
 }

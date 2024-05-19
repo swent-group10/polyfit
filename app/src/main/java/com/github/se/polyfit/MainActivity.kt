@@ -51,7 +51,6 @@ class MainActivity : ComponentActivity() {
         val navController = rememberNavController()
         val navigation = Navigation(navController)
         NavHost(navController = navController, startDestination = Route.Register) {
-
           composable(Route.Map) {
             GenericScreen(
                 navController = navController,
