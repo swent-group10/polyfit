@@ -27,11 +27,11 @@ constructor(
   private val _radius = MutableLiveData<Double>()
   val radius: LiveData<Double> = _radius
 
-  var _posts = MutableLiveData<List<Post>>()
+  private var _posts = MutableLiveData<List<Post>>()
   val posts: LiveData<List<Post>> = _posts
 
   init {
-    setRadius(5.0) // default radius can be change later for a better default value
+    setRadius(150.0) // default radius can be change later for a better default value
   }
 
   fun listenToPosts() {

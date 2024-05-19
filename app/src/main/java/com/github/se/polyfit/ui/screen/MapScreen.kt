@@ -36,6 +36,7 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.Circle
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
@@ -44,6 +45,8 @@ import kotlinx.coroutines.delay
 // Size in meters of the rayon of the circle to see other posts
 val MIN_SIZE_RAYON = 100f
 val MAX_SIZE_RAYON = 2000f
+val EPFL_LATITUDE = 46.5181
+val EPFL_LONGITUDE = 6.5659
 
 @Composable
 fun MapScreen(paddingValues: PaddingValues, mapviewMap: MapViewModel = hiltViewModel()) {
@@ -54,19 +57,25 @@ fun MapScreen(paddingValues: PaddingValues, mapviewMap: MapViewModel = hiltViewM
   var isCircleShown by remember { mutableStateOf(false) }
 
   val cameraPositionState = rememberCameraPositionState {
-    position = CameraPosition.fromLatLngZoom(LatLng(46.5181, 6.5659), 15f)
+    position = CameraPosition.fromLatLngZoom(LatLng(EPFL_LATITUDE, EPFL_LONGITUDE), 15f)
   }
   var sliderPosition by remember { mutableFloatStateOf(MIN_SIZE_RAYON) }
 
   LaunchedEffect(currentLocation) {
+    mapviewMap.location.observeForever { currentLocation.value = it }
     mapviewMap.setLocation(currentLocation.value)
-    mapviewMap.setRadius(500000.0)
     mapviewMap.listenToPosts()
-    delay(10000) // delay for 3 seconds00) // delay for 3 seconds
-    posts.value = mapviewMap._posts.value!!
+    mapviewMap.posts.observeForever { posts.value = it }
+
     isCircleShown = true
-    delay(1500) // delay for 3 seconds
+    delay(3000) // delay for 3 seconds
     isCircleShown = false
+  }
+  LaunchedEffect(sliderPosition) {
+    mapviewMap.setRadius(sliderPosition.toDouble())
+    mapviewMap.listenToPosts()
+    mapviewMap.posts.observeForever { posts.value = it }
+    isCircleShown = true
   }
 
   LaunchedEffect(key1 = mapviewMap) {
@@ -98,28 +107,28 @@ fun MapScreen(paddingValues: PaddingValues, mapviewMap: MapViewModel = hiltViewM
       contentAlignment = Alignment.BottomStart) {
         GoogleMap(
             cameraPositionState = cameraPositionState,
-            //            properties = MapProperties(isMyLocationEnabled = true)
-        ) {
-          Circle(
-              center = LatLng(currentLocation.value.latitude, currentLocation.value.longitude),
-              radius = (sliderPosition).toDouble() + 10, // Make the shadow circle slightly larger
-              strokeColor =
-                  Color.Black.copy(alpha = 0.2f) // Use a semi-transparent color for the shadow
-              ,
-              visible = isCircleShown)
-          Circle(
-              center = LatLng(currentLocation.value.latitude, currentLocation.value.longitude),
-              radius = (sliderPosition).toDouble(),
-              strokeColor = PrimaryPurple,
-              visible = isCircleShown)
-          listMarker.forEach { markerState ->
-            Marker(
-                state = markerState,
-                title = "title",
-                contentDescription = "description",
-                onClick = { goToMarker(markerState) })
-          }
-        }
+            properties = MapProperties(isMyLocationEnabled = true)) {
+              Circle(
+                  center = LatLng(currentLocation.value.latitude, currentLocation.value.longitude),
+                  radius =
+                      (sliderPosition).toDouble() + 10, // Make the shadow circle slightly larger
+                  strokeColor =
+                      Color.Black.copy(alpha = 0.2f) // Use a semi-transparent color for the shadow
+                  ,
+                  visible = isCircleShown)
+              Circle(
+                  center = LatLng(currentLocation.value.latitude, currentLocation.value.longitude),
+                  radius = (sliderPosition).toDouble(),
+                  strokeColor = PrimaryPurple,
+                  visible = isCircleShown)
+              listMarker.forEach { markerState ->
+                Marker(
+                    state = markerState,
+                    title = "title",
+                    contentDescription = "description",
+                    onClick = { goToMarker(markerState) })
+              }
+            }
         Row(modifier = Modifier.padding(end = 64.dp)) {
           FloatingActionButton(
               onClick = showToastMessage(LocalContext.current),

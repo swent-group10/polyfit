@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
       PolyfitTheme {
         val navController = rememberNavController()
         val navigation = Navigation(navController)
-        NavHost(navController = navController, startDestination = Route.Map) {
+        NavHost(navController = navController, startDestination = Route.Home) {
           composable(Route.Map) {
             GenericScreen(
                 navController = navController,
