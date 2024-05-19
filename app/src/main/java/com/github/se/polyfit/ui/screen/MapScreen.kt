@@ -8,10 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Slider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -141,10 +137,6 @@ fun MapScreen(
               }
             }
         Row(modifier = Modifier.padding(end = 64.dp)) {
-          FloatingActionButton(onClick = {}, modifier = Modifier.padding(16.dp)) {
-            Icon(Icons.Filled.Menu, "Go settings")
-          }
-
           Slider(
               value = sliderPosition,
               onValueChange = { sliderPosition = it },
