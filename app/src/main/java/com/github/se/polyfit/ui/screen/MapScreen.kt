@@ -158,7 +158,7 @@ fun MapScreen(
       }
 }
 
-fun goToMarker(goToPost: () -> Unit,marker: MarkerState): Boolean {
-    goToPost()
+fun goToMarker(goToPost: () -> Unit, marker: MarkerState): Boolean {
+  goToPost()
   return true
 }

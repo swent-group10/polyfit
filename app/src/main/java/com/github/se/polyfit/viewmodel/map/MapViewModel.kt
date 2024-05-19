@@ -49,11 +49,12 @@ constructor(
   }
 
   fun setRadius(radius: Double) {
-    val radiusToSet: Double = if (radius < 0.0) {
-      0.0
-    } else {
-      radius
-    }
+    val radiusToSet: Double =
+        if (radius < 0.0) {
+          0.0
+        } else {
+          radius
+        }
     _radius.value = radiusToSet
   }
 
