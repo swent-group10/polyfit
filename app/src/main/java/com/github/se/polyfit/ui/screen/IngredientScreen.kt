@@ -19,8 +19,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -109,6 +111,7 @@ private fun BottomBar(onClickAddIngred: () -> Unit, navigateForward: () -> Unit,
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TopBar(navigateBack: () -> Unit) {
+  var wasClicked by remember { mutableStateOf(false) }
   TopAppBar(
       title = {
         Text(
@@ -119,7 +122,12 @@ private fun TopBar(navigateBack: () -> Unit) {
       },
       navigationIcon = {
         IconButton(
-            onClick = { navigateBack() },
+            onClick = {
+              if (!wasClicked) {
+                navigateBack()
+                wasClicked = true
+              }
+            },
             content = {
               Icon(
                   imageVector = Icons.AutoMirrored.Filled.ArrowBack,
