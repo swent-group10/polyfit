@@ -51,7 +51,9 @@ class MainActivity : ComponentActivity() {
           composable(Route.Map) {
             GenericScreen(
                 navController = navController,
-                content = { paddingValues -> MapScreen(paddingValues) })
+                content = { paddingValues ->
+                  MapScreen(paddingValues, { navController.navigate(Route.PostInfo) })
+                })
           }
           composable(Route.Graph) { FullGraphScreen(goBack = navigation::goBack) }
           composable(Route.Home) {

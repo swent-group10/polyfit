@@ -31,7 +31,7 @@ constructor(
   val posts: LiveData<List<Post>> = _posts
 
   init {
-    setRadius(150.0) // default radius can be change later for a better default value
+    setRadius(0.0) // default radius can be change later for a better default value
   }
 
   fun listenToPosts() {
@@ -49,17 +49,17 @@ constructor(
   }
 
   fun setRadius(radius: Double) {
-    var radiusToSet: Double
-    if (radius < 0.0) {
-      radiusToSet = 0.0
+    val radiusToSet: Double = if (radius < 0.0) {
+      0.0
     } else {
-      radiusToSet = radius
+      radius
     }
     _radius.value = radiusToSet
   }
 
   fun setLocation(location: Location) {
     _location.value = location
+    Log.i("Map", "setLocation: $location")
   }
 
   fun getAllPost(): Flow<List<Post>> {

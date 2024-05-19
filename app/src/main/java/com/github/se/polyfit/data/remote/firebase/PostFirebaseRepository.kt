@@ -90,8 +90,8 @@ class PostFirebaseRepository(
       completion: (List<Post>) -> Unit,
       geoFire: GeoFire = GeoFire(geoFireRef)
   ) {
-    Log.d("Radius", "Radius: $radiusInKm")
-    Log.d("Center", "Center: $centerLatitude, $centerLongitude")
+    Log.d("MapRadius", "Radius: $radiusInKm")
+    Log.d("MapCenter", "Center: $centerLatitude, $centerLongitude")
     val center = GeoLocation(centerLatitude, centerLongitude)
     val query = geoFire.queryAtLocation(center, radiusInKm)
 
