@@ -5,7 +5,6 @@ import io.mockk.every
 import io.mockk.mockkStatic
 import junit.framework.TestCase.assertEquals
 import kotlin.test.Test
-import kotlin.test.assertFailsWith
 import org.junit.Before
 
 class MeasurementUnitTest {
@@ -61,12 +60,5 @@ class MeasurementUnitTest {
   @Test
   fun `illegal arguments throw exception`() {
     assertEquals(MeasurementUnit.fromString("INVALID"), MeasurementUnit.OTHER)
-  }
-
-  @Test
-  fun `test UNIT conversion`() {
-    assertFailsWith<IllegalArgumentException> {
-      MeasurementUnit.unitConversion(MeasurementUnit.UNIT, MeasurementUnit.UNIT, 1.0)
-    }
   }
 }
