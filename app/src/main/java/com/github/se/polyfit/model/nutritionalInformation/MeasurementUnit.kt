@@ -88,7 +88,8 @@ enum class MeasurementUnit {
     fun unitConversion(from: MeasurementUnit, to: MeasurementUnit, value: Double): Double {
       if (from == UNIT || to == UNIT || from == OTHER || to == OTHER) {
         Log.e("MeasurementUnit", "Unsupported conversion from $from to $to")
-        throw IllegalArgumentException("Unsupported conversion from $from to $to")
+        //        throw IllegalArgumentException("Unsupported conversion from $from to $to")
+        return value
       } else if (value < 0) {
         Log.e("MeasurementUnit", "Value cannot be negative")
         throw IllegalArgumentException("Value cannot be negative")

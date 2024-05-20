@@ -1,0 +1,64 @@
+Title	URL	Assignees	Status	Sprint	Task Type	Nature	Epic	Expected time (hours)	Actual time (hours)
+Design Icon : Icon not Gluten free			Product Backlog						
+API class for getting allergy information from a food name	https://github.com/swent-group10/polyfit/issues/105	Neb1010	Product Backlog	Sprint 4	Backend		Technical		
+Nominatim API	https://github.com/swent-group10/polyfit/issues/153	Neb1010	Product Backlog	Sprint 5	Backend			3	
+Improving cognitive complexity for files in the ui folder	https://github.com/swent-group10/polyfit/issues/242		Product Backlog						
+Improving cognitive complexity for files in the viewmodels folder	https://github.com/swent-group10/polyfit/issues/244		Product Backlog						
+Design Icon : Icon vegetarian / not vegetarian			Product Backlog						
+Design Icon : Icon Vegan / not Vegan			Product Backlog						
+Design Icon : not dairy free			Product Backlog						
+Allergen in my food?			Product Backlog			User Story			
+Streamlined Access to Camera and Photo Upload			Product Backlog		Backend	User Story			
+Store food picture locally, in case of loss of network			Product Backlog		Backend	Sprint Task	Technical		
+Program and objectif			Product Backlog			User Story			
+Sport compensation meal			Product Backlog			User Story			
+Calorie to amount exercise			Product Backlog						
+Share calorie consumption			Product Backlog			User Story			
+* Understanding nutritional facts			Product Backlog			User Story			
+BugFix GraphScreen	https://github.com/swent-group10/polyfit/issues/269	sharif-bbd	In Review	Sprint 8	Frontend	User Story			
+Scan QR code UI	https://github.com/swent-group10/polyfit/issues/214	sharif-bbd	Sprint Backlog	Sprint 7	Frontend	User Story		2	
+Create + extract SimpleBottomBar	https://github.com/swent-group10/polyfit/issues/168	medwardson	Product Backlog	Sprint 7					
+Meal Temperature Recommendations - Backend (Get temperature to store with meal)	https://github.com/swent-group10/polyfit/issues/211	medwardson	Product Backlog	Sprint 7					
+Change nutrition screen to show up to 2 decimals	https://github.com/swent-group10/polyfit/issues/167	medwardson	Product Backlog	Sprint 7				1	
+Fix Spoonacular API response formatting			Product Backlog						
+Bug bashing	https://github.com/swent-group10/polyfit/issues/262	medwardson	Done in Spring 7/8						
+Refactoring Overview Screen	https://github.com/swent-group10/polyfit/issues/227	sharif-bbd	Done in Spring 7/8		Backend	Sprint Task		6	
+Settings Page UI	https://github.com/swent-group10/polyfit/issues/185	aprilslis	Done in Spring 7/8	Sprint 7					
+Settings Page	https://github.com/swent-group10/polyfit/issues/279	aprilslis	Done in Spring 7/8	Sprint 9					
+Edit user info settings UI + backend	https://github.com/swent-group10/polyfit/issues/213	aprilslis	Done in Spring 7/8	Sprint 7					
+PRD Outline	https://github.com/swent-group10/polyfit/issues/261	aprilslis, medwardson	Done in Spring 7/8	Sprint 8					
+Store all user information in firebase	https://github.com/swent-group10/polyfit/issues/308	aprilslis	Done in Spring 7/8						
+add_recipe	https://github.com/swent-group10/polyfit/issues/298	antomax33	Done in Spring 7/8						
+refactoring components/ingredients	https://github.com/swent-group10/polyfit/issues/249	sharif-bbd	Done in Spring 7/8	Sprint 7		Sprint Task	Miscellaneous	3	3
+Updating the overview screen to reflect current information	https://github.com/swent-group10/polyfit/issues/250	RandomUsername1315	Done in Spring 7/8	Sprint 7	Frontend	Sprint Task	Technical	4	
+MapViewModel	https://github.com/swent-group10/polyfit/issues/233	Neb1010	Done in Spring 7/8	Sprint 7	Backend			8	5
+Location model	https://github.com/swent-group10/polyfit/issues/258	Neb1010	Done in Spring 7/8	Sprint 8	Backend			5	
+Video for M3	https://github.com/swent-group10/polyfit/issues/303	Neb1010	Done in Spring 7/8	Sprint 8		Sprint Task		1	1
+Clean Scrum Board	https://github.com/swent-group10/polyfit/issues/304	Neb1010	Done in Spring 7/8	Sprint 7		Sprint Task		1	1
+UI recipe recommendation	https://github.com/swent-group10/polyfit/issues/222	RandomUsername1315	Done in Spring 7/8	Sprint 7	Frontend	Sprint Task	Technical	4	
+Modify the Spoonacular API to fetch recipe recommendations and add viewmodel	https://github.com/swent-group10/polyfit/issues/225	RandomUsername1315	Done in Spring 7/8	Sprint 7	Backend	Sprint Task	Technical	3	
+Add the possibility to add images when creating posts	https://github.com/swent-group10/polyfit/issues/259	RandomUsername1315	Done in Spring 7/8	Sprint 8	Backend	Sprint Task	Technical	6	
+Adjust Add Meal Flow to work with Editing	https://github.com/swent-group10/polyfit/issues/184	medwardson	Done in Spring 7/8	Sprint 7				6	
+Restructure Meal ID	https://github.com/swent-group10/polyfit/issues/256	medwardson	Done in Spring 7/8					6	
+Recipe Dataclass and FirebaseLogic	https://github.com/swent-group10/polyfit/issues/223	RandomUsername1315	Done in Spring 7/8	Sprint 7	Backend	Sprint Task	Technical	4	
+Figma for recipe recommendation	https://github.com/swent-group10/polyfit/issues/224	RandomUsername1315	Done in Spring 7/8	Sprint 7	Figma	Sprint Task	Technical	4	
+Fix test of sign in intent	https://github.com/swent-group10/polyfit/issues/84	antomax33	Done in Spring 7/8	Sprint 5	Backend	Sprint Task	Miscellaneous	2	
+Post Sharing UI map background	https://github.com/swent-group10/polyfit/issues/151	antomax33	Done in Spring 7/8	Sprint 5	Frontend	Sprint Task	Technical		
+Update Meal class to NutritionalInformation as a constructor field	https://github.com/swent-group10/polyfit/issues/177	medwardson	Done in Spring 7/8	Sprint 7				5	
+Post Sharing UI Button zoom	https://github.com/swent-group10/polyfit/issues/299	antomax33	Done in Spring 7/8						
+Displaying screens post near when button pressed, Displaying postinfo when second button pressed.	https://github.com/swent-group10/polyfit/issues/228	antomax33	Done in Spring 7/8	Sprint 7	Frontend	Sprint Task	Technical	3	
+Offline feature: add seamless reentry if the user is already signed in	https://github.com/swent-group10/polyfit/issues/226	antomax33	Done in Spring 7/8		Backend	Sprint Task	Technical	5	
+Modify the meal class to store the intolerance tag from the spooncular api	https://github.com/swent-group10/polyfit/issues/221	RandomUsername1315	Sprint Backlog	Sprint 9	Backend	Sprint Task	Technical	4	
+QR Code Backend	https://github.com/swent-group10/polyfit/issues/216	sharif-bbd	Sprint Backlog	Sprint 7	Backend	Sprint Task		8	
+Add Figma screen for the QR code	https://github.com/swent-group10/polyfit/issues/215	sharif-bbd	Sprint Backlog		Figma	Sprint Task		3	
+Settings Logout	https://github.com/swent-group10/polyfit/issues/281	aprilslis	In Review			User Story			
+PRD Writing	https://github.com/swent-group10/polyfit/issues/282	aprilslis, medwardson, Neb1010	Sprint Backlog			Sprint Task			
+Ingredients Caching to improve offline usage experience	https://github.com/swent-group10/polyfit/issues/294	RandomUsername1315	Sprint Backlog	Sprint 9	Backend	Sprint Task	Technical	5	
+Recipe Recommendation more detail screen UI	https://github.com/swent-group10/polyfit/issues/295	RandomUsername1315	Sprint Backlog	Sprint 9	Frontend	Sprint Task	Technical	5	
+Recipe Recommendation more detail backend (Viewmodel and API)	https://github.com/swent-group10/polyfit/issues/296	RandomUsername1315	Sprint Backlog	Sprint 9	Backend	Sprint Task	Technical	5	
+Refactor the code to use the same top bar (SimplteTopBar.kt)	https://github.com/swent-group10/polyfit/issues/301		Sprint Backlog	Sprint 9	Backend	Sprint Task	Technical	6	
+Offline Mode	https://github.com/swent-group10/polyfit/issues/278	antomax33	In Development			User Story			
+Meal Recommendation from ingredients bar code scanning	https://github.com/swent-group10/polyfit/issues/280	antomax33, sharif-bbd	In Development			User Story			
+BugFix	https://github.com/swent-group10/polyfit/issues/265	antomax33, aprilslis, medwardson, Neb1010, RandomUsername1315, sharif-bbd	In Development	Sprint 8	Backend	Sprint Task	Miscellaneous		
+Fixing cat 0 (really important ) bugs	https://github.com/swent-group10/polyfit/issues/286	RandomUsername1315	In Review	Sprint 9		Sprint Task	Miscellaneous	6	
+Location For map	https://github.com/swent-group10/polyfit/issues/274	Neb1010	Done in Current Sprint	Sprint 8	Backend				
