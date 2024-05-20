@@ -57,7 +57,10 @@ fun SettingFlow(
 
   val options =
       listOf(
-          SettingOption("Account", Icons.Default.Person, navigation::navigateToAccountSettings),
+          SettingOption(
+              context.getString(R.string.account),
+              Icons.Default.Person,
+              navigation::navigateToAccountSettings),
           SettingOption(
               context.getString(R.string.signout),
               Icons.AutoMirrored.Default.ExitToApp,
