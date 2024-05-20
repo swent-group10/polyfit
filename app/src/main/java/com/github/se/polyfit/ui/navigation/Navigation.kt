@@ -20,6 +20,10 @@ class Navigation(private val navHostController: NavHostController) {
     navigateTo(Route.Graph)
   }
 
+  fun navigateToRecipeRecommendationMore() {
+    navigateTo(Route.RecipeRecommendationMore)
+  }
+
   fun navigateToEditMeal(mealDatabaseId: String) {
     navigateTo(Route.EditMeal + "/$mealDatabaseId")
   }

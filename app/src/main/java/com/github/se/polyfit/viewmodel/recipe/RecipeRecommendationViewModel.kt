@@ -23,4 +23,12 @@ constructor(private val spoonacularApiCaller: SpoonacularApiCaller) : ViewModel(
   fun ingredientList(): List<String> {
     return listOf("apple", "banana")
   }
+
+  fun getSelectedRecipe(): Recipe {
+    return Recipe.default()
+  }
+
+  fun setRecipe(recipe: Recipe) {
+    // TODO
+  }
 }

@@ -1,5 +1,7 @@
-package com.github.se.polyfit.ui.screen
+package com.github.se.polyfit.ui.screen.recipeRec
 
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,16 +26,21 @@ import com.github.se.polyfit.viewmodel.recipe.RecipeRecommendationViewModel
 @Composable
 fun RecipeRecommendationScreen(
     navController: NavHostController,
-    recipeRecViewModel: RecipeRecommendationViewModel = hiltViewModel()
+    recipeRecViewModel: RecipeRecommendationViewModel = hiltViewModel(),
+    navigateToRecipeRecommendationMore: () -> Unit = {},
 ) {
   GenericScreen(
       navController = navController,
-      content = { recipeDisplay(recipeRecViewModel) },
+      content = { it -> recipeDisplay(recipeRecViewModel, it, navigateToRecipeRecommendationMore) },
       modifier = Modifier.testTag("RecipeDisplay"))
 }
 
 @Composable
-fun recipeDisplay(recipesRec: RecipeRecommendationViewModel) {
+fun recipeDisplay(
+    recipesRec: RecipeRecommendationViewModel,
+    paddingValues: PaddingValues,
+    navigateToRecipeRecommendationMore: () -> Unit
+) {
   val context = LocalContext.current
 
   val recipes = remember { mutableStateOf(listOf<Recipe>()) }
@@ -43,7 +50,7 @@ fun recipeDisplay(recipesRec: RecipeRecommendationViewModel) {
 
   LazyColumn(
       horizontalAlignment = Alignment.CenterHorizontally,
-      modifier = Modifier.testTag("RecipeList")) {
+      modifier = Modifier.testTag("RecipeList").padding(paddingValues)) {
         item {
           Text(
               text = ContextCompat.getString(context, R.string.recommendedRecipe),
@@ -51,6 +58,15 @@ fun recipeDisplay(recipesRec: RecipeRecommendationViewModel) {
               fontWeight = FontWeight.Bold,
           )
         }
-        recipes.value.forEach { item { RecipeCard(recipe = it) } }
+        recipes.value.forEach {
+          item {
+            RecipeCard(
+                recipe = it,
+                onCardClick = {
+                  (recipesRec::setRecipe)(it)
+                  navigateToRecipeRecommendationMore.invoke()
+                })
+          }
+        }
       }
 }

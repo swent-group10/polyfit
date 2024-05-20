@@ -1,5 +1,6 @@
 package com.github.se.polyfit.model.ingredient
 
+import android.net.Uri
 import android.util.Log
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
@@ -18,6 +19,7 @@ data class Ingredient(
     val amount: Double,
     val unit: MeasurementUnit,
     val nutritionalInformation: NutritionalInformation = NutritionalInformation(),
+    val imageUri: Uri = Uri.EMPTY,
 ) {
 
   fun deepCopy(): Ingredient {
