@@ -33,7 +33,7 @@
     <string name="enterMealPlaceholder">"Enter a meal…"</string>
     <string name="newPostTitle">"New Post"</string>
     <string name="newPostDescriptionPlaceholder">" What's on your mind today?"</string>
-    <string name="postBeutton">"Post"</string>
+    <string name="postButton">"Post"</string>
     <string name="account">"Account"</string>
     <string name="termsAndConditions">"Terms &amp; Conditions"</string>
     <string name="privacyPolicy">"Privacy Policy"</string>
