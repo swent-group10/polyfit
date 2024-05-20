@@ -8,6 +8,10 @@ class Navigation(private val navHostController: NavHostController) {
     navHostController.popBackStack()
   }
 
+  fun navigateToPostList() {
+    navigateTo(Route.PostInfo)
+  }
+
   fun goBackTo(route: String) {
     navHostController.popBackStack(route, inclusive = false)
   }

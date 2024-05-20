@@ -11,18 +11,25 @@ import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,9 +61,8 @@ import kotlinx.coroutines.runBlocking
 fun OverviewScreen(
     paddingValues: PaddingValues,
     navController: NavHostController,
-    overviewViewModel: OverviewViewModel = hiltViewModel()
+    overviewViewModel: OverviewViewModel = hiltViewModel(),
 ) {
-
   val context = LocalContext.current
   val navigation = Navigation(navController)
   var showPictureDialog by remember { mutableStateOf(false) }
@@ -66,6 +72,12 @@ fun OverviewScreen(
   var imageUri by remember { mutableStateOf<Uri?>(null) }
   val iconExample = BitmapFactory.decodeResource(context.resources, R.drawable.picture_example)
   var imageBitmap by remember { mutableStateOf(iconExample) }
+
+  var mealSummary by remember { mutableStateOf(listOf<Pair<MealOccasion, Double>>()) }
+
+  LaunchedEffect(Unit) {
+    overviewViewModel.getCaloriesPerMealOccasionTodayLiveData().observeForever { mealSummary = it }
+  }
 
   // Launcher for starting the camera activity
   val startCamera =
@@ -90,9 +102,11 @@ fun OverviewScreen(
             startCamera.launch(takePictureIntent)
           } catch (e: Exception) {
             // Handle the exception if the camera intent cannot be launched
+            Log.e("OverviewScreen", "Error launching camera: $e")
           }
         } else {
           // Permission is denied. Handle the denial appropriately.
+          Log.w("OverviewScreen", "Camera permission denied")
         }
       }
 
@@ -107,9 +121,7 @@ fun OverviewScreen(
             val bitmap = ImageDecoder.decodeBitmap(createSource(context.contentResolver, uri))
             imageBitmap = bitmap
           } catch (e: Exception) {
-            Log.e(
-                "OverviewScreen",
-                "Error decoding image: $e," + " are you sure the image is a bitmap?")
+            Log.e("OverviewScreen", "Error decoding image: $e, are you sure the image is a bitmap?")
           }
         }
       }
@@ -117,11 +129,16 @@ fun OverviewScreen(
   if (showPictureDialog) {
     PictureDialog(
         onDismiss = { showPictureDialog = false },
-        onFirstButtonClick =
-            overviewViewModel.callCamera(context, startCamera, requestPermissionLauncher),
-        onSecondButtonClick = { pickImageLauncher.launch("image/*") },
-        firstButtonName = context.getString(R.string.take_picture_dialog),
-        secondButtonName = context.getString(R.string.import_picture_dialog))
+        onButtonsClick =
+            listOf(
+                overviewViewModel.callCamera(context, startCamera, requestPermissionLauncher),
+                { pickImageLauncher.launch("image/*") },
+                {}),
+        buttonsName =
+            listOf(
+                context.getString(R.string.take_picture_dialog),
+                context.getString(R.string.import_picture_dialog),
+                context.getString(R.string.scan_picture_dialog)))
   }
 
   Box(modifier = Modifier.padding(paddingValues).fillMaxWidth().testTag("OverviewScreen")) {
@@ -140,12 +157,8 @@ fun OverviewScreen(
           }
           item {
             MealTrackerCard(
-                caloriesGoal = 2200,
-                meals =
-                    listOf(
-                        Pair(MealOccasion.BREAKFAST, 300.0),
-                        Pair(MealOccasion.LUNCH, 456.0),
-                        Pair(MealOccasion.DINNER, 0.0)),
+                caloriesGoal = overviewViewModel.getCaloryGoal(),
+                meals = mealSummary,
                 onCreateMealFromPhoto = {
                   showPictureDialog = true
                   Log.d("OverviewScreen", "Photo button clicked")
@@ -164,16 +177,27 @@ fun OverviewScreen(
                         .clickable { navigation.navigateToGraph() },
             ) {
               Column(modifier = Modifier.fillMaxSize().testTag("Graph Card Column")) {
-                Text(
-                    text = "Calories Graph",
-                    style = MaterialTheme.typography.headlineLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.secondary,
-                    modifier =
-                        Modifier.padding(start = 10.dp, top = 10.dp)
-                            .weight(1f)
-                            .testTag("Graph Card Title")
-                            .clickable { navigation.navigateToGraph() })
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(5.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween) {
+                      Text(
+                          text = "Calories Graph",
+                          style = MaterialTheme.typography.headlineLarge,
+                          fontWeight = FontWeight.Bold,
+                          color = MaterialTheme.colorScheme.secondary,
+                          modifier =
+                              Modifier.padding(start = 10.dp, top = 10.dp)
+                                  .weight(1f)
+                                  .testTag("Graph Card Title")
+                                  .clickable { navigation.navigateToGraph() })
+
+                      Icon(
+                          imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                          contentDescription = "rightArrow",
+                          modifier =
+                              Modifier.align(Alignment.CenterVertically).padding(top = 10.dp))
+                    }
+                HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 2.dp)
                 Box(
                     modifier =
                         Modifier.fillMaxSize(0.85f)

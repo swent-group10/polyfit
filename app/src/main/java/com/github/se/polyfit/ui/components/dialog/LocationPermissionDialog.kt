@@ -83,21 +83,31 @@ fun LocationPermissionDialog(onDeny: () -> Unit, onApprove: (CurrentLocationRequ
 @Composable
 fun launcherForActivityResult(
     onDeny: () -> Unit,
-    onApprove: (CurrentLocationRequest) -> Unit,
+    onApproveForPost: (CurrentLocationRequest) -> Unit,
+    onApproveForMap: () -> Unit = {},
+    requestForMap: Boolean = false
 ): ManagedActivityResultLauncher<Array<String>, Map<String, Boolean>> {
 
   return rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
       permissions ->
     when {
       permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
-        onApprove(
-            CurrentLocationRequest.Builder().setPriority(Priority.PRIORITY_HIGH_ACCURACY).build())
+        if (requestForMap) {
+          onApproveForMap()
+        } else {
+          onApproveForPost(
+              CurrentLocationRequest.Builder().setPriority(Priority.PRIORITY_HIGH_ACCURACY).build())
+        }
       }
       permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
-        onApprove(
-            CurrentLocationRequest.Builder()
-                .setPriority(Priority.PRIORITY_BALANCED_POWER_ACCURACY)
-                .build())
+        if (requestForMap) {
+          onApproveForMap()
+        } else {
+          onApproveForPost(
+              CurrentLocationRequest.Builder()
+                  .setPriority(Priority.PRIORITY_BALANCED_POWER_ACCURACY)
+                  .build())
+        }
       }
       else -> {
         onDeny()

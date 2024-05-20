@@ -5,6 +5,7 @@
     <string name="meal_tracking_headline">Track your meals</string>
     <string name="take_picture_dialog">Take Picture</string>
     <string name="import_picture_dialog">Import Picture</string>
+    <string name="scan_picture_dialog">Scan Picture</string>
     <string name="dialog_headline">Choose Option</string>
     <string name="home_nav_label">Home</string>
     <string name="map_nav_posts">Posts</string>
@@ -18,7 +19,7 @@
     <string name="signGoogle">"Sign in with Google"</string>
     <string name="graphScreenTitle">Calories Per Day</string>
     <string name="kcalvalue">%1$.1f kCal</string>
-    <string name="weightvalue">%1$.1f lbs</string>
+    <string name="weightvalue">%1$.1f g</string>
     <string name="datevalue">%1$s</string>
     <string name="noPostAvailable">"Unfortunately there is no post\navailable around you"</string>
     <string name="description">"Description"</string>
@@ -38,11 +39,18 @@
     <string name="privacyPolicy">"Privacy Policy"</string>
     <string name="about">"About"</string>
     <string name="logout">"Logout"</string>
+    <string name="GenerateRecipe">"Generate\nRecipe"</string>
+    <string name="Product">"Product"</string>
     <string name="recommendedRecipe">Recommended Recipes</string>
     <string name="signInFailed">"Sign in failed"</string>
     <string name="PermissionDenied">Permission denied</string>
     <string name="TakeToTakePicture">Tap to take a photo</string>
     <string name="CreatePostImageDesription">Captured image</string>
+    <string name="ServingSize">"Serving Size</string>
+    <string name="Calories">"Calories"</string>
+    <string name="Protein">"Protein"</string>
+    <string name="Carbs">"Carbs"</string>
+    <string name="Fat">"Fat"</string>
     <string name="accountSettings">Account Information</string>
     <string name="accountSettingsCancel">Cancel</string>
     <string name="accountSettingsSave">Save</string>
@@ -53,4 +61,6 @@
     <string name="accountSettingsLastName">Last Name</string>
     <string name="accountSettingsFirstName">First Name</string>
     <string name="accountSettingsDisplayName">Display Name</string>
+    <string name="noMealsFound">No recorded meals</string>
+    <string name="addMealButton">Add a Meal</string>
 </resources>

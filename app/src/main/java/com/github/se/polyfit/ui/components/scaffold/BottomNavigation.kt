@@ -1,8 +1,10 @@
 package com.github.se.polyfit.ui.components.scaffold
 
+import android.Manifest
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -12,14 +14,13 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.navigation.NavBackStackEntry
 import com.github.se.polyfit.R
+import com.github.se.polyfit.ui.components.dialog.launcherForActivityResult
 import com.github.se.polyfit.ui.navigation.Route
 import com.github.se.polyfit.ui.utils.OverviewTags
 
@@ -32,7 +33,9 @@ fun BottomNavigationBar(
     navMap: () -> Unit,
 ) {
   val context = LocalContext.current
-  var showingMap by remember { mutableStateOf(false) }
+  val launcher =
+      launcherForActivityResult(
+          onDeny = {}, onApproveForPost = {}, onApproveForMap = navMap, requestForMap = true)
 
   NavigationBar(
       modifier = Modifier.testTag("MainBottomBar"),
@@ -64,18 +67,28 @@ fun BottomNavigationBar(
             NavigationBarItemDefaults.colors(
                 unselectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 selectedIconColor = MaterialTheme.colorScheme.primary),
-        icon = { Icon(Icons.Default.Menu, contentDescription = OverviewTags.overviewMapIcon) },
-        label = {
-          if (currentRoute == Route.PostInfo)
-              if (showingMap) context.getString(R.string.map_nav_label)
-              else
-                  Text(
-                      context.getString(R.string.map_nav_posts),
-                      Modifier.testTag(OverviewTags.overviewMapLabel))
+        icon = {
+          if (currentRoute != Route.Map) {
+            Icon(Icons.Default.Place, contentDescription = OverviewTags.overviewMapIcon)
+          } else {
+            Icon(Icons.Default.Menu, contentDescription = OverviewTags.overviewPostsIcon)
+          }
         },
-        selected = currentRoute == Route.PostInfo,
+        label = {
+          if (currentRoute == Route.Map) {
+            Text("Posts", Modifier.testTag(OverviewTags.overviewPostsLabel))
+          } else if (currentRoute == Route.PostInfo) {
+            Text("Map", Modifier.testTag(OverviewTags.overviewPostsLabel))
+          }
+        },
+        selected = false,
         onClick = {
-          if (currentRoute != Route.PostInfo) {
+          if (currentRoute != Route.Map) {
+            launcher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION))
+          } else if (currentRoute == Route.Map) {
             navPostInfo()
           }
         })

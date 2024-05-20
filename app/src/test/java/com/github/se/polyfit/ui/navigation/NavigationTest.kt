@@ -83,4 +83,14 @@ class NavigationTest {
 
     verify { navHostController.popBackStack() }
   }
+
+  @Test
+  fun testNavigateTopPostList() {
+    val expectedRoute = Route.PostInfo
+    every { navHostController.navigate(expectedRoute) } just Runs
+
+    navigation.navigateToPostList()
+
+    verify { navHostController.navigate(expectedRoute) }
+  }
 }
