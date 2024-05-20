@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.github.se.polyfit.viewmodel.recipe.RecipeRecommendationViewModel
@@ -33,14 +34,14 @@ fun TitleAndToggleCard(
   val showIngredient by recipeRecViewModel.showIngredient.observeAsState(initial = true)
 
   Card(
-      modifier = Modifier.padding(16.dp).fillMaxWidth(),
+      modifier = Modifier.padding(16.dp).fillMaxWidth().testTag("TitleAndToggleCard"),
       colors = CardDefaults.cardColors(containerColor = Color.Transparent),
       elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)) {
         Column(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
           Text(
               text = title,
               style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-              modifier = Modifier.padding(bottom = 16.dp))
+              modifier = Modifier.padding(bottom = 16.dp).testTag("RecipeRecTitle"))
           Row(
               horizontalArrangement = Arrangement.SpaceBetween,
               modifier = Modifier.fillMaxWidth()) {
@@ -50,7 +51,7 @@ fun TitleAndToggleCard(
                       Log.d("TitleAndToggleCard", "showIngredient: $showIngredient")
                       recipeRecViewModel.setShowIngredientTrue()
                     },
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).testTag("tonalButton1"),
                     colors =
                         ButtonDefaults.buttonColors(
                             containerColor =
@@ -66,7 +67,7 @@ fun TitleAndToggleCard(
                 Spacer(modifier = Modifier.width(8.dp))
                 FilledTonalButton(
                     onClick = { recipeRecViewModel.setShowIngredientFalse() },
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).testTag("tonalButton2"),
                     colors =
                         ButtonDefaults.buttonColors(
                             containerColor =

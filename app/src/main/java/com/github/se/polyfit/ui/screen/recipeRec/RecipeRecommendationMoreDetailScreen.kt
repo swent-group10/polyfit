@@ -1,6 +1,8 @@
 package com.github.se.polyfit.ui.screen.recipeRec
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
@@ -33,6 +35,7 @@ fun RecipeRecommendationMoreDetailScreen(
   val context = LocalContext.current
 
   Scaffold(
+      modifier = Modifier.testTag("RecipeDetail"),
       topBar = {
         SimpleTopBar(
             title = ContextCompat.getString(context, R.string.MoreDetailRecipe),
@@ -48,7 +51,7 @@ fun RecipeDetailContent(
     padding: PaddingValues,
     recipeRecViewModel: RecipeRecommendationViewModel
 ) {
-  val showIngredient by recipeRecViewModel.showIngredient.observeAsState(initial = false)
+  val showIngredient by recipeRecViewModel.showIngredient.observeAsState(initial = true)
 
   val context = LocalContext.current
   LazyColumn(
@@ -65,8 +68,11 @@ fun RecipeDetailContent(
         item { NutriInfoCard(recipeInfo = recipe.recipeInformation) }
 
         if (showIngredient) {
-          recipe.recipeInformation.ingredients.forEach {
-            item { IngredientInfoCard(ingredient = it) }
+          item {
+            // This is done purely for testing purposes
+            Box(modifier = Modifier.fillMaxSize().testTag("IngredientList")) {
+              recipe.recipeInformation.ingredients.forEach { IngredientInfoCard(ingredient = it) }
+            }
           }
         } else {
           item { recipeInstructions(recipe) }
@@ -74,7 +80,7 @@ fun RecipeDetailContent(
       }
 }
 
-// Place holder will depend on the implementation of the Recipe
+// Place holder will depend on the implementation of the Recipe future todo
 @Composable
 fun recipeInstructions(recipe: Recipe) {
   Card(onClick = { /*TODO*/}) { Text(recipe.recipeInformation.instructions) }

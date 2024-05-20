@@ -37,10 +37,7 @@ class RecipeRecommendationScreenTest {
     coEvery { mockkRecommendationViewModel.recipeFromIngredients(any()) } returns recipeList
 
     composeTestRule.setContent {
-      RecipeRecommendationScreen(
-          mockkNavigation,
-          mockkRecommendationViewModel,
-          navigation.navigateToRecipeRecommendationMore())
+      RecipeRecommendationScreen(mockkNavigation, mockkRecommendationViewModel, {})
     }
     composeTestRule.waitForIdle()
 
