@@ -108,7 +108,8 @@ class MainActivity : ComponentActivity() {
             AddMealFlow(navigation::goBack, { navigation.goBackTo(Route.Home) })
           }
 
-          composable(Route.RecipeRecFlow) { RecipeRecFlow({}, {}) }
+          // the navcontroller is needed for the generic screen
+          composable(Route.RecipeRecFlow) { RecipeRecFlow() }
         }
       }
     }

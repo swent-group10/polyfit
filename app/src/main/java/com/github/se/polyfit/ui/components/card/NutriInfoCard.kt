@@ -8,13 +8,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.github.se.polyfit.model.recipe.RecipeInformation
 
 @Composable
 fun NutriInfoCard(recipeInfo: RecipeInformation) {
-
   Card(
       modifier = Modifier.padding(16.dp).fillMaxWidth(),
       shape = MaterialTheme.shapes.medium,
@@ -23,52 +21,22 @@ fun NutriInfoCard(recipeInfo: RecipeInformation) {
         modifier = Modifier.padding(16.dp).fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically) {
-          Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                text = "Calories",
-                fontWeight = FontWeight.Bold,
-                fontSize = MaterialTheme.typography.bodyMedium.fontSize)
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "${recipeInfo.calories.toStringNoType()}",
-                fontSize = MaterialTheme.typography.bodySmall.fontSize)
-          }
-          Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                text = "Fat",
-                fontWeight = FontWeight.Bold,
-                fontSize = MaterialTheme.typography.bodyMedium.fontSize)
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "${recipeInfo.fat.toStringNoType()}",
-                fontSize = MaterialTheme.typography.bodyMedium.fontSize)
-          }
-          Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                text = "Protein",
-                fontWeight = FontWeight.Bold,
-                fontSize = MaterialTheme.typography.bodyMedium.fontSize)
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "${recipeInfo.protein.toStringNoType()}",
-                fontSize = MaterialTheme.typography.bodySmall.fontSize)
-          }
-          Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                text = "Carbs",
-                fontWeight = FontWeight.Bold,
-                fontSize = MaterialTheme.typography.bodyMedium.fontSize)
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "${recipeInfo.carbs.toStringNoType()}",
-                fontSize = MaterialTheme.typography.bodySmall.fontSize)
-          }
+          NutriInfoColumn(title = "Calories", value = recipeInfo.calories.toStringNoType())
+          NutriInfoColumn(title = "Fat", value = recipeInfo.fat.toStringNoType())
+          NutriInfoColumn(title = "Protein", value = recipeInfo.protein.toStringNoType())
+          NutriInfoColumn(title = "Carbs", value = recipeInfo.carbs.toStringNoType())
         }
   }
 }
 
 @Composable
-@Preview
-fun preview() {
-  NutriInfoCard(RecipeInformation.default())
+fun NutriInfoColumn(title: String, value: String) {
+  Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Text(
+        text = title,
+        fontWeight = FontWeight.Bold,
+        fontSize = MaterialTheme.typography.bodyMedium.fontSize)
+    Spacer(modifier = Modifier.height(8.dp))
+    Text(text = value, fontSize = MaterialTheme.typography.bodySmall.fontSize)
+  }
 }

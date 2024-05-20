@@ -1,5 +1,7 @@
 package com.github.se.polyfit.viewmodel.recipe
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.github.se.polyfit.data.api.SpoonacularApiCaller
 import com.github.se.polyfit.model.recipe.Recipe
@@ -12,6 +14,13 @@ import kotlinx.coroutines.withContext
 class RecipeRecommendationViewModel
 @Inject
 constructor(private val spoonacularApiCaller: SpoonacularApiCaller) : ViewModel() {
+  private var _showIngredient = MutableLiveData<Boolean>()
+
+  val showIngredient: LiveData<Boolean> = _showIngredient
+
+  init {
+    _showIngredient.value = false
+  }
 
   suspend fun recipeFromIngredients(ingredients: List<String>): List<Recipe> {
     val recipesResponse =
@@ -30,5 +39,13 @@ constructor(private val spoonacularApiCaller: SpoonacularApiCaller) : ViewModel(
 
   fun setRecipe(recipe: Recipe) {
     // TODO
+  }
+
+  fun setShowIngredientFalse() {
+    _showIngredient.value = false
+  }
+
+  fun setShowIngredientTrue() {
+    _showIngredient.value = true
   }
 }

@@ -1,22 +1,36 @@
 package com.github.se.polyfit.ui.components.card
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import android.util.Log
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.github.se.polyfit.model.recipe.Recipe
+import com.github.se.polyfit.viewmodel.recipe.RecipeRecommendationViewModel
 
 @Composable
 fun TitleAndToggleCard(
-    title: String = "Title",
-    button1Title: String = "Button1",
-    button2Title: String = "Button2"
+    title: String,
+    button1Title: String,
+    button2Title: String,
+    recipeRecViewModel: RecipeRecommendationViewModel,
 ) {
-  var isButton1Enabled by remember { mutableStateOf(true) }
+  val showIngredient by recipeRecViewModel.showIngredient.observeAsState(initial = true)
 
   Card(
       modifier = Modifier.padding(16.dp).fillMaxWidth(),
@@ -31,41 +45,40 @@ fun TitleAndToggleCard(
               horizontalArrangement = Arrangement.SpaceBetween,
               modifier = Modifier.fillMaxWidth()) {
                 FilledTonalButton(
-                    onClick = { isButton1Enabled = !isButton1Enabled },
+                    onClick = {
+                      Log.d("TitleAndToggleCard", "button1Title clicked")
+                      Log.d("TitleAndToggleCard", "showIngredient: $showIngredient")
+                      recipeRecViewModel.setShowIngredientTrue()
+                    },
                     modifier = Modifier.weight(1f),
                     colors =
                         ButtonDefaults.buttonColors(
                             containerColor =
-                                if (isButton1Enabled) MaterialTheme.colorScheme.primary
+                                if (showIngredient) MaterialTheme.colorScheme.primary
                                 else MaterialTheme.colorScheme.primary.copy(alpha = 0.12f))) {
                       Text(
                           text = button1Title,
                           color =
-                              if (isButton1Enabled) Color.White
+                              if (showIngredient) Color.White
                               else MaterialTheme.colorScheme.primary)
                     }
+
                 Spacer(modifier = Modifier.width(8.dp))
                 FilledTonalButton(
-                    onClick = { isButton1Enabled = !isButton1Enabled },
+                    onClick = { recipeRecViewModel.setShowIngredientFalse() },
                     modifier = Modifier.weight(1f),
                     colors =
                         ButtonDefaults.buttonColors(
                             containerColor =
-                                if (!isButton1Enabled) MaterialTheme.colorScheme.primary
+                                if (!showIngredient) MaterialTheme.colorScheme.primary
                                 else MaterialTheme.colorScheme.primary.copy(alpha = 0.12f))) {
                       Text(
                           text = button2Title,
                           color =
-                              if (!isButton1Enabled) Color.White
+                              if (!showIngredient) Color.White
                               else MaterialTheme.colorScheme.primary)
                     }
               }
         }
       }
-}
-
-@Composable
-@Preview
-fun previewCard() {
-  TitleAndToggleCard(Recipe.default().title)
 }

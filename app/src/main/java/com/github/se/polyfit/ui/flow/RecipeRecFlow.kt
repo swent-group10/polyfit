@@ -13,25 +13,23 @@ import com.github.se.polyfit.viewmodel.recipe.RecipeRecommendationViewModel
 
 @Composable
 fun RecipeRecFlow(
-    goBack: () -> Unit,
-    goForward: () -> Unit,
     recipeRecommendationViewModel: RecipeRecommendationViewModel = hiltViewModel(),
 ) {
-  val navController = rememberNavController()
-  val navigation = Navigation(navController)
+  val navigation = rememberNavController()
 
-  NavHost(navController = navController, startDestination = Route.RecipeRecommendation) {
+  val navAction = Navigation(navigation)
+
+  NavHost(navController = navigation, startDestination = Route.RecipeRecommendation) {
     composable(Route.RecipeRecommendation) {
       RecipeRecommendationScreen(
-          navController,
+          navigation,
           recipeRecommendationViewModel,
-          navigation::navigateToRecipeRecommendationMore,
+          navAction::navigateToRecipeRecommendationMore,
       )
     }
     composable(Route.RecipeRecommendationMore) {
       RecipeRecommendationMoreDetailScreen(
-          navController,
-          recipeRecommendationViewModel,
+          navigateBack = navAction::goBack,
       )
     }
   }
