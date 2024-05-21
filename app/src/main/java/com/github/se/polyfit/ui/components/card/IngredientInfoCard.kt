@@ -57,7 +57,7 @@ fun IngredientInfoCard(ingredient: Ingredient) {
               }
               Box(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    text = ingredient.amountFormated(),
+                    text = ingredient.amountFormatted(),
                     style = MaterialTheme.typography.titleSmall,
                     modifier = Modifier.align(Alignment.CenterEnd))
               }

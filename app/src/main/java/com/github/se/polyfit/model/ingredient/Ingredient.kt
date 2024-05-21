@@ -27,7 +27,7 @@ data class Ingredient(
     return Ingredient(name, id, amount, unit, nutritionalInformation.deepCopy())
   }
 
-  fun amountFormated(): String {
+  fun amountFormatted(): String {
     return amount.toString() + " " + unit.toString().lowercase(Locale.ROOT)
   }
 

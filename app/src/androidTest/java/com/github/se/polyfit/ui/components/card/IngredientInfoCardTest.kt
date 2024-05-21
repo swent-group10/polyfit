@@ -31,7 +31,7 @@ class IngredientInfoCardTest {
 
       composeTestRule.onNodeWithText(Ingredient.default().name).assertIsDisplayed()
 
-      composeTestRule.onNodeWithText(Ingredient.default().amountFormated()).assertIsDisplayed()
+      composeTestRule.onNodeWithText(Ingredient.default().amountFormatted()).assertIsDisplayed()
     }
   }
 }
