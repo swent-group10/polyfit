@@ -74,14 +74,15 @@ object UserModule {
       @ApplicationContext context: Context,
       mealFirebaseRepository: MealFirebaseRepository,
       mealDao: MealDao,
+      user: User
   ): MealRepository {
-    return MealRepository(context, mealFirebaseRepository, mealDao)
+    return MealRepository(context, mealFirebaseRepository, mealDao, user)
   }
 
   @Provides
   @Singleton
-  fun providesLocalDataProcessor(mealDao: MealDao): LocalDataProcessor {
-    return LocalDataProcessor(mealDao)
+  fun providesLocalDataProcessor(mealDao: MealDao, user: User): LocalDataProcessor {
+    return LocalDataProcessor(mealDao, user)
   }
 
   @Provides

@@ -50,6 +50,7 @@ class MealDatabaseTest {
             occasion = MealOccasion.BREAKFAST,
             name = "Oatmeal",
             id = "TestId",
+            userId = "testUserID",
             mealTemp = 20.0,
             nutritionalInformation =
                 NutritionalInformation(
@@ -66,17 +67,18 @@ class MealDatabaseTest {
             createdAt = nowTime,
             tags = mutableListOf()))
 
-    val meals = mealDao.getAll().map { it.toMeal() }
+    val meals = mealDao.getAll("testUserID").map { it.toMeal() }
 
     assert(meals.size == 1)
     assertEquals(meals.first().name, "Oatmeal")
     assertEquals(meals.first().createdAt, nowTime)
 
     val meal2 = Meal.default()
+    meal2.userId = "testUserID"
 
     mealDao.insert(meal2)
 
-    val allMeals = mealDao.getAllMeals()
+    val allMeals = mealDao.getAllMeals("testUserID")
 
     assertEquals(allMeals.size, 2)
   }
@@ -92,13 +94,14 @@ class MealDatabaseTest {
         Meal(
             name = "Oatmeal",
             occasion = MealOccasion.BREAKFAST,
+            userId = "testUserID",
             id = "TestId",
             mealTemp = 20.0,
             ingredients = ingredientList,
             createdAt = LocalDate.now())
     mealDao.insert(MealEntity.toMealEntity(meal))
 
-    val ingredients = mealDao.getAllIngredients()
+    val ingredients = mealDao.getAllIngredients("testUserID")
 
     assertEquals(ingredients.size, 2)
     assertContains(ingredients, ingredientList.first())
@@ -116,14 +119,15 @@ class MealDatabaseTest {
     mealDao.insert(meal2)
     mealDao.insert(meal3)
 
-    val meals = mealDao.getMealsCreatedOnOrAfterDate(LocalDate.now())
+    val meals = mealDao.getMealsCreatedOnOrAfterDate(LocalDate.now(), "testUserID")
 
     assert(meals.size == 2)
     assert(meals.contains(meal))
     assert(meals.contains(meal2))
     assertFalse(meals.contains(meal3))
 
-    val newMeals = mealDao.getMealsCreatedOnOrAfterDate(LocalDate.now().minusMonths(1))
+    val newMeals =
+        mealDao.getMealsCreatedOnOrAfterDate(LocalDate.now().minusMonths(1), "testUserID")
 
     assert(newMeals.contains(meal3))
   }
@@ -152,6 +156,7 @@ class MealDatabaseTest {
         name = name,
         occasion = MealOccasion.BREAKFAST,
         id = id,
+        userId = "testUserID",
         mealTemp = 20.0,
         ingredients =
             mutableListOf(

@@ -35,18 +35,11 @@ constructor(
     if (imageBitmap == null) {
       Log.e("OverviewViewModel", "Image is null")
       return null
-    } else {
-      val meal = spoonacularApiCaller.getMealsFromImage(imageBitmap)
-
-      val mealId = mealDao.insert(meal)
-
-      if (mealId == null) {
-        Log.e("OverviewViewModel", "Meal could not be inserted into the database")
-        return null
-      } else {
-        return mealId
-      }
     }
+
+    val meal = spoonacularApiCaller.getMealsFromImage(imageBitmap)
+    meal.userId = user.id
+    return mealDao.insert(meal)
   }
 
   fun deleteById(mealDatabaseId: String) {
@@ -55,7 +48,7 @@ constructor(
 
   fun getMealsByCalorieRange(minCalories: Double, maxCalories: Double): List<Meal> {
     // Get all meals from the database
-    val allMeals = mealDao.getAllMeals()
+    val allMeals = mealDao.getAllMeals(user.id)
 
     // Filter meals based on their calorie content
     val filteredMeals =
@@ -78,7 +71,7 @@ constructor(
 
   fun getMealsByName(name: String): List<Meal> {
     // Get all meals from the database
-    val allMeals = mealDao.getAllMeals()
+    val allMeals = mealDao.getAllMeals(user.id)
 
     // Filter meals based on their name
     val filteredMeals = allMeals.filter { meal -> meal.name.contains(name, ignoreCase = true) }
@@ -96,7 +89,7 @@ constructor(
 
   fun getMealsByOccasion(occasion: MealOccasion): List<Meal> {
     // Get all meals from the database
-    val allMeals = mealDao.getAllMeals()
+    val allMeals = mealDao.getAllMeals(user.id)
 
     // Filter meals based on their occasion
     val filteredMeals = allMeals.filter { meal -> meal.occasion == occasion }
@@ -118,7 +111,7 @@ constructor(
       maxCalories: Double,
       occasion: MealOccasion
   ): List<Meal> {
-    val allMeals = mealDao.getAllMeals()
+    val allMeals = mealDao.getAllMeals(user.id)
 
     val filteredMeals =
         allMeals.filter { meal ->
@@ -139,7 +132,7 @@ constructor(
 
   fun getMealWithHighestCalories(): Meal? {
     // Get all meals from the database
-    val allMeals = mealDao.getAllMeals()
+    val allMeals = mealDao.getAllMeals(user.id)
 
     // Find the meal with the highest calories
     val highestCalorieMeal =
@@ -161,7 +154,7 @@ constructor(
 
   fun getMealWithLowestCalories(): Meal? {
     // Get all meals from the database
-    val allMeals = mealDao.getAllMeals()
+    val allMeals = mealDao.getAllMeals(user.id)
 
     // Find the meal with the lowest calories
     val lowestCalorieMeal =

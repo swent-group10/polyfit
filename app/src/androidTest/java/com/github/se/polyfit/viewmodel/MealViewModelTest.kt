@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import com.github.se.polyfit.data.local.dao.MealDao
 import com.github.se.polyfit.data.repository.MealRepository
+import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
@@ -38,13 +39,15 @@ class MealViewModelTest {
     Dispatchers.setMain(TestCoroutineDispatcher())
 
     val mealDao = mockk<MealDao>()
-
-    val meal = Meal(occasion = MealOccasion.OTHER, name = "Test Meal", id = "firebase123")
+    val user = User.testUser()
+    val meal =
+        Meal(
+            occasion = MealOccasion.OTHER, name = "Test Meal", id = "firebase123", userId = user.id)
 
     every { mealDao.getMealById(any()) } returns meal
     coEvery { mealRepo.getMealById(any()) } returns meal
 
-    viewModel = MealViewModel(mealRepo)
+    viewModel = MealViewModel(mealRepo, user)
     viewModel.setMealData(meal)
   }
 

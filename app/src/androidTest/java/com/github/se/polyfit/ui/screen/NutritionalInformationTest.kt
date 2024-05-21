@@ -12,6 +12,7 @@ import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.data.repository.MealRepository
+import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
@@ -49,8 +50,9 @@ class NutritionalInfoTest : TestCase() {
   @RelaxedMockK lateinit var mockNav: Navigation
 
   private val mockMealRepo: MealRepository = mockk(relaxed = true)
+  private val user = User.testUser()
 
-  private val mockMealViewModel: MealViewModel = MealViewModel(mockMealRepo)
+  private val mockMealViewModel: MealViewModel = MealViewModel(mockMealRepo, user)
 
   private val meal =
       Meal(
