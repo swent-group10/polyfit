@@ -35,218 +35,231 @@ constructor(
     private val localDataProcessor: LocalDataProcessor
 ) : ViewModel() {
 
-  fun storeMeal(imageBitmap: Bitmap?): String? {
-    if (imageBitmap == null) {
-      Log.e("OverviewViewModel", "Image is null")
-      return null
-    } else {
-      val meal = spoonacularApiCaller.getMealsFromImage(imageBitmap)
+    fun storeMeal(imageBitmap: Bitmap?): String? {
+        if (imageBitmap == null) {
+            Log.e("OverviewViewModel", "Image is null")
+            return null
+        } else {
+            val meal = spoonacularApiCaller.getMealsFromImage(imageBitmap)
 
-      val mealId = mealDao.insert(meal)
+            val mealId = mealDao.insert(meal)
 
-      if (mealId == null) {
-        Log.e("OverviewViewModel", "Meal could not be inserted into the database")
-        return null
-      } else {
-        return mealId
-      }
+            if (mealId == null) {
+                Log.e("OverviewViewModel", "Meal could not be inserted into the database")
+                return null
+            } else {
+                return mealId
+            }
+        }
     }
-  }
 
-  fun deleteById(mealDatabaseId: String) {
-    mealDao.deleteById(mealDatabaseId)
-  }
+    fun deleteById(mealDatabaseId: String) {
+        mealDao.deleteById(mealDatabaseId)
+    }
 
-  fun getMealsByCalorieRange(minCalories: Double, maxCalories: Double): List<Meal> {
-    // Get all meals from the database
-    val allMeals = mealDao.getAllMeals()
+    fun getMealsByCalorieRange(minCalories: Double, maxCalories: Double): List<Meal> {
+        // Get all meals from the database
+        val allMeals = mealDao.getAllMeals()
 
-    // Filter meals based on their calorie content
-    val filteredMeals =
-        allMeals.filter { meal ->
-          val calories =
-              meal.nutritionalInformation.nutrients.find { it.nutrientType == "calories" }?.amount
-          calories != null && calories >= minCalories && calories <= maxCalories
+        // Filter meals based on their calorie content
+        val filteredMeals =
+            allMeals.filter { meal ->
+                val calories =
+                    meal.nutritionalInformation.nutrients.find { it.nutrientType == "calories" }?.amount
+                calories != null && calories >= minCalories && calories <= maxCalories
+            }
+
+        // Log the result
+        if (filteredMeals.isEmpty()) {
+            Log.e("OverviewViewModel", "No meals found in the specified calorie range")
+        } else {
+            Log.i(
+                "OverviewViewModel",
+                "Found ${filteredMeals.size} meals in the specified calorie range"
+            )
         }
 
-    // Log the result
-    if (filteredMeals.isEmpty()) {
-      Log.e("OverviewViewModel", "No meals found in the specified calorie range")
-    } else {
-      Log.i("OverviewViewModel", "Found ${filteredMeals.size} meals in the specified calorie range")
+        // Return the filtered meals
+        return filteredMeals
     }
 
-    // Return the filtered meals
-    return filteredMeals
-  }
+    fun getMealsByName(name: String): List<Meal> {
+        // Get all meals from the database
+        val allMeals = mealDao.getAllMeals()
 
-  fun getMealsByName(name: String): List<Meal> {
-    // Get all meals from the database
-    val allMeals = mealDao.getAllMeals()
+        // Filter meals based on their name
+        val filteredMeals = allMeals.filter { meal -> meal.name.contains(name, ignoreCase = true) }
 
-    // Filter meals based on their name
-    val filteredMeals = allMeals.filter { meal -> meal.name.contains(name, ignoreCase = true) }
-
-    // Log the result
-    if (filteredMeals.isEmpty()) {
-      Log.e("OverviewViewModel", "No meals found with the specified name")
-    } else {
-      Log.i("OverviewViewModel", "Found ${filteredMeals.size} meals with the specified name")
-    }
-
-    // Return the filtered meals
-    return filteredMeals
-  }
-
-  fun getMealsByOccasion(occasion: MealOccasion): List<Meal> {
-    // Get all meals from the database
-    val allMeals = mealDao.getAllMeals()
-
-    // Filter meals based on their occasion
-    val filteredMeals = allMeals.filter { meal -> meal.occasion == occasion }
-
-    // Log the result
-    if (filteredMeals.isEmpty()) {
-      Log.e("OverviewViewModel", "No meals found for the specified occasion")
-    } else {
-      Log.i("OverviewViewModel", "Found ${filteredMeals.size} meals for the specified occasion")
-    }
-
-    // Return the filtered meals
-    return filteredMeals
-  }
-
-  fun getMealsByMultipleCriteria(
-      name: String,
-      minCalories: Double,
-      maxCalories: Double,
-      occasion: MealOccasion
-  ): List<Meal> {
-    val allMeals = mealDao.getAllMeals()
-
-    val filteredMeals =
-        allMeals.filter { meal ->
-          meal.nutritionalInformation.nutrients
-              .find { it.nutrientType == "calories" }
-              ?.amount
-              ?.let { calories -> calories in minCalories..maxCalories } ?: false
+        // Log the result
+        if (filteredMeals.isEmpty()) {
+            Log.e("OverviewViewModel", "No meals found with the specified name")
+        } else {
+            Log.i("OverviewViewModel", "Found ${filteredMeals.size} meals with the specified name")
         }
 
-    if (filteredMeals.isEmpty()) {
-      Log.e("OverviewViewModel", "No meals found matching all criteria")
-    } else {
-      Log.i("OverviewViewModel", "Found ${filteredMeals.size} meals matching all criteria")
+        // Return the filtered meals
+        return filteredMeals
     }
 
-    return filteredMeals
-  }
+    fun getMealsByOccasion(occasion: MealOccasion): List<Meal> {
+        // Get all meals from the database
+        val allMeals = mealDao.getAllMeals()
 
-  fun getMealWithHighestCalories(): Meal? {
-    // Get all meals from the database
-    val allMeals = mealDao.getAllMeals()
+        // Filter meals based on their occasion
+        val filteredMeals = allMeals.filter { meal -> meal.occasion == occasion }
 
-    // Find the meal with the highest calories
-    val highestCalorieMeal =
-        allMeals.maxByOrNull { meal ->
-          meal.nutritionalInformation.nutrients.find { it.nutrientType == "calories" }?.amount
-              ?: 0.0
+        // Log the result
+        if (filteredMeals.isEmpty()) {
+            Log.e("OverviewViewModel", "No meals found for the specified occasion")
+        } else {
+            Log.i(
+                "OverviewViewModel",
+                "Found ${filteredMeals.size} meals for the specified occasion"
+            )
         }
 
-    // Log the result
-    if (highestCalorieMeal == null) {
-      Log.e("OverviewViewModel", "No meals found in the database")
-    } else {
-      Log.i("OverviewViewModel", "Meal with the highest calories found: ${highestCalorieMeal.name}")
+        // Return the filtered meals
+        return filteredMeals
     }
 
-    // Return the meal with the highest calories
-    return highestCalorieMeal
-  }
+    fun getMealsByMultipleCriteria(
+        name: String,
+        minCalories: Double,
+        maxCalories: Double,
+        occasion: MealOccasion
+    ): List<Meal> {
+        val allMeals = mealDao.getAllMeals()
 
-  fun getMealWithLowestCalories(): Meal? {
-    // Get all meals from the database
-    val allMeals = mealDao.getAllMeals()
+        val filteredMeals =
+            allMeals.filter { meal ->
+                meal.nutritionalInformation.nutrients
+                    .find { it.nutrientType == "calories" }
+                    ?.amount
+                    ?.let { calories -> calories in minCalories..maxCalories } ?: false
+            }
 
-    // Find the meal with the lowest calories
-    val lowestCalorieMeal =
-        allMeals.minByOrNull { meal ->
-          meal.nutritionalInformation.nutrients.find { it.nutrientType == "calories" }?.amount
-              ?: Double.MAX_VALUE
+        if (filteredMeals.isEmpty()) {
+            Log.e("OverviewViewModel", "No meals found matching all criteria")
+        } else {
+            Log.i("OverviewViewModel", "Found ${filteredMeals.size} meals matching all criteria")
         }
 
-    // Log the result
-    if (lowestCalorieMeal == null) {
-      Log.e("OverviewViewModel", "No meals found in the database")
-    } else {
-      Log.i("OverviewViewModel", "Meal with the lowest calories found: ${lowestCalorieMeal.name}")
+        return filteredMeals
     }
 
-    // Return the meal with the lowest calories
-    return lowestCalorieMeal
-  }
+    fun getMealWithHighestCalories(): Meal? {
+        // Get all meals from the database
+        val allMeals = mealDao.getAllMeals()
 
-  fun getUserName(): String {
-    return when {
-      user.displayName != null -> user.displayName!!
-      else -> user.email
-    }
-  }
+        // Find the meal with the highest calories
+        val highestCalorieMeal =
+            allMeals.maxByOrNull { meal ->
+                meal.nutritionalInformation.nutrients.find { it.nutrientType == "calories" }?.amount
+                    ?: 0.0
+            }
 
-  fun callCamera(
-      context: Context,
-      startCamera: ManagedActivityResultLauncher<Intent, ActivityResult>,
-      requestPermissionLauncher: ManagedActivityResultLauncher<String, Boolean>
-  ): () -> Unit = {
-    // Check if the permission has already been granted
-    when (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)) {
-      PackageManager.PERMISSION_GRANTED -> {
-        // You can use the camera
-        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        try {
-          startCamera.launch(takePictureIntent)
-        } catch (e: Exception) {
-          // Handle the exception if the camera intent cannot be launched
-          Log.e("HomeScreen", "Error launching camera intent: $e")
+        // Log the result
+        if (highestCalorieMeal == null) {
+            Log.e("OverviewViewModel", "No meals found in the database")
+        } else {
+            Log.i(
+                "OverviewViewModel",
+                "Meal with the highest calories found: ${highestCalorieMeal.name}"
+            )
         }
-      }
-      else -> {
-        // Request the permission
-        requestPermissionLauncher.launch(Manifest.permission.CAMERA)
-      }
+
+        // Return the meal with the highest calories
+        return highestCalorieMeal
     }
-  }
 
-  fun getCaloriesPerMealOccasionTodayLiveData(): LiveData<List<Pair<MealOccasion, Double>>> {
+    fun getMealWithLowestCalories(): Meal? {
+        // Get all meals from the database
+        val allMeals = mealDao.getAllMeals()
 
-    return localDataProcessor.getCaloriesPerMealOccasionTodayLiveData()
-  }
+        // Find the meal with the lowest calories
+        val lowestCalorieMeal =
+            allMeals.minByOrNull { meal ->
+                meal.nutritionalInformation.nutrients.find { it.nutrientType == "calories" }?.amount
+                    ?: Double.MAX_VALUE
+            }
 
-  fun getCaloryGoal(): Long {
-    return user.calorieGoal
-  }
-
-  fun uriToBitmap(context: Context, uri: Uri): Bitmap? {
-    return context.contentResolver
-        .openInputStream(uri)
-        ?.use { inputStream ->
-          ByteArrayOutputStream().apply { inputStream.copyTo(this) }.toByteArray()
+        // Log the result
+        if (lowestCalorieMeal == null) {
+            Log.e("OverviewViewModel", "No meals found in the database")
+        } else {
+            Log.i(
+                "OverviewViewModel",
+                "Meal with the lowest calories found: ${lowestCalorieMeal.name}"
+            )
         }
-        ?.let { BitmapFactory.decodeByteArray(it, 0, it.size) }
-  }
 
-  fun handleSelectedImage(
-      context: Context,
-      uri: Uri?,
-      overviewViewModel: OverviewViewModel,
-  ): String? {
-    if (uri != null) {
-      val imageBitmap =
-          uriToBitmap(context, uri)
-              ?: BitmapFactory.decodeResource(context.resources, R.drawable.picture_example)
-      return overviewViewModel.storeMeal(imageBitmap)
-    } else {
-      Log.d("PhotoPicker", "No media selected")
-      return null
+        // Return the meal with the lowest calories
+        return lowestCalorieMeal
     }
-  }
+
+    fun getUserName(): String {
+        return when {
+            user.displayName != null -> user.displayName!!
+            else -> user.email
+        }
+    }
+
+    fun callCamera(
+        context: Context,
+        startCamera: ManagedActivityResultLauncher<Intent, ActivityResult>,
+        requestPermissionLauncher: ManagedActivityResultLauncher<String, Boolean>
+    ): () -> Unit = {
+        // Check if the permission has already been granted
+        when (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)) {
+            PackageManager.PERMISSION_GRANTED -> {
+                // You can use the camera
+                val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                try {
+                    startCamera.launch(takePictureIntent)
+                } catch (e: Exception) {
+                    // Handle the exception if the camera intent cannot be launched
+                    Log.e("HomeScreen", "Error launching camera intent: $e")
+                }
+            }
+
+            else -> {
+                // Request the permission
+                requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+            }
+        }
+    }
+
+    fun getCaloriesPerMealOccasionTodayLiveData(): LiveData<List<Pair<MealOccasion, Double>>> {
+
+        return localDataProcessor.getCaloriesPerMealOccasionTodayLiveData()
+    }
+
+    fun getCaloryGoal(): Long {
+        return user.calorieGoal
+    }
+
+    fun uriToBitmap(context: Context, uri: Uri): Bitmap? {
+        return context.contentResolver
+            .openInputStream(uri)
+            ?.use { inputStream ->
+                ByteArrayOutputStream().apply { inputStream.copyTo(this) }.toByteArray()
+            }
+            ?.let { BitmapFactory.decodeByteArray(it, 0, it.size) }
+    }
+
+    fun handleSelectedImage(
+        context: Context,
+        uri: Uri?,
+        overviewViewModel: OverviewViewModel,
+    ): String? {
+        return if (uri != null) {
+            val imageBitmap =
+                uriToBitmap(context, uri)
+                    ?: BitmapFactory.decodeResource(context.resources, R.drawable.picture_example)
+            overviewViewModel.storeMeal(imageBitmap)
+        } else {
+            Log.d("PhotoPicker", "No media selected")
+            null
+        }
+    }
 }
