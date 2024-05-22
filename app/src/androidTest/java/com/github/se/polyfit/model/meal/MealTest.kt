@@ -1,11 +1,7 @@
-package com.github.se.polyfit.data.model.meal
+package com.github.se.polyfit.model.meal
 
 import android.util.Log
 import com.github.se.polyfit.model.ingredient.Ingredient
-import com.github.se.polyfit.model.meal.Meal
-import com.github.se.polyfit.model.meal.MealOccasion
-import com.github.se.polyfit.model.meal.MealTag
-import com.github.se.polyfit.model.meal.MealTagColor
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation

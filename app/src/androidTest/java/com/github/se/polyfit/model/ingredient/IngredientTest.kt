@@ -1,7 +1,6 @@
-package com.github.se.polyfit.data.model.ingredient
+package com.github.se.polyfit.model.ingredient
 
 import android.util.Log
-import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import io.mockk.every

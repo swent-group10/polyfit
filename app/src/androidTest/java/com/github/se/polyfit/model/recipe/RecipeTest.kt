@@ -1,8 +1,6 @@
-package com.github.se.polyfit.data.model.recipe
+package com.github.se.polyfit.model.recipe
 
 import android.util.Log
-import com.github.se.polyfit.model.recipe.Recipe
-import com.github.se.polyfit.model.recipe.RecipeInformation
 import io.mockk.every
 import io.mockk.mockkStatic
 import java.net.URL

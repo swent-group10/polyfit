@@ -1,10 +1,9 @@
-package com.github.se.polyfit.data.model.recipe
+package com.github.se.polyfit.model.recipe
 
 import android.util.Log
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
-import com.github.se.polyfit.model.recipe.RecipeInformation
 import io.mockk.every
 import io.mockk.mockkStatic
 import junit.framework.TestCase.assertEquals
