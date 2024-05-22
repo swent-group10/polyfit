@@ -91,7 +91,7 @@ class LocalDataProcessorTest {
   @Test
   fun getCaloriesLiveData() = runTest {
     val meals = createSampleMeals()
-    every { mockMealDao.getMealsCreatedOnOrAfterDateLiveData(any()) } returns MutableLiveData(meals)
+    every { mockMealDao.getMealsCreatedOnDateLiveData(any()) } returns MutableLiveData(meals)
 
     val result = localDataProcessor.getCaloriesPerMealOccasionTodayLiveData()
     assertEquals(100.0, result.value?.find { it.first == MealOccasion.BREAKFAST }?.second)

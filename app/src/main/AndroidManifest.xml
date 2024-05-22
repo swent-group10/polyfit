@@ -19,9 +19,6 @@
         android:name="android.hardware.camera.flash"
         android:required="false" />
 
-
-
-
     <application
         android:name=".ExampleApplication"
         android:allowBackup="true"
@@ -34,6 +31,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Polyfit"
         tools:targetApi="31">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/api_google_map" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

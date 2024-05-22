@@ -30,6 +30,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import co.yml.charts.common.extensions.roundTwoDecimal
 import co.yml.charts.ui.linechart.LineChart
 import com.github.se.polyfit.R
 import com.github.se.polyfit.ui.components.DropDownMenu
@@ -139,13 +140,13 @@ private fun ListOfElements(filteredGraphData: List<GraphData>, modifier: Modifie
             Column(
                 horizontalAlignment = Alignment.Start, modifier = Modifier.padding(start = 4.dp)) {
                   Text(
-                      text = context.getString(R.string.kcalvalue, data.kCal),
+                      text = context.getString(R.string.kcalvalue, data.kCal.roundTwoDecimal()),
                       modifier = Modifier.testTag("kcal"))
                   Text(
                       text =
-                          context.getString(R.string.weightvalue, data.weight).takeIf {
-                            data.weight > 0.0
-                          } ?: "",
+                          context
+                              .getString(R.string.weightvalue, data.weight.roundTwoDecimal())
+                              .takeIf { data.weight > 0.0 } ?: "",
                       modifier = Modifier.testTag("weight"))
                 }
             Text(

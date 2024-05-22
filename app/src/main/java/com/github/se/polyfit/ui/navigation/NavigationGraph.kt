@@ -18,9 +18,7 @@ fun NavGraphBuilder.globalNavigation(
           navController = navController,
           content = { paddingValues -> OverviewScreen(paddingValues, navController) })
     }
-    composable(Route.Map) {
-      GenericScreen(navController = navController, content = { Text("Map Screen") })
-    }
+    //        composable(Route.Map) { MapScreen(paddingValues) }
     composable(Route.Settings) {
       GenericScreen(navController = navController, content = { Text("Settings Screen") })
     }

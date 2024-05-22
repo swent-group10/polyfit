@@ -21,8 +21,6 @@ import java.util.UUID
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
@@ -43,6 +41,9 @@ class PostFirebaseRepository(
   suspend fun storePost(post: Post): DocumentReference? {
     try {
       val documentRef = postCollection.add(post.serialize()).await()
+
+      geoFire.setLocation(
+          documentRef.id, GeoLocation(post.location.latitude, post.location.longitude))
 
       return documentRef
     } catch (e: Exception) {
@@ -89,6 +90,8 @@ class PostFirebaseRepository(
       completion: (List<Post>) -> Unit,
       geoFire: GeoFire = GeoFire(geoFireRef)
   ) {
+    Log.d("MapRadius", "Radius: $radiusInKm")
+    Log.d("MapCenter", "Center: $centerLatitude, $centerLongitude")
     val center = GeoLocation(centerLatitude, centerLongitude)
     val query = geoFire.queryAtLocation(center, radiusInKm)
 
@@ -127,6 +130,7 @@ class PostFirebaseRepository(
     val batchSize = 10
     val batches = keys.chunked(batchSize)
     var completedBatches = 0
+    Log.d("PostFirebaseRepository", "Keys: $keys")
 
     // Use a batch operation to fetch all posts
     batches.forEach { batch ->
@@ -135,21 +139,27 @@ class PostFirebaseRepository(
           .get()
           .addOnSuccessListener { querySnapshot ->
             CoroutineScope(Dispatchers.Default).launch {
+              Log.d("PostFirebaseRepository", "QuerySnapshot: $querySnapshot")
               val tempPosts = mutableListOf<Post>()
               val deferredImages = mutableListOf<Deferred<Unit>>()
 
               querySnapshot.documents.forEach { document ->
                 document.data?.let {
                   Post.deserialize(it)?.also { post ->
-                    deferredImages.add(
-                        async { post.listOfURLs = fetchImageReferencesForPost(document.id) })
+                    //                                    deferredImages.add(
+                    //                                        async {
+                    //                                            post.listOfURLs =
+                    //
+                    // fetchImageReferencesForPost(document.id)
+                    //                                        })
+                    Log.d("PostFirebaseRepository", "Post: $post")
                     tempPosts.add(post)
                   }
                 }
               }
-              deferredImages.awaitAll()
 
               synchronized(posts) {
+                Log.d("PostFirebaseRepositorySynch", "TempPosts: $tempPosts")
                 posts.addAll(tempPosts)
                 for (post in posts) {
                   Log.d("PostFirebase", "download uri : ${post.imageDownloadURL}")
@@ -161,6 +171,7 @@ class PostFirebaseRepository(
               }
             }
           }
+          .addOnSuccessListener { Log.d("PostFirebaseRepository", "Successfully fetched posts") }
           .addOnFailureListener {
             Log.e("PostFirebaseRepository", "Failed to fetch posts: ${it.message}")
           }

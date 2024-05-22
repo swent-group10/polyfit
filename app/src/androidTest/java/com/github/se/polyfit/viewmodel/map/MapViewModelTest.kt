@@ -25,7 +25,7 @@ class MapViewModelTest {
 
   @Before
   fun setup() {
-    viewModel = MapViewModel(repository)
+    viewModel = MapViewModel(repository, mockk(relaxed = true))
   }
 
   @Test

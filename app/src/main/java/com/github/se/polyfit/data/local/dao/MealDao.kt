@@ -38,8 +38,8 @@ interface MealDao {
   @Query("SELECT * FROM MEALTABLE WHERE createdAt >= :date ")
   fun getMealsCreatedOnOrAfterDate(date: LocalDate): List<Meal>
 
-  @Query("SELECT * FROM MEALTABLE WHERE createdAt >= :date ")
-  fun getMealsCreatedOnOrAfterDateLiveData(date: LocalDate): LiveData<List<Meal>>
+  @Query("SELECT * FROM MEALTABLE WHERE createdAt == :date ")
+  fun getMealsCreatedOnDateLiveData(date: LocalDate): LiveData<List<Meal>>
 
   @Query("SELECT * FROM MEALTABLE WHERE createdAt == :date ")
   fun getMealsCreatedOnDate(date: LocalDate): List<Meal>

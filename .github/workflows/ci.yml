@@ -96,6 +96,12 @@ jobs:
           GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
         run: echo $GOOGLE_SERVICES_JSON | base64 -di > ./app/google-services.json
 
+      # Creating and Importing secret.xml
+      - name: Create Google Map key
+        env:
+          GOOGLE_MAP: ${{ secrets.GOOGLE_MAP }}
+        run: echo $GOOGLE_MAP | base64 -di> ./app/src/main/res/values/secret.xml
+
       - name: Decode Keystore (for signing the APK)
         run: echo "${{ secrets.KEYSTORE }}" | base64 --decode > ./app/keystore.jks
         
