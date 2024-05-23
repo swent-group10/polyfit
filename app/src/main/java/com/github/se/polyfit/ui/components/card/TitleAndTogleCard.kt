@@ -1,6 +1,5 @@
 package com.github.se.polyfit.ui.components.card
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,8 +29,10 @@ fun TitleAndToggleCard(
     button1Title: String,
     button2Title: String,
     recipeRecViewModel: RecipeRecommendationViewModel,
+    showIngredientInitial: Boolean = true
 ) {
-  val showIngredient by recipeRecViewModel.showIngredient.observeAsState(initial = true)
+  val showIngredient by
+      recipeRecViewModel.showIngredient.observeAsState(initial = showIngredientInitial)
 
   Card(
       modifier = Modifier.padding(16.dp).fillMaxWidth().testTag("TitleAndToggleCard"),
@@ -46,11 +47,7 @@ fun TitleAndToggleCard(
               horizontalArrangement = Arrangement.SpaceBetween,
               modifier = Modifier.fillMaxWidth()) {
                 FilledTonalButton(
-                    onClick = {
-                      Log.d("TitleAndToggleCard", "button1Title clicked")
-                      Log.d("TitleAndToggleCard", "showIngredient: $showIngredient")
-                      recipeRecViewModel.setShowIngredientTrue()
-                    },
+                    onClick = { recipeRecViewModel.setShowIngredientTrue() },
                     modifier = Modifier.weight(1f).testTag("tonalButton1"),
                     colors =
                         ButtonDefaults.buttonColors(

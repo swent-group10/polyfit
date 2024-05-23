@@ -28,39 +28,37 @@ import com.github.se.polyfit.model.ingredient.Ingredient
 
 @Composable
 fun IngredientInfoCard(ingredient: Ingredient) {
-  Card(
-      onClick = {},
-      modifier = Modifier.padding(16.dp).height(IntrinsicSize.Min).testTag("IngredientsCard")) {
-        Row(
-            modifier = Modifier.padding(16.dp).fillMaxWidth().height(IntrinsicSize.Min),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween) {
-              Row(
-                  verticalAlignment = Alignment.CenterVertically,
-              ) {
-                AsyncImage(
-                    model =
-                        ImageRequest.Builder(LocalContext.current)
-                            .data(ingredient.imageUri)
-                            .crossfade(true)
-                            .build(),
-                    placeholder = painterResource(R.drawable.logo),
-                    error = painterResource(R.drawable.logo),
-                    contentDescription = stringResource(R.string.description),
-                    contentScale = ContentScale.Crop,
-                    modifier =
-                        Modifier.size(100.dp) // Ensures the image is a square
-                            .testTag("IngredientsCard"))
-                Text(
-                    text = ingredient.name,
-                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold))
-              }
-              Box(modifier = Modifier.fillMaxWidth()) {
-                Text(
-                    text = ingredient.amountFormatted(),
-                    style = MaterialTheme.typography.titleSmall,
-                    modifier = Modifier.align(Alignment.CenterEnd))
-              }
-            }
-      }
+  Card(modifier = Modifier.padding(16.dp).height(IntrinsicSize.Min).testTag("IngredientsCard")) {
+    Row(
+        modifier = Modifier.padding(16.dp).fillMaxWidth().height(IntrinsicSize.Min),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween) {
+          Row(
+              verticalAlignment = Alignment.CenterVertically,
+          ) {
+            AsyncImage(
+                model =
+                    ImageRequest.Builder(LocalContext.current)
+                        .data(ingredient.imageUri)
+                        .crossfade(true)
+                        .build(),
+                placeholder = painterResource(R.drawable.logo),
+                error = painterResource(R.drawable.logo),
+                contentDescription = stringResource(R.string.description),
+                contentScale = ContentScale.Crop,
+                modifier =
+                    Modifier.size(100.dp) // Ensures the image is a square
+                        .testTag("IngredientsCardImage"))
+            Text(
+                text = ingredient.name,
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold))
+          }
+          Box(modifier = Modifier.fillMaxWidth()) {
+            Text(
+                text = ingredient.amountFormatted(),
+                style = MaterialTheme.typography.titleSmall,
+                modifier = Modifier.align(Alignment.CenterEnd))
+          }
+        }
+  }
 }

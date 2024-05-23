@@ -14,6 +14,7 @@ import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.MealTag
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import com.google.common.reflect.TypeToken
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import java.time.LocalDate
 
@@ -94,17 +95,15 @@ class UriTypeConverter {
 }
 
 class TagListConverter {
-  private val gson = GsonBuilder().registerTypeAdapter(Uri::class.java, UriTypeAdapter()).create()
-
   @TypeConverter
   fun fromTagList(tags: List<MealTag>): String {
-    return gson.toJson(tags)
+    return Gson().toJson(tags)
   }
 
   @TypeConverter
   fun toTagList(tagsString: String): List<MealTag> {
     val type = object : TypeToken<List<MealTag>>() {}.type
-    return gson.fromJson(tagsString, type)
+    return Gson().fromJson(tagsString, type)
   }
 }
 
