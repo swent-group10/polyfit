@@ -62,4 +62,5 @@
     <string name="accountSettingsDisplayName">Display Name</string>
     <string name="noMealsFound">No recorded meals</string>
     <string name="addMealButton">Add a Meal</string>
+    <string name="ErrorPicture">Error fetching the picture</string>
 </resources>

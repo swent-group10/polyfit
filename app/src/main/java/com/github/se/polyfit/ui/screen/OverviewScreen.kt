@@ -1,5 +1,6 @@
 package com.github.se.polyfit.ui.screen
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -90,7 +91,7 @@ fun OverviewScreen(
 
         showPictureDialog = false
         val id: String? = runBlocking(Dispatchers.IO) { overviewViewModel.storeMeal(imageBitmap) }
-        navigation.navigateToAddMeal(id)
+        navigateOrShowError(id, navigation, context)
       }
 
   val pickMedia =
@@ -105,7 +106,8 @@ fun OverviewScreen(
                   overviewViewModel,
               )
         }
-        navigation.navigateToAddMeal(id)
+
+        navigateOrShowError(id, navigation, context)
       }
 
   // Launcher for requesting the camera permission
@@ -242,5 +244,13 @@ fun OverviewScreen(
             }
           }
         }
+  }
+}
+
+fun navigateOrShowError(id: String?, navigation: Navigation, context: Context) {
+  if (id != null) {
+    navigation.navigateToAddMeal(id)
+  } else {
+    Toast.makeText(context, context.getString(R.string.ErrorPicture), Toast.LENGTH_SHORT).show()
   }
 }
