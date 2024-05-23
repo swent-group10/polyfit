@@ -66,4 +66,6 @@
     <string name="Ingredients">Ingredients</string>
     <string name="Recipe">Recipe</string>
 
+    <string name="confirmSignout">Are you sure you want to sign out?</string>
+    <string name="signout">Sign Out</string>
 </resources>
