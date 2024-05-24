@@ -197,6 +197,7 @@ android {
         kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.51")
         androidTestImplementation("androidx.hilt:hilt-navigation-compose:1.2.0")
         androidTestImplementation("androidx.arch.core:core-testing:2.2.0")
+        androidTestImplementation("androidx.test:core-ktx:1.5.0")
 
         // Test
         testImplementation("io.mockk:mockk-jvm:1.13.10")
@@ -216,6 +217,7 @@ android {
 
         // Mockito
         androidTestImplementation("org.mockito:mockito-core:5.11.0")
+        androidTestImplementation ("org.mockito.kotlin:mockito-kotlin:5.3.1")
 
         testImplementation("io.mockk:mockk:1.13.10")
         testImplementation("org.mockito:mockito-core:5.11.0")
