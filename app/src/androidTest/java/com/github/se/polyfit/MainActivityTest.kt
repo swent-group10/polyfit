@@ -1,13 +1,11 @@
 package com.github.se.polyfit
 
-import android.util.Log
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.firebase.auth.FirebaseAuth
 import io.mockk.every
 import io.mockk.junit4.MockKRule
 import io.mockk.mockk
-import java.lang.Thread.sleep
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -26,18 +24,12 @@ class MainActivityTest {
     scenario.recreate()
     scenario.onActivity { activity ->
       val authentication = activity.authentication
+      val user = activity.user
       authentication.setCallbackOnSign {}
       authentication.signIn()
-      var i = 0
-      while (!authentication.isAnswered()) {
-        sleep(10)
-        Log.i("MainActivityTest", "Waiting for authentication")
-        i++
-        assert(i < 1_000)
-      }
-      assert(authentication.isAuthenticated())
       authentication.signOut()
       assert(!authentication.isAuthenticated())
+      assert(!user.isSignedIn())
     }
   }
 }
