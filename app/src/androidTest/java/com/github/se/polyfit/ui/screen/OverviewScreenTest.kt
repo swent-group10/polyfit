@@ -1,5 +1,10 @@
 package com.github.se.polyfit.ui.screen
 
+import android.app.Activity
+import android.app.Instrumentation
+import android.content.Intent
+import android.graphics.BitmapFactory
+import android.provider.MediaStore
 import android.util.Log
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.graphics.Brush
@@ -19,7 +24,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import co.yml.charts.axis.AxisData
 import co.yml.charts.common.model.Point
 import co.yml.charts.ui.linechart.model.GridLines
@@ -27,6 +35,7 @@ import co.yml.charts.ui.linechart.model.IntersectionPoint
 import co.yml.charts.ui.linechart.model.LineStyle
 import co.yml.charts.ui.linechart.model.LineType
 import co.yml.charts.ui.linechart.model.ShadowUnderLine
+import com.github.se.polyfit.R
 import com.github.se.polyfit.data.processor.LocalDataProcessor
 import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.model.meal.Meal
@@ -411,6 +420,14 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
 
   @Test
   fun testImportButton() {
+    val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+    val bitmap = BitmapFactory.decodeResource(appContext.resources, R.drawable.google_logo)
+    val resultData = Intent()
+    resultData.putExtra("data", bitmap)
+    val result = Instrumentation.ActivityResult(Activity.RESULT_OK, resultData)
+
+    Intents.init()
+    Intents.intending(IntentMatchers.hasAction(MediaStore.ACTION_PICK_IMAGES)).respondWith(result)
     setup()
     ComposeScreen.onComposeScreen<CalorieCard>(composeTestRule) {
       composeTestRule.onNodeWithTag(OverviewTags.overviewPictureBtn).performClick()
