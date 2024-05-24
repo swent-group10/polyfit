@@ -70,7 +70,8 @@ class UserAuthTest {
     every { mockResult.idpResponse } returns null
 
     // Call onSignInResult
-    authentication.onSignInResult(mockResult) {}
+    authentication.setCallbackOnSign {}
+    authentication.onSignInResult(mockResult)
 
     // Verify that User.currentUser is set with the correct values
     assertEquals("1", user.id)

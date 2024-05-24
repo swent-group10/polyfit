@@ -18,7 +18,7 @@ import com.google.firebase.auth.FirebaseAuth
 
 class Authentication(
     activity: ComponentActivity,
-    private val user: User,
+    val user: User,
     private val userFirebaseRepository: UserFirebaseRepository,
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance(),
     private var context: Context = activity.applicationContext,
@@ -33,10 +33,7 @@ class Authentication(
     Log.v("Authentication", "Authentication initialized")
     signInLauncher =
         activity.registerForActivityResult(FirebaseAuthUIActivityResultContract()) { res ->
-          onSignInResult(res) {
-            Log.v("Authentication", "Sign in result received: $it")
-            if (it) (callback)()
-          }
+          onSignInResult(res)
         }
     if (firebaseAuth.currentUser != null) {
       Log.v("Authentication", "User already authenticated")
@@ -74,19 +71,18 @@ class Authentication(
     Log.v("Authentication", "Sign out")
   }
 
-  fun onSignInResult(result: FirebaseAuthUIAuthenticationResult, callback: (Boolean) -> Unit) {
+  fun onSignInResult(result: FirebaseAuthUIAuthenticationResult) {
     Log.i("Authentication", "Sign in result received")
     val response = result.idpResponse
     if (result.resultCode == Activity.RESULT_OK) {
       // to get google account info
+      Log.i("Authentication", "Sign in successful $response")
       val account = GoogleSignIn.getLastSignedInAccount(context)
-
       setUserInfo(account)
 
-      callback(true)
+      callback()
     } else {
       Log.e("Authentication", "Error in result: ${result.resultCode}")
-      callback(false)
     }
     isAnswered = true
   }
