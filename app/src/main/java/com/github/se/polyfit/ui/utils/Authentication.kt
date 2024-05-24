@@ -30,25 +30,31 @@ class Authentication(
   private var isAnswered = false
 
   init {
-    Log.i("Authentication", "Authentication initialized")
+    Log.v("Authentication", "Authentication initialized")
     signInLauncher =
         activity.registerForActivityResult(FirebaseAuthUIActivityResultContract()) { res ->
-          onSignInResult(res) { if (it) (callback)() }
+          onSignInResult(res) {
+            Log.v("Authentication", "Sign in result received: $it")
+            if (it) (callback)()
+          }
         }
     if (firebaseAuth.currentUser != null) {
-      Log.i("Authentication", "User already authenticated")
+      Log.v("Authentication", "User already authenticated")
       setUserInfo(GoogleSignIn.getLastSignedInAccount(context))
       isAnswered = true
     }
-    Log.i("Authentication", "End of Authentication initialized")
+    Log.v("Authentication", "End of Authentication initialized")
   }
 
   fun setCallbackOnSign(callback: () -> Unit) {
+    Log.v("Authentication", "Callback set")
     this.callback = callback
   }
 
   fun isAuthenticated(): Boolean {
-    return firebaseAuth.currentUser != null
+    val result = firebaseAuth.currentUser != null
+    Log.i("Authentication", "isAuthenticated: $result")
+    return result
   }
 
   fun signIn() {
@@ -65,6 +71,7 @@ class Authentication(
     AuthUI.getInstance().signOut(context)
     user.signOut()
     isAnswered = false
+    Log.v("Authentication", "Sign out")
   }
 
   fun onSignInResult(result: FirebaseAuthUIAuthenticationResult, callback: (Boolean) -> Unit) {
@@ -79,23 +86,14 @@ class Authentication(
       callback(true)
     } else {
       Log.e("Authentication", "Error in result: ${result.resultCode}")
-      response?.let {
-        Log.e(
-            "Authentication",
-            "Error in result firebase authentication: " + "${it.error?.errorCode}")
-      }
       callback(false)
     }
     isAnswered = true
   }
 
   private fun setUserInfo(account: GoogleSignInAccount?) {
-    if (account == null) {
-      Log.e("Authentication", "Account is null")
-      return
-    }
     this.user.update(
-        id = account.id!!,
+        id = account!!.id!!,
         email = account.email!!,
         displayName = account.displayName,
         familyName = account.familyName,
@@ -110,9 +108,5 @@ class Authentication(
         userFirebaseRepository.storeUser(this.user)
       }
     }
-  }
-
-  fun isAnswered(): Boolean {
-    return isAnswered
   }
 }
