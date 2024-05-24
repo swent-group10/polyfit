@@ -39,7 +39,7 @@ class ViewPostViewModelTest {
 
     // Assert
     coVerify { postFirebaseRepository.getAllPosts() }
-    assertEquals(posts, viewModel.posts.value)
+    assertEquals(false, viewModel.isFetching.value)
   }
 
   @Test

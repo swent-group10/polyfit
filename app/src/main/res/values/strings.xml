@@ -63,6 +63,10 @@
     <string name="noMealsFound">No recorded meals</string>
     <string name="addMealButton">Add a Meal</string>
     <string name="ErrorPicture">Error fetching the picture</string>
+    <string name="MoreDetailRecipe">More Detail</string>
+    <string name="Ingredients">Ingredients</string>
+    <string name="Recipe">Recipe</string>
+
     <string name="confirmSignout">Are you sure you want to sign out?</string>
     <string name="signout">Sign Out</string>
 </resources>

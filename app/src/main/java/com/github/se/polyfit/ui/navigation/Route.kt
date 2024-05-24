@@ -25,4 +25,8 @@ object Route {
   const val CreatePost = "CreatePost"
 
   const val RecipeRecommendation = "RecipeRecommendation"
+
+  const val RecipeRecommendationMore = "RecipeRecommendationMore"
+
+  const val RecipeRecFlow = "RecipeRecFlow"
 }

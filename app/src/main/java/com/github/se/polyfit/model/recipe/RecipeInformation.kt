@@ -3,6 +3,7 @@ package com.github.se.polyfit.model.recipe
 import android.util.Log
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
+import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 
 /** This is a separate class from the Recipe.kt class to reflect the structure of the api */
 data class RecipeInformation(
@@ -11,7 +12,11 @@ data class RecipeInformation(
     val glutenFree: Boolean,
     val dairyFree: Boolean,
     val ingredients: List<Ingredient>,
-    val instructions: String
+    val instructions: String,
+    val calories: Nutrient = Nutrient("calories", 0.0, MeasurementUnit.KCAL),
+    val fat: Nutrient = Nutrient("fat", 0.0, MeasurementUnit.G),
+    val protein: Nutrient = Nutrient("protein", 0.0, MeasurementUnit.G),
+    val carbs: Nutrient = Nutrient("carbs", 0.0, MeasurementUnit.G),
 ) {
   fun serialize(): Map<String, Any> {
     return serialize(this)
@@ -51,7 +56,7 @@ data class RecipeInformation(
       // Define the default values for a basic recipe
       val ingredients =
           listOf(
-              Ingredient("ancho chile powder", 1022009, 1.5, MeasurementUnit.TEASPOONS),
+              Ingredient("ancho chile", 1022009, 1.5, MeasurementUnit.TEASPOONS),
               Ingredient("beef tenderloin", 13926, 3.5, MeasurementUnit.LB),
               Ingredient("black pepper", 1002030, 0.5, MeasurementUnit.TEASPOONS),
               Ingredient("sweet paprika", 1002028, 1.0, MeasurementUnit.TEASPOONS))
