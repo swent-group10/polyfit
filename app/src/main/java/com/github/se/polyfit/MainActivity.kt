@@ -52,8 +52,7 @@ class MainActivity : ComponentActivity() {
     controller.systemBarsBehavior =
         WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 
-    val authentication =
-        Authentication(this, user, userFirebaseRepository)
+    val authentication = Authentication(this, user, userFirebaseRepository)
 
     // TODO: technical debt, next deadline find better way to pass arguments from overview screen
     // to add meal screen
