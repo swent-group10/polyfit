@@ -2,10 +2,12 @@ package com.github.se.polyfit
 
 import android.util.Log
 import androidx.test.core.app.ActivityScenario
+import androidx.test.core.app.launchActivity
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.ui.utils.Authentication
 import com.google.firebase.auth.FirebaseAuth
+import com.kaspersky.components.kautomator.common.Environment
 import io.mockk.every
 import io.mockk.junit4.MockKRule
 import io.mockk.mockk
@@ -13,6 +15,7 @@ import java.lang.Thread.sleep
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import kotlin.test.BeforeTest
 
 @RunWith(AndroidJUnit4::class)
 class MainActivityTest {
@@ -29,18 +32,17 @@ class MainActivityTest {
     val auth: FirebaseAuth = mockk(relaxed = true)
     every { auth.currentUser } answers { mockk(relaxed = true) }
 
-    val scenario = ActivityScenario.launch(MainActivity::class.java)
-
-    scenario.onActivity { activity ->
-      val authentication =
-          Authentication(activity, mockk(relaxed = true), mockk(relaxed = true), auth)
-      authentication.setCallback({}, 0)
-      var i = 0
-      while (!authentication.isAnswered()) {
-        sleep(10)
-        Log.i("MainActivityTest", "Waiting for authentication")
-        i++
-        assert(i < 10_000)
+    launchActivity<MainActivity>().use {activityScenario ->
+      activityScenario.onActivity { activity ->
+        val authentication = activity.authentication
+        authentication.setCallbackOnSign {}
+        var i = 0
+        while (!authentication.isAnswered()) {
+          sleep(10)
+          Log.i("MainActivityTest", "Waiting for authentication")
+          i++
+          assert(i < 1_000)
+        }
       }
     }
   }
@@ -55,13 +57,13 @@ class MainActivityTest {
     scenario.onActivity { activity ->
       val authentication =
           Authentication(activity, mockk(relaxed = true), mockk(relaxed = true), auth)
-      authentication.setCallback({}, 0)
+      authentication.setCallbackOnSign {}
       var i = 0
       while (!authentication.isAnswered()) {
         sleep(10)
         Log.i("MainActivityTest", "Waiting for authentication")
         i++
-        assert(i < 10_000)
+        assert(i < 1_000)
       }
       authentication.signOut()
     }

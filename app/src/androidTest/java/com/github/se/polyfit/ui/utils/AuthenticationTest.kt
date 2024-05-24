@@ -56,7 +56,7 @@ class AuthenticationTest {
           }
         }
     authentication = Authentication(activity, user, mockk(), firebaseAuth, context)
-    authentication.setCallback({}, 3)
+    authentication.setCallbackOnSign {}
     assert(authentication.isAuthenticated())
   }
 
@@ -65,7 +65,7 @@ class AuthenticationTest {
     every { firebaseAuth.currentUser } returns null
 
     authentication = Authentication(activity, user, mockk(), firebaseAuth, context)
-    authentication.setCallback({}, 3)
+    authentication.setCallbackOnSign {}
     authentication.signOut()
     assert(!authentication.isAuthenticated())
   }
@@ -85,7 +85,7 @@ class AuthenticationTest {
         }
 
     authentication = Authentication(activity, user, mockk(), firebaseAuth, context)
-    authentication.setCallback({}, 3)
+    authentication.setCallbackOnSign {}
     authentication.signIn()
     assert(authentication.isAuthenticated())
   }

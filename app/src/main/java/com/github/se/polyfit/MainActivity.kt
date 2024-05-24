@@ -38,6 +38,7 @@ class MainActivity : ComponentActivity() {
 
   @Inject lateinit var user: User
   @Inject lateinit var userFirebaseRepository: UserFirebaseRepository
+  lateinit var authentication: Authentication
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -52,7 +53,7 @@ class MainActivity : ComponentActivity() {
     controller.systemBarsBehavior =
         WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 
-    val authentication =
+    authentication =
         Authentication(
             activity = this,
             user = user,
@@ -65,7 +66,7 @@ class MainActivity : ComponentActivity() {
       PolyfitTheme {
         val navController = rememberNavController()
         val navigation = Navigation(navController)
-        authentication.setCallback({ navigation.navigateToHome() }, 3)
+        authentication.setCallbackOnSign { navigation.navigateToHome() }
 
         val startDestination = if (authentication.isAuthenticated()) Route.Home else Route.Register
         NavHost(navController = navController, startDestination = startDestination) {

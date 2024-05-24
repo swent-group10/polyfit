@@ -25,34 +25,22 @@ class Authentication(
 ) {
 
   private var callback: (() -> Unit) = { Log.e("Authentication", "Callback not set") }
-  private var signInLauncher: ActivityResultLauncher<Intent>? = null
+  private var signInLauncher: ActivityResultLauncher<Intent>
   // This value is used to be sure the request is received in the test.
   private var isAnswered = false
 
   init {
-    initLaunch(activity)
-  }
-
-  private fun initLaunch(activity: ComponentActivity) {
-    if (firebaseAuth.currentUser != null) {
-      isAnswered = true
-      setUserInfo(GoogleSignIn.getLastSignedInAccount(context))
-      return
-    }
-    // This init is launched when the user is not signed in
     signInLauncher =
-        activity.registerForActivityResult(FirebaseAuthUIActivityResultContract()) { res ->
-          onSignInResult(res) { if (it) (callback)() }
-        }
-    val providers = arrayListOf(AuthUI.IdpConfig.GoogleBuilder().build())
-
-    val signInIntent =
-        AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(providers).build()
-
-    signInLauncher!!.launch(signInIntent)
+            activity.registerForActivityResult(FirebaseAuthUIActivityResultContract()) { res ->
+              onSignInResult(res) { if (it) (callback)() }
+            }
+    if (firebaseAuth.currentUser != null) {
+      setUserInfo(GoogleSignIn.getLastSignedInAccount(context))
+      isAnswered = true
+    }
   }
 
-  fun setCallback(callback: () -> Unit, justToHave2ArguementHilt: Int) {
+  fun setCallbackOnSign(callback: () -> Unit) {
     this.callback = callback
   }
 
@@ -66,7 +54,7 @@ class Authentication(
     val signInIntent =
         AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(providers).build()
 
-    signInLauncher!!.launch(signInIntent)
+    signInLauncher.launch(signInIntent)
   }
 
   fun signOut() {
@@ -118,7 +106,6 @@ class Authentication(
   }
 
   fun isAnswered(): Boolean {
-
     Log.i("Authentication", "Authentication isAnswered: $isAnswered")
     return isAnswered
   }
