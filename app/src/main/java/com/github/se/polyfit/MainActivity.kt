@@ -38,7 +38,6 @@ class MainActivity : ComponentActivity() {
 
   @Inject lateinit var user: User
   @Inject lateinit var userFirebaseRepository: UserFirebaseRepository
-  lateinit var authentication: Authentication
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -53,12 +52,8 @@ class MainActivity : ComponentActivity() {
     controller.systemBarsBehavior =
         WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 
-    authentication =
-        Authentication(
-            activity = this,
-            user = user,
-            context = this,
-            userFirebaseRepository = userFirebaseRepository)
+    val authentication =
+        Authentication(this, user, userFirebaseRepository)
 
     // TODO: technical debt, next deadline find better way to pass arguments from overview screen
     // to add meal screen
