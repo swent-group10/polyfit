@@ -73,6 +73,15 @@ class NavigationTest {
   }
 
   @Test
+  fun goBackToLogin() {
+    route = Route.Register
+    every { navHostController.popBackStack(route, any()) } returns true
+    navigation.goBackToLogin()
+
+    verify { navHostController.popBackStack(Route.Register, false) }
+  }
+
+  @Test
   fun navigateToAddMeal() {
     route = Route.AddMeal
     every { navHostController.navigate(route) } returns Unit
