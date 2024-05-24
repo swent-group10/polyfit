@@ -36,9 +36,11 @@ class Authentication(
           onSignInResult(res) { if (it) (callback)() }
         }
     if (firebaseAuth.currentUser != null) {
+      Log.i("Authentication", "User already authenticated")
       setUserInfo(GoogleSignIn.getLastSignedInAccount(context))
       isAnswered = true
     }
+    Log.i("Authentication", "End of Authentication initialized")
   }
 
   fun setCallbackOnSign(callback: () -> Unit) {
@@ -66,6 +68,7 @@ class Authentication(
   }
 
   fun onSignInResult(result: FirebaseAuthUIAuthenticationResult, callback: (Boolean) -> Unit) {
+    Log.i("Authentication", "Sign in result received")
     val response = result.idpResponse
     if (result.resultCode == Activity.RESULT_OK) {
       // to get google account info
@@ -75,9 +78,11 @@ class Authentication(
 
       callback(true)
     } else {
-      Log.e("LoginScreen", "Error in result: ${result.resultCode}")
+      Log.e("Authentication", "Error in result: ${result.resultCode}")
       response?.let {
-        Log.e("LoginScreen", "Error in result firebase authentication: " + "${it.error?.errorCode}")
+        Log.e(
+            "Authentication",
+            "Error in result firebase authentication: " + "${it.error?.errorCode}")
       }
       callback(false)
     }
@@ -86,7 +91,7 @@ class Authentication(
 
   private fun setUserInfo(account: GoogleSignInAccount?) {
     if (account == null) {
-      Log.e("AuthenticationCloud", "Account is null")
+      Log.e("Authentication", "Account is null")
       return
     }
     this.user.update(
@@ -99,7 +104,7 @@ class Authentication(
 
     userFirebaseRepository.getUser(this.user.id).continueWith {
       if (it.result.isNotNull()) {
-        Log.d("AuthenticationCloud", "User already exists, information loaded")
+        Log.d("Authentication", "User already exists, information loaded")
         this.user.update(user = it.result!!)
       } else {
         userFirebaseRepository.storeUser(this.user)
@@ -108,7 +113,6 @@ class Authentication(
   }
 
   fun isAnswered(): Boolean {
-    Log.i("Authentication", "Authentication isAnswered: $isAnswered")
     return isAnswered
   }
 }

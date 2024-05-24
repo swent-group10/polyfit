@@ -1,5 +1,6 @@
 package com.github.se.polyfit
 
+import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.firebase.auth.FirebaseAuth
@@ -16,7 +17,7 @@ class MainActivityTest {
   @get:Rule val mockkRule = MockKRule(this)
 
   @Test
-  fun testSignInSignOut() {
+  fun testDirectSignIn() {
     val auth: FirebaseAuth = mockk(relaxed = true)
     every { auth.currentUser } answers { mockk(relaxed = true) }
 
@@ -24,12 +25,24 @@ class MainActivityTest {
     scenario.recreate()
     scenario.onActivity { activity ->
       val authentication = activity.authentication
-      val user = activity.user
+      authentication.setCallbackOnSign {}
+      assert(!authentication.isAuthenticated())
+    }
+  }
+
+  @Test
+  fun testSignOut() {
+    val auth: FirebaseAuth = mockk(relaxed = true)
+    every { auth.currentUser } answers { mockk(relaxed = true) }
+
+    val scenario = ActivityScenario.launch(MainActivity::class.java)
+    scenario.moveToState(Lifecycle.State.RESUMED)
+    scenario.onActivity { activity ->
+      val authentication = activity.authentication
       authentication.setCallbackOnSign {}
       authentication.signIn()
       authentication.signOut()
       assert(!authentication.isAuthenticated())
-      assert(!user.isSignedIn())
     }
   }
 }

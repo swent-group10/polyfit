@@ -44,7 +44,7 @@ class MainActivity : ComponentActivity() {
   public override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    Log.i("MainActivity", "onCreate")
+
     // hides the system bar
     WindowCompat.setDecorFitsSystemWindows(window, false)
 
