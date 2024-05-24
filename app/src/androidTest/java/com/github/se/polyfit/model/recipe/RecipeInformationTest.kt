@@ -21,7 +21,7 @@ class RecipeInformationTest {
   }
 
   @Test
-  fun `deserialize returns correct RecipeInformation for valid data`() {
+  fun deserializeReturnsCorrectRecipeInformationValidData() {
     val data =
         mapOf(
             "vegetarian" to true,
@@ -57,14 +57,14 @@ class RecipeInformationTest {
   }
 
   @Test
-  fun `deserialize throws IllegalArgumentException for invalid data`() {
+  fun deserializeThrowsIllegalArgumentExceptionInvalidData() {
     val data = mapOf<String, Any>("invalidKey" to "invalidValue")
 
     assertFailsWith<IllegalArgumentException> { RecipeInformation.deserialize(data) }
   }
 
   @Test
-  fun `serialize returns correct data for RecipeInformation`() {
+  fun serializeReturnsCorrectDataRecipeInformation() {
     val ingredients =
         listOf(
             Ingredient("ingredient1", 1, 1.0, MeasurementUnit.TEASPOONS),
@@ -82,7 +82,7 @@ class RecipeInformationTest {
   }
 
   @Test
-  fun `serialize and deserialize default`() {
+  fun serializeAndDeserializeDefault() {
     val recipeInformation = RecipeInformation.default()
     val result = RecipeInformation.serialize(recipeInformation)
     val deserialized = RecipeInformation.deserialize(result)

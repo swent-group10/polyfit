@@ -8,7 +8,7 @@ import org.junit.Assert.assertEquals
 class RecipeFromIngredientsResponseAPITest {
 
   @Test
-  fun `fromJsonObject returns success response when JSON is valid`() {
+  fun fromJsonObjectReturnsSuccessResponseWhenJSONIsValid() {
     val jsonArray =
         JSONArray(
             "[{\"id\":1,\"title\":\"Apple Pie\",\"image\":\"http://example.com/apple_pie.png\",\"likes\":\"100\",\"usedIngredientCount\":\"5\",\"missedIngredientCount\":\"0\"}]")
@@ -26,7 +26,7 @@ class RecipeFromIngredientsResponseAPITest {
   }
 
   @Test
-  fun `fromJsonObject returns failure response when JSON is invalid`() {
+  fun fromJsonObjectReturnsFailureResponseWhenJSONIsInvalid() {
     val jsonArray = JSONArray("[{\"invalid\":\"data\"}]")
 
     val response = RecipeFromIngredientsResponseAPI.fromJsonObject(jsonArray)
@@ -36,7 +36,7 @@ class RecipeFromIngredientsResponseAPITest {
   }
 
   @Test
-  fun `fromJsonObject returns failure response when JSON is empty`() {
+  fun fromJsonObjectReturnsFailureResponseWhenJSONEmpty() {
     val jsonArray = JSONArray("[]")
 
     val response = RecipeFromIngredientsResponseAPI.fromJsonObject(jsonArray)

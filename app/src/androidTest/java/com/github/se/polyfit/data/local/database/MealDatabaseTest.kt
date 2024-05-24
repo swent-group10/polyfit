@@ -1,6 +1,7 @@
 package com.github.se.polyfit.data.local.database
 
 import android.content.Context
+import android.net.Uri
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -12,6 +13,10 @@ import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
+import com.google.gson.GsonBuilder
+import com.google.gson.TypeAdapter
+import com.google.gson.stream.JsonReader
+import com.google.gson.stream.JsonWriter
 import java.time.LocalDate
 import junit.framework.TestCase.assertFalse
 import kotlin.test.assertContains
@@ -25,6 +30,8 @@ import org.junit.runner.RunWith
 class MealDatabaseTest {
   private lateinit var mealDatabase: MealDatabase
   private lateinit var mealDao: MealDao
+
+  private val gson = GsonBuilder().registerTypeAdapter(Uri::class.java, UriTypeAdapter()).create()
 
   @Before
   fun setup() {
@@ -166,5 +173,15 @@ class MealDatabaseTest {
   @After
   fun closeDB() {
     mealDatabase.close()
+  }
+}
+
+class UriTypeAdapter : TypeAdapter<Uri>() {
+  override fun write(out: JsonWriter, value: Uri?) {
+    out.value(value.toString())
+  }
+
+  override fun read(input: JsonReader): Uri {
+    return Uri.parse(input.nextString())
   }
 }

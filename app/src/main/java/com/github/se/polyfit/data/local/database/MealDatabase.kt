@@ -1,5 +1,6 @@
 package com.github.se.polyfit.data.local.database
 
+import android.net.Uri
 import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.DeleteColumn
@@ -14,6 +15,7 @@ import com.github.se.polyfit.model.meal.MealTag
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import com.google.common.reflect.TypeToken
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import java.time.LocalDate
 
 @Database(
@@ -27,7 +29,8 @@ import java.time.LocalDate
     NutritionalInformationConverter::class,
     IngredientListConverter::class,
     TimeConverter::class,
-    TagListConverter::class)
+    TagListConverter::class,
+    UriTypeConverter::class)
 abstract class MealDatabase : RoomDatabase() {
   abstract fun mealDao(): MealDao
 
@@ -39,27 +42,31 @@ abstract class MealDatabase : RoomDatabase() {
 }
 
 class NutritionalInformationConverter {
+  private val gson = GsonBuilder().registerTypeAdapter(Uri::class.java, UriTypeAdapter()).create()
+
   @TypeConverter
   fun fromNutritionalInformation(nutritionalInformation: NutritionalInformation): String {
-    return Gson().toJson(nutritionalInformation)
+    return gson.toJson(nutritionalInformation)
   }
 
   @TypeConverter
   fun toNutritionalInformation(nutritionalInformationString: String): NutritionalInformation {
-    return Gson().fromJson(nutritionalInformationString, NutritionalInformation::class.java)
+    return gson.fromJson(nutritionalInformationString, NutritionalInformation::class.java)
   }
 }
 
 class IngredientListConverter {
+  private val gson = GsonBuilder().registerTypeAdapter(Uri::class.java, UriTypeAdapter()).create()
+
   @TypeConverter
   fun fromIngredientList(ingredients: List<Ingredient>): String {
-    return Gson().toJson(ingredients)
+    return gson.toJson(ingredients)
   }
 
   @TypeConverter
   fun toIngredientList(ingredientsString: String): List<Ingredient> {
     val type = object : TypeToken<List<Ingredient>>() {}.type
-    return Gson().fromJson(ingredientsString, type)
+    return gson.fromJson(ingredientsString, type)
   }
 }
 
@@ -75,6 +82,18 @@ class TimeConverter {
   }
 }
 
+class UriTypeConverter {
+  @TypeConverter
+  fun fromUri(uri: Uri): String {
+    return uri.toString()
+  }
+
+  @TypeConverter
+  fun toUri(uriString: String): Uri {
+    return Uri.parse(uriString)
+  }
+}
+
 class TagListConverter {
   @TypeConverter
   fun fromTagList(tags: List<MealTag>): String {
@@ -85,5 +104,15 @@ class TagListConverter {
   fun toTagList(tagsString: String): List<MealTag> {
     val type = object : TypeToken<List<MealTag>>() {}.type
     return Gson().fromJson(tagsString, type)
+  }
+}
+
+class UriTypeAdapter : com.google.gson.TypeAdapter<Uri>() {
+  override fun write(out: com.google.gson.stream.JsonWriter, value: Uri?) {
+    out.value(value.toString())
+  }
+
+  override fun read(input: com.google.gson.stream.JsonReader): Uri {
+    return Uri.parse(input.nextString())
   }
 }

@@ -16,6 +16,7 @@ import com.github.se.polyfit.data.remote.firebase.UserFirebaseRepository
 import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.flow.AddMealFlow
+import com.github.se.polyfit.ui.flow.RecipeRecFlow
 import com.github.se.polyfit.ui.flow.SettingFlow
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.navigation.Route
@@ -26,7 +27,6 @@ import com.github.se.polyfit.ui.screen.LoginScreen
 import com.github.se.polyfit.ui.screen.MapScreen
 import com.github.se.polyfit.ui.screen.OverviewScreen
 import com.github.se.polyfit.ui.screen.PostInfoScreen
-import com.github.se.polyfit.ui.screen.RecipeRecommendationScreen
 import com.github.se.polyfit.ui.theme.PolyfitTheme
 import com.github.se.polyfit.ui.utils.Authentication
 import dagger.hilt.android.AndroidEntryPoint
@@ -119,9 +119,8 @@ class MainActivity : ComponentActivity() {
             AddMealFlow(navigation::goBack, { navigation.goBackTo(Route.Home) })
           }
 
-          composable(Route.RecipeRecommendation) {
-            RecipeRecommendationScreen(navController = navController)
-          }
+          // the navcontroller is needed for the generic screen
+          composable(Route.RecipeRecFlow) { RecipeRecFlow() }
         }
       }
     }

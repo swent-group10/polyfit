@@ -11,6 +11,10 @@ data class Nutrient(val nutrientType: String, val amount: Double, val unit: Meas
     return "$nutrientType :  $amount $unit"
   }
 
+  fun toStringNoType(): String {
+    return "$amount ${unit.toString().lowercase()}"
+  }
+
   fun convertToUnit(newUnit: MeasurementUnit): Nutrient {
     val convertedAmount = MeasurementUnit.unitConversion(this.unit, newUnit, this.amount)
     val wasItConverted = (convertedAmount != this.amount)

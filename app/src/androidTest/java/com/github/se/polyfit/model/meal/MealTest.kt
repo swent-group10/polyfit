@@ -24,7 +24,7 @@ class MealTest {
   }
 
   @Test
-  fun `Meal addIngredient should update meal`() {
+  fun MealAddIngredientUpdateMeal() {
     val meal = Meal(MealOccasion.DINNER, name = "eggs", mealTemp = 102.2)
     val newNutritionalInformation =
         NutritionalInformation(mutableListOf(Nutrient("calcium", 1.0, MeasurementUnit.G)))
@@ -36,7 +36,7 @@ class MealTest {
   }
 
   @Test
-  fun `Meal serialize should serialize meal correctly`() {
+  fun mealSerializeSerializeMeal() {
     val meal =
         Meal(
             MealOccasion.DINNER,
@@ -56,7 +56,7 @@ class MealTest {
   }
 
   @Test
-  fun `Meal deserialize should return null if data is incorrect`() {
+  fun mealDeserializeReturnsNull() {
     val data =
         mapOf(
             "id" to UUID.randomUUID(),
@@ -69,7 +69,7 @@ class MealTest {
   }
 
   @Test
-  fun `Meal deserialize should return meal if data is correct`() {
+  fun mealDeserializeShouldReturnsMeal() {
     val uuid = UUID.randomUUID().toString()
     val data =
         mapOf(
@@ -91,7 +91,7 @@ class MealTest {
   }
 
   @Test
-  fun `testing deserialize with Firebase type`() {
+  fun testingDeserializeWithFirebaseType() {
     val data: Map<String, Any> =
         mapOf(
             "id" to UUID.randomUUID().toString(),
@@ -107,7 +107,7 @@ class MealTest {
   }
 
   @Test
-  fun `meal without name is incomplete`() {
+  fun mealWithoutNameIsIncomplete() {
     val meal =
         Meal(
             MealOccasion.DINNER,
@@ -119,7 +119,7 @@ class MealTest {
   }
 
   @Test
-  fun `meal without ingredients is incomplete`() {
+  fun mealWithoutIngredientsIsIncomplete() {
     val meal =
         Meal(MealOccasion.DINNER, name = "eggs", mealTemp = 102.2, ingredients = mutableListOf())
 
@@ -127,7 +127,7 @@ class MealTest {
   }
 
   @Test
-  fun `meal without nutritional information is incomplete`() {
+  fun mealWithoutNutritionalInformationIsIncomplete() {
     val meal =
         Meal(
             MealOccasion.DINNER,
@@ -139,7 +139,7 @@ class MealTest {
   }
 
   @Test
-  fun `meal with all mandatory fields is complete`() {
+  fun mealWithAllMandatoryFieldsIsComplete() {
     val meal =
         Meal(
             MealOccasion.DINNER,
@@ -159,7 +159,7 @@ class MealTest {
   }
 
   @Test
-  fun `Meal calculateTotalCalories should return total calories`() {
+  fun MealCalculateTotalCaloriesShouldReturnTotalCalories() {
     val meal =
         Meal(
             MealOccasion.DINNER,
@@ -181,7 +181,7 @@ class MealTest {
   }
 
   @Test
-  fun `Meal calculateTotalNutrient should return total nutrient`() {
+  fun MealCalculateTotalNutrientShouldReturnTotalNutrient() {
     val meal =
         Meal(
             MealOccasion.DINNER,
