@@ -156,7 +156,11 @@ fun OverviewScreen(
                       PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                 },
                 {
-                  Toast.makeText(context, "Feature not yet implemented", Toast.LENGTH_SHORT).show()
+                  Toast.makeText(
+                          context,
+                          context.getString(R.string.FeatureNotYetImplemented),
+                          Toast.LENGTH_SHORT)
+                      .show()
                 }),
         buttonsName =
             listOf(
