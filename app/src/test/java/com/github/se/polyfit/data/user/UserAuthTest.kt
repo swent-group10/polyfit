@@ -31,6 +31,7 @@ class UserAuthTest {
   fun setup() {
     // Mock the Log class
     mockkStatic(Log::class)
+    every { Log.v(any(), any()) } returns 0
     every { Log.i(any(), any()) } returns 0
     every { Log.e(any(), any()) } returns 0
     // Create a mock GoogleSignInAccount object
