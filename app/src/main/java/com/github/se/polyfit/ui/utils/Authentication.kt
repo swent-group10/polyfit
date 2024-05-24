@@ -24,16 +24,17 @@ class Authentication(
     private var context: Context = activity.applicationContext,
 ) {
 
-  private var callback: (() -> Unit) = { Log.e("Authentication", "Callback not set") }
+  private var callback: (() -> Unit) = { throw Throwable("Callback not set") }
   private var signInLauncher: ActivityResultLauncher<Intent>
   // This value is used to be sure the request is received in the test.
   private var isAnswered = false
 
   init {
+    Log.i("Authentication", "Authentication initialized")
     signInLauncher =
-            activity.registerForActivityResult(FirebaseAuthUIActivityResultContract()) { res ->
-              onSignInResult(res) { if (it) (callback)() }
-            }
+        activity.registerForActivityResult(FirebaseAuthUIActivityResultContract()) { res ->
+          onSignInResult(res) { if (it) (callback)() }
+        }
     if (firebaseAuth.currentUser != null) {
       setUserInfo(GoogleSignIn.getLastSignedInAccount(context))
       isAnswered = true
@@ -45,7 +46,7 @@ class Authentication(
   }
 
   fun isAuthenticated(): Boolean {
-    return firebaseAuth.currentUser != null || user.isSignedIn()
+    return firebaseAuth.currentUser != null
   }
 
   fun signIn() {
@@ -55,6 +56,7 @@ class Authentication(
         AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(providers).build()
 
     signInLauncher.launch(signInIntent)
+    Log.i("Authentication", "Sign in launched")
   }
 
   fun signOut() {
