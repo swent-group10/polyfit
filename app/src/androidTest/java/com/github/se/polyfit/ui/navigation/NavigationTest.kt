@@ -76,7 +76,7 @@ class NavigationTest {
   fun goBackToLogin() {
     route = Route.Register
     every { navHostController.popBackStack(route, any()) } returns true
-    navigation.goBackToLogin()
+    navigation.restartToLogin()
 
     verify { navHostController.popBackStack(Route.Register, false) }
   }
