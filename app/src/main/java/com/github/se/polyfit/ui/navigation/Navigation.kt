@@ -16,6 +16,10 @@ class Navigation(private val navHostController: NavHostController) {
     navHostController.popBackStack(route, inclusive = false)
   }
 
+  fun goBackToLogin() {
+    goBackTo(Route.Register)
+  }
+
   fun navigateToGraph() {
     navigateTo(Route.Graph)
   }

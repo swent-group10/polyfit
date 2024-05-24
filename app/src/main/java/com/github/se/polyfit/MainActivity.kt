@@ -105,8 +105,8 @@ class MainActivity : ComponentActivity() {
           composable(Route.Settings) {
             GenericScreen(
                 navController = navController,
-                content = { paddingValues ->
-                  SettingFlow(modifier = Modifier.padding(paddingValues))
+                content = {
+                  SettingFlow(toLogin = navigation::goBackToLogin, modifier = Modifier.padding(it))
                 })
           }
 
