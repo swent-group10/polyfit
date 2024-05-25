@@ -20,7 +20,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
@@ -67,15 +67,14 @@ class InOrderTest {
   }
 
   @Test
-  fun testSetInOrder() =
-      testScope.runBlockingTest {
-        // Call the function under test
-        viewModel.setInOrder(locationRequest)
+  fun testSetInOrder() = runTest {
+    // Call the function under test
+    viewModel.setInOrder(locationRequest)
 
-        // Verify the order of calls
-        coVerifyOrder {
-          viewModel.initPostLocation(locationRequest)
-          viewModel.setPost()
-        }
-      }
+    // Verify the order of calls
+    coVerifyOrder {
+      viewModel.initPostLocation(locationRequest)
+      viewModel.setPost()
+    }
+  }
 }

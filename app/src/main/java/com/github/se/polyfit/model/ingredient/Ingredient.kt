@@ -1,8 +1,10 @@
 package com.github.se.polyfit.model.ingredient
 
+import android.net.Uri
 import android.util.Log
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
+import java.util.Locale
 
 /**
  * Represents an ingredient in a meal. Automatically updates the parent meal when any property
@@ -18,10 +20,15 @@ data class Ingredient(
     val amount: Double,
     val unit: MeasurementUnit,
     val nutritionalInformation: NutritionalInformation = NutritionalInformation(),
+    val imageUri: Uri = Uri.EMPTY,
 ) {
 
   fun deepCopy(): Ingredient {
     return Ingredient(name, id, amount, unit, nutritionalInformation.deepCopy())
+  }
+
+  fun amountFormatted(): String {
+    return amount.toString() + " " + unit.toString().lowercase(Locale.ROOT)
   }
 
   companion object {

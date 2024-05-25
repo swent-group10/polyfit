@@ -42,6 +42,7 @@
     <string name="GenerateRecipe">"Generate\nRecipe"</string>
     <string name="Product">"Product"</string>
     <string name="recommendedRecipe">Recommended Recipes</string>
+    <string name="signInFailed">"Sign in failed"</string>
     <string name="PermissionDenied">Permission denied</string>
     <string name="TakeToTakePicture">Tap to take a photo</string>
     <string name="CreatePostImageDesription">Captured image</string>
@@ -62,4 +63,10 @@
     <string name="accountSettingsDisplayName">Display Name</string>
     <string name="noMealsFound">No recorded meals</string>
     <string name="addMealButton">Add a Meal</string>
+    <string name="MoreDetailRecipe">More Detail</string>
+    <string name="Ingredients">Ingredients</string>
+    <string name="Recipe">Recipe</string>
+
+    <string name="confirmSignout">Are you sure you want to sign out?</string>
+    <string name="signout">Sign Out</string>
 </resources>
