@@ -4,9 +4,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
@@ -15,12 +13,11 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.se.polyfit.R
-import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.ui.components.IngredientsOverview.BottomBarIngredient
 import com.github.se.polyfit.ui.components.IngredientsOverview.ListProducts
 import com.github.se.polyfit.ui.components.button.FloatingActionButtonIngredients
 import com.github.se.polyfit.ui.components.scaffold.SimpleTopBar
-import com.github.se.polyfit.viewmodel.qrCode.QrCodeViewModel
+import com.github.se.polyfit.viewmodel.qrCode.BarCodeCodeViewModel
 
 // TODO THIS CLASS IS TEMPORARY, REMOVE IT WHEN DOING THE VIEWMODEL
 data class IngredientsTMP(
@@ -47,15 +44,15 @@ private fun PreviewIngredientsOverview() {
 
 @Composable
 fun IngredientsOverview(
-    navigateBack: () -> Unit,
-    navigateForward: () -> Unit,
-    onClickFloatingButton: () -> Unit,
-    listProducts: List<IngredientsTMP>,
-    qrCodeViewModel: QrCodeViewModel = hiltViewModel()
+        navigateBack: () -> Unit,
+        navigateForward: () -> Unit,
+        onClickFloatingButton: () -> Unit,
+        listProducts: List<IngredientsTMP>,
+        barCodeCodeViewModel: BarCodeCodeViewModel = hiltViewModel()
 ) {
   val context = LocalContext.current
 
-  val listId by qrCodeViewModel.listId.observeAsState()
+  val listId by barCodeCodeViewModel.listId.observeAsState()
 
   val listProducts = mutableListOf<IngredientsTMP>()
   for (qrCode in listId ?: emptyList()) {

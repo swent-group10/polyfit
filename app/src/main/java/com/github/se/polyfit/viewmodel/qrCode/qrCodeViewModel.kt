@@ -8,13 +8,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.util.ArrayList
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 @HiltViewModel
-class QrCodeViewModel
+class BarCodeCodeViewModel
 @Inject
 constructor(
 ): ViewModel() {
@@ -23,8 +22,8 @@ constructor(
   val listId: LiveData<List<String>> = _listId
 
   fun addId(id: String?) {
-    // TODO check if arround 13 characters to be sure not half qrcode
     if (id == null || id.isEmpty() || _listId.value!!.contains(id)) return
+    if (id.length !in 6..13) return
     val list = _listId.value?.toMutableList() ?: mutableListOf()
     list.add(0, id)
     _listId.value = list

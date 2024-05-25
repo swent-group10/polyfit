@@ -1,11 +1,9 @@
 package com.github.se.polyfit.ui.screen
 
-import android.content.Context
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
-import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
@@ -25,18 +23,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.github.se.polyfit.ml.ImageAnalyserQr
+import com.github.se.polyfit.ml.ImageAnalyserBarCode
 import com.github.se.polyfit.ui.theme.getGradient
-import com.github.se.polyfit.viewmodel.qrCode.QrCodeViewModel
+import com.github.se.polyfit.viewmodel.qrCode.BarCodeCodeViewModel
 import com.github.se.polyfit.viewmodel.qrCode.getCameraProvider
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 import androidx.compose.ui.tooling.preview.Preview as Preview1
 
 @Preview1
 @Composable
-fun CameraPreviewScreen(qrCodeViewModel: QrCodeViewModel = hiltViewModel()
+fun CameraPreviewScreen(barCodeCodeViewModel: BarCodeCodeViewModel = hiltViewModel()
 ) {
 
   val lensFacing = CameraSelector.LENS_FACING_BACK
@@ -57,9 +52,9 @@ fun CameraPreviewScreen(qrCodeViewModel: QrCodeViewModel = hiltViewModel()
           .build()
 
 
-  val imageAnalyserQr = ImageAnalyserQr(qrCodeViewModel::addId)
+  val imageAnalyserBarCode = ImageAnalyserBarCode(barCodeCodeViewModel::addId)
 
-  imageAnalysis.setAnalyzer(ContextCompat.getMainExecutor(context), imageAnalyserQr)
+  imageAnalysis.setAnalyzer(ContextCompat.getMainExecutor(context), imageAnalyserBarCode)
 
 
   LaunchedEffect(lensFacing) {
