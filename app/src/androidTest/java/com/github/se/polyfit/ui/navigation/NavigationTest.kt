@@ -2,6 +2,7 @@ package com.github.se.polyfit.ui.navigation
 
 import android.util.Log
 import androidx.navigation.NavHostController
+import androidx.navigation.NavOptionsBuilder
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.mockk.every
 import io.mockk.mockk
@@ -73,12 +74,11 @@ class NavigationTest {
   }
 
   @Test
-  fun goBackToLogin() {
-    route = Route.Register
-    every { navHostController.popBackStack(route, any()) } returns true
-    navigation.goBackToLogin()
-
-    verify { navHostController.popBackStack(Route.Register, false) }
+  fun restartToLogin() {
+    every { navHostController.navigate(any<String>(), any<NavOptionsBuilder.() -> Unit>()) } returns
+        Unit
+    navigation.restartToLogin()
+    verify { navHostController.navigate(Route.Register, any<NavOptionsBuilder.() -> Unit>()) }
   }
 
   @Test
