@@ -33,61 +33,47 @@ import com.github.se.polyfit.data.api.Ingredient
 
 @Composable
 fun IngredientInfoCard(ingredient: Ingredient) {
-    Card(
-        modifier = Modifier
-            .padding(16.dp)
-            .height(IntrinsicSize.Min)
-            .testTag("IngredientsCard"),
-        shape = RoundedCornerShape(16.dp) // Adjust corner radius as needed
-    ) {
+  Card(
+      modifier = Modifier.padding(16.dp).height(IntrinsicSize.Min).testTag("IngredientsCard"),
+      shape = RoundedCornerShape(16.dp) // Adjust corner radius as needed
+      ) {
         Row(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth()
-                .height(IntrinsicSize.Min),
+            modifier = Modifier.padding(16.dp).fillMaxWidth().height(IntrinsicSize.Min),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start
-        ) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(ingredient.image)
-                    .crossfade(true)
-                    .build(),
-                placeholder = painterResource(R.drawable.logo),
-                error = painterResource(R.drawable.logo),
-                contentDescription = stringResource(R.string.description),
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(100.dp) // Ensures the image is a square
-                    .clip(RoundedCornerShape(16.dp)) // Rounded corners for the image
-                    .testTag("IngredientsCardImage")
-            )
-            Spacer(modifier = Modifier.width(16.dp)) // Spacer to add some space between the image and text
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp),
-                contentAlignment = Alignment.CenterStart // Center the text in the remaining space
-            ) {
-                Text(
-                    text = ingredient.name,
-                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
-                )
+            horizontalArrangement = Arrangement.Start) {
+              AsyncImage(
+                  model =
+                      ImageRequest.Builder(LocalContext.current)
+                          .data(ingredient.image)
+                          .crossfade(true)
+                          .build(),
+                  placeholder = painterResource(R.drawable.logo),
+                  error = painterResource(R.drawable.logo),
+                  contentDescription = stringResource(R.string.description),
+                  contentScale = ContentScale.Crop,
+                  modifier =
+                      Modifier.size(100.dp) // Ensures the image is a square
+                          .clip(RoundedCornerShape(16.dp)) // Rounded corners for the image
+                          .testTag("IngredientsCardImage"))
+              Spacer(
+                  modifier =
+                      Modifier.width(16.dp)) // Spacer to add some space between the image and text
+              Box(
+                  modifier = Modifier.fillMaxWidth().padding(start = 16.dp),
+                  contentAlignment = Alignment.CenterStart // Center the text in the remaining space
+                  ) {
+                    Text(
+                        text = ingredient.name,
+                        style =
+                            MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold))
+                  }
             }
-        }
-    }
+      }
 }
-
 
 @Composable
 @Preview
 fun IngredientInfoCardPreview() {
-    IngredientInfoCard(
-        Ingredient(
-            1,
-            "Apple",
-            "Apple",
-            "https://spoonacular.com/cdn/ingredients_100x100/apple.jpg"
-        )
-    )
+  IngredientInfoCard(
+      Ingredient(1, "Apple", "Apple", "https://spoonacular.com/cdn/ingredients_100x100/apple.jpg"))
 }

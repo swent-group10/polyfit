@@ -8,7 +8,7 @@ import com.github.se.polyfit.model.recipe.Recipe
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 @HiltViewModel
 class RecipeRecommendationViewModel
@@ -25,16 +25,15 @@ constructor(private val spoonacularApiCaller: SpoonacularApiCaller) : ViewModel(
     _showIngredient.value = true
   }
 
-  fun recipeFromIngredients(ingredients: List<String>): List<Recipe> {
+  suspend fun recipeFromIngredients(ingredients: List<String>): List<Recipe> {
     // Removed to avoid using the Spoonacular API unnecessarily
     //    val recipesResponse =
     //        withContext(Dispatchers.Default) {
     // spoonacularApiCaller.recipeByIngredients(ingredients) }
     //    return recipesResponse.recipes
 
-    return runBlocking(Dispatchers.IO) {
-      val recipesResponse = spoonacularApiCaller.getCompleteRecipesFromIngredients(ingredients)
-      return@runBlocking recipesResponse
+    return withContext(Dispatchers.IO) {
+      spoonacularApiCaller.getCompleteRecipesFromIngredients(ingredients)
     }
   }
 

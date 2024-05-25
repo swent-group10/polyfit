@@ -12,72 +12,67 @@ import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.mockk.every
 import io.mockk.junit4.MockKRule
 import io.mockk.mockk
+import kotlin.test.Test
 import org.junit.Before
 import org.junit.Rule
 import org.junit.runner.RunWith
-import kotlin.test.Test
 
 @RunWith(AndroidJUnit4::class)
 class RecipeRecommendationMoreDetailScreenTest {
 
-    @get:Rule
-    val composeTestRule = createComposeRule()
+  @get:Rule val composeTestRule = createComposeRule()
 
-    @get:Rule
-    val mockkRule = MockKRule(this)
+  @get:Rule val mockkRule = MockKRule(this)
 
-    private val mockRecipeRecommendationViewModel = mockk<RecipeRecommendationViewModel>()
-    private var showIngredient = MutableLiveData<Boolean>()
+  private val mockRecipeRecommendationViewModel = mockk<RecipeRecommendationViewModel>()
+  private var showIngredient = MutableLiveData<Boolean>()
 
-    @Before
-    fun setUp() {
-        showIngredient = MutableLiveData(true)
-        every { mockRecipeRecommendationViewModel.selectedRecipe } returns MutableLiveData(Recipe.default())
-        every { mockRecipeRecommendationViewModel.showIngredient } returns showIngredient
-        every { mockRecipeRecommendationViewModel.setShowIngredientFalse() } answers
-                {
-                    showIngredient.postValue(false)
-                }
-
-        composeTestRule.setContent {
-            RecipeRecommendationMoreDetailScreen(mockRecipeRecommendationViewModel)
+  @Before
+  fun setUp() {
+    showIngredient = MutableLiveData(true)
+    every { mockRecipeRecommendationViewModel.selectedRecipe } returns
+        MutableLiveData(Recipe.default())
+    every { mockRecipeRecommendationViewModel.showIngredient } returns showIngredient
+    every { mockRecipeRecommendationViewModel.setShowIngredientFalse() } answers
+        {
+          showIngredient.postValue(false)
         }
+
+    composeTestRule.setContent {
+      RecipeRecommendationMoreDetailScreen(mockRecipeRecommendationViewModel)
     }
+  }
 
-    @Test
-    fun testEverythingIsDisplayed() {
+  @Test
+  fun testEverythingIsDisplayed() {
 
-        composeTestRule.waitForIdle()
+    composeTestRule.waitForIdle()
 
-        ComposeScreen.onComposeScreen<RecipeRecommendationMoreDetailScreenScreen>(composeTestRule) {
-            assertExists()
-            assertIsDisplayed()
+    ComposeScreen.onComposeScreen<RecipeRecommendationMoreDetailScreenScreen>(composeTestRule) {
+      assertExists()
+      assertIsDisplayed()
 
-            composeTestRule.onNodeWithTag("RecipeCard").assertExists().assertIsDisplayed()
+      composeTestRule.onNodeWithTag("RecipeCard").assertExists().assertIsDisplayed()
 
-            composeTestRule.onNodeWithTag("TitleAndToggleCard").assertExists().assertIsDisplayed()
-
-            composeTestRule.onNodeWithTag("IngredientList").assertExists().assertIsDisplayed()
-        }
+      composeTestRule.onNodeWithTag("TitleAndToggleCard").assertExists().assertIsDisplayed()
     }
+  }
 
-    @Test
-    fun testToggleButtons() {
+  @Test
+  fun testToggleButtons() {
 
-        composeTestRule.waitForIdle()
-        ComposeScreen.onComposeScreen<RecipeRecommendationMoreDetailScreenScreen>(composeTestRule) {
-            assertExists()
-            assertIsDisplayed()
+    composeTestRule.waitForIdle()
+    ComposeScreen.onComposeScreen<RecipeRecommendationMoreDetailScreenScreen>(composeTestRule) {
+      assertExists()
+      assertIsDisplayed()
 
-            composeTestRule.onNodeWithTag("IngredientList").assertExists().assertIsDisplayed()
+      composeTestRule
+          .onNodeWithTag("tonalButton2")
+          .assertExists()
+          .assertIsDisplayed()
+          .performClick()
 
-            composeTestRule
-                .onNodeWithTag("tonalButton2")
-                .assertExists()
-                .assertIsDisplayed()
-                .performClick()
-
-            composeTestRule.onNodeWithTag("IngredientList").assertDoesNotExist()
-        }
+      composeTestRule.onNodeWithTag("IngredientList").assertDoesNotExist()
     }
+  }
 }
