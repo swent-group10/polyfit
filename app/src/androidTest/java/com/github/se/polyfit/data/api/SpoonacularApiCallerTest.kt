@@ -282,6 +282,15 @@ class SpoonacularApiCallerTest {
     assertEquals(response.status, APIResponse.FAILURE)
   }
 
+  @Test
+  fun testAPI() {
+    val api = SpoonacularApiCaller()
+    val response = api.getRecipeSteps(324694)
+
+    Log.e("SpoonacularApiCallerTest", "testAPI: ${response.steps}")
+    print(response.steps)
+  }
+
   @After
   fun tearDown() {
     mockWebServer.shutdown()

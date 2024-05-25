@@ -30,7 +30,7 @@ class RecipeRecommendationMoreDetailScreenTest {
   @Before
   fun setUp() {
     showIngredient = MutableLiveData(true)
-    every { mockRecipeRecommendationViewModel.getSelectedRecipe() } returns Recipe.default()
+    every { mockRecipeRecommendationViewModel.selectedRecipe } returns Recipe.default()
     every { mockRecipeRecommendationViewModel.showIngredient } returns showIngredient
     every { mockRecipeRecommendationViewModel.setShowIngredientFalse() } answers
         {

@@ -160,7 +160,7 @@ android {
         implementation("com.google.code.gson:gson:2.10.1")
         implementation("com.squareup.okhttp3:okhttp:4.12.0")
         implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
-        implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
+        implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.0")
         implementation("io.coil-kt:coil:2.6.0")
         implementation("io.coil-kt:coil-compose:2.6.0")
         implementation("androidx.camera:camera-camera2:1.3.3")
@@ -208,7 +208,7 @@ android {
         testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.9.0")
         testImplementation("org.robolectric:robolectric:4.8")
         testImplementation("android.arch.persistence.room:testing:1.1.1")
-     
+
 
         // Debug
         debugImplementation("androidx.compose.ui:ui-tooling")
@@ -217,7 +217,7 @@ android {
 
         // Mockito
         androidTestImplementation("org.mockito:mockito-core:5.11.0")
-        androidTestImplementation ("org.mockito.kotlin:mockito-kotlin:5.3.1")
+        androidTestImplementation("org.mockito.kotlin:mockito-kotlin:5.3.1")
 
         testImplementation("io.mockk:mockk:1.13.10")
         testImplementation("org.mockito:mockito-core:5.11.0")
@@ -231,6 +231,10 @@ android {
         implementation("com.google.android.gms:play-services-maps:18.2.0")
         implementation("androidx.appcompat:appcompat:1.6.1")
         implementation("com.google.maps.android:maps-compose:4.3.3")
+
+        // Json (Moshi)
+        implementation("com.squareup.moshi:moshi:1.15.1")
+        implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
 
         //Ycharts
         implementation("co.yml:ycharts:2.1.0")

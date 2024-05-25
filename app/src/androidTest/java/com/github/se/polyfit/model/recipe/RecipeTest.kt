@@ -28,7 +28,7 @@ class RecipeTest {
             "missingIngredients" to 2L,
             "likes" to 100L,
             "recipeInformation" to
-                RecipeInformation(true, false, true, false, emptyList(), "instructions")
+                RecipeInformation(true, false, true, false, emptyList(), listOf("instructions"))
                     .serialize())
 
     val result = Recipe.deserialize(data)
@@ -51,7 +51,8 @@ class RecipeTest {
 
   @Test
   fun serializeReturnsCorrectDataForRecipe() {
-    val recipeInformation = RecipeInformation(true, false, true, false, emptyList(), "instructions")
+    val recipeInformation =
+        RecipeInformation(true, false, true, false, emptyList(), listOf("instructions"))
     val recipe =
         Recipe(1L, "Recipe Title", URL("http://example.com"), 5L, 2L, 100L, recipeInformation)
 

@@ -29,6 +29,7 @@ fun RecipeRecFlow(
     }
     composable(Route.RecipeRecommendationMore) {
       RecipeRecommendationMoreDetailScreen(
+          recipeRecommendationViewModel,
           navigateBack = navAction::goBack,
       )
     }

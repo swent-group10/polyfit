@@ -69,7 +69,8 @@ class RecipeInformationTest {
         listOf(
             Ingredient("ingredient1", 1, 1.0, MeasurementUnit.TEASPOONS),
             Ingredient("ingredient2", 2, 2.0, MeasurementUnit.TEASPOONS))
-    val recipeInformation = RecipeInformation(true, false, true, false, ingredients, "instructions")
+    val recipeInformation =
+        RecipeInformation(true, false, true, false, ingredients, listOf("instructions"))
 
     val result = RecipeInformation.serialize(recipeInformation)
 
