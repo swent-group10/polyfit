@@ -20,10 +20,11 @@ import com.github.se.polyfit.ui.flow.RecipeRecFlow
 import com.github.se.polyfit.ui.flow.SettingFlow
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.navigation.Route
-import com.github.se.polyfit.ui.screen.CameraPreviewScreen
 import com.github.se.polyfit.ui.screen.CreatePostScreen
 import com.github.se.polyfit.ui.screen.DailyRecapScreen
 import com.github.se.polyfit.ui.screen.FullGraphScreen
+import com.github.se.polyfit.ui.screen.IngredientsOverview
+import com.github.se.polyfit.ui.screen.IngredientsTMP
 import com.github.se.polyfit.ui.screen.LoginScreen
 import com.github.se.polyfit.ui.screen.MapScreen
 import com.github.se.polyfit.ui.screen.OverviewScreen
@@ -72,7 +73,7 @@ class MainActivity : ComponentActivity() {
                   MapScreen(paddingValues, { navController.navigate(Route.PostInfo) })
                 })
           }
-          composable(Route.CameraX) { CameraPreviewScreen() }
+          composable(Route.CameraX) { IngredientsOverview({}, {}, {}, emptyList()) }
           composable(Route.Graph) { FullGraphScreen(goBack = navigation::goBack) }
           composable(Route.Home) {
             GenericScreen(
