@@ -20,6 +20,7 @@ import com.github.se.polyfit.ui.flow.RecipeRecFlow
 import com.github.se.polyfit.ui.flow.SettingFlow
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.navigation.Route
+import com.github.se.polyfit.ui.screen.CameraPreviewScreen
 import com.github.se.polyfit.ui.screen.CreatePostScreen
 import com.github.se.polyfit.ui.screen.DailyRecapScreen
 import com.github.se.polyfit.ui.screen.FullGraphScreen
@@ -63,7 +64,7 @@ class MainActivity : ComponentActivity() {
         authentication.setCallbackOnSign { navigation.navigateToHome() }
 
         val startDestination = if (authentication.isAuthenticated()) Route.Home else Route.Register
-        NavHost(navController = navController, startDestination = startDestination) {
+        NavHost(navController = navController, startDestination = Route.CameraX) {
           composable(Route.Map) {
             GenericScreen(
                 navController = navController,
@@ -71,6 +72,7 @@ class MainActivity : ComponentActivity() {
                   MapScreen(paddingValues, { navController.navigate(Route.PostInfo) })
                 })
           }
+          composable(Route.CameraX) { CameraPreviewScreen() }
           composable(Route.Graph) { FullGraphScreen(goBack = navigation::goBack) }
           composable(Route.Home) {
             GenericScreen(

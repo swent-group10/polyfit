@@ -118,7 +118,11 @@ android {
     }
 
 
+
     dependencies {
+
+
+
         // AndroidX
         implementation("androidx.core:core:1.13.1")
         implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
@@ -163,7 +167,7 @@ android {
         implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
         implementation("io.coil-kt:coil:2.6.0")
         implementation("io.coil-kt:coil-compose:2.6.0")
-        implementation("androidx.camera:camera-camera2:1.3.3")
+        //implementation("androidx.camera:camera-camera2:1.3.3")
 
         // Kapt
         kapt("androidx.room:room-compiler:2.6.1")
@@ -237,6 +241,19 @@ android {
 
         //MainViewModel
         implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+
+        // Google ML Kit dependencies
+        implementation("com.google.mlkit:barcode-scanning:17.2.0")
+        implementation("com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.0")
+
+
+        // CameraX
+        val cameraxVersion = "1.4.0-beta01"
+        implementation("androidx.camera:camera-core:$cameraxVersion")
+        implementation("androidx.camera:camera-camera2:$cameraxVersion")
+        implementation ("androidx.camera:camera-view:${cameraxVersion}")
+        implementation ("androidx.camera:camera-lifecycle:$cameraxVersion")
+
 
 
     }
