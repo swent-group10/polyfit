@@ -23,7 +23,6 @@ class OverviewViewModelTest {
 
   private val mockMealDao: MealDao = mockk()
   private val mockSpoonacularApiCaller: SpoonacularApiCaller = mockk()
-
   private lateinit var overviewViewModel: OverviewViewModel
 
   @Before
@@ -38,7 +37,7 @@ class OverviewViewModelTest {
   @Test
   fun storeMeal_withNonNullBitmap_storesMeal() {
     val bitmap: Bitmap = mockk()
-    val meal: Meal = mockk()
+    val meal: Meal = mockk(relaxed = true)
     every { mockSpoonacularApiCaller.getMealsFromImage(bitmap) } returns meal
     every { mockMealDao.insert(meal) } returns "1"
     Assert.assertEquals("1", overviewViewModel.storeMeal(bitmap))
@@ -113,7 +112,7 @@ class OverviewViewModelTest {
     val allMeals = listOf(meal1, meal2, meal3)
 
     // Mock the getAllMeals function in the dao
-    every { mockMealDao.getAllMeals() } returns allMeals
+    every { mockMealDao.getAllMeals(any()) } returns allMeals
 
     // Call the method under test
     val result = overviewViewModel.getMealsByCalorieRange(150.0, 250.0)
@@ -127,7 +126,7 @@ class OverviewViewModelTest {
   fun getMealsByCalorieRange_emptyDatabase() {
 
     // Mock the getAllMeals function in the dao
-    every { mockMealDao.getAllMeals() } returns listOf()
+    every { mockMealDao.getAllMeals(any()) } returns listOf()
 
     // Call the method under test
     val result = overviewViewModel.getMealsByCalorieRange(150.0, 250.0)
@@ -145,7 +144,7 @@ class OverviewViewModelTest {
     val allMeals = listOf(meal1, meal2, meal3)
 
     // Mock the getAllMeals function in the dao
-    every { mockMealDao.getAllMeals() } returns allMeals
+    every { mockMealDao.getAllMeals(any()) } returns allMeals
 
     // Call the method under test
     val result = overviewViewModel.getMealsByName("Fish")
@@ -163,7 +162,7 @@ class OverviewViewModelTest {
     val allMeals = listOf(meal1, meal2, meal3)
 
     // Mock the getAllMeals function in the dao
-    every { mockMealDao.getAllMeals() } returns allMeals
+    every { mockMealDao.getAllMeals(any()) } returns allMeals
 
     // Call the method under test
     val result = overviewViewModel.getMealsByOccasion(MealOccasion.BREAKFAST)
@@ -182,7 +181,7 @@ class OverviewViewModelTest {
     val allMeals = listOf(meal1, meal2, meal3)
 
     // Mock the getAllMeals function in the dao
-    every { mockMealDao.getAllMeals() } returns allMeals
+    every { mockMealDao.getAllMeals(any()) } returns allMeals
 
     // Call the method under test
     val result = overviewViewModel.getMealsByOccasion(MealOccasion.SNACK)
@@ -240,7 +239,7 @@ class OverviewViewModelTest {
     val allMeals = listOf(meal1, meal2, meal3)
 
     // Mock the getAllMeals function in the dao
-    every { mockMealDao.getAllMeals() } returns allMeals
+    every { mockMealDao.getAllMeals(any()) } returns allMeals
 
     // Call the method under test
     val result =
@@ -301,7 +300,7 @@ class OverviewViewModelTest {
     val allMeals = listOf(meal1, meal2, meal3)
 
     // Mock the getAllMeals function in the dao
-    every { mockMealDao.getAllMeals() } returns allMeals
+    every { mockMealDao.getAllMeals(any()) } returns allMeals
 
     // Call the method under test
     val result =
@@ -360,7 +359,7 @@ class OverviewViewModelTest {
     val allMeals = listOf(meal1, meal2, meal3)
 
     // Mock the getAllMeals function in the dao
-    every { mockMealDao.getAllMeals() } returns allMeals
+    every { mockMealDao.getAllMeals(any()) } returns allMeals
 
     // Call the method under test
     val result = overviewViewModel.getMealWithHighestCalories()
@@ -372,7 +371,7 @@ class OverviewViewModelTest {
   @Test
   fun getMealWithHighestCalories_noMealsInDatabase() {
     // Mock the getAllMeals function in the dao
-    every { mockMealDao.getAllMeals() } returns listOf()
+    every { mockMealDao.getAllMeals(any()) } returns listOf()
 
     // Call the method under test
     val result = overviewViewModel.getMealWithHighestCalories()
@@ -429,7 +428,7 @@ class OverviewViewModelTest {
     val allMeals = listOf(meal1, meal2, meal3)
 
     // Mock the getAllMeals function in the dao
-    every { mockMealDao.getAllMeals() } returns allMeals
+    every { mockMealDao.getAllMeals(any()) } returns allMeals
 
     // Call the method under test
     val result =
@@ -487,7 +486,7 @@ class OverviewViewModelTest {
     val allMeals = listOf(meal1, meal2, meal3)
 
     // Mock the getAllMeals function in the dao
-    every { mockMealDao.getAllMeals() } returns allMeals
+    every { mockMealDao.getAllMeals(any()) } returns allMeals
 
     // Call the method under test
     val result = overviewViewModel.getMealWithLowestCalories()
@@ -499,7 +498,7 @@ class OverviewViewModelTest {
   @Test
   fun getMealWithLowestCalories_noMealsInDatabase() {
     // Mock the getAllMeals function in the dao
-    every { mockMealDao.getAllMeals() } returns listOf()
+    every { mockMealDao.getAllMeals(any()) } returns listOf()
 
     // Call the method under test
     val result = overviewViewModel.getMealWithLowestCalories()
@@ -529,7 +528,7 @@ class OverviewViewModelTest {
     val allMeals = listOf(meal1)
 
     // Mock the getAllMeals function in the dao
-    every { mockMealDao.getAllMeals() } returns allMeals
+    every { mockMealDao.getAllMeals(any()) } returns allMeals
 
     // Call the method under test
     val result = overviewViewModel.getMealWithHighestCalories()

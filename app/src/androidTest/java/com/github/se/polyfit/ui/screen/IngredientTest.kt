@@ -44,7 +44,7 @@ class IngredientTest : TestCase() {
   @RelaxedMockK lateinit var mockNav: Navigation
 
   private val mockMealRepo: MealRepository = mockk()
-  private val mockMealViewModel: MealViewModel = MealViewModel(mockMealRepo)
+  private val mockMealViewModel: MealViewModel = MealViewModel(mockMealRepo, mockk())
 
   @Before fun setup() {}
 

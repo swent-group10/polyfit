@@ -3,6 +3,7 @@ package com.github.se.polyfit.data.processor
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
 import com.github.se.polyfit.data.local.dao.MealDao
+import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
@@ -19,14 +20,15 @@ import org.junit.Test
 
 class LocalDataProcessorTest {
   private val mockMealDao: MealDao = mockk(relaxed = true)
-  private val localDataProcessor = LocalDataProcessor(mockMealDao)
+  private val user = User.testUser()
+  val localDataProcessor = LocalDataProcessor(mockMealDao, user)
   private val mealList = createSampleMeals()
 
   @get:Rule val instantTaskExecutorRule = InstantTaskExecutorRule()
 
   @Test
   fun getCaloriesForTodaysOccasions() {
-    every { mockMealDao.getMealsCreatedOnOrAfterDate(LocalDate.now()) } returns mealList
+    every { mockMealDao.getMealsCreatedOnOrAfterDate(LocalDate.now(), user.id) } returns mealList
     val result = localDataProcessor.getCaloriesPerMealOccasionToday()
     assertEquals(100.0, result[MealOccasion.BREAKFAST])
     assertEquals(200.0, result[MealOccasion.LUNCH])
@@ -36,7 +38,7 @@ class LocalDataProcessorTest {
 
   @Test
   fun returnsZeroCaloriesForEachMealOccasionWhenNoMealsToday() {
-    every { mockMealDao.getMealsCreatedOnOrAfterDate(LocalDate.now()) } returns emptyList()
+    every { mockMealDao.getMealsCreatedOnOrAfterDate(LocalDate.now(), user.id) } returns emptyList()
     val result = localDataProcessor.getCaloriesPerMealOccasionToday()
     assertEquals(0.0, result[MealOccasion.BREAKFAST])
     assertEquals(0.0, result[MealOccasion.LUNCH])
@@ -52,7 +54,7 @@ class LocalDataProcessorTest {
             createCustomMeal(MealOccasion.BREAKFAST, 200.0),
             createCustomMeal(MealOccasion.LUNCH, 300.0),
             createCustomMeal(MealOccasion.LUNCH, 400.0))
-    every { mockMealDao.getMealsCreatedOnOrAfterDate(LocalDate.now()) } returns meals
+    every { mockMealDao.getMealsCreatedOnOrAfterDate(LocalDate.now(), user.id) } returns meals
     val result = localDataProcessor.getCaloriesPerMealOccasionToday()
     assertEquals(300.0, result[MealOccasion.BREAKFAST])
     assertEquals(700.0, result[MealOccasion.LUNCH])
@@ -65,7 +67,7 @@ class LocalDataProcessorTest {
             createCustomMeal(date = LocalDate.now().minusMonths(1), calories = 100.0),
             createCustomMeal(date = LocalDate.now().minusMonths(1).plusDays(1), calories = 200.0),
             createCustomMeal(date = LocalDate.now().minusMonths(1).plusDays(2), calories = 300.0))
-    every { mockMealDao.getMealsCreatedOnOrAfterDate(any()) } returns meals
+    every { mockMealDao.getMealsCreatedOnOrAfterDate(any(), any()) } returns meals
     val result = localDataProcessor.getCaloriesLastMonth()
     assertEquals(3, result.size)
     assertEquals(100.0, result[0].totalCalories)
@@ -80,7 +82,7 @@ class LocalDataProcessorTest {
             createCustomMeal(date = LocalDate.now().minusWeeks(1), calories = 100.0),
             createCustomMeal(date = LocalDate.now().minusWeeks(1).plusDays(1), calories = 200.0),
             createCustomMeal(date = LocalDate.now().minusWeeks(1).plusDays(2), calories = 300.0))
-    every { mockMealDao.getMealsCreatedOnOrAfterDate(any()) } returns meals
+    every { mockMealDao.getMealsCreatedOnOrAfterDate(any(), any()) } returns meals
     val result = localDataProcessor.getCaloriesLastWeek()
     assertEquals(3, result.size)
     assertEquals(100.0, result[0].totalCalories)
@@ -91,7 +93,7 @@ class LocalDataProcessorTest {
   @Test
   fun getCaloriesLiveData() = runTest {
     val meals = createSampleMeals()
-    every { mockMealDao.getMealsCreatedOnDateLiveData(any()) } returns MutableLiveData(meals)
+    every { mockMealDao.getMealsCreatedOnDateLiveData(any(), any()) } returns MutableLiveData(meals)
 
     val result = localDataProcessor.getCaloriesPerMealOccasionTodayLiveData()
     assertEquals(100.0, result.value?.find { it.first == MealOccasion.BREAKFAST }?.second)
