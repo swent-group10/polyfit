@@ -1,8 +1,17 @@
 package com.github.se.polyfit.ui.screen
 
+import android.app.Activity
 import android.content.Context
+import android.content.Context.CAMERA_SERVICE
+import android.hardware.camera2.CameraAccessException
+import android.hardware.camera2.CameraCharacteristics
+import android.hardware.camera2.CameraManager
+import android.os.Build
 import android.util.Log
+import android.util.SparseIntArray
+import android.view.Surface
 import androidx.annotation.OptIn
+import androidx.annotation.RequiresApi
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
@@ -22,6 +31,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import com.google.mlkit.vision.barcode.BarcodeScannerOptions
+import com.google.mlkit.vision.barcode.BarcodeScanning
+import com.google.mlkit.vision.barcode.common.Barcode
+import com.google.mlkit.vision.common.InputImage
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import androidx.compose.ui.tooling.preview.Preview as Preview1
@@ -47,13 +60,13 @@ fun CameraPreviewScreen() {
           .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
           .build()
 
-  val qrCodeAnalyzer = QrCodeAnalyzer { qrCodes ->
-    qrCodes.forEach {
-      Log.d("CameraPreviewScreen", "qrCode: ${it.displayValue}")
-    }
-  }
 
-  imageAnalysis.setAnalyzer(ContextCompat.getMainExecutor(context), qrCodeAnalyzer)
+  // Or, to specify the formats to recognize:
+  // val scanner = BarcodeScanning.getClient(options)
+
+  val yourImageAnalyzer = YourImageAnalyzer()
+
+  imageAnalysis.setAnalyzer(ContextCompat.getMainExecutor(context), yourImageAnalyzer)
 
 
   LaunchedEffect(lensFacing) {
@@ -81,35 +94,46 @@ private suspend fun Context.getCameraProvider(): ProcessCameraProvider =
     }
 
 
+private class YourImageAnalyzer : ImageAnalysis.Analyzer {
 
-class QrCodeAnalyzer(
-        private val onQrCodesDetected: (qrCodes: List<FirebaseVisionBarcode>) -> Unit
-) : ImageAnalysis.Analyzer {
+  val options = BarcodeScannerOptions.Builder()
+          .setBarcodeFormats(
+                  Barcode.FORMAT_CODE_128,
+                  Barcode.FORMAT_CODE_39,
+                  Barcode.FORMAT_CODE_93,
+                  Barcode.FORMAT_CODABAR,
+                  Barcode.FORMAT_EAN_13,
+                  Barcode.FORMAT_EAN_8,
+                  Barcode.FORMAT_ITF,
+                  Barcode.FORMAT_UPC_A,
+                  Barcode.FORMAT_UPC_E,
+                  Barcode.FORMAT_PDF417,
+                  Barcode.FORMAT_QR_CODE,
+                  Barcode.FORMAT_AZTEC)
+          .enableAllPotentialBarcodes()
+          .build()
+
+  val scanner = BarcodeScanning.getClient(options)
 
   @OptIn(ExperimentalGetImage::class)
-  override fun analyze(image: ImageProxy) {
-    Log.i("QrCodeAnalyzer", "analyze")
-    val options = FirebaseVisionBarcodeDetectorOptions.Builder()
-            // We want to only detect QR codes.
-            .setBarcodeFormats(FirebaseVisionBarcode.FORMAT_QR_CODE)
-            .build()
+  override fun analyze(imageProxy: ImageProxy) {
+    val mediaImage = imageProxy.image
+    if (mediaImage != null) {
+      val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
+      // Pass image to an ML Kit Vision API
 
-    val detector = FirebaseVision.getInstance().getVisionBarcodeDetector(options)
-
-
-    val rotation = image.imageInfo.rotationDegrees
-    val visionImage = FirebaseVisionImage.fromMediaImage(image.image!!, rotation)
-
-    detector.detectInImage(visionImage)
-            .addOnSuccessListener { barcodes ->
-              Log.d("QrCodeAnalyzer", "barcodes: $barcodes")
-              onQrCodesDetected(barcodes)
-            }
-            .addOnFailureListener {
-              Log.e("QrCodeAnalyzer", "something went wrong", it)
-            }
-            .addOnCompleteListener {
-              image.close()
-            }
+      scanner.process(image)
+              .addOnSuccessListener { barcodes ->
+                for (barcode in barcodes) {
+                  Log.d("Barcode", "Value: ${barcode.displayValue}")
+                }
+              }
+              .addOnFailureListener {
+                Log.e("Barcode", "Error processing image", it)
+              }
+              .addOnCompleteListener {
+                imageProxy.close()
+              }
+    }
   }
 }
