@@ -12,15 +12,16 @@ import java.time.LocalDate
 
 @Dao
 interface MealDao {
-  @Query("SELECT * FROM MealTable") fun getAll(): List<MealEntity>
+  @Query("SELECT * FROM MealTable where userId == :userId")
+  fun getAll(userId: String): List<MealEntity>
 
-  fun getAllMeals(): List<Meal> {
-    val meals = getAll()
+  fun getAllMeals(userId: String): List<Meal> {
+    val meals = getAll(userId)
     return meals.map { it.toMeal() }
   }
 
-  fun getAllIngredients(): List<Ingredient> {
-    val meals = getAll()
+  fun getAllIngredients(userId: String): List<Ingredient> {
+    val meals = getAll(userId)
 
     return meals.flatMap { it.ingredients }
   }
@@ -35,14 +36,14 @@ interface MealDao {
     return mealEntity.id
   }
 
-  @Query("SELECT * FROM MEALTABLE WHERE createdAt >= :date ")
-  fun getMealsCreatedOnOrAfterDate(date: LocalDate): List<Meal>
+  @Query("SELECT * FROM MEALTABLE WHERE createdAt >= :date and userId == :userId")
+  fun getMealsCreatedOnOrAfterDate(date: LocalDate, userId: String): List<Meal>
 
-  @Query("SELECT * FROM MEALTABLE WHERE createdAt == :date ")
-  fun getMealsCreatedOnDateLiveData(date: LocalDate): LiveData<List<Meal>>
+  @Query("SELECT * FROM MEALTABLE WHERE createdAt == :date and userId == :userId")
+  fun getMealsCreatedOnDateLiveData(date: LocalDate, userId: String): LiveData<List<Meal>>
 
-  @Query("SELECT * FROM MEALTABLE WHERE createdAt == :date ")
-  fun getMealsCreatedOnDate(date: LocalDate): List<Meal>
+  @Query("SELECT * FROM MEALTABLE WHERE createdAt == :date and userId == :userId")
+  fun getMealsCreatedOnDate(date: LocalDate, userId: String): List<Meal>
 
   @Query("DELETE FROM MealTable WHERE id = :id") fun deleteById(id: String)
 
