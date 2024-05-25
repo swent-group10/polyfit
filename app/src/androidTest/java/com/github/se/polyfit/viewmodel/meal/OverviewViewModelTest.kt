@@ -572,6 +572,8 @@ class OverviewViewModelTest {
   fun handleSelectedImage_withUri_returnsString() {
     val uri = Uri.parse("android.resource://com.github.se.polyfit/drawable/picture_example")
     every { overviewViewModel.storeMeal(any()) } returns "1"
+    every { mockSpoonacularApiCaller.getMealsFromImage(any()) } returns Meal.default()
+    every { mockMealDao.insert(any<Meal>()) } returns "1"
     val result = overviewViewModel.handleSelectedImage(context, uri, overviewViewModel)
     assertEquals("1", result)
   }
