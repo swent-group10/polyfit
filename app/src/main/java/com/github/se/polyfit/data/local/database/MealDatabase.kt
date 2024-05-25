@@ -20,11 +20,12 @@ import java.time.LocalDate
 
 @Database(
     entities = [MealEntity::class],
-    version = 3,
+    version = 4,
     autoMigrations =
         [
             AutoMigration(from = 1, to = 2, spec = MealDatabase.RemoveMealId::class),
-            AutoMigration(from = 2, to = 3, spec = MealDatabase.RemoveFirebaseId::class)])
+            AutoMigration(from = 2, to = 3, spec = MealDatabase.RemoveFirebaseId::class),
+            AutoMigration(from = 3, to = 4)])
 @TypeConverters(
     NutritionalInformationConverter::class,
     IngredientListConverter::class,

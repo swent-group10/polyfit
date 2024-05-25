@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
 import com.github.se.polyfit.data.local.dao.MealDao
+import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
@@ -14,10 +15,10 @@ data class DailyCalorieSummary(val date: LocalDate, val totalCalories: Double)
 
 data class DailyWeightSummary(val date: LocalDate, val totalWeight: Nutrient)
 
-class LocalDataProcessor @Inject constructor(private val mealDao: MealDao) {
+class LocalDataProcessor @Inject constructor(private val mealDao: MealDao, private val user: User) {
   fun calculateCaloriesSince(sinceDate: LocalDate): List<DailyCalorieSummary> {
     return mealDao
-        .getMealsCreatedOnOrAfterDate(sinceDate)
+        .getMealsCreatedOnOrAfterDate(sinceDate, user.id)
         .filter { it.isComplete() && it.occasion != MealOccasion.OTHER }
         .groupBy { it.createdAt }
         .map { (date, meals) ->
@@ -31,7 +32,7 @@ class LocalDataProcessor @Inject constructor(private val mealDao: MealDao) {
 
   fun getCaloriesPerMealOccasionTodayLiveData(): LiveData<List<Pair<MealOccasion, Double>>> {
     Log.d("LocalDataProcessor", "${LocalDate.now()}")
-    return mealDao.getMealsCreatedOnDateLiveData(LocalDate.now()).map { meals ->
+    return mealDao.getMealsCreatedOnDateLiveData(LocalDate.now(), user.id).map { meals ->
       val allOccasion =
           MealOccasion.values().toList().filter { it != MealOccasion.OTHER }.map { Pair(it, 0.0) }
 
@@ -54,7 +55,7 @@ class LocalDataProcessor @Inject constructor(private val mealDao: MealDao) {
   }
 
   fun getCaloriesPerMealOnSpecificDay(day: LocalDate): Map<MealOccasion, Double> {
-    val mealsOnDay = mealDao.getMealsCreatedOnOrAfterDate(day)
+    val mealsOnDay = mealDao.getMealsCreatedOnOrAfterDate(day, user.id)
     return MealOccasion.entries
         .toList()
         .associateWith { 0.0 }
@@ -72,7 +73,7 @@ class LocalDataProcessor @Inject constructor(private val mealDao: MealDao) {
 
   fun getWeightSince(sinceDate: LocalDate): List<DailyWeightSummary> {
     return mealDao
-        .getMealsCreatedOnOrAfterDate(sinceDate)
+        .getMealsCreatedOnOrAfterDate(sinceDate, user.id)
         .groupBy { it.createdAt }
         .map { (date, meals) ->
           DailyWeightSummary(

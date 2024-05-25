@@ -102,7 +102,7 @@ class MainActivity : ComponentActivity() {
             GenericScreen(
                 navController = navController,
                 content = {
-                  SettingFlow(toLogin = navigation::goBackToLogin, modifier = Modifier.padding(it))
+                  SettingFlow(toLogin = navigation::restartToLogin, modifier = Modifier.padding(it))
                 })
           }
 

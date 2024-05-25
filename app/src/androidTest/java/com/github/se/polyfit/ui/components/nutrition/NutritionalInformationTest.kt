@@ -105,7 +105,8 @@ class NutritionalInformationTest : TestCase() {
 
   private fun setup(meal: Meal) {
     composeTestRule.setContent {
-      NutritionalInformation(mealViewModel = MealViewModel(mockk()).apply { setMealData(meal) })
+      NutritionalInformation(
+          mealViewModel = MealViewModel(mockk(), mockk()).apply { setMealData(meal) })
     }
   }
 

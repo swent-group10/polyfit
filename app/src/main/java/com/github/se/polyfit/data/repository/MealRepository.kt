@@ -5,6 +5,7 @@ import android.net.ConnectivityManager
 import android.util.Log
 import com.github.se.polyfit.data.local.dao.MealDao
 import com.github.se.polyfit.data.remote.firebase.MealFirebaseRepository
+import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
 import com.google.firebase.firestore.DocumentReference
@@ -19,6 +20,7 @@ class MealRepository(
     private val context: Context,
     private val mealFirebaseRepository: MealFirebaseRepository,
     private val mealDao: MealDao,
+    private val user: User,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Default,
     private val checkConnectivity: ConnectivityChecker = ConnectivityChecker(context)
 ) {
@@ -59,11 +61,11 @@ class MealRepository(
   }
 
   fun getAllMeals(): List<Meal> {
-    return mealDao.getAllMeals()
+    return mealDao.getAllMeals(userId = user.id)
   }
 
   suspend fun getMealsOnDate(date: LocalDate): List<Meal> {
-    return withContext(this.dispatcher) { mealDao.getMealsCreatedOnDate(date) }
+    return withContext(this.dispatcher) { mealDao.getMealsCreatedOnDate(date, user.id) }
   }
 
   suspend fun deleteMeal(id: String) {
@@ -88,12 +90,12 @@ class MealRepository(
 
   /** Returns a list of unique ingredients */
   suspend fun getAllIngredients(): List<Ingredient> {
-    return mealDao.getAllIngredients().distinctBy { it.name }
+    return mealDao.getAllIngredients(user.id).distinctBy { it.name }
   }
 
   private suspend fun updateFirebase() {
     withContext(dispatcher) {
-      mealDao.getAllMeals().forEach {
+      mealDao.getAllMeals(user.id).forEach {
         try {
           mealFirebaseRepository.storeMeal(it)
         } catch (e: Exception) {
