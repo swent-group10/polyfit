@@ -18,7 +18,13 @@ class RecipeInstructionResponseAPI(
 }
 
 @JsonClass(generateAdapter = true)
-data class RecipeInstruction(val name: String?, val steps: List<Step>)
+data class RecipeInstruction(val name: String?, val steps: List<Step>) {
+  companion object {
+    fun faillure(): RecipeInstruction {
+      return RecipeInstruction(name = "", steps = emptyList())
+    }
+  }
+}
 
 @JsonClass(generateAdapter = true)
 data class Step(
@@ -37,7 +43,7 @@ data class Step(
 data class Ingredient(
     val id: Int,
     val name: String,
-    val localizedName: String,
+    val localizedName: String?,
     val image: String?
 ) {
   companion object {
@@ -45,7 +51,7 @@ data class Ingredient(
       val map = mutableMapOf<String, Any>()
       map["id"] = ingredient.id
       map["name"] = ingredient.name
-      map["localizedName"] = ingredient.localizedName
+      map["localizedName"] = ingredient.localizedName ?: ""
       map["image"] = ingredient.image ?: ""
       return map
     }
@@ -69,7 +75,7 @@ data class Ingredient(
 data class Equipment(
     val id: Int,
     val name: String,
-    val localizedName: String,
+    val localizedName: String?,
     val image: String?,
     val temperature: Temperature?
 )

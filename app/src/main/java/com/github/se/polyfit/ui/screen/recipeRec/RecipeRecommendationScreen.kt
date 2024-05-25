@@ -84,7 +84,7 @@ fun recipeDisplay(
 fun loader(paddingValues: PaddingValues) {
 
   Box(
-      modifier = Modifier.fillMaxSize().padding(paddingValues),
+      modifier = Modifier.fillMaxSize().padding(paddingValues).testTag("Loader"),
       contentAlignment = Alignment.Center) {
         CircularProgressIndicator(modifier = Modifier.padding(16.dp).testTag("LoadingPost"))
       }

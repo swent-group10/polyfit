@@ -46,4 +46,22 @@ class RecipeRecommendationScreenTest {
       composeTestRule.onNodeWithTag("RecipeList").assertExists().assertIsDisplayed()
     }
   }
+
+  @Test
+  fun testLoadingAnimation() {
+    val mockkNavigation = mockk<NavHostController>(relaxed = true)
+
+    val mockkRecommendationViewModel = mockk<RecipeRecommendationViewModel>()
+
+    coEvery { mockkRecommendationViewModel.recipeFromIngredients(any()) } returns emptyList()
+    coEvery { mockkRecommendationViewModel.ingredientList() } returns listOf("apple", "banana")
+
+    composeTestRule.setContent {
+      RecipeRecommendationScreen(mockkNavigation, mockkRecommendationViewModel, {})
+    }
+
+    ComposeScreen.onComposeScreen<RecipeRecommendationScreen>(composeTestRule) {
+      composeTestRule.onNodeWithTag("Loader").assertIsDisplayed()
+    }
+  }
 }

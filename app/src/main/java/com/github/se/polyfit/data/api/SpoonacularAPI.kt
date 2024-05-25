@@ -204,9 +204,10 @@ class SpoonacularApiCaller {
       }
 
       return RecipeInstructionResponseAPI.fromJson(jsonArray.getJSONObject(0).toString())
-    } catch (e: IOException) {
+    } catch (e: Exception) {
       Log.e("SpoonacularApiCaller", "Error getting recipe steps", e)
-      throw Exception("Error getting recipe steps: ", e)
+      // avoids crashing the app
+      return RecipeInstruction.faillure()
     }
   }
 
@@ -222,18 +223,25 @@ class SpoonacularApiCaller {
    */
   fun getCompleteRecipesFromIngredients(ingredients: List<String>): List<Recipe> {
     //        val recipesResponse = recipeByIngredients(ingredients)
-    val recipesResponse =
-        RecipeFromIngredientsResponseAPI(APIResponse.SUCCESS, listOf(Recipe.default()))
-    recipesResponse.recipes.forEach { recipe ->
-      val recipeInfo = getRecipeSteps(recipe.id)
+    return try {
 
-      // Add the steps to the recipe
-      recipe.recipeInformation.instructions = recipeInfo.steps.map { it.step }
+      // done to avoid making a bunch of API calls, will need to remove later
+      val recipesResponse =
+          RecipeFromIngredientsResponseAPI(APIResponse.SUCCESS, listOf(Recipe.default()))
+      recipesResponse.recipes.forEach { recipe ->
+        val recipeInfo = getRecipeSteps(recipe.id)
 
-      // Add information about the ingredients, removing duplicates
-      val ingredients = recipeInfo.steps.flatMap { it.ingredients ?: emptyList() }
-      recipe.recipeInformation.ingredients = ingredients.distinctBy { it.name }
+        // Add the steps to the recipe
+        recipe.recipeInformation.instructions = recipeInfo.steps.map { it.step }
+
+        // Add information about the ingredients, removing duplicates
+        val ingredients = recipeInfo.steps.flatMap { it.ingredients ?: emptyList() }
+        recipe.recipeInformation.ingredients = ingredients.distinctBy { it.name }
+      }
+      return recipesResponse.recipes
+    } catch (e: Exception) {
+      Log.e("SpoonacularApiCaller", "Error getting recipe from ingredients", e)
+      return emptyList()
     }
-    return recipesResponse.recipes
   }
 }

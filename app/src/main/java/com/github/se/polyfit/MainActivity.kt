@@ -36,116 +36,97 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    @Inject
-    lateinit var user: User
+  @Inject lateinit var user: User
 
-    @Inject
-    lateinit var userFirebaseRepository: UserFirebaseRepository
+  @Inject lateinit var userFirebaseRepository: UserFirebaseRepository
 
-    public override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+  public override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
 
-        // hides the system bar
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+    // hides the system bar
+    WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        val controller = WindowInsetsControllerCompat(window, window.decorView)
-        controller.hide(WindowInsetsCompat.Type.systemBars())
+    val controller = WindowInsetsControllerCompat(window, window.decorView)
+    controller.hide(WindowInsetsCompat.Type.systemBars())
 
-        // Set the behavior to show transient bars by swipe
-        controller.systemBarsBehavior =
-            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+    // Set the behavior to show transient bars by swipe
+    controller.systemBarsBehavior =
+        WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 
-        val authentication = Authentication(this, user, userFirebaseRepository)
+    val authentication = Authentication(this, user, userFirebaseRepository)
 
-        // TODO: technical debt, next deadline find better way to pass arguments from overview screen
-        // to add meal screen
-        setContent {
-            PolyfitTheme {
-                val navController = rememberNavController()
-                val navigation = Navigation(navController)
-                authentication.setCallbackOnSign { navigation.navigateToHome() }
+    // TODO: technical debt, next deadline find better way to pass arguments from overview screen
+    // to add meal screen
+    setContent {
+      PolyfitTheme {
+        val navController = rememberNavController()
+        val navigation = Navigation(navController)
+        authentication.setCallbackOnSign { navigation.navigateToHome() }
 
-                val startDestination =
-                    if (authentication.isAuthenticated()) Route.Home else Route.Register
+        val startDestination = if (authentication.isAuthenticated()) Route.Home else Route.Register
 
-                NavHost(navController = navController, startDestination = startDestination) {
-                    composable(Route.Map) {
-                        GenericScreen(
-                            navController = navController,
-                            content = { paddingValues ->
-                                MapScreen(paddingValues, { navController.navigate(Route.PostInfo) })
-                            })
-                    }
-                    composable(Route.Graph) { FullGraphScreen(goBack = navigation::goBack) }
-                    composable(Route.Home) {
-                        GenericScreen(
-                            navController = navController,
-                            content = { paddingValues ->
-                                OverviewScreen(
-                                    paddingValues,
-                                    navController
-                                )
-                            })
-                    }
+        NavHost(navController = navController, startDestination = startDestination) {
+          composable(Route.Map) {
+            GenericScreen(
+                navController = navController,
+                content = { paddingValues ->
+                  MapScreen(paddingValues, { navController.navigate(Route.PostInfo) })
+                })
+          }
+          composable(Route.Graph) { FullGraphScreen(goBack = navigation::goBack) }
+          composable(Route.Home) {
+            GenericScreen(
+                navController = navController,
+                content = { paddingValues -> OverviewScreen(paddingValues, navController) })
+          }
 
-                    composable(Route.Register) { LoginScreen { authentication.signIn() } }
-                    composable(Route.AddMeal + "/{mId}") { backStackEntry ->
-                        val mealId = backStackEntry.arguments?.getString("mId")
-                        AddMealFlow(
-                            goBack = navigation::goBack,
-                            goForward = { navigation.goBackTo(Route.Home) },
-                            mealId = mealId
-                        )
-                    }
+          composable(Route.Register) { LoginScreen { authentication.signIn() } }
+          composable(Route.AddMeal + "/{mId}") { backStackEntry ->
+            val mealId = backStackEntry.arguments?.getString("mId")
+            AddMealFlow(
+                goBack = navigation::goBack,
+                goForward = { navigation.goBackTo(Route.Home) },
+                mealId = mealId)
+          }
 
-                    composable(Route.EditMeal + "/{mId}") { backStackEntry ->
-                        val mealId = backStackEntry.arguments?.getString("mId")
-                        // If we allow edits from other screens, we will have to modify how we choose goForward
-                        AddMealFlow(
-                            goBack = navigation::goBack,
-                            goForward = { navigation.goBackTo(Route.DailyRecap) },
-                            mealId = mealId
-                        )
-                    }
+          composable(Route.EditMeal + "/{mId}") { backStackEntry ->
+            val mealId = backStackEntry.arguments?.getString("mId")
+            // If we allow edits from other screens, we will have to modify how we choose goForward
+            AddMealFlow(
+                goBack = navigation::goBack,
+                goForward = { navigation.goBackTo(Route.DailyRecap) },
+                mealId = mealId)
+          }
 
-                    composable(Route.Settings) {
-                        GenericScreen(
-                            navController = navController,
-                            content = {
-                                SettingFlow(
-                                    toLogin = navigation::restartToLogin,
-                                    modifier = Modifier.padding(it)
-                                )
-                            })
-                    }
+          composable(Route.Settings) {
+            GenericScreen(
+                navController = navController,
+                content = {
+                  SettingFlow(toLogin = navigation::restartToLogin, modifier = Modifier.padding(it))
+                })
+          }
 
-                    composable(Route.PostInfo) { PostInfoScreen(navigation, navController) }
+          composable(Route.PostInfo) { PostInfoScreen(navigation, navController) }
 
-                    composable(Route.CreatePost) {
-                        CreatePostScreen(
-                            navigation::goBack,
-                            navigation::navigateToPostList,
-                            navigation::navigateToAddMeal
-                        )
-                    }
+          composable(Route.CreatePost) {
+            CreatePostScreen(
+                navigation::goBack, navigation::navigateToPostList, navigation::navigateToAddMeal)
+          }
 
-                    composable(Route.DailyRecap) {
-                        DailyRecapScreen(
-                            navigateBack = navigation::goBack,
-                            navigateTo = navigation::navigateToEditMeal
-                        )
-                    }
-                    composable(Route.AddMeal) {
-                        AddMealFlow(navigation::goBack, { navigation.goBackTo(Route.Home) })
-                    }
+          composable(Route.DailyRecap) {
+            DailyRecapScreen(
+                navigateBack = navigation::goBack, navigateTo = navigation::navigateToEditMeal)
+          }
+          composable(Route.AddMeal) {
+            AddMealFlow(navigation::goBack, { navigation.goBackTo(Route.Home) })
+          }
 
-                    // the navcontroller is needed for the generic screen
-                    composable(Route.RecipeRecFlow) { RecipeRecFlow() }
-                }
-            }
+          // the navcontroller is needed for the generic screen
+          composable(Route.RecipeRecFlow) { RecipeRecFlow() }
         }
+      }
     }
+  }
 }
 
-@HiltAndroidApp
-class ExampleApplication : Application()
+@HiltAndroidApp class ExampleApplication : Application()
