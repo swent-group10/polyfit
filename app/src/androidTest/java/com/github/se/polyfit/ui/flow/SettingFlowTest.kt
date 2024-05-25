@@ -40,7 +40,7 @@ class SettingFlowTest {
       every { mockAccountSettingsViewModel.user.value } returns User(id = "test", email = "test")
 
       SettingFlow(
-          toLogin = mockNav::goBackToLogin,
+          toLogin = mockNav::restartToLogin,
           settingFlowViewModel = mockSettingFlowViewModel,
           accountSettingsViewModel = mockAccountSettingsViewModel)
     }
