@@ -31,64 +31,71 @@ fun RecipeRecommendationMoreDetailScreen(
     recipeRecViewModel: RecipeRecommendationViewModel = hiltViewModel(),
     navigateBack: () -> Unit = {},
 ) {
-  val context = LocalContext.current
+    val context = LocalContext.current
 
-  Scaffold(
-      modifier = Modifier.testTag("RecipeDetail"),
-      topBar = {
-        SimpleTopBar(
-            title = ContextCompat.getString(context, R.string.MoreDetailRecipe),
-            navigateBack = navigateBack)
-      }) { padding ->
+    Scaffold(
+        modifier = Modifier.testTag("RecipeDetail"),
+        topBar = {
+            SimpleTopBar(
+                title = ContextCompat.getString(context, R.string.MoreDetailRecipe),
+                navigateBack = navigateBack
+            )
+        }) { padding ->
         RecipeDetailContent(padding, recipeRecViewModel)
-      }
+    }
 }
 
 @Composable
 fun RecipeDetailContent(padding: PaddingValues, recipeRecViewModel: RecipeRecommendationViewModel) {
-  val showIngredient by recipeRecViewModel.showIngredient.observeAsState(initial = true)
-  val selectedRecipe: Recipe? by recipeRecViewModel.selectedRecipe.observeAsState()
+    val showIngredient by recipeRecViewModel.showIngredient.observeAsState(initial = true)
+    val selectedRecipe: Recipe? by recipeRecViewModel.selectedRecipe.observeAsState()
 
-  if (selectedRecipe == null) {
-    Box(modifier = Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
-      CircularProgressIndicator(modifier = Modifier.padding(16.dp).testTag("LoadingPost"))
-    }
-    return
-  } else {
+    if (selectedRecipe == null) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .testTag("LoadingPost")
+            )
+        }
+        return
+    } else {
 
-    val context = LocalContext.current
-    LazyColumn(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier =
-            Modifier.testTag("RecipeList")
+        val context = LocalContext.current
+        LazyColumn(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier =
+            Modifier
+                .testTag("RecipeList")
                 .padding(padding)
                 .padding(bottom = 16.dp) // Add bottom padding here
         ) {
-          item { RecipeCard(recipe = selectedRecipe!!, showTitle = false) }
-          item {
-            TitleAndToggleCard(
-                title = selectedRecipe!!.title,
-                button1Title = ContextCompat.getString(context, R.string.Ingredients),
-                button2Title = ContextCompat.getString(context, R.string.Recipe),
-                recipeRecViewModel)
-          }
-
-          if (showIngredient) {
+            item { RecipeCard(recipe = selectedRecipe!!, showTitle = false) }
             item {
-              // This is done purely for testing purposes
-              Box(modifier = Modifier.fillMaxSize().testTag("IngredientList")) {
-                selectedRecipe!!.recipeInformation.ingredients.forEach {
-                  IngredientInfoCard(ingredient = it)
-                }
-              }
-            }
-          } else {
-            selectedRecipe!!.recipeInformation.instructions?.forEachIndexed { index, step ->
-              item { recipeInstructions(step, index + 1) }
+                TitleAndToggleCard(
+                    title = selectedRecipe!!.title,
+                    button1Title = ContextCompat.getString(context, R.string.Ingredients),
+                    button2Title = ContextCompat.getString(context, R.string.Recipe),
+                    recipeRecViewModel
+                )
             }
 
-            PaddingValues(8.dp)
-          }
+            if (showIngredient) {
+                selectedRecipe?.recipeInformation?.ingredients?.forEach {
+                    item { IngredientInfoCard(ingredient = it) }
+                }
+            } else {
+                selectedRecipe!!.recipeInformation.instructions?.forEachIndexed { index, step ->
+                    item { recipeInstructions(step, index + 1) }
+                }
+
+                PaddingValues(8.dp)
+            }
         }
-  }
+    }
 }

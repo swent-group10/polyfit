@@ -5,18 +5,17 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
 class RecipeInstructionResponseAPI(
-    val status: APIResponse,
     val recipes: List<RecipeInstruction>?,
-    val returnedCode: Int = 200
 ) {
-  companion object {
-    private val moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
+    companion object {
+        private val moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
 
-    fun fromJson(jsonString: String): RecipeInstruction {
-      val jsonAdapter = moshi.adapter(RecipeInstruction::class.java).lenient()
-      return jsonAdapter.fromJson(jsonString) ?: throw IllegalArgumentException("Invalid JSON data")
+        fun fromJson(jsonString: String): RecipeInstruction {
+            val jsonAdapter = moshi.adapter(RecipeInstruction::class.java).lenient()
+            return jsonAdapter.fromJson(jsonString)
+                ?: throw IllegalArgumentException("Invalid JSON data")
+        }
     }
-  }
 }
 
 @JsonClass(generateAdapter = true)
@@ -31,8 +30,43 @@ data class Step(
     val length: TimeLength?
 )
 
+/**
+ * Represents an ingredient in a meal. This has the same name as the data in the model package.
+ * This is due to moshi needing the names of the classes being the same as the names in the Json.
+ */
 @JsonClass(generateAdapter = true)
-data class Ingredient(val id: Int, val name: String, val localizedName: String, val image: String?)
+data class Ingredient(
+    val id: Int,
+    val name: String,
+    val localizedName: String,
+    val image: String?
+) {
+    companion object {
+        fun serialize(ingredient: Ingredient): Map<String, Any> {
+            val map = mutableMapOf<String, Any>()
+            map["id"] = ingredient.id
+            map["name"] = ingredient.name
+            map["localizedName"] = ingredient.localizedName
+            map["image"] = ingredient.image ?: ""
+            return map
+        }
+
+        fun deserialize(map: Map<String, Any>): Ingredient {
+            return try {
+
+                Ingredient(
+                    map["id"] as Int,
+                    map["name"] as String,
+                    map["localizedName"] as String,
+                    map["image"] as String
+                )
+            } catch (e: Exception) {
+                throw IllegalArgumentException("Failed to deserialize Ingredient object", e)
+            }
+
+        }
+    }
+}
 
 @JsonClass(generateAdapter = true)
 data class Equipment(
@@ -43,6 +77,8 @@ data class Equipment(
     val temperature: Temperature?
 )
 
-@JsonClass(generateAdapter = true) data class Temperature(val number: Int, val unit: String)
+@JsonClass(generateAdapter = true)
+data class Temperature(val number: Int, val unit: String)
 
-@JsonClass(generateAdapter = true) data class TimeLength(val number: Int, val unit: String)
+@JsonClass(generateAdapter = true)
+data class TimeLength(val number: Int, val unit: String)
