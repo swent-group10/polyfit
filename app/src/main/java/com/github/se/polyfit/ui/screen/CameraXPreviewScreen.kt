@@ -39,7 +39,7 @@ fun CameraPreviewScreen(barCodeCodeViewModel: BarCodeCodeViewModel = hiltViewMod
   val context = LocalContext.current
   val preview = Preview.Builder().build()
   val previewView = remember { PreviewView(context) }
-  val cameraxSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
+  val cameraxSelector = CameraSelector.Builder().build()
   val imageCapture = remember {
     ImageCapture.Builder()
         .setTargetResolution(Size(1920, 1080))

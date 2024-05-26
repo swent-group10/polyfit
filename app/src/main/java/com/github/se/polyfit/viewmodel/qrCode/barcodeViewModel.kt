@@ -47,7 +47,7 @@ class BarCodeCodeViewModel @Inject constructor() : ViewModel() {
     val list = _listId.value?.toMutableList() ?: mutableListOf()
     list.add(0, id)
     _listId.value = list
-    Log.v("QrCodeViewModel", "addId: ${_listId.value}")
+    Log.v("QrCodeViewModel", "new list: ${_listId.value}")
   }
 }
 

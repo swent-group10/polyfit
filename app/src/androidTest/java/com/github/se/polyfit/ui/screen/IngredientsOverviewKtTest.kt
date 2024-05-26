@@ -232,7 +232,7 @@ class IngredientsOverviewTest {
     val onClickFloatingButton: () -> Unit = mockk(relaxed = true)
     composeTestRule.setContent {
       IngredientsOverview(
-          navigateBack, navigateForward, onClickFloatingButton, l1, mockk(relaxed = true))
+          navigateBack, navigateForward, onClickFloatingButton, l1, BarCodeCodeViewModel())
     }
 
     ComposeScreen.onComposeScreen<IngredientsOverviewScreen>(composeTestRule) {
