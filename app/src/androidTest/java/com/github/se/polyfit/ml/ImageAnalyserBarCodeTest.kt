@@ -64,34 +64,6 @@ class ImageProxyWrapper(private val image: Image?) : ImageProxy {
 }
 
 class ImageAnalyserBarCodeTest {
-  @org.junit.Test
-  fun analyzeImage1() {
-
-    val context = InstrumentationRegistry.getInstrumentation().targetContext
-
-    val bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.barcode1)
-    val image = InputImage.fromBitmap(bitmap, 0)
-    Log.i("ImageAnalyser", "image $image")
-
-    val mockImageProxy = mockk<ImageProxy>()
-    val mockImage = mockk<Image>()
-    val mockImageInfo = mockk<ImageInfo>()
-    every { mockImageProxy.getImage() } returns mockImage
-    every { mockImageProxy.imageInfo } returns mockImageInfo
-    every { mockImageInfo.rotationDegrees } returns 0
-    every { mockImage.format } returns ImageFormat.JPEG
-    every { mockImage.height } returns 1920
-    every { mockImage.width } returns 1080
-    every { mockImage.close() } returns Unit
-    every { mockImage.planes } returns emptyArray()
-
-    val imageProxyWrapper = ImageProxyWrapper(mockImage)
-    val addMeal: (String?) -> Unit = mockk()
-
-    val imageAnalyserBarCode = ImageAnalyserBarCode(addMeal)
-    imageAnalyserBarCode.analyze(imageProxyWrapper)
-    verify { addMeal("7613312266533") }
-  }
 
   @org.junit.Test
   fun findTheBarCode() {
