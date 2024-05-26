@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
@@ -19,6 +21,7 @@ import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 @HiltViewModel
@@ -212,5 +215,56 @@ constructor(
 
   fun getCaloryGoal(): Long {
     return user.calorieGoal
+  }
+
+  /**
+   * Converts a URI to a Bitmap.
+   *
+   * @param context The context of the application
+   * @param uri The URI to convert stored locally on the device
+   * @return The Bitmap if the conversion was successful, null otherwise
+   */
+  fun uriToBitmap(context: Context, uri: Uri): Bitmap? {
+    // Open an InputStream from the URI
+    val inputStream = context.contentResolver.openInputStream(uri)
+
+    // Use the InputStream if it's not null
+    inputStream?.use { stream ->
+      // Create a ByteArrayOutputStream and copy the InputStream into it
+      val outputStream = ByteArrayOutputStream().apply { stream.copyTo(this) }
+
+      // Convert the ByteArrayOutputStream to a byte array
+      val byteArray = outputStream.toByteArray()
+
+      // Decode the byte array into a Bitmap
+      return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+    }
+
+    // If the InputStream was null, return null
+    return null
+  }
+
+  /**
+   * Handles the selected image by converting it to a Bitmap. It handles calling the spoonacular API
+   * to get the meal, and storing the meal in the database.
+   *
+   * @param context The context of the application
+   * @param uri The URI of the selected image
+   * @param overviewViewModel The OverviewViewModel instance
+   * @return The ID of the stored meal in the local database if the image was successfully stored,
+   *   null otherwise
+   */
+  fun handleSelectedImage(
+      context: Context,
+      uri: Uri?,
+      overviewViewModel: OverviewViewModel,
+  ): String? {
+    return if (uri != null) {
+      val imageBitmap = uriToBitmap(context, uri)
+
+      overviewViewModel.storeMeal(imageBitmap)
+    } else {
+      null
+    }
   }
 }

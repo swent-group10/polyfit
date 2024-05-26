@@ -16,8 +16,11 @@ class Navigation(private val navHostController: NavHostController) {
     navHostController.popBackStack(route, inclusive = false)
   }
 
-  fun goBackToLogin() {
-    goBackTo(Route.Register)
+  fun restartToLogin() {
+    navHostController.navigate(Route.Register) {
+      popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+      launchSingleTop = true
+    }
   }
 
   fun navigateToGraph() {
@@ -75,5 +78,9 @@ class Navigation(private val navHostController: NavHostController) {
   private fun navigateTo(route: String) {
     Log.i("Navigation", "Navigating to $route")
     navHostController.navigate(route)
+  }
+
+  fun navigateToPostInfo() {
+    navigateTo(Route.PostInfo)
   }
 }
