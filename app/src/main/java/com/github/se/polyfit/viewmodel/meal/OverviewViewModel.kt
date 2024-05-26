@@ -2,15 +2,12 @@ package com.github.se.polyfit.viewmodel.meal
 
 import android.Manifest
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
-import androidx.activity.result.ActivityResult
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
@@ -20,7 +17,6 @@ import com.github.se.polyfit.data.processor.LocalDataProcessor
 import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
-import com.github.se.polyfit.ui.screen.firstActivity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
@@ -185,29 +181,13 @@ constructor(
     }
   }
 
-  fun callCamera(
-          context: Context,
-          startCamera: ManagedActivityResultLauncher<Intent, ActivityResult>,
-          requestPermissionLauncher: ManagedActivityResultLauncher<String, Boolean>
+  fun launchCamera(
+      context: Context,
+      requestPermissionLauncher: ManagedActivityResultLauncher<String, Boolean>,
+      callback: () -> Unit
   ) {
-    if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-      val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-      try {
-          startCamera.launch(takePictureIntent)
-      } catch (e: Exception) {
-        Log.e("HomeScreen", "Error launching camera intent: $e")
-      }
-    } else {
-      requestPermissionLauncher.launch(Manifest.permission.CAMERA)
-    }
-  }
-
-  fun callCamera2(
-          context: Context,
-          requestPermissionLauncher: ManagedActivityResultLauncher<String, Boolean>,
-          callback: () -> Unit
-  ) {
-    if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+    if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) ==
+        PackageManager.PERMISSION_GRANTED) {
       try {
         callback()
       } catch (e: Exception) {

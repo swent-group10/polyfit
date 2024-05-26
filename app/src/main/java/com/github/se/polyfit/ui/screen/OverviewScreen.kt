@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
@@ -57,7 +56,9 @@ import com.github.se.polyfit.ui.viewModel.GraphViewModel
 import com.github.se.polyfit.viewmodel.meal.OverviewViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-var firstActivity = true
+
+var cameraNormal = true
+
 @Composable
 fun OverviewScreen(
     paddingValues: PaddingValues,
@@ -70,7 +71,6 @@ fun OverviewScreen(
   val isTestEnvironment = System.getProperty("isTestEnvironment") == "true"
 
   // State to hold the URI, the image and the bitmap
-  var imageUri by remember { mutableStateOf<Uri?>(null) }
   val iconExample = BitmapFactory.decodeResource(context.resources, R.drawable.picture_example)
   var imageBitmap by remember { mutableStateOf(iconExample) }
 
@@ -108,7 +108,6 @@ fun OverviewScreen(
         navigateOrShowError(id, navigation, context)
       }
 
-
   // Launcher for requesting the camera permission
   val requestPermissionLauncher =
       rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
@@ -117,12 +116,11 @@ fun OverviewScreen(
           // Permission is granted, you can start the camera
           val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
           try {
-            if(firstActivity){
+            if (cameraNormal) {
               startCamera.launch(takePictureIntent)
-            }else{
+            } else {
               navigation.navigateToBarcodeScan()
             }
-
           } catch (e: Exception) {
             // Handle the exception if the camera intent cannot be launched
             Log.e("OverviewScreen", "Error launching camera: $e")
@@ -138,20 +136,19 @@ fun OverviewScreen(
         onDismiss = { showPictureDialog = false },
         onButtonsClick =
             listOf(
-                  {
-                    firstActivity = true
-                    //overviewViewModel.callCamera(context, startCamera, requestPermissionLauncher)
-                    overviewViewModel.callCamera2(context, requestPermissionLauncher){
-                      startCamera.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
-                    }
-                  },
+                {
+                  cameraNormal = true
+                  overviewViewModel.launchCamera(context, requestPermissionLauncher) {
+                    startCamera.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+                  }
+                },
                 {
                   pickMedia.launch(
                       PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                 },
                 {
-                  firstActivity = false
-                  overviewViewModel.callCamera2(context, requestPermissionLauncher){
+                  cameraNormal = false
+                  overviewViewModel.launchCamera(context, requestPermissionLauncher) {
                     navigation.navigateToBarcodeScan()
                   }
                 }),
@@ -162,10 +159,7 @@ fun OverviewScreen(
                 context.getString(R.string.scan_picture_dialog)))
   }
 
-  Box(modifier = Modifier
-          .padding(paddingValues)
-          .fillMaxWidth()
-          .testTag("OverviewScreen")) {
+  Box(modifier = Modifier.padding(paddingValues).fillMaxWidth().testTag("OverviewScreen")) {
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 30.dp, vertical = 20.dp),
         modifier = Modifier.testTag("OverviewScreenLazyColumn"),
@@ -194,20 +188,15 @@ fun OverviewScreen(
           item {
             Box(
                 modifier =
-                Modifier
-                        .align(Alignment.Center)
+                    Modifier.align(Alignment.Center)
                         .padding(top = 10.dp)
                         .size(width = 350.dp, height = 300.dp)
                         .testTag("Graph Card")
                         .clickable { navigation.navigateToGraph() },
             ) {
-              Column(modifier = Modifier
-                      .fillMaxSize()
-                      .testTag("Graph Card Column")) {
+              Column(modifier = Modifier.fillMaxSize().testTag("Graph Card Column")) {
                 Row(
-                    modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(5.dp),
+                    modifier = Modifier.fillMaxWidth().padding(5.dp),
                     horizontalArrangement = Arrangement.SpaceBetween) {
                       Text(
                           text = "Calories Graph",
@@ -215,8 +204,7 @@ fun OverviewScreen(
                           fontWeight = FontWeight.Bold,
                           color = MaterialTheme.colorScheme.secondary,
                           modifier =
-                          Modifier
-                                  .padding(start = 10.dp, top = 10.dp)
+                              Modifier.padding(start = 10.dp, top = 10.dp)
                                   .weight(1f)
                                   .testTag("Graph Card Title")
                                   .clickable { navigation.navigateToGraph() })
@@ -225,32 +213,25 @@ fun OverviewScreen(
                           imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                           contentDescription = "rightArrow",
                           modifier =
-                          Modifier
-                                  .align(Alignment.CenterVertically)
-                                  .padding(top = 10.dp))
+                              Modifier.align(Alignment.CenterVertically).padding(top = 10.dp))
                     }
                 HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 2.dp)
                 Box(
                     modifier =
-                    Modifier
-                            .fillMaxSize(0.85f)
+                        Modifier.fillMaxSize(0.85f)
                             .align(Alignment.CenterHorizontally)
                             .testTag("Graph Box")
                             .clickable { navigation.navigateToGraph() }) {
                       if (!isTestEnvironment) {
                         LineChart(
-                            modifier = Modifier
-                                    .testTag("Overview Line Chart")
-                                    .fillMaxSize(),
+                            modifier = Modifier.testTag("Overview Line Chart").fillMaxSize(),
                             lineChartData =
                                 lineChartData(
                                     hiltViewModel<GraphViewModel>().DataPoints(),
                                     hiltViewModel<GraphViewModel>().DateList(),
                                     DisplayScreen.OVERVIEW))
                       } else {
-                        Spacer(modifier = Modifier
-                                .fillMaxSize()
-                                .testTag("LineChartSpacer"))
+                        Spacer(modifier = Modifier.fillMaxSize().testTag("LineChartSpacer"))
                       }
                     }
               }
