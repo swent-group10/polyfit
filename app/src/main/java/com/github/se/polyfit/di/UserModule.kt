@@ -13,6 +13,7 @@ import com.github.se.polyfit.data.repository.MealRepository
 import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.model.post.PostLocationModel
 import com.github.se.polyfit.ui.viewModel.GraphViewModel
+import com.github.se.polyfit.viewmodel.qrCode.BarCodeCodeViewModel
 import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
 import dagger.Provides
@@ -101,5 +102,11 @@ object UserModule {
   @Singleton
   fun providesFirebaseAuth(): FirebaseAuth {
     return FirebaseAuth.getInstance()
+  }
+
+  @Provides
+  @Singleton
+  fun providesBarCodeCodeViewModel(): BarCodeCodeViewModel {
+    return BarCodeCodeViewModel()
   }
 }

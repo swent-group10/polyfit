@@ -24,7 +24,6 @@ import com.github.se.polyfit.ui.screen.CreatePostScreen
 import com.github.se.polyfit.ui.screen.DailyRecapScreen
 import com.github.se.polyfit.ui.screen.FullGraphScreen
 import com.github.se.polyfit.ui.screen.IngredientsOverview
-import com.github.se.polyfit.ui.screen.IngredientsTMP
 import com.github.se.polyfit.ui.screen.LoginScreen
 import com.github.se.polyfit.ui.screen.MapScreen
 import com.github.se.polyfit.ui.screen.OverviewScreen

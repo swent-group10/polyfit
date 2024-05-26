@@ -44,21 +44,13 @@ private fun PreviewIngredientsOverview() {
 
 @Composable
 fun IngredientsOverview(
-        navigateBack: () -> Unit,
-        navigateForward: () -> Unit,
-        onClickFloatingButton: () -> Unit,
-        listProducts: List<IngredientsTMP>,
-        barCodeCodeViewModel: BarCodeCodeViewModel = hiltViewModel()
+    navigateBack: () -> Unit,
+    navigateForward: () -> Unit,
+    onClickFloatingButton: () -> Unit,
+    listProducts: List<IngredientsTMP>,
+    barCodeCodeViewModel: BarCodeCodeViewModel = hiltViewModel()
 ) {
   val context = LocalContext.current
-
-  val listId by barCodeCodeViewModel.listId.observeAsState()
-
-  val listProducts = mutableListOf<IngredientsTMP>()
-  for (qrCode in listId ?: emptyList()) {
-    listProducts += IngredientsTMP(qrCode, 0, 0, 0, 0, 0)
-  }
-
 
   Scaffold(
       topBar = { SimpleTopBar(title = context.getString(R.string.Product)) { navigateBack() } },
@@ -66,11 +58,13 @@ fun IngredientsOverview(
       floatingActionButton = { FloatingActionButtonIngredients(onClickFloatingButton) },
       containerColor = MaterialTheme.colorScheme.background,
       modifier = Modifier.testTag("IngredientsOverviewScaffold")) {
-        CameraPreviewScreen()
+        CameraPreviewScreen(barCodeCodeViewModel)
 
         // TODO THIS IS TEMPORARY, REMOVE IT WHEN DOING THE VIEWMODEL
-        ListProducts(listIngredients = listProducts, Modifier
-                .fillMaxSize()
-                .padding(0.dp, it.calculateTopPadding() + 200.dp, 0.dp, it.calculateBottomPadding()))
+        ListProducts(
+            listIngredients = listProducts,
+            Modifier.fillMaxSize()
+                .padding(
+                    0.dp, it.calculateTopPadding() + 200.dp, 0.dp, it.calculateBottomPadding()))
       }
 }

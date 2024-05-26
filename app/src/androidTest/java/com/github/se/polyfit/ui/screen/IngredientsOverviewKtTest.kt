@@ -8,9 +8,14 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.printToString
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.ui.components.IngredientsOverview.ListProducts
+import com.github.se.polyfit.viewmodel.qrCode.BarCodeCodeViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.testing.HiltAndroidTest
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.mockk.mockk
 import io.mockk.verify
+import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -29,6 +34,8 @@ class IngredientsOverviewTest {
 
   @get:Rule val composeTestRule = createComposeRule()
 
+
+  @Ignore("Not a test but useful to show the tree")
   @Test
   fun displays_tree() {
     composeTestRule.setContent { IngredientsOverview({}, {}, {}, l1) }
@@ -37,7 +44,7 @@ class IngredientsOverviewTest {
 
   @Test
   fun displays_ingredients_overview() {
-    composeTestRule.setContent { IngredientsOverview({}, {}, {}, l1) }
+    composeTestRule.setContent { IngredientsOverview({}, {}, {}, l1, BarCodeCodeViewModel()) }
 
     ComposeScreen.onComposeScreen<IngredientsOverviewScreen>(composeTestRule) {
       topBar { assertExists() }
@@ -52,7 +59,7 @@ class IngredientsOverviewTest {
 
   @Test
   fun displays_top() {
-    composeTestRule.setContent { IngredientsOverview({}, {}, {}, l1) }
+    composeTestRule.setContent { IngredientsOverview({}, {}, {}, l1, BarCodeCodeViewModel()) }
 
     ComposeScreen.onComposeScreen<IngredientsOverviewTopBar>(composeTestRule) {
       assertExists()
@@ -71,7 +78,7 @@ class IngredientsOverviewTest {
 
   @Test
   fun displays_bottom() {
-    composeTestRule.setContent { IngredientsOverview({}, {}, {}, l1) }
+    composeTestRule.setContent { IngredientsOverview({}, {}, {}, l1, BarCodeCodeViewModel()) }
 
     ComposeScreen.onComposeScreen<IngredientsOverviewBottomBarIngredient>(composeTestRule) {
       generateButton {
@@ -83,7 +90,7 @@ class IngredientsOverviewTest {
 
   @Test
   fun displays_floating_action_button() {
-    composeTestRule.setContent { IngredientsOverview({}, {}, {}, l1) }
+    composeTestRule.setContent { IngredientsOverview({}, {}, {}, l1, BarCodeCodeViewModel()) }
 
     ComposeScreen.onComposeScreen<FloatingActionButtonIngredientsScreen>(composeTestRule) {
       assertExists()
@@ -180,7 +187,7 @@ class IngredientsOverviewTest {
     val navigateForward: () -> Unit = mockk(relaxed = true)
     val onClickFloatingButton: () -> Unit = mockk(relaxed = true)
     composeTestRule.setContent {
-      IngredientsOverview(navigateBack, navigateForward, onClickFloatingButton, l1)
+      IngredientsOverview(navigateBack, navigateForward, onClickFloatingButton, l1, BarCodeCodeViewModel())
     }
 
     ComposeScreen.onComposeScreen<IngredientsOverviewTopBar>(composeTestRule) {
@@ -203,7 +210,7 @@ class IngredientsOverviewTest {
     val navigateForward: () -> Unit = mockk(relaxed = true)
     val onClickFloatingButton: () -> Unit = mockk(relaxed = true)
     composeTestRule.setContent {
-      IngredientsOverview(navigateBack, navigateForward, onClickFloatingButton, l1)
+      IngredientsOverview(navigateBack, navigateForward, onClickFloatingButton, l1, BarCodeCodeViewModel())
     }
 
     ComposeScreen.onComposeScreen<IngredientsOverviewBottomBarIngredient>(composeTestRule) {
@@ -226,7 +233,7 @@ class IngredientsOverviewTest {
     val navigateForward: () -> Unit = mockk(relaxed = true)
     val onClickFloatingButton: () -> Unit = mockk(relaxed = true)
     composeTestRule.setContent {
-      IngredientsOverview(navigateBack, navigateForward, onClickFloatingButton, l1)
+      IngredientsOverview(navigateBack, navigateForward, onClickFloatingButton, l1, mockk(relaxed = true))
     }
 
     ComposeScreen.onComposeScreen<IngredientsOverviewScreen>(composeTestRule) {

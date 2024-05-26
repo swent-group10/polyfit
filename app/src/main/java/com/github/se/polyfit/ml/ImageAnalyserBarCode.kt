@@ -12,12 +12,13 @@ import com.google.mlkit.vision.common.InputImage
 
 class ImageAnalyserBarCode(val addMeal: (id: String?) -> Unit) : ImageAnalysis.Analyzer {
 
-  private val options = BarcodeScannerOptions.Builder()
+  private val options =
+      BarcodeScannerOptions.Builder()
           .setBarcodeFormats(
-                  Barcode.FORMAT_EAN_8,
-                  Barcode.FORMAT_EAN_13,
-                  Barcode.FORMAT_UPC_A,
-                  Barcode.FORMAT_UPC_E,
+              Barcode.FORMAT_EAN_8,
+              Barcode.FORMAT_EAN_13,
+              Barcode.FORMAT_UPC_A,
+              Barcode.FORMAT_UPC_E,
           )
           .build()
 
@@ -30,18 +31,15 @@ class ImageAnalyserBarCode(val addMeal: (id: String?) -> Unit) : ImageAnalysis.A
       val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
 
       // Pass image to the ML Kit Vision API
-      scanner.process(image)
-              .addOnSuccessListener { barcodes ->
-                for (barcode in barcodes) {
-                  addMeal(barcode.displayValue)
-                }
-              }
-              .addOnFailureListener {
-                Log.e("Barcode", "Error processing image", it)
-              }
-              .addOnCompleteListener {
-                imageProxy.close()
-              }
+      scanner
+          .process(image)
+          .addOnSuccessListener { barcodes ->
+            for (barcode in barcodes) {
+              addMeal(barcode.displayValue)
+            }
+          }
+          .addOnFailureListener { Log.e("Barcode", "Error processing image", it) }
+          .addOnCompleteListener { imageProxy.close() }
     }
   }
 }

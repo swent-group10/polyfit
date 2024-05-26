@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.tooling.preview.Preview as Preview1
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
@@ -27,35 +28,27 @@ import com.github.se.polyfit.ml.ImageAnalyserBarCode
 import com.github.se.polyfit.ui.theme.getGradient
 import com.github.se.polyfit.viewmodel.qrCode.BarCodeCodeViewModel
 import com.github.se.polyfit.viewmodel.qrCode.getCameraProvider
-import androidx.compose.ui.tooling.preview.Preview as Preview1
 
 @Preview1
 @Composable
-fun CameraPreviewScreen(barCodeCodeViewModel: BarCodeCodeViewModel = hiltViewModel()
-) {
+fun CameraPreviewScreen(barCodeCodeViewModel: BarCodeCodeViewModel = hiltViewModel()) {
 
   val lensFacing = CameraSelector.LENS_FACING_BACK
   val lifecycleOwner = LocalLifecycleOwner.current
   val context = LocalContext.current
   val preview = Preview.Builder().build()
-  val previewView = remember {
-    PreviewView(context)
-  }
+  val previewView = remember { PreviewView(context) }
   val cameraxSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
-  val imageCapture = remember {
-    ImageCapture.Builder().build()
-  }
+  val imageCapture = remember { ImageCapture.Builder().build() }
 
-
-  val imageAnalysis = ImageAnalysis.Builder()
+  val imageAnalysis =
+      ImageAnalysis.Builder()
           .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
           .build()
-
 
   val imageAnalyserBarCode = ImageAnalyserBarCode(barCodeCodeViewModel::addId)
 
   imageAnalysis.setAnalyzer(ContextCompat.getMainExecutor(context), imageAnalyserBarCode)
-
 
   LaunchedEffect(lensFacing) {
     val cameraProvider = context.getCameraProvider()
@@ -64,17 +57,11 @@ fun CameraPreviewScreen(barCodeCodeViewModel: BarCodeCodeViewModel = hiltViewMod
     preview.setSurfaceProvider(previewView.surfaceProvider)
   }
 
-  Box(modifier = Modifier
-          .fillMaxWidth()
-          .height(30.dp),
-          contentAlignment = Alignment.Center) {
-    AndroidView({ previewView },
-            modifier = Modifier
-                    .border(BorderStroke(1.dp, getGradient(active = true)), RectangleShape)
-                    .fillMaxSize(0.9f)
-    )
+  Box(modifier = Modifier.fillMaxWidth().height(30.dp), contentAlignment = Alignment.Center) {
+    AndroidView(
+        { previewView },
+        modifier =
+            Modifier.border(BorderStroke(1.dp, getGradient(active = true)), RectangleShape)
+                .fillMaxSize(0.9f))
   }
 }
-
-
-

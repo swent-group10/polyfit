@@ -13,10 +13,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 @HiltViewModel
-class BarCodeCodeViewModel
-@Inject
-constructor(
-): ViewModel() {
+class BarCodeCodeViewModel @Inject constructor() : ViewModel() {
   private val _listId = MutableLiveData<List<String>>(emptyList())
 
   val listId: LiveData<List<String>> = _listId
@@ -31,10 +28,9 @@ constructor(
   }
 }
 
-suspend fun Context.getCameraProvider(): ProcessCameraProvider =
-        suspendCoroutine { continuation ->
-          ProcessCameraProvider.getInstance(this).also { cameraProvider ->
-            cameraProvider.addListener(
-                    { continuation.resume(cameraProvider.get()) }, ContextCompat.getMainExecutor(this))
-          }
-        }
+suspend fun Context.getCameraProvider(): ProcessCameraProvider = suspendCoroutine { continuation ->
+  ProcessCameraProvider.getInstance(this).also { cameraProvider ->
+    cameraProvider.addListener(
+        { continuation.resume(cameraProvider.get()) }, ContextCompat.getMainExecutor(this))
+  }
+}
