@@ -8,8 +8,6 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
 import androidx.camera.view.PreviewView
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,16 +17,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview as Preview1
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.se.polyfit.ml.ImageAnalyserBarCode
-import com.github.se.polyfit.ui.theme.getGradient
 import com.github.se.polyfit.viewmodel.qrCode.BarCodeCodeViewModel
 import com.github.se.polyfit.viewmodel.qrCode.getCameraProvider
 
@@ -54,13 +51,11 @@ fun CameraXScreen(barCodeCodeViewModel: BarCodeCodeViewModel = hiltViewModel()) 
 
   imageAnalysis.setAnalyzer(ContextCompat.getMainExecutor(context), imageAnalyserBarCode)
 
-  Box(modifier = Modifier.fillMaxWidth().height(30.dp), contentAlignment = Alignment.Center) {
-    AndroidView(
-        { previewView },
-        modifier =
-            Modifier.border(BorderStroke(1.dp, getGradient(active = true)), RectangleShape)
-                .fillMaxSize(0.9f))
-  }
+  Box(
+      modifier = Modifier.fillMaxWidth().height(30.dp).testTag("BoxCamera"),
+      contentAlignment = Alignment.Center) {
+        AndroidView({ previewView }, modifier = Modifier.testTag("AndroidView").fillMaxSize(0.9f))
+      }
 
   // If there is no camera we display nothing
   val pm: PackageManager = context.getPackageManager()
