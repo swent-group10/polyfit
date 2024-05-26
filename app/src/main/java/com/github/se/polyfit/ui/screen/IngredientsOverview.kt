@@ -68,7 +68,7 @@ fun IngredientsOverview(
       modifier = Modifier.testTag("IngredientsOverviewScaffold")) {
         CameraXScreen(barCodeCodeViewModel)
 
-        // TODO THIS IS TEMPORARY, REMOVE IT WHEN DOING THE VIEWMODEL
+        // TODO THIS IS TEMPORARY, REMOVE IT WHEN ADDING THE REAL VALUES
         ListProducts(
             listIngredients = listProducts,
             Modifier.fillMaxSize()
