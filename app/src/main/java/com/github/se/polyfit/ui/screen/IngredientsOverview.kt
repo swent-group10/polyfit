@@ -54,6 +54,7 @@ fun IngredientsOverview(
 
   val listId by barCodeCodeViewModel.listId.observeAsState()
 
+  // TODO REMOVE
   val listProducts = mutableListOf<IngredientsTMP>()
   for (qrCode in listId ?: emptyList()) {
     listProducts += IngredientsTMP(qrCode, 0, 0, 0, 0, 0)
@@ -65,7 +66,7 @@ fun IngredientsOverview(
       floatingActionButton = { FloatingActionButtonIngredients(onClickFloatingButton) },
       containerColor = MaterialTheme.colorScheme.background,
       modifier = Modifier.testTag("IngredientsOverviewScaffold")) {
-        CameraPreviewScreen(barCodeCodeViewModel)
+        CameraXScreen(barCodeCodeViewModel)
 
         // TODO THIS IS TEMPORARY, REMOVE IT WHEN DOING THE VIEWMODEL
         ListProducts(

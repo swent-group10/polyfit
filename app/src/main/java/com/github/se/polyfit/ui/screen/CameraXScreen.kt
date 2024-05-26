@@ -1,6 +1,8 @@
 package com.github.se.polyfit.ui.screen
 
-import android.util.Size
+import android.content.pm.PackageManager
+import android.hardware.Camera
+import android.util.Log
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageCapture
@@ -20,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview as Preview1
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -32,20 +35,25 @@ import com.github.se.polyfit.viewmodel.qrCode.getCameraProvider
 
 @Preview1
 @Composable
-fun CameraPreviewScreen(barCodeCodeViewModel: BarCodeCodeViewModel = hiltViewModel()) {
+fun CameraXScreen(barCodeCodeViewModel: BarCodeCodeViewModel = hiltViewModel()) {
+
+  val context = LocalContext.current
+  val lifecycleOwner = LocalLifecycleOwner.current
+
+  val pm: PackageManager = context.getPackageManager()
+  val numberOfCameras = Camera.getNumberOfCameras()
+  val hasCamera = numberOfCameras > 0 && pm.hasSystemFeature(PackageManager.FEATURE_CAMERA)
+
+  if (!hasCamera) {
+    Log.e("CameraXScreen", "No camera found")
+    return
+  }
 
   val lensFacing = CameraSelector.LENS_FACING_BACK
-  val lifecycleOwner = LocalLifecycleOwner.current
-  val context = LocalContext.current
   val preview = Preview.Builder().build()
   val previewView = remember { PreviewView(context) }
   val cameraxSelector = CameraSelector.Builder().build()
-  val imageCapture = remember {
-    ImageCapture.Builder()
-        .setTargetResolution(Size(1920, 1080))
-        // .setBackpressureStrategy(ImageCapture.STRATEGY_KEEP_ONLY_LATEST)
-        .build()
-  }
+  val imageCapture = remember { ImageCapture.Builder().build() }
 
   val imageAnalysis =
       ImageAnalysis.Builder()
@@ -64,11 +72,14 @@ fun CameraPreviewScreen(barCodeCodeViewModel: BarCodeCodeViewModel = hiltViewMod
     preview.setSurfaceProvider(previewView.surfaceProvider)
   }
 
-  Box(modifier = Modifier.fillMaxWidth().height(30.dp), contentAlignment = Alignment.Center) {
-    AndroidView(
-        { previewView },
-        modifier =
-            Modifier.border(BorderStroke(1.dp, getGradient(active = true)), RectangleShape)
-                .fillMaxSize(0.9f))
-  }
+  Box(
+      modifier = Modifier.fillMaxWidth().height(30.dp).testTag("BoxCamera"),
+      contentAlignment = Alignment.Center) {
+        AndroidView(
+            { previewView },
+            modifier =
+                Modifier.border(BorderStroke(1.dp, getGradient(active = true)), RectangleShape)
+                    .fillMaxSize(0.9f)
+                    .testTag("preview"))
+      }
 }
