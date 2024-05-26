@@ -172,7 +172,7 @@ jobs:
       - name: Fetch SonarCloud report
         run: |
           sleep 1m  # Wait for SonarCloud to process the report
-          curl https://sonarcloud.io/api/measures/component?componentKey=swent-group10_polyfit&metricKeys=line_coverage > sonar-report.json
+          curl "https://sonarcloud.io/api/measures/component?componentKey=swent-group10_polyfit&metricKeys=line_coverage" > sonar-report.json
 
       - name: Coverage results
         run: |
