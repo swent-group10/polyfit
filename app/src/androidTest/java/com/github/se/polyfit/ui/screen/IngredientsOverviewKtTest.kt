@@ -9,12 +9,9 @@ import androidx.compose.ui.test.printToString
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.ui.components.IngredientsOverview.ListProducts
 import com.github.se.polyfit.viewmodel.qrCode.BarCodeCodeViewModel
-import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.testing.HiltAndroidTest
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.mockk.mockk
 import io.mockk.verify
-import org.junit.Before
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
@@ -33,7 +30,6 @@ class IngredientsOverviewTest {
   val l2 = listOf(i1, i2, i3, i4, i5)
 
   @get:Rule val composeTestRule = createComposeRule()
-
 
   @Ignore("Not a test but useful to show the tree")
   @Test
@@ -187,7 +183,8 @@ class IngredientsOverviewTest {
     val navigateForward: () -> Unit = mockk(relaxed = true)
     val onClickFloatingButton: () -> Unit = mockk(relaxed = true)
     composeTestRule.setContent {
-      IngredientsOverview(navigateBack, navigateForward, onClickFloatingButton, l1, BarCodeCodeViewModel())
+      IngredientsOverview(
+          navigateBack, navigateForward, onClickFloatingButton, l1, BarCodeCodeViewModel())
     }
 
     ComposeScreen.onComposeScreen<IngredientsOverviewTopBar>(composeTestRule) {
@@ -210,7 +207,8 @@ class IngredientsOverviewTest {
     val navigateForward: () -> Unit = mockk(relaxed = true)
     val onClickFloatingButton: () -> Unit = mockk(relaxed = true)
     composeTestRule.setContent {
-      IngredientsOverview(navigateBack, navigateForward, onClickFloatingButton, l1, BarCodeCodeViewModel())
+      IngredientsOverview(
+          navigateBack, navigateForward, onClickFloatingButton, l1, BarCodeCodeViewModel())
     }
 
     ComposeScreen.onComposeScreen<IngredientsOverviewBottomBarIngredient>(composeTestRule) {
@@ -233,7 +231,8 @@ class IngredientsOverviewTest {
     val navigateForward: () -> Unit = mockk(relaxed = true)
     val onClickFloatingButton: () -> Unit = mockk(relaxed = true)
     composeTestRule.setContent {
-      IngredientsOverview(navigateBack, navigateForward, onClickFloatingButton, l1, mockk(relaxed = true))
+      IngredientsOverview(
+          navigateBack, navigateForward, onClickFloatingButton, l1, mockk(relaxed = true))
     }
 
     ComposeScreen.onComposeScreen<IngredientsOverviewScreen>(composeTestRule) {

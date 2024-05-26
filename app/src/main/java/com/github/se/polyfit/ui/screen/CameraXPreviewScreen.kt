@@ -42,9 +42,9 @@ fun CameraPreviewScreen(barCodeCodeViewModel: BarCodeCodeViewModel = hiltViewMod
   val cameraxSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
   val imageCapture = remember {
     ImageCapture.Builder()
-            .setTargetResolution(Size(1920, 1080))
-            //.setBackpressureStrategy(ImageCapture.STRATEGY_KEEP_ONLY_LATEST)
-            .build()
+        .setTargetResolution(Size(1920, 1080))
+        // .setBackpressureStrategy(ImageCapture.STRATEGY_KEEP_ONLY_LATEST)
+        .build()
   }
 
   val imageAnalysis =
@@ -59,7 +59,8 @@ fun CameraPreviewScreen(barCodeCodeViewModel: BarCodeCodeViewModel = hiltViewMod
   LaunchedEffect(lensFacing) {
     val cameraProvider = context.getCameraProvider()
     cameraProvider.unbindAll()
-    cameraProvider.bindToLifecycle(lifecycleOwner, cameraxSelector, preview, imageCapture, imageAnalysis)
+    cameraProvider.bindToLifecycle(
+        lifecycleOwner, cameraxSelector, preview, imageCapture, imageAnalysis)
     preview.setSurfaceProvider(previewView.surfaceProvider)
   }
 

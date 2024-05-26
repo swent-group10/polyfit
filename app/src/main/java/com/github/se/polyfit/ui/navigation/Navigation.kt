@@ -23,6 +23,10 @@ class Navigation(private val navHostController: NavHostController) {
     }
   }
 
+  fun navigateToBarcodeScan() {
+    navigateTo(Route.OverviewScan)
+  }
+
   fun navigateToGraph() {
     navigateTo(Route.Graph)
   }

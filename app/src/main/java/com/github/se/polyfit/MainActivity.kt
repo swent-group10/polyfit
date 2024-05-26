@@ -64,7 +64,7 @@ class MainActivity : ComponentActivity() {
         authentication.setCallbackOnSign { navigation.navigateToHome() }
 
         val startDestination = if (authentication.isAuthenticated()) Route.Home else Route.Register
-        NavHost(navController = navController, startDestination = Route.CameraX) {
+        NavHost(navController = navController, startDestination = startDestination) {
           composable(Route.Map) {
             GenericScreen(
                 navController = navController,
@@ -72,7 +72,9 @@ class MainActivity : ComponentActivity() {
                   MapScreen(paddingValues, { navController.navigate(Route.PostInfo) })
                 })
           }
-          composable(Route.CameraX) { IngredientsOverview({}, {}, {}, emptyList()) }
+          composable(Route.OverviewScan) {
+            IngredientsOverview(navigation::goBack, {}, {}, emptyList())
+          }
           composable(Route.Graph) { FullGraphScreen(goBack = navigation::goBack) }
           composable(Route.Home) {
             GenericScreen(

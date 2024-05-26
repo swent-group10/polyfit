@@ -26,7 +26,7 @@ class BarCodeCodeViewModel @Inject constructor() : ViewModel() {
   val listId: LiveData<List<String>> = _listId
 
   // We need to scan multiple times the same value to be sure it's not a mistake
-  private var previousScan : String? = null
+  private var previousScan: String? = null
   private var count = 0
 
   fun addId(id: String?) {
@@ -43,7 +43,6 @@ class BarCodeCodeViewModel @Inject constructor() : ViewModel() {
       count = 1
       return
     }
-
 
     val list = _listId.value?.toMutableList() ?: mutableListOf()
     list.add(0, id)

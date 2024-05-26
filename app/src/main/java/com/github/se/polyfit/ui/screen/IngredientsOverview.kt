@@ -26,7 +26,7 @@ data class IngredientsTMP(
     val calories: Int,
     val carbs: Int,
     val fat: Int,
-    val protein: Int,
+    val protein: Int
 )
 
 /*val i1 = IngredientsTMP("Apple", 100, 52, 14, 0, 0)

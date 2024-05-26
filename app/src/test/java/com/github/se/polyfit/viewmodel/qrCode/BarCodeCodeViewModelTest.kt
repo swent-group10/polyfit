@@ -2,25 +2,16 @@ package com.github.se.polyfit.viewmodel.qrCode
 
 import android.util.Log
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import io.mockk.*
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkAll
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestRule
-import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
-
-import android.content.Context
-import androidx.camera.core.CameraX
-import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.core.content.ContextCompat
-import com.google.common.util.concurrent.ListenableFuture
-import io.mockk.*
-import kotlinx.coroutines.runBlocking
-import org.junit.After
-import org.junit.Before
 
 class BarCodeCodeViewModelTest {
 
@@ -82,7 +73,7 @@ class BarCodeCodeViewModelTest {
     for (i in 1..REQUIRED_SCAN_COUNT) {
       viewModel.addId("789012")
     }
-      assertEquals(listOf("789012", "123456"), viewModel.listId.value)
+    assertEquals(listOf("789012", "123456"), viewModel.listId.value)
   }
 
   @Test
@@ -91,7 +82,7 @@ class BarCodeCodeViewModelTest {
     for (i in 1..REQUIRED_SCAN_COUNT) {
       viewModel.addId("")
     }
-      assertEquals(emptyList<String>(), viewModel.listId.value)
+    assertEquals(emptyList<String>(), viewModel.listId.value)
   }
 
   @Test
@@ -103,13 +94,13 @@ class BarCodeCodeViewModelTest {
     for (i in 1..REQUIRED_SCAN_COUNT) {
       viewModel.addId(s)
     }
-      assertEquals(emptyList<String>(), viewModel.listId.value)
+    assertEquals(emptyList<String>(), viewModel.listId.value)
   }
 
   @Test
   fun `addId does not add id to list when id length is less than 6`() {
     var s = ""
-    for (i in 1..< MIN_BARCODE_LENGTH) {
+    for (i in 1 ..< MIN_BARCODE_LENGTH) {
       s += "1"
     }
     for (i in 1..REQUIRED_SCAN_COUNT) {
@@ -117,15 +108,26 @@ class BarCodeCodeViewModelTest {
     }
     assertEquals(emptyList<String>(), viewModel.listId.value)
   }
+
   @Test
   fun `addId does not added enough time`() {
 
-    for (i in 1..<REQUIRED_SCAN_COUNT) {
+    for (i in 1 ..< REQUIRED_SCAN_COUNT) {
       viewModel.addId("12345678")
     }
-      assertEquals(emptyList<String>(), viewModel.listId.value)
+    assertEquals(emptyList<String>(), viewModel.listId.value)
   }
 
+  @Test
+  fun `addId null and then add same value`() {
+
+    for (i in 1 ..< REQUIRED_SCAN_COUNT) {
+      viewModel.addId("12345678")
+    }
+    viewModel.addId(null)
+    viewModel.addId("12345678")
+    assertEquals(listOf("12345678"), viewModel.listId.value)
+  }
 }
 
 /*

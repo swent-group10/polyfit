@@ -20,6 +20,7 @@ import com.github.se.polyfit.data.processor.LocalDataProcessor
 import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
+import com.github.se.polyfit.ui.screen.firstActivity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
@@ -185,26 +186,35 @@ constructor(
   }
 
   fun callCamera(
-      context: Context,
-      startCamera: ManagedActivityResultLauncher<Intent, ActivityResult>,
-      requestPermissionLauncher: ManagedActivityResultLauncher<String, Boolean>
-  ): () -> Unit = {
-    // Check if the permission has already been granted
-    when (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)) {
-      PackageManager.PERMISSION_GRANTED -> {
-        // You can use the camera
-        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        try {
+          context: Context,
+          startCamera: ManagedActivityResultLauncher<Intent, ActivityResult>,
+          requestPermissionLauncher: ManagedActivityResultLauncher<String, Boolean>
+  ) {
+    if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+      val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+      try {
           startCamera.launch(takePictureIntent)
-        } catch (e: Exception) {
-          // Handle the exception if the camera intent cannot be launched
-          Log.e("HomeScreen", "Error launching camera intent: $e")
-        }
+      } catch (e: Exception) {
+        Log.e("HomeScreen", "Error launching camera intent: $e")
       }
-      else -> {
-        // Request the permission
-        requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+    } else {
+      requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+    }
+  }
+
+  fun callCamera2(
+          context: Context,
+          requestPermissionLauncher: ManagedActivityResultLauncher<String, Boolean>,
+          callback: () -> Unit
+  ) {
+    if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+      try {
+        callback()
+      } catch (e: Exception) {
+        Log.e("HomeScreen", "Error launching camera intent: $e")
       }
+    } else {
+      requestPermissionLauncher.launch(Manifest.permission.CAMERA)
     }
   }
 

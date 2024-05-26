@@ -29,5 +29,5 @@ object Route {
   const val RecipeRecommendationMore = "RecipeRecommendationMore"
 
   const val RecipeRecFlow = "RecipeRecFlow"
-  const val CameraX = "CameraX"
+  const val OverviewScan = "OverviewScan"
 }
