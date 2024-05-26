@@ -10,7 +10,7 @@ import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 
-class ImageAnalyserBarCode(val addMeal: (id: String?) -> Unit ) : ImageAnalysis.Analyzer {
+class ImageAnalyserBarCode(val addMeal: (id: String?) -> Unit) : ImageAnalysis.Analyzer {
 
   private val options =
       BarcodeScannerOptions.Builder()
@@ -43,7 +43,6 @@ class ImageAnalyserBarCode(val addMeal: (id: String?) -> Unit ) : ImageAnalysis.
           }
           .addOnFailureListener { Log.e("ImageAnalyser", "Error processing image", it) }
           .addOnCompleteListener { imageProxy.close() }
-
     }
     Log.i("ImageAnalyser", "Image end")
   }

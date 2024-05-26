@@ -9,7 +9,6 @@ import androidx.camera.core.ImageInfo
 import androidx.camera.core.ImageProxy
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.se.polyfit.R
-import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.mlkit.vision.barcode.BarcodeScanner
 import com.google.mlkit.vision.barcode.BarcodeScanning
@@ -23,196 +22,194 @@ import kotlin.Exception
 
 class ImageProxyWrapper(private val image: Image?) : ImageProxy {
 
-    override fun close() {
-        image?.close()
-    }
+  override fun close() {
+    image?.close()
+  }
 
-    override fun getCropRect(): Rect {
-        TODO("Not yet implemented")
-    }
+  override fun getCropRect(): Rect {
+    TODO("Not yet implemented")
+  }
 
-    override fun setCropRect(rect: Rect?) {
-        TODO("Not yet implemented")
-    }
+  override fun setCropRect(rect: Rect?) {
+    TODO("Not yet implemented")
+  }
 
-    override fun getFormat(): Int {
-        return ImageFormat.JPEG
-    }
+  override fun getFormat(): Int {
+    return ImageFormat.JPEG
+  }
 
-    override fun getHeight(): Int {
-        return 1920
-    }
+  override fun getHeight(): Int {
+    return 1920
+  }
 
-    override fun getWidth(): Int {
-        return 1080
-    }
+  override fun getWidth(): Int {
+    return 1080
+  }
 
-    override fun getPlanes(): Array<ImageProxy.PlaneProxy> {
-        return listOf(mockk<ImageProxy.PlaneProxy>(mockk(relaxed = true), mockk(relaxed = true), mockk(relaxed = true))).toTypedArray()
-    }
+  override fun getPlanes(): Array<ImageProxy.PlaneProxy> {
+    return listOf(
+            mockk<ImageProxy.PlaneProxy>(
+                mockk(relaxed = true), mockk(relaxed = true), mockk(relaxed = true)))
+        .toTypedArray()
+  }
 
-    override fun getImageInfo(): ImageInfo {
-        return mockk(relaxed = true)
-    }
+  override fun getImageInfo(): ImageInfo {
+    return mockk(relaxed = true)
+  }
 
-    override fun getImage(): Image? {
-        Log.i("ImageAnalyser", "getImage $image")
-        return image
-    }
+  override fun getImage(): Image? {
+    Log.i("ImageAnalyser", "getImage $image")
+    return image
+  }
 }
+
 class ImageAnalyserBarCodeTest {
-    @org.junit.Test
-    fun analyzeImage1() {
+  @org.junit.Test
+  fun analyzeImage1() {
 
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
+    val context = InstrumentationRegistry.getInstrumentation().targetContext
 
-        val bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.barcode1)
-        val image = InputImage.fromBitmap(bitmap, 0)
-        Log.i("ImageAnalyser", "image $image")
+    val bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.barcode1)
+    val image = InputImage.fromBitmap(bitmap, 0)
+    Log.i("ImageAnalyser", "image $image")
 
-        val mockImageProxy = mockk<ImageProxy>()
-        val mockImage = mockk<Image>()
-        val mockImageInfo = mockk<ImageInfo>()
-        every { mockImageProxy.getImage() } returns mockImage
-        every { mockImageProxy.imageInfo } returns mockImageInfo
-        every { mockImageInfo.rotationDegrees } returns 0
-        every { mockImage.format } returns ImageFormat.JPEG
-        every { mockImage.height } returns 1920
-        every { mockImage.width } returns 1080
-        every { mockImage.close() } returns Unit
-        every { mockImage.planes } returns emptyArray()
+    val mockImageProxy = mockk<ImageProxy>()
+    val mockImage = mockk<Image>()
+    val mockImageInfo = mockk<ImageInfo>()
+    every { mockImageProxy.getImage() } returns mockImage
+    every { mockImageProxy.imageInfo } returns mockImageInfo
+    every { mockImageInfo.rotationDegrees } returns 0
+    every { mockImage.format } returns ImageFormat.JPEG
+    every { mockImage.height } returns 1920
+    every { mockImage.width } returns 1080
+    every { mockImage.close() } returns Unit
+    every { mockImage.planes } returns emptyArray()
 
+    val imageProxyWrapper = ImageProxyWrapper(mockImage)
+    val addMeal: (String?) -> Unit = mockk()
 
-        val imageProxyWrapper = ImageProxyWrapper(mockImage)
-        val addMeal: (String?) -> Unit = mockk()
+    val imageAnalyserBarCode = ImageAnalyserBarCode(addMeal)
+    imageAnalyserBarCode.analyze(imageProxyWrapper)
+    verify { addMeal("7613312266533") }
+  }
 
-        val imageAnalyserBarCode = ImageAnalyserBarCode(addMeal)
-        imageAnalyserBarCode.analyze(imageProxyWrapper)
-        verify { addMeal("7613312266533") }
-    }
+  @org.junit.Test
+  fun findTheBarCode() {
 
+    val context = InstrumentationRegistry.getInstrumentation().targetContext
 
-    @org.junit.Test
-    fun findTheBarCode() {
+    val bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.barcode1)
+    val image = InputImage.fromBitmap(bitmap, 0)
 
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
+    // Mock the ImageProxy and Image
+    val mockImageProxy = mockk<ImageProxy>(relaxed = true)
+    val mockImage = mockk<Image>(relaxed = true)
+    every { mockImageProxy.getImage() } returns mockImage
+    every { mockImageProxy.imageInfo } returns mockk(relaxed = true)
+    every { mockImageProxy.close() } returns Unit
 
-        val bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.barcode1)
-        val image = InputImage.fromBitmap(bitmap, 0)
+    val inputImage = mockk<InputImage>(relaxed = true)
+    every { inputImage.width } returns 2268
+    every { inputImage.height } returns 4032
+    every { inputImage.rotationDegrees } returns 0
+    every { inputImage.format } returns ImageFormat.JPEG
+    every { inputImage.planes } returns emptyArray()
 
-        // Mock the ImageProxy and Image
-        val mockImageProxy = mockk<ImageProxy>(relaxed = true)
-        val mockImage = mockk<Image>(relaxed = true)
-        every { mockImageProxy.getImage() } returns mockImage
-        every { mockImageProxy.imageInfo } returns mockk(relaxed = true)
-        every { mockImageProxy.close() } returns Unit
+    mockkStatic(InputImage::class)
+    every { InputImage.fromMediaImage(any(), any()) } returns image
 
-        val inputImage = mockk<InputImage>(relaxed = true)
-        every { inputImage.width } returns 2268
-        every { inputImage.height } returns 4032
-        every { inputImage.rotationDegrees } returns 0
-        every { inputImage.format } returns ImageFormat.JPEG
-        every { inputImage.planes } returns emptyArray()
+    val mockImageInfo = mockk<ImageInfo>(relaxed = true)
+    every { mockImageProxy.getImage() } returns mockImage
+    every { mockImageProxy.imageInfo } returns mockImageInfo
+    every { mockImageInfo.rotationDegrees } returns 0
+    every { mockImage.format } returns ImageFormat.JPEG
+    every { mockImage.height } returns 4032
+    every { mockImage.width } returns 2268
+    every { mockImage.close() } returns Unit
+    every { mockImage.planes } returns emptyArray()
 
-        mockkStatic(InputImage::class)
-        every { InputImage.fromMediaImage(any(), any()) } returns image
+    val mockBarcode = mockk<Barcode>(relaxed = true)
+    val barcodeList = listOf(mockBarcode) // Create a list of Barcodes
+    val successfulTask = Tasks.forResult(barcodeList) // Create a successful Task
 
-        val mockImageInfo = mockk<ImageInfo>(relaxed = true)
-        every { mockImageProxy.getImage() } returns mockImage
-        every { mockImageProxy.imageInfo } returns mockImageInfo
-        every { mockImageInfo.rotationDegrees } returns 0
-        every { mockImage.format } returns ImageFormat.JPEG
-        every { mockImage.height } returns 4032
-        every { mockImage.width } returns 2268
-        every { mockImage.close() } returns Unit
-        every { mockImage.planes } returns emptyArray()
+    mockkStatic(BarcodeScanning::class)
+    every { BarcodeScanning.getClient(any()) } returns
+        mockk<BarcodeScanner> { every { process(any<InputImage>()) } returns successfulTask }
 
-        val mockBarcode = mockk<Barcode>(relaxed = true)
-        val barcodeList = listOf(mockBarcode) // Create a list of Barcodes
-        val successfulTask = Tasks.forResult(barcodeList) // Create a successful Task
+    mockkStatic(InputImage::class)
+    every { InputImage.fromMediaImage(any(), any()) } returns mockk()
 
-        mockkStatic(BarcodeScanning::class)
-        every { BarcodeScanning.getClient(any()) } returns mockk<BarcodeScanner> {
-            every { process(any<InputImage>()) } returns successfulTask
-        }
+    // Mock the Barcode
+    every { mockBarcode.displayValue } returns "1234567890128"
 
+    // Mock the addMeal function
+    val addMeal: (String?) -> Unit = mockk(relaxed = true)
 
-        mockkStatic(InputImage::class)
-        every { InputImage.fromMediaImage(any(), any()) } returns mockk()
+    // Create the ImageAnalyserBarCode
+    val imageAnalyserBarCode = ImageAnalyserBarCode(addMeal)
 
-        // Mock the Barcode
-        every { mockBarcode.displayValue } returns "1234567890128"
+    // Call analyze
+    imageAnalyserBarCode.analyze(mockImageProxy)
 
-        // Mock the addMeal function
-        val addMeal: (String?) -> Unit = mockk(relaxed = true)
+    // Verify that addMeal was called with the correct barcode
+    verify { addMeal("1234567890128") }
+  }
 
-        // Create the ImageAnalyserBarCode
-        val imageAnalyserBarCode = ImageAnalyserBarCode(addMeal)
+  @org.junit.Test
+  fun doesntFindTheBarCode() {
 
-        // Call analyze
-        imageAnalyserBarCode.analyze(mockImageProxy)
+    val context = InstrumentationRegistry.getInstrumentation().targetContext
 
-        // Verify that addMeal was called with the correct barcode
-        verify { addMeal("1234567890128") }
-    }
+    val bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.barcode1)
+    val image = InputImage.fromBitmap(bitmap, 0)
 
-    @org.junit.Test
-    fun doesntFindTheBarCode() {
+    // Mock the ImageProxy and Image
+    val mockImageProxy = mockk<ImageProxy>(relaxed = true)
+    val mockImage = mockk<Image>(relaxed = true)
+    every { mockImageProxy.getImage() } returns mockImage
+    every { mockImageProxy.imageInfo } returns mockk(relaxed = true)
+    every { mockImageProxy.close() } returns Unit
 
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
+    val inputImage = mockk<InputImage>(relaxed = true)
+    every { inputImage.width } returns 2268
+    every { inputImage.height } returns 4032
+    every { inputImage.rotationDegrees } returns 0
+    every { inputImage.format } returns ImageFormat.JPEG
+    every { inputImage.planes } returns emptyArray()
 
-        val bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.barcode1)
-        val image = InputImage.fromBitmap(bitmap, 0)
+    mockkStatic(InputImage::class)
+    every { InputImage.fromMediaImage(any(), any()) } returns image
 
-        // Mock the ImageProxy and Image
-        val mockImageProxy = mockk<ImageProxy>(relaxed = true)
-        val mockImage = mockk<Image>(relaxed = true)
-        every { mockImageProxy.getImage() } returns mockImage
-        every { mockImageProxy.imageInfo } returns mockk(relaxed = true)
-        every { mockImageProxy.close() } returns Unit
+    val mockImageInfo = mockk<ImageInfo>(relaxed = true)
+    every { mockImageProxy.getImage() } returns mockImage
+    every { mockImageProxy.imageInfo } returns mockImageInfo
+    every { mockImageInfo.rotationDegrees } returns 0
+    every { mockImage.format } returns ImageFormat.JPEG
+    every { mockImage.height } returns 4032
+    every { mockImage.width } returns 2268
+    every { mockImage.close() } returns Unit
+    every { mockImage.planes } returns emptyArray()
 
-        val inputImage = mockk<InputImage>(relaxed = true)
-        every { inputImage.width } returns 2268
-        every { inputImage.height } returns 4032
-        every { inputImage.rotationDegrees } returns 0
-        every { inputImage.format } returns ImageFormat.JPEG
-        every { inputImage.planes } returns emptyArray()
+    val exceptionTask =
+        Tasks.forException<List<Barcode>>(Exception("Task failed")) // Create a failure Task
 
-        mockkStatic(InputImage::class)
-        every { InputImage.fromMediaImage(any(), any()) } returns image
+    mockkStatic(BarcodeScanning::class)
+    every { BarcodeScanning.getClient(any()) } returns
+        mockk<BarcodeScanner> { every { process(any<InputImage>()) } returns exceptionTask }
 
-        val mockImageInfo = mockk<ImageInfo>(relaxed = true)
-        every { mockImageProxy.getImage() } returns mockImage
-        every { mockImageProxy.imageInfo } returns mockImageInfo
-        every { mockImageInfo.rotationDegrees } returns 0
-        every { mockImage.format } returns ImageFormat.JPEG
-        every { mockImage.height } returns 4032
-        every { mockImage.width } returns 2268
-        every { mockImage.close() } returns Unit
-        every { mockImage.planes } returns emptyArray()
+    mockkStatic(InputImage::class)
+    every { InputImage.fromMediaImage(any(), any()) } returns mockk()
 
+    // Mock the addMeal function
+    val addMeal: (String?) -> Unit = mockk(relaxed = true)
 
-        val exceptionTask = Tasks.forException<List<Barcode>>(Exception("Task failed")) // Create a failure Task
+    // Create the ImageAnalyserBarCode
+    val imageAnalyserBarCode = ImageAnalyserBarCode(addMeal)
 
-        mockkStatic(BarcodeScanning::class)
-        every { BarcodeScanning.getClient(any()) } returns mockk<BarcodeScanner> {
-            every { process(any<InputImage>()) } returns exceptionTask
-        }
+    // Call analyze
+    imageAnalyserBarCode.analyze(mockImageProxy)
 
-
-        mockkStatic(InputImage::class)
-        every { InputImage.fromMediaImage(any(), any()) } returns mockk()
-
-        // Mock the addMeal function
-        val addMeal: (String?) -> Unit = mockk(relaxed = true)
-
-        // Create the ImageAnalyserBarCode
-        val imageAnalyserBarCode = ImageAnalyserBarCode(addMeal)
-
-        // Call analyze
-        imageAnalyserBarCode.analyze(mockImageProxy)
-
-        // Verify that addMeal was called with the correct barcode
-        verify(exactly = 0) { addMeal(any()) }
-    }
+    // Verify that addMeal was called with the correct barcode
+    verify(exactly = 0) { addMeal(any()) }
+  }
 }
