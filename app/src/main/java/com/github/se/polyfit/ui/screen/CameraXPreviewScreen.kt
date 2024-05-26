@@ -1,5 +1,6 @@
 package com.github.se.polyfit.ui.screen
 
+import android.util.Size
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageCapture
@@ -39,7 +40,12 @@ fun CameraPreviewScreen(barCodeCodeViewModel: BarCodeCodeViewModel = hiltViewMod
   val preview = Preview.Builder().build()
   val previewView = remember { PreviewView(context) }
   val cameraxSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
-  val imageCapture = remember { ImageCapture.Builder().build() }
+  val imageCapture = remember {
+    ImageCapture.Builder()
+            .setTargetResolution(Size(1920, 1080))
+            //.setBackpressureStrategy(ImageCapture.STRATEGY_KEEP_ONLY_LATEST)
+            .build()
+  }
 
   val imageAnalysis =
       ImageAnalysis.Builder()

@@ -52,6 +52,13 @@ fun IngredientsOverview(
 ) {
   val context = LocalContext.current
 
+  val listId by barCodeCodeViewModel.listId.observeAsState()
+
+  val listProducts = mutableListOf<IngredientsTMP>()
+  for (qrCode in listId ?: emptyList()) {
+    listProducts += IngredientsTMP(qrCode, 0, 0, 0, 0, 0)
+  }
+
   Scaffold(
       topBar = { SimpleTopBar(title = context.getString(R.string.Product)) { navigateBack() } },
       bottomBar = { BottomBarIngredient(navigateForward = navigateForward) },

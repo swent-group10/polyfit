@@ -35,6 +35,7 @@ class ImageAnalyserBarCode(val addMeal: (id: String?) -> Unit) : ImageAnalysis.A
           .process(image)
           .addOnSuccessListener { barcodes ->
             for (barcode in barcodes) {
+              Log.i("ImageAnalyser", "format ${barcode.format} value ${barcode.displayValue}")
               addMeal(barcode.displayValue)
             }
           }

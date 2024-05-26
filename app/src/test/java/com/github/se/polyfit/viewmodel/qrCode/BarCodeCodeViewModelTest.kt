@@ -43,7 +43,9 @@ class BarCodeCodeViewModelTest {
 
   @Test
   fun `addId adds id to list when id is valid and not in list`() {
-    viewModel.addId("123456")
+    for (i in 1..REQUIRED_SCAN_COUNT) {
+      viewModel.addId("123456")
+    }
     assertEquals(listOf("123456"), viewModel.listId.value)
   }
 
@@ -55,35 +57,75 @@ class BarCodeCodeViewModelTest {
 
   @Test
   fun `addId does not add id to list when id is already in list`() {
-    viewModel.addId("123456")
-    viewModel.addId("123456")
+    for (i in 1..REQUIRED_SCAN_COUNT) {
+      viewModel.addId("123456")
+    }
+    for (i in 1..REQUIRED_SCAN_COUNT) {
+      viewModel.addId("123456")
+    }
     assertEquals(listOf("123456"), viewModel.listId.value)
   }
 
   @Test
   fun `addId does not add id to list when id length is not in 6 to 13`() {
-    viewModel.addId("12345")
+    for (i in 1..REQUIRED_SCAN_COUNT) {
+      viewModel.addId("12345")
+    }
     assertEquals(emptyList<String>(), viewModel.listId.value)
   }
 
   @Test
   fun `addId adds id to the top of the list when id is valid and not in list`() {
+    for (i in 1..REQUIRED_SCAN_COUNT) {
       viewModel.addId("123456")
+    }
+    for (i in 1..REQUIRED_SCAN_COUNT) {
       viewModel.addId("789012")
+    }
       assertEquals(listOf("789012", "123456"), viewModel.listId.value)
   }
 
   @Test
   fun `addId does not add id to list when id is empty`() {
+
+    for (i in 1..REQUIRED_SCAN_COUNT) {
       viewModel.addId("")
+    }
       assertEquals(emptyList<String>(), viewModel.listId.value)
   }
 
   @Test
   fun `addId does not add id to list when id length is more than 13`() {
-      viewModel.addId("12345678901234")
+    var s = ""
+    for (i in 1..MAX_BARCODE_LENGTH + 1) {
+      s += "1"
+    }
+    for (i in 1..REQUIRED_SCAN_COUNT) {
+      viewModel.addId(s)
+    }
       assertEquals(emptyList<String>(), viewModel.listId.value)
   }
+
+  @Test
+  fun `addId does not add id to list when id length is less than 6`() {
+    var s = ""
+    for (i in 1..< MIN_BARCODE_LENGTH) {
+      s += "1"
+    }
+    for (i in 1..REQUIRED_SCAN_COUNT) {
+      viewModel.addId(s)
+    }
+    assertEquals(emptyList<String>(), viewModel.listId.value)
+  }
+  @Test
+  fun `addId does not added enough time`() {
+
+    for (i in 1..<REQUIRED_SCAN_COUNT) {
+      viewModel.addId("12345678")
+    }
+      assertEquals(emptyList<String>(), viewModel.listId.value)
+  }
+
 }
 
 /*
