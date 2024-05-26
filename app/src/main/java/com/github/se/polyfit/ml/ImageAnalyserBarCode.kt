@@ -26,15 +26,14 @@ class ImageAnalyserBarCode(val addMeal: (id: String?) -> Unit) : ImageAnalysis.A
 
   @OptIn(ExperimentalGetImage::class)
   override fun analyze(imageProxy: ImageProxy) {
-    Log.i("ImageAnalyser", "Image received1")
     val mediaImage = imageProxy.getImage()
-    Log.i("ImageAnalyser", "Image received2 $mediaImage")
     if (mediaImage != null) {
       val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
-      Log.i("ImageAnalyser", "Image received3")
+
       // Pass image to the ML Kit Vision API
-      scanner
-          .process(image)
+      val mutableListTask = scanner.process(image)
+
+      mutableListTask
           .addOnSuccessListener { barcodes ->
             for (barcode in barcodes) {
               Log.i("ImageAnalyser", "format ${barcode.format} value ${barcode.displayValue}")
@@ -42,8 +41,6 @@ class ImageAnalyserBarCode(val addMeal: (id: String?) -> Unit) : ImageAnalysis.A
             }
           }
           .addOnFailureListener { Log.e("ImageAnalyser", "Error processing image", it) }
-          .addOnCompleteListener { imageProxy.close() }
     }
-    Log.i("ImageAnalyser", "Image end")
   }
 }
