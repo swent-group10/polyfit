@@ -79,4 +79,8 @@ class Navigation(private val navHostController: NavHostController) {
     Log.i("Navigation", "Navigating to $route")
     navHostController.navigate(route)
   }
+
+  fun navigateToPostInfo() {
+    navigateTo(Route.PostInfo)
+  }
 }
