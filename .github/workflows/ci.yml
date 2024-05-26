@@ -104,7 +104,7 @@ jobs:
 
       - name: Decode Keystore (for signing the APK)
         run: echo "${{ secrets.KEYSTORE }}" | base64 --decode > ./app/keystore.jks
-        
+
       - name: Inject secrets for signing APK into gradle.properties
         run: |
           echo "RELEASE_STORE_PASSWORD=${{ secrets.RELEASE_STORE_PASSWORD }}" >> gradle.properties
@@ -167,6 +167,18 @@ jobs:
         run: ./gradlew sonar --parallel --build-cache
         # Adjust the sonar.projectKey and sonar.organization to your project's values
         # The xmlReportPaths needs to point to where your JaCoCo coverage report is generated
+
+
+      ##
+      - name: Fetch SonarCloud report
+        run: |
+          sleep 5m  # Wait for SonarCloud to process the report
+          curl -u ${{ secrets.SONAR_TOKEN }}: https://sonarcloud.io/api/measures/component?componentKey=your-project-key&metricKeys=coverage > sonar-report.json
+
+      - name: Print coverage
+        run: |
+          COVERAGE=$(jq -r '.component.measures[] | select(.metric=="coverage") | .value' sonar-report.json)
+          echo "SonarCloud coverage: $COVERAGE%"
 
       - name: Create empty result file
         run: echo -n "" > grading-result.csv
