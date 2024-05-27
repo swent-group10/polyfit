@@ -15,16 +15,6 @@ class IngredientsOverviewScreen(semanticsProvider: SemanticsNodeInteractionsProv
   val listProducts: KNode = child { hasTestTag("ListProductColumn") }
 }
 
-class IngredientsOverviewTopBarOld(semanticsProvider: SemanticsNodeInteractionsProvider) :
-    ComposeScreen<IngredientsOverviewTopBarOld>(
-        semanticsProvider = semanticsProvider,
-        viewBuilderAction = { hasTestTag("TopBarIngredient") }) {
-
-  val backButton: KNode = child { hasTestTag("BackButton") }
-  val title: KNode = child { hasTestTag("ProductTitle") }
-  val icon: KNode = backButton.child { hasTestTag("BackButtonIcon") }
-}
-
 class IngredientsOverviewTopBar(semanticsProvider: SemanticsNodeInteractionsProvider) :
     ComposeScreen<IngredientsOverviewTopBar>(
         semanticsProvider = semanticsProvider, viewBuilderAction = { hasTestTag("TopBar") }) {

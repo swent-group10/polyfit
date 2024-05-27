@@ -38,7 +38,6 @@ fun CameraXScreen(barCodeCodeViewModel: BarCodeCodeViewModel = hiltViewModel()) 
 
   val preview = Preview.Builder().build()
   val cameraxSelector = CameraSelector.Builder().build()
-  val lensFacing = CameraSelector.LENS_FACING_BACK
   val previewView = remember { PreviewView(context) }
   val imageCapture = remember { ImageCapture.Builder().build() }
 
@@ -66,7 +65,7 @@ fun CameraXScreen(barCodeCodeViewModel: BarCodeCodeViewModel = hiltViewModel()) 
     return
   }
 
-  LaunchedEffect(lensFacing) {
+  LaunchedEffect(Unit) {
     val cameraProvider = context.getCameraProvider()
     cameraProvider.unbindAll()
     cameraProvider.bindToLifecycle(

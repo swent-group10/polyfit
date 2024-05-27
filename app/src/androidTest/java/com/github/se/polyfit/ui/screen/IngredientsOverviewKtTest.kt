@@ -1,15 +1,30 @@
 package com.github.se.polyfit.ui.screen
 
+import android.content.Context
+import android.content.pm.PackageManager
 import android.util.Log
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.printToString
+import androidx.core.app.ActivityCompat
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.rule.GrantPermissionRule
+import com.github.se.polyfit.data.processor.LocalDataProcessor
+import com.github.se.polyfit.model.data.User
+import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.components.IngredientsOverview.ListProducts
+import com.github.se.polyfit.ui.navigation.Route
+import com.github.se.polyfit.ui.utils.OverviewTags
+import com.github.se.polyfit.viewmodel.meal.OverviewViewModel
 import com.github.se.polyfit.viewmodel.qrCode.BarCodeCodeViewModel
 import io.github.kakaocup.compose.node.element.ComposeScreen
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Ignore
@@ -19,6 +34,10 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class IngredientsOverviewTest {
+
+  @get:Rule
+  val grantPermissionRule: GrantPermissionRule =
+      GrantPermissionRule.grant(android.Manifest.permission.CAMERA)
 
   val i1 = IngredientsTMP("Apple", 100, 52, 14, 0, 0)
   val i2 = IngredientsTMP("Banana", 100, 89, 23, 0, 1)
@@ -246,5 +265,115 @@ class IngredientsOverviewTest {
     verify(exactly = 0) { navigateBack() }
     verify(exactly = 0) { navigateForward() }
     verify(exactly = 1) { onClickFloatingButton() }
+  }
+
+  private val mockkGoBack: () -> Unit = mockk(relaxed = true)
+  private val mockkGoForward: () -> Unit = mockk(relaxed = true)
+  private val barCodeCodeViewModel = BarCodeCodeViewModel()
+  private val context = mockk<Context>(relaxed = true)
+
+  fun setup() {
+
+    every { ActivityCompat.checkSelfPermission(context, any()) } returns
+        PackageManager.PERMISSION_GRANTED
+
+    System.setProperty("isTestEnvironment", "true")
+    val mockkDataProcessor: LocalDataProcessor = mockk(relaxed = true)
+    val mockkOverviewModule =
+        OverviewViewModel(
+            mockk(),
+            mockk(),
+            User.testUser().apply { displayName = "It's a me Mario" },
+            mockkDataProcessor)
+
+    composeTestRule.setContent {
+      val navController = rememberNavController()
+      NavHost(navController = navController, startDestination = Route.Home) {
+        composable(Route.Home) {
+          GenericScreen(
+              navController = navController,
+              content = { paddingValues ->
+                OverviewScreen(paddingValues, navController, mockkOverviewModule)
+              })
+        }
+        composable(Route.OverviewScan) {
+          IngredientsOverview(mockkGoBack, mockkGoForward, {}, emptyList(), barCodeCodeViewModel)
+        }
+      }
+    }
+  }
+
+  @Test
+  fun showTree() {
+
+    composeTestRule.setContent {
+      IngredientsOverview(mockkGoBack, mockkGoForward, {}, emptyList(), barCodeCodeViewModel)
+    }
+
+    Log.i("abc", "printAllNode  ${composeTestRule.onRoot(useUnmergedTree = true).printToString()}")
+  }
+
+  @Test
+  fun Verify_button_go_to_scan_screen_and_go_back() {
+    setup()
+    ComposeScreen.onComposeScreen<PictureDialogBox>(composeTestRule) {
+      assertDoesNotExist()
+      composeTestRule.onNodeWithTag(OverviewTags.overviewPictureBtn).performClick()
+      assertExists()
+      assertIsDisplayed()
+
+      thirdButton {
+        assertExists()
+        assertIsDisplayed()
+        assertHasClickAction()
+        performClick()
+      }
+    }
+
+    ComposeScreen.onComposeScreen<IngredientsOverviewTopBar>(composeTestRule) {
+      assertExists()
+
+      backButton {
+        assertExists()
+        assertIsDisplayed()
+        assertHasClickAction()
+        performClick()
+      }
+    }
+
+    verify(exactly = 0) { mockkGoForward() }
+    verify(exactly = 1) { mockkGoBack() }
+  }
+
+  @Test
+  fun Verify_button_go_to_scan_and_go_further() {
+    setup()
+    ComposeScreen.onComposeScreen<PictureDialogBox>(composeTestRule) {
+      assertDoesNotExist()
+      composeTestRule.onNodeWithTag(OverviewTags.overviewPictureBtn).performClick()
+      assertExists()
+      assertIsDisplayed()
+
+      thirdButton {
+        assertExists()
+        assertIsDisplayed()
+        assertHasClickAction()
+        performClick()
+      }
+    }
+
+    ComposeScreen.onComposeScreen<IngredientsOverviewBottomBarIngredient>(composeTestRule) {
+      assertExists()
+
+      generateButton {
+        assertExists()
+        assertIsDisplayed()
+        assertHasClickAction()
+        performClick()
+      }
+    }
+
+    verify(exactly = 1) { mockkGoForward() }
+    verify(exactly = 0) { mockkGoBack() }
   }
 }
