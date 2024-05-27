@@ -1,5 +1,6 @@
 package com.github.se.polyfit.ui.screen
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -10,6 +11,7 @@ import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -89,7 +91,23 @@ fun OverviewScreen(
 
         showPictureDialog = false
         val id: String? = runBlocking(Dispatchers.IO) { overviewViewModel.storeMeal(imageBitmap) }
-        navigation.navigateToAddMeal(id)
+        navigateOrShowError(id, navigation, context)
+      }
+
+  val pickMedia =
+      rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        showPictureDialog = false
+        var id: String? = null
+        runBlocking(Dispatchers.IO) {
+          id =
+              overviewViewModel.handleSelectedImage(
+                  context,
+                  uri,
+                  overviewViewModel,
+              )
+        }
+
+        navigateOrShowError(id, navigation, context)
       }
 
   // Launcher for requesting the camera permission
@@ -134,13 +152,14 @@ fun OverviewScreen(
             listOf(
                 overviewViewModel.callCamera(context, startCamera, requestPermissionLauncher),
                 {
-                  Toast.makeText(
-                          context, context.getString(R.string.PermissionDenied), Toast.LENGTH_SHORT)
-                      .show()
+                  pickMedia.launch(
+                      PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                 },
                 {
                   Toast.makeText(
-                          context, context.getString(R.string.PermissionDenied), Toast.LENGTH_SHORT)
+                          context,
+                          context.getString(R.string.FeatureNotYetImplemented),
+                          Toast.LENGTH_SHORT)
                       .show()
                 }),
         buttonsName =
@@ -229,5 +248,13 @@ fun OverviewScreen(
             }
           }
         }
+  }
+}
+
+fun navigateOrShowError(id: String?, navigation: Navigation, context: Context) {
+  if (id != null) {
+    navigation.navigateToAddMeal(id)
+  } else {
+    Toast.makeText(context, context.getString(R.string.ErrorPicture), Toast.LENGTH_SHORT).show()
   }
 }
