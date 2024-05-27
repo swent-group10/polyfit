@@ -55,19 +55,13 @@ fun IngredientsOverview(
 
   val listId by barCodeCodeViewModel.listId.observeAsState()
 
+  Log.i("IngredientsOverview", "listProducts Before: $listProducts")
   // TODO REMOVE
   val listProducts = mutableListOf<IngredientsTMP>()
   for (qrCode in listId ?: emptyList()) {
-    listProducts +=
-        IngredientsTMP(
-            qrCode,
-            (0..100).random(),
-            (0..100).random(),
-            (0..100).random(),
-            (0..100).random(),
-            (0..100).random())
+    listProducts += IngredientsTMP(qrCode, 0, 0, 0, 0, 0)
   }
-  Log.i("IngredientsOverview", "listProducts: $listProducts")
+  Log.i("IngredientsOverview", "listProducts After: $listProducts")
 
   Scaffold(
       topBar = { SimpleTopBar(title = context.getString(R.string.Product)) { navigateBack() } },
