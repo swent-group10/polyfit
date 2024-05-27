@@ -24,7 +24,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -69,11 +68,4 @@ fun IngredientInfoCard(ingredient: Ingredient) {
                   }
             }
       }
-}
-
-@Composable
-@Preview
-fun IngredientInfoCardPreview() {
-  IngredientInfoCard(
-      Ingredient(1, "Apple", "Apple", "https://spoonacular.com/cdn/ingredients_100x100/apple.jpg"))
 }

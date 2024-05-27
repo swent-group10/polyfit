@@ -4,6 +4,11 @@ import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
+/**
+ * Represents the response from the Spoonacular API when requesting the instructions for a recipe.
+ * If the request was successful, the response will contain a list of [RecipeInstruction] objects
+ * else it will be empty.
+ */
 class RecipeInstructionResponseAPI(
     val recipes: List<RecipeInstruction>?,
 ) {
