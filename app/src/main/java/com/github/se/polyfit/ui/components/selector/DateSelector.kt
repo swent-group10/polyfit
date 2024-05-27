@@ -35,6 +35,7 @@ fun DateSelector(
     onConfirm: (LocalDate) -> Unit,
     modifier: Modifier = Modifier,
     title: String = "",
+    allowFutureDates: Boolean = true,
     inputDate: LocalDate? = null,
     titleStyle: TextStyle = MaterialTheme.typography.titleLarge,
 ) {
@@ -43,9 +44,10 @@ fun DateSelector(
   val startDate = inputDate ?: LocalDate.now(ZoneId.systemDefault())
   val initialMillis = startDate.toEpochDay() * 1000 * 60 * 60 * 24
   val datePickerState = rememberDatePickerState(initialSelectedDateMillis = initialMillis)
-
   val selectedDate =
       LocalDate.ofEpochDay(datePickerState.selectedDateMillis!! / (1000 * 60 * 60 * 24))
+  val invalidSelection =
+      !allowFutureDates && selectedDate.isAfter(LocalDate.now(ZoneId.systemDefault()))
 
   fun onConfirm() {
     onConfirm(selectedDate)
@@ -72,7 +74,11 @@ fun DateSelector(
           if (showDatePicker) {
             DatePickerDialog(
                 onDismissRequest = { showDatePicker = false },
-                confirmButton = { TextButton(onClick = { onConfirm() }) { Text(text = "Done") } },
+                confirmButton = {
+                  TextButton(enabled = !invalidSelection, onClick = { onConfirm() }) {
+                    Text(text = "Done")
+                  }
+                },
                 dismissButton = {
                   TextButton(onClick = { showDatePicker = false }) { Text(text = "Cancel") }
                 },
