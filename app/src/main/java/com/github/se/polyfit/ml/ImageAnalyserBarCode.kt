@@ -41,6 +41,7 @@ class ImageAnalyserBarCode(val addMeal: (id: String?) -> Unit) : ImageAnalysis.A
             }
           }
           .addOnFailureListener { Log.e("ImageAnalyser", "Error processing image", it) }
+          .addOnCompleteListener { imageProxy.close() }
     }
   }
 }
