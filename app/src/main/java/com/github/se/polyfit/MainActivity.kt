@@ -23,6 +23,7 @@ import com.github.se.polyfit.ui.navigation.Route
 import com.github.se.polyfit.ui.screen.CreatePostScreen
 import com.github.se.polyfit.ui.screen.DailyRecapScreen
 import com.github.se.polyfit.ui.screen.FullGraphScreen
+import com.github.se.polyfit.ui.screen.IngredientsOverview
 import com.github.se.polyfit.ui.screen.LoginScreen
 import com.github.se.polyfit.ui.screen.MapScreen
 import com.github.se.polyfit.ui.screen.OverviewScreen
@@ -70,6 +71,9 @@ class MainActivity : ComponentActivity() {
                 content = { paddingValues ->
                   MapScreen(paddingValues, { navController.navigate(Route.PostInfo) })
                 })
+          }
+          composable(Route.OverviewScan) {
+            IngredientsOverview(navigation::goBack, {}, {}, emptyList())
           }
           composable(Route.Graph) { FullGraphScreen(goBack = navigation::goBack) }
           composable(Route.Home) {

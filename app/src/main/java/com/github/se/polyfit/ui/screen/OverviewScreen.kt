@@ -4,9 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.ImageDecoder
-import android.graphics.ImageDecoder.createSource
-import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
@@ -60,6 +57,8 @@ import com.github.se.polyfit.viewmodel.meal.OverviewViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 
+var cameraNormal = true
+
 @Composable
 fun OverviewScreen(
     paddingValues: PaddingValues,
@@ -72,7 +71,6 @@ fun OverviewScreen(
   val isTestEnvironment = System.getProperty("isTestEnvironment") == "true"
 
   // State to hold the URI, the image and the bitmap
-  var imageUri by remember { mutableStateOf<Uri?>(null) }
   val iconExample = BitmapFactory.decodeResource(context.resources, R.drawable.picture_example)
   var imageBitmap by remember { mutableStateOf(iconExample) }
 
@@ -118,7 +116,11 @@ fun OverviewScreen(
           // Permission is granted, you can start the camera
           val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
           try {
-            startCamera.launch(takePictureIntent)
+            if (cameraNormal) {
+              startCamera.launch(takePictureIntent)
+            } else {
+              navigation.navigateToBarcodeScan()
+            }
           } catch (e: Exception) {
             // Handle the exception if the camera intent cannot be launched
             Log.e("OverviewScreen", "Error launching camera: $e")
@@ -129,38 +131,26 @@ fun OverviewScreen(
         }
       }
 
-  // Create a launcher to open gallery
-  val pickImageLauncher =
-      rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri?
-        ->
-        uri?.let {
-          imageUri = uri // Update the UI with the selected image URI
-
-          try {
-            val bitmap = ImageDecoder.decodeBitmap(createSource(context.contentResolver, uri))
-            imageBitmap = bitmap
-          } catch (e: Exception) {
-            Log.e("OverviewScreen", "Error decoding image: $e, are you sure the image is a bitmap?")
-          }
-        }
-      }
-
   if (showPictureDialog) {
     PictureDialog(
         onDismiss = { showPictureDialog = false },
         onButtonsClick =
             listOf(
-                overviewViewModel.callCamera(context, startCamera, requestPermissionLauncher),
+                {
+                  cameraNormal = true
+                  overviewViewModel.launchCamera(context, requestPermissionLauncher) {
+                    startCamera.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+                  }
+                },
                 {
                   pickMedia.launch(
                       PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                 },
                 {
-                  Toast.makeText(
-                          context,
-                          context.getString(R.string.FeatureNotYetImplemented),
-                          Toast.LENGTH_SHORT)
-                      .show()
+                  cameraNormal = false
+                  overviewViewModel.launchCamera(context, requestPermissionLauncher) {
+                    navigation.navigateToBarcodeScan()
+                  }
                 }),
         buttonsName =
             listOf(
