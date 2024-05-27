@@ -58,7 +58,12 @@ fun IngredientsOverview(
   // TODO REMOVE
   val listProducts = mutableListOf<IngredientsTMP>()
   for (qrCode in listId ?: emptyList()) {
-    listProducts += IngredientsTMP(qrCode, 0, 0, 0, 0, 0)
+    listProducts += IngredientsTMP(qrCode,
+            (0..100).random(),
+            (0..100).random(),
+            (0..100).random(),
+            (0..100).random(),
+            (0..100).random())
   }
   Log.i("IngredientsOverview", "listProducts: $listProducts")
 
