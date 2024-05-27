@@ -34,6 +34,11 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/api_google_map" />
+        <meta-data
+            android:name="com.google.mlkit.vision.DEPENDENCIES"
+            android:value="barcode"/>
+        <!-- Directly download the ml barcode model from the playstore -->
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

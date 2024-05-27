@@ -2,15 +2,12 @@ package com.github.se.polyfit.viewmodel.meal
 
 import android.Manifest
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
-import androidx.activity.result.ActivityResult
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
@@ -184,27 +181,20 @@ constructor(
     }
   }
 
-  fun callCamera(
+  fun launchCamera(
       context: Context,
-      startCamera: ManagedActivityResultLauncher<Intent, ActivityResult>,
-      requestPermissionLauncher: ManagedActivityResultLauncher<String, Boolean>
-  ): () -> Unit = {
-    // Check if the permission has already been granted
-    when (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)) {
-      PackageManager.PERMISSION_GRANTED -> {
-        // You can use the camera
-        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        try {
-          startCamera.launch(takePictureIntent)
-        } catch (e: Exception) {
-          // Handle the exception if the camera intent cannot be launched
-          Log.e("HomeScreen", "Error launching camera intent: $e")
-        }
+      requestPermissionLauncher: ManagedActivityResultLauncher<String, Boolean>,
+      callback: () -> Unit
+  ) {
+    if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) ==
+        PackageManager.PERMISSION_GRANTED) {
+      try {
+        callback()
+      } catch (e: Exception) {
+        Log.e("HomeScreen", "Error launching camera intent: $e")
       }
-      else -> {
-        // Request the permission
-        requestPermissionLauncher.launch(Manifest.permission.CAMERA)
-      }
+    } else {
+      requestPermissionLauncher.launch(Manifest.permission.CAMERA)
     }
   }
 
