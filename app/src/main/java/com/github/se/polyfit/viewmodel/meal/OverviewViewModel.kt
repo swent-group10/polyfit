@@ -2,13 +2,12 @@ package com.github.se.polyfit.viewmodel.meal
 
 import android.Manifest
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.provider.MediaStore
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
-import androidx.activity.result.ActivityResult
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
@@ -19,6 +18,7 @@ import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 @HiltViewModel
@@ -35,18 +35,11 @@ constructor(
     if (imageBitmap == null) {
       Log.e("OverviewViewModel", "Image is null")
       return null
-    } else {
-      val meal = spoonacularApiCaller.getMealsFromImage(imageBitmap)
-
-      val mealId = mealDao.insert(meal)
-
-      if (mealId == null) {
-        Log.e("OverviewViewModel", "Meal could not be inserted into the database")
-        return null
-      } else {
-        return mealId
-      }
     }
+
+    val meal = spoonacularApiCaller.getMealsFromImage(imageBitmap)
+    meal.userId = user.id
+    return mealDao.insert(meal)
   }
 
   fun deleteById(mealDatabaseId: String) {
@@ -55,7 +48,7 @@ constructor(
 
   fun getMealsByCalorieRange(minCalories: Double, maxCalories: Double): List<Meal> {
     // Get all meals from the database
-    val allMeals = mealDao.getAllMeals()
+    val allMeals = mealDao.getAllMeals(user.id)
 
     // Filter meals based on their calorie content
     val filteredMeals =
@@ -78,7 +71,7 @@ constructor(
 
   fun getMealsByName(name: String): List<Meal> {
     // Get all meals from the database
-    val allMeals = mealDao.getAllMeals()
+    val allMeals = mealDao.getAllMeals(user.id)
 
     // Filter meals based on their name
     val filteredMeals = allMeals.filter { meal -> meal.name.contains(name, ignoreCase = true) }
@@ -96,7 +89,7 @@ constructor(
 
   fun getMealsByOccasion(occasion: MealOccasion): List<Meal> {
     // Get all meals from the database
-    val allMeals = mealDao.getAllMeals()
+    val allMeals = mealDao.getAllMeals(user.id)
 
     // Filter meals based on their occasion
     val filteredMeals = allMeals.filter { meal -> meal.occasion == occasion }
@@ -118,7 +111,7 @@ constructor(
       maxCalories: Double,
       occasion: MealOccasion
   ): List<Meal> {
-    val allMeals = mealDao.getAllMeals()
+    val allMeals = mealDao.getAllMeals(user.id)
 
     val filteredMeals =
         allMeals.filter { meal ->
@@ -139,7 +132,7 @@ constructor(
 
   fun getMealWithHighestCalories(): Meal? {
     // Get all meals from the database
-    val allMeals = mealDao.getAllMeals()
+    val allMeals = mealDao.getAllMeals(user.id)
 
     // Find the meal with the highest calories
     val highestCalorieMeal =
@@ -161,7 +154,7 @@ constructor(
 
   fun getMealWithLowestCalories(): Meal? {
     // Get all meals from the database
-    val allMeals = mealDao.getAllMeals()
+    val allMeals = mealDao.getAllMeals(user.id)
 
     // Find the meal with the lowest calories
     val lowestCalorieMeal =
@@ -188,27 +181,20 @@ constructor(
     }
   }
 
-  fun callCamera(
+  fun launchCamera(
       context: Context,
-      startCamera: ManagedActivityResultLauncher<Intent, ActivityResult>,
-      requestPermissionLauncher: ManagedActivityResultLauncher<String, Boolean>
-  ): () -> Unit = {
-    // Check if the permission has already been granted
-    when (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)) {
-      PackageManager.PERMISSION_GRANTED -> {
-        // You can use the camera
-        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        try {
-          startCamera.launch(takePictureIntent)
-        } catch (e: Exception) {
-          // Handle the exception if the camera intent cannot be launched
-          Log.e("HomeScreen", "Error launching camera intent: $e")
-        }
+      requestPermissionLauncher: ManagedActivityResultLauncher<String, Boolean>,
+      callback: () -> Unit
+  ) {
+    if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) ==
+        PackageManager.PERMISSION_GRANTED) {
+      try {
+        callback()
+      } catch (e: Exception) {
+        Log.e("HomeScreen", "Error launching camera intent: $e")
       }
-      else -> {
-        // Request the permission
-        requestPermissionLauncher.launch(Manifest.permission.CAMERA)
-      }
+    } else {
+      requestPermissionLauncher.launch(Manifest.permission.CAMERA)
     }
   }
 
@@ -219,5 +205,56 @@ constructor(
 
   fun getCaloryGoal(): Long {
     return user.calorieGoal
+  }
+
+  /**
+   * Converts a URI to a Bitmap.
+   *
+   * @param context The context of the application
+   * @param uri The URI to convert stored locally on the device
+   * @return The Bitmap if the conversion was successful, null otherwise
+   */
+  fun uriToBitmap(context: Context, uri: Uri): Bitmap? {
+    // Open an InputStream from the URI
+    val inputStream = context.contentResolver.openInputStream(uri)
+
+    // Use the InputStream if it's not null
+    inputStream?.use { stream ->
+      // Create a ByteArrayOutputStream and copy the InputStream into it
+      val outputStream = ByteArrayOutputStream().apply { stream.copyTo(this) }
+
+      // Convert the ByteArrayOutputStream to a byte array
+      val byteArray = outputStream.toByteArray()
+
+      // Decode the byte array into a Bitmap
+      return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+    }
+
+    // If the InputStream was null, return null
+    return null
+  }
+
+  /**
+   * Handles the selected image by converting it to a Bitmap. It handles calling the spoonacular API
+   * to get the meal, and storing the meal in the database.
+   *
+   * @param context The context of the application
+   * @param uri The URI of the selected image
+   * @param overviewViewModel The OverviewViewModel instance
+   * @return The ID of the stored meal in the local database if the image was successfully stored,
+   *   null otherwise
+   */
+  fun handleSelectedImage(
+      context: Context,
+      uri: Uri?,
+      overviewViewModel: OverviewViewModel,
+  ): String? {
+    return if (uri != null) {
+      val imageBitmap = uriToBitmap(context, uri)
+
+      overviewViewModel.storeMeal(imageBitmap)
+    } else {
+      null
+    }
   }
 }

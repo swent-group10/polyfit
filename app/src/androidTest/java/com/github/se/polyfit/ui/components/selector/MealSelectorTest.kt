@@ -56,7 +56,7 @@ class MealSelectorTest : TestCase() {
 
   @Test
   fun selectingMealReplacesSelector() {
-    val meal = Meal(MealOccasion.DINNER, "eggs", "1", 102.2)
+    val meal = Meal(MealOccasion.DINNER, "eggs", "1", "testUserID", 102.2)
     meal.addIngredient(
         Ingredient(
             "milk",
@@ -90,7 +90,7 @@ class MealSelectorTest : TestCase() {
 
   @Test
   fun selectedMealIsDisplayed() {
-    val meal = Meal(MealOccasion.DINNER, "eggs", "1", 102.2)
+    val meal = Meal(MealOccasion.DINNER, "eggs", "1", "testUserID", 102.2)
     meal.addIngredient(
         Ingredient(
             "milk",
@@ -105,7 +105,7 @@ class MealSelectorTest : TestCase() {
       mealSelectorRow {
         assertIsDisplayed()
         assertTextContains("eggs")
-        assertTextContains("1.0 kCal")
+        assertTextContains("1.00 kCal")
       }
 
       carbs { assertIsDisplayed() }

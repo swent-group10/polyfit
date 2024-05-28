@@ -175,7 +175,8 @@ private fun AccountSettings(
           title = getString(context, R.string.accountSettingsDob),
           titleStyle = MaterialTheme.typography.titleMedium,
           inputDate = user.dob,
-          modifier = Modifier.padding(vertical = 8.dp))
+          modifier = Modifier.padding(vertical = 8.dp),
+          allowFutureDates = false)
     }
 
     // TODO: Add interface to set dietary preferences

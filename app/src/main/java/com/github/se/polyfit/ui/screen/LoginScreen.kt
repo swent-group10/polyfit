@@ -2,7 +2,6 @@ package com.github.se.polyfit.ui.screen
 
 import android.content.Context
 import android.util.Log
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,48 +30,32 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.getString
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.github.se.polyfit.R
 import com.github.se.polyfit.ui.compose.Title
 import com.github.se.polyfit.ui.theme.PrimaryPurple
-import com.github.se.polyfit.ui.utils.AuthenticationCloud
 
 @Composable
-fun LoginScreen(goTo: () -> Unit, authenticationCloud: AuthenticationCloud = hiltViewModel()) {
-  // Create an instance of the Authentication class
+fun LoginScreen(onClick: () -> Unit) {
+
   val context = LocalContext.current
-
-  val signInLauncher =
-      rememberLauncherForActivityResult(contract = FirebaseAuthUIActivityResultContract()) { res ->
-        authenticationCloud.onSignInResult(res) {
-          if (it) goTo() else Log.d("LoginScreen", "Sign in failed")
-        }
-      }
-
-  // Set the signInLauncher in the Authentication class
-  authenticationCloud.setSignInLauncher(signInLauncher)
-
-  // This function starts the sign-in process
-  fun createSignInIntent() {
-    authenticationCloud.signIn()
-  }
 
   Surface(
       modifier = Modifier.fillMaxSize().testTag("LoginScreen"),
       color = MaterialTheme.colorScheme.background) {
         Column(
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally) {
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.testTag("LoginColumn")) {
               Spacer(Modifier.weight(0.2f))
 
-              Title(Modifier.testTag("LoginTitle"), "Polyfit")
+              Title(context.getString(R.string.app_name))
 
               Spacer(Modifier.weight(0.6f))
 
               SignInButton {
                 Log.d("LoginScreen", "button clicked")
-                createSignInIntent()
+
+                onClick()
               }
 
               Spacer(Modifier.weight(0.03f))

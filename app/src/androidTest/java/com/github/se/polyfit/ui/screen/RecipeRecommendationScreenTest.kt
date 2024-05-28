@@ -8,6 +8,7 @@ import androidx.navigation.NavHostController
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.model.recipe.Recipe
 import com.github.se.polyfit.ui.components.button.LikeButtonScreen
+import com.github.se.polyfit.ui.screen.recipeRec.RecipeRecommendationScreen
 import com.github.se.polyfit.viewmodel.recipe.RecipeRecommendationViewModel
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.mockk.coEvery
@@ -36,7 +37,7 @@ class RecipeRecommendationScreenTest {
     coEvery { mockkRecommendationViewModel.recipeFromIngredients(any()) } returns recipeList
 
     composeTestRule.setContent {
-      RecipeRecommendationScreen(mockkNavigation, mockkRecommendationViewModel)
+      RecipeRecommendationScreen(mockkNavigation, mockkRecommendationViewModel, {})
     }
     composeTestRule.waitForIdle()
 

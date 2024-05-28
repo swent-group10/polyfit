@@ -26,7 +26,7 @@ data class User(
   }
 
   fun isSignedIn(): Boolean {
-    return id.isNotEmpty()
+    return id.isNotEmpty() && !id.equals("testUserID")
   }
 
   fun serialize(): Map<String, Any?> {

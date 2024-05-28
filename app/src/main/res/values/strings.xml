@@ -5,7 +5,7 @@
     <string name="meal_tracking_headline">Track your meals</string>
     <string name="take_picture_dialog">Take Picture</string>
     <string name="import_picture_dialog">Import Picture</string>
-    <string name="scan_picture_dialog">Scan Picture</string>
+    <string name="scan_picture_dialog">Scan Barcode</string>
     <string name="dialog_headline">Choose Option</string>
     <string name="home_nav_label">Home</string>
     <string name="map_nav_posts">Posts</string>
@@ -18,8 +18,8 @@
     <string name="condition4">"Privacy Policy"</string>
     <string name="signGoogle">"Sign in with Google"</string>
     <string name="graphScreenTitle">Calories Per Day</string>
-    <string name="kcalvalue">%1$.1f kCal</string>
-    <string name="weightvalue">%1$.1f g</string>
+    <string name="kcalvalue">%1$.2f kCal</string>
+    <string name="weightvalue">%1$.2f g</string>
     <string name="datevalue">%1$s</string>
     <string name="noPostAvailable">"Unfortunately there is no post\navailable around you"</string>
     <string name="description">"Description"</string>
@@ -42,6 +42,7 @@
     <string name="GenerateRecipe">"Generate\nRecipe"</string>
     <string name="Product">"Product"</string>
     <string name="recommendedRecipe">Recommended Recipes</string>
+    <string name="signInFailed">"Sign in failed"</string>
     <string name="PermissionDenied">Permission denied</string>
     <string name="TakeToTakePicture">Tap to take a photo</string>
     <string name="CreatePostImageDesription">Captured image</string>
@@ -62,4 +63,12 @@
     <string name="accountSettingsDisplayName">Display Name</string>
     <string name="noMealsFound">No recorded meals</string>
     <string name="addMealButton">Add a Meal</string>
+    <string name="ErrorPicture">Error fetching the picture</string>
+    <string name="MoreDetailRecipe">More Detail</string>
+    <string name="Ingredients">Ingredients</string>
+    <string name="Recipe">Recipe</string>
+
+    <string name="confirmSignout">Are you sure you want to sign out?</string>
+    <string name="signout">Sign Out</string>
+    <string name="FeatureNotYetImplemented">Feature not yet implemented</string>
 </resources>

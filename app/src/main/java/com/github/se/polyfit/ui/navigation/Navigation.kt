@@ -16,8 +16,23 @@ class Navigation(private val navHostController: NavHostController) {
     navHostController.popBackStack(route, inclusive = false)
   }
 
+  fun restartToLogin() {
+    navHostController.navigate(Route.Register) {
+      popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+      launchSingleTop = true
+    }
+  }
+
+  fun navigateToBarcodeScan() {
+    navigateTo(Route.OverviewScan)
+  }
+
   fun navigateToGraph() {
     navigateTo(Route.Graph)
+  }
+
+  fun navigateToRecipeRecommendationMore() {
+    navigateTo(Route.RecipeRecommendationMore)
   }
 
   fun navigateToEditMeal(mealDatabaseId: String) {
@@ -67,5 +82,9 @@ class Navigation(private val navHostController: NavHostController) {
   private fun navigateTo(route: String) {
     Log.i("Navigation", "Navigating to $route")
     navHostController.navigate(route)
+  }
+
+  fun navigateToPostInfo() {
+    navigateTo(Route.PostInfo)
   }
 }

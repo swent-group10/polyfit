@@ -1,8 +1,11 @@
 package com.github.se.polyfit.ui.components.selector
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -107,6 +110,7 @@ fun MealSelector(
   }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun MealDetails(meal: Meal, modifier: Modifier = Modifier) {
   Box(modifier = modifier.fillMaxWidth().testTag("MealDetails")) {
@@ -135,31 +139,33 @@ fun MealDetails(meal: Meal, modifier: Modifier = Modifier) {
 
       Spacer(modifier = Modifier.height(10.dp))
 
-      Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
-        val macros = meal.getMacros()
-        val nutrients =
-            listOf(
-                Pair("Carbs", macros["carbohydrates"]),
-                Pair("Fat", macros["fat"]),
-                Pair("Protein", macros["protein"]),
-            )
+      FlowRow(
+          horizontalArrangement = Arrangement.Center,
+          modifier = Modifier.align(Alignment.CenterHorizontally)) {
+            val macros = meal.getMacros()
+            val nutrients =
+                listOf(
+                    Pair("Carbs", macros["carbohydrates"]),
+                    Pair("Fat", macros["fat"]),
+                    Pair("Protein", macros["protein"]),
+                )
 
-        nutrients.forEach { (nutrientName, amount) ->
-          GradientBox(
-              outerModifier = Modifier.padding(horizontal = 10.dp),
-              innerModifier = Modifier.size(80.dp),
-              round = 50.0) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                  Column(
-                      horizontalAlignment = Alignment.CenterHorizontally,
-                      modifier = Modifier.testTag(nutrientName)) {
-                        Text(text = "${amount!!.roundTwoDecimal()} g", color = SecondaryGrey)
-                        Text(text = nutrientName, color = PrimaryPurple, fontSize = 15.sp)
-                      }
-                }
-              }
-        }
-      }
+            nutrients.forEach { (nutrientName, amount) ->
+              GradientBox(
+                  outerModifier = Modifier.padding(8.dp),
+                  innerModifier = Modifier.size(80.dp),
+                  round = 50.0) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                      Column(
+                          horizontalAlignment = Alignment.CenterHorizontally,
+                          modifier = Modifier.testTag(nutrientName)) {
+                            Text(text = "${amount!!.roundTwoDecimal()} g", color = SecondaryGrey)
+                            Text(text = nutrientName, color = PrimaryPurple, fontSize = 15.sp)
+                          }
+                    }
+                  }
+            }
+          }
     }
   }
 }

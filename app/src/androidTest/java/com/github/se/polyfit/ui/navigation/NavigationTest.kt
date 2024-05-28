@@ -2,6 +2,7 @@ package com.github.se.polyfit.ui.navigation
 
 import android.util.Log
 import androidx.navigation.NavHostController
+import androidx.navigation.NavOptionsBuilder
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.mockk.every
 import io.mockk.mockk
@@ -73,6 +74,14 @@ class NavigationTest {
   }
 
   @Test
+  fun restartToLogin() {
+    every { navHostController.navigate(any<String>(), any<NavOptionsBuilder.() -> Unit>()) } returns
+        Unit
+    navigation.restartToLogin()
+    verify { navHostController.navigate(Route.Register, any<NavOptionsBuilder.() -> Unit>()) }
+  }
+
+  @Test
   fun navigateToAddMeal() {
     route = Route.AddMeal
     every { navHostController.navigate(route) } returns Unit
@@ -109,5 +118,14 @@ class NavigationTest {
     navigation.navigateToAddMeal()
 
     verify { navHostController.navigate(Route.AddMeal) }
+  }
+
+  @Test
+  fun navigateToPostInfo() {
+    route = Route.PostInfo
+    every { navHostController.navigate(route) } returns Unit
+    navigation.navigateToPostInfo()
+
+    verify { navHostController.navigate(Route.PostInfo) }
   }
 }
