@@ -76,7 +76,9 @@ fun RecipeDisplay(
                 onCardClick = {
                   (recipesRec::onSelectedRecipe)(it)
                   navigateToRecipeRecommendationMore.invoke()
-                })
+                },
+                showBookmark = false,
+            )
           }
         }
       }

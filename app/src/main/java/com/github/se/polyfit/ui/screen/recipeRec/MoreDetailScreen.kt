@@ -64,7 +64,7 @@ fun RecipeDetailContent(padding: PaddingValues, recipeRecViewModel: RecipeRecomm
                 .padding(padding)
                 .padding(bottom = 16.dp) // Add bottom padding here
         ) {
-          item { RecipeCard(recipe = selectedRecipe!!, showTitle = false) }
+          item { RecipeCard(recipe = selectedRecipe!!, showTitle = false, showBookmark = false) }
           item {
             TitleAndToggleCard(
                 title = selectedRecipe!!.title,

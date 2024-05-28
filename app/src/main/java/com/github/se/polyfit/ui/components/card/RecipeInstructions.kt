@@ -15,8 +15,9 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun RecipeInstructions(step: String, stepNumber: Int) {
-  Card(modifier = Modifier.fillMaxWidth().padding(8.dp), shape = RoundedCornerShape(8.dp)) {
-    Column(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
+  val commonModifier = Modifier.fillMaxWidth()
+  Card(modifier = commonModifier.padding(8.dp), shape = RoundedCornerShape(8.dp)) {
+    Column(modifier = commonModifier.fillMaxWidth().padding(16.dp)) {
       Text(
           text = "Step $stepNumber",
           fontWeight = FontWeight.Bold,
@@ -26,8 +27,7 @@ fun RecipeInstructions(step: String, stepNumber: Int) {
           text = step,
           fontSize = MaterialTheme.typography.bodyMedium.fontSize,
           style = MaterialTheme.typography.displaySmall,
-          lineHeight = 16.sp // Adjust this value to your needs
-          )
+          lineHeight = 16.sp)
     }
   }
 }

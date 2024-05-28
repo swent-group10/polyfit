@@ -4,29 +4,26 @@ import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
-/**
- * Represents the response from the Spoonacular API when requesting the instructions for a recipe.
- * If the request was successful, the response will contain a list of [RecipeInstruction] objects
- * else it will be empty.
- */
-class RecipeInstructionResponseAPI(
-    val recipes: List<RecipeInstruction>?,
-) {
-  companion object {
-    private val moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
-
-    fun fromJson(jsonString: String): RecipeInstruction {
-      val jsonAdapter = moshi.adapter(RecipeInstruction::class.java).lenient()
-      return jsonAdapter.fromJson(jsonString) ?: throw IllegalArgumentException("Invalid JSON data")
-    }
-  }
-}
-
+/** Represents the response from the Spoonacular API for the recipe instructions. */
 @JsonClass(generateAdapter = true)
 data class RecipeInstruction(val name: String?, val steps: List<Step>) {
   companion object {
+    private val moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
+
     fun failure(): RecipeInstruction {
       return RecipeInstruction(name = "", steps = emptyList())
+    }
+
+    /**
+     * Converts a JSON string to a RecipeInstruction object.
+     *
+     * @param jsonString The JSON string to convert.
+     * @return The RecipeInstruction object.
+     * @throws IllegalArgumentException If the JSON data is invalid.
+     */
+    fun fromJson(jsonString: String): RecipeInstruction {
+      val jsonAdapter = moshi.adapter(RecipeInstruction::class.java).lenient()
+      return jsonAdapter.fromJson(jsonString) ?: throw IllegalArgumentException("Invalid JSON data")
     }
   }
 }

@@ -198,7 +198,7 @@ class SpoonacularApiCaller {
         throw Exception("No instructions found for recipe: $recipeId")
       }
 
-      return RecipeInstructionResponseAPI.fromJson(jsonArray.getJSONObject(0).toString())
+      return RecipeInstruction.fromJson(jsonArray.getJSONObject(0).toString())
     } catch (e: Exception) {
       Log.e("SpoonacularApiCaller", "Error getting recipe steps", e)
       // avoids crashing the app
