@@ -25,7 +25,7 @@ class RecipeInstructionResponseAPI(
 @JsonClass(generateAdapter = true)
 data class RecipeInstruction(val name: String?, val steps: List<Step>) {
   companion object {
-    fun faillure(): RecipeInstruction {
+    fun failure(): RecipeInstruction {
       return RecipeInstruction(name = "", steps = emptyList())
     }
   }

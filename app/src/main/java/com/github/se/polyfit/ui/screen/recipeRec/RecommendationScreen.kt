@@ -28,19 +28,21 @@ import com.github.se.polyfit.ui.components.recipe.RecipeCard
 import com.github.se.polyfit.viewmodel.recipe.RecipeRecommendationViewModel
 
 @Composable
-fun RecipeRecommendationScreen(
+fun RecommendationScreen(
     navController: NavHostController,
     recipeRecViewModel: RecipeRecommendationViewModel = hiltViewModel(),
     navigateToRecipeRecommendationMore: () -> Unit = {},
 ) {
   GenericScreen(
       navController = navController,
-      content = { it -> recipeDisplay(recipeRecViewModel, it, navigateToRecipeRecommendationMore) },
+      content = { paddingValues ->
+        RecipeDisplay(recipeRecViewModel, paddingValues, navigateToRecipeRecommendationMore)
+      },
       modifier = Modifier.testTag("RecipeDisplay"))
 }
 
 @Composable
-fun recipeDisplay(
+fun RecipeDisplay(
     recipesRec: RecipeRecommendationViewModel,
     paddingValues: PaddingValues,
     navigateToRecipeRecommendationMore: () -> Unit
@@ -63,7 +65,7 @@ fun recipeDisplay(
           )
         }
         if (recipes.value.isEmpty()) {
-          item { loader(paddingValues) }
+          item { Loader(paddingValues) }
           return@LazyColumn
         }
 
@@ -81,12 +83,10 @@ fun recipeDisplay(
 }
 
 @Composable
-fun loader(paddingValues: PaddingValues) {
-
+fun Loader(paddingValues: PaddingValues) {
   Box(
       modifier = Modifier.fillMaxSize().padding(paddingValues).testTag("Loader"),
       contentAlignment = Alignment.Center) {
         CircularProgressIndicator(modifier = Modifier.padding(16.dp).testTag("LoadingPost"))
       }
-  return
 }

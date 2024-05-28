@@ -20,14 +20,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.se.polyfit.R
 import com.github.se.polyfit.model.recipe.Recipe
 import com.github.se.polyfit.ui.components.card.IngredientInfoCard
+import com.github.se.polyfit.ui.components.card.RecipeInstructions
 import com.github.se.polyfit.ui.components.card.TitleAndToggleCard
-import com.github.se.polyfit.ui.components.card.recipeInstructions
 import com.github.se.polyfit.ui.components.recipe.RecipeCard
 import com.github.se.polyfit.ui.components.scaffold.SimpleTopBar
 import com.github.se.polyfit.viewmodel.recipe.RecipeRecommendationViewModel
 
 @Composable
-fun RecipeRecommendationMoreDetailScreen(
+fun MoreDetailScreen(
     recipeRecViewModel: RecipeRecommendationViewModel = hiltViewModel(),
     navigateBack: () -> Unit = {},
 ) {
@@ -78,8 +78,8 @@ fun RecipeDetailContent(padding: PaddingValues, recipeRecViewModel: RecipeRecomm
               item { IngredientInfoCard(ingredient = it) }
             }
           } else {
-            selectedRecipe!!.recipeInformation.instructions?.forEachIndexed { index, step ->
-              item { recipeInstructions(step, index + 1) }
+            selectedRecipe!!.recipeInformation.instructions.forEachIndexed { index, step ->
+              item { RecipeInstructions(step, index + 1) }
             }
 
             PaddingValues(8.dp)

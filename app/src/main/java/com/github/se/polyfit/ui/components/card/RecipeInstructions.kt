@@ -14,23 +14,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun recipeInstructions(step: String, stepNumber: Int) {
-  Card(
-      modifier = Modifier.fillMaxWidth().padding(8.dp),
-      shape = RoundedCornerShape(8.dp),
-      onClick = { /*TODO*/}) {
-        Column(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
-          Text(
-              text = "Step $stepNumber",
-              fontWeight = FontWeight.Bold,
-              fontSize = MaterialTheme.typography.bodyLarge.fontSize,
-              modifier = Modifier.padding(bottom = 8.dp))
-          Text(
-              text = step,
-              fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-              style = MaterialTheme.typography.displaySmall,
-              lineHeight = 16.sp // Adjust this value to your needs
-              )
-        }
-      }
+fun RecipeInstructions(step: String, stepNumber: Int) {
+  Card(modifier = Modifier.fillMaxWidth().padding(8.dp), shape = RoundedCornerShape(8.dp)) {
+    Column(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
+      Text(
+          text = "Step $stepNumber",
+          fontWeight = FontWeight.Bold,
+          fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+          modifier = Modifier.padding(bottom = 8.dp))
+      Text(
+          text = step,
+          fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+          style = MaterialTheme.typography.displaySmall,
+          lineHeight = 16.sp // Adjust this value to your needs
+          )
+    }
+  }
 }

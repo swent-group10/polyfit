@@ -34,11 +34,6 @@ class SpoonacularApiCaller {
     API_URL = baseUrl
   }
 
-  fun imageAnalysis(filePath: String): ImageAnalysisResponseAPI {
-    val file = File(filePath)
-    return imageAnalysis(file)
-  }
-
   /**
    * Analyze a food image. The API tries to classify the image, guess the nutrition, and find a
    * matching recipes.
@@ -119,7 +114,7 @@ class SpoonacularApiCaller {
    */
   fun getMealsFromImage(imageBitmap: Bitmap): Meal {
     // need to convert to File
-    var file = File.createTempFile("image", ".jpg")
+    val file = File.createTempFile("image", ".jpg")
     imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, FileOutputStream(file))
     // Gets Api response
 
@@ -207,7 +202,7 @@ class SpoonacularApiCaller {
     } catch (e: Exception) {
       Log.e("SpoonacularApiCaller", "Error getting recipe steps", e)
       // avoids crashing the app
-      return RecipeInstruction.faillure()
+      return RecipeInstruction.failure()
     }
   }
 
@@ -235,13 +230,13 @@ class SpoonacularApiCaller {
         recipe.recipeInformation.instructions = recipeInfo.steps.map { it.step }
 
         // Add information about the ingredients, removing duplicates
-        val ingredients = recipeInfo.steps.flatMap { it.ingredients ?: emptyList() }
-        recipe.recipeInformation.ingredients = ingredients.distinctBy { it.name }
+        val recipeIngredients = recipeInfo.steps.flatMap { it.ingredients ?: emptyList() }
+        recipe.recipeInformation.ingredients = recipeIngredients.distinctBy { it.name }
       }
       return recipesResponse.recipes
     } catch (e: Exception) {
       Log.e("SpoonacularApiCaller", "Error getting recipe from ingredients", e)
-      return emptyList()
+      emptyList()
     }
   }
 }

@@ -18,7 +18,7 @@ import org.junit.Rule
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class RecipeRecommendationMoreDetailScreenTest {
+class MoreDetailScreenTest {
 
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -38,9 +38,7 @@ class RecipeRecommendationMoreDetailScreenTest {
           showIngredient.postValue(false)
         }
 
-    composeTestRule.setContent {
-      RecipeRecommendationMoreDetailScreen(mockRecipeRecommendationViewModel)
-    }
+    composeTestRule.setContent { MoreDetailScreen(mockRecipeRecommendationViewModel) }
   }
 
   @Test
@@ -48,7 +46,7 @@ class RecipeRecommendationMoreDetailScreenTest {
 
     composeTestRule.waitForIdle()
 
-    ComposeScreen.onComposeScreen<RecipeRecommendationMoreDetailScreenScreen>(composeTestRule) {
+    ComposeScreen.onComposeScreen<MoreDetailScreenScreen>(composeTestRule) {
       assertExists()
       assertIsDisplayed()
 
@@ -62,7 +60,7 @@ class RecipeRecommendationMoreDetailScreenTest {
   fun testToggleButtons() {
 
     composeTestRule.waitForIdle()
-    ComposeScreen.onComposeScreen<RecipeRecommendationMoreDetailScreenScreen>(composeTestRule) {
+    ComposeScreen.onComposeScreen<MoreDetailScreenScreen>(composeTestRule) {
       assertExists()
       assertIsDisplayed()
 
