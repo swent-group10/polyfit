@@ -3,6 +3,7 @@ package com.github.se.polyfit.model.nutritionalInformation
 import android.util.Log
 import io.mockk.every
 import io.mockk.mockkStatic
+import kotlin.math.round
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import org.junit.Assert
@@ -52,8 +53,7 @@ class NutrientTest {
 
     // Convert 0.1 pounds to grams manually for expected result
     val convertedAmountInGrams = 0.1 * 453.592
-    val expectedAmountInGrams =
-        roundToTwoDecimalPlaces(100.0 + convertedAmountInGrams) // 100 + 45.3592
+    val expectedAmountInGrams = round(100.0 + convertedAmountInGrams) // 100 + 45.3592
 
     // Add the nutrients using the plus function
     val result = Nutrient.plus(nutrient1, nutrient2)
@@ -65,7 +65,7 @@ class NutrientTest {
   }
 
   private fun roundToTwoDecimalPlaces(value: Double): Double {
-    return kotlin.math.round(value * 100) / 100.0
+    return round(value * 100) / 100.0
   }
 
   @Test
