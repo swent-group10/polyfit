@@ -1,7 +1,6 @@
 package com.github.se.polyfit.data.api
 
 import android.util.Log
-import co.yml.charts.common.extensions.roundTwoDecimal
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import java.io.IOException
