@@ -65,7 +65,7 @@ class PostFirebaseRepository(
   }
 
   /** Fetches all posts from the database and updates the LiveData object with the new data. */
-  suspend fun getAllPosts() {
+  suspend fun getAllPosts(): MutableList<Post> {
     val newPosts: MutableList<Post> = mutableListOf()
 
     try {
@@ -75,6 +75,8 @@ class PostFirebaseRepository(
           .await()
           .map { document -> Post.deserialize(document.data)?.let { newPosts.add(it) } }
           .also { _posts.postValue(newPosts) }
+
+      return newPosts
     } catch (e: Exception) {
       Log.e("PostFirebaseRepository", "Failed to get posts from the database", e)
       throw Exception("Error getting posts : ${e.message}", e)
