@@ -158,5 +158,5 @@ private val nutellaResult =
     },
     "status": 1,
     "status_verbose": "product found"
-}  
+}
         """)
