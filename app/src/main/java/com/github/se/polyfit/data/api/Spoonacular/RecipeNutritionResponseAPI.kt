@@ -1,6 +1,7 @@
-package com.github.se.polyfit.data.api
+package com.github.se.polyfit.data.api.Spoonacular
 
 import android.util.Log
+import com.github.se.polyfit.data.api.APIResponse
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient

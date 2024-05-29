@@ -2,7 +2,7 @@ package com.github.se.polyfit.di
 
 import android.content.Context
 import androidx.room.Room
-import com.github.se.polyfit.data.api.SpoonacularApiCaller
+import com.github.se.polyfit.data.api.Spoonacular.SpoonacularApiCaller
 import com.github.se.polyfit.data.local.dao.MealDao
 import com.github.se.polyfit.data.local.database.MealDatabase
 import com.github.se.polyfit.data.processor.LocalDataProcessor
