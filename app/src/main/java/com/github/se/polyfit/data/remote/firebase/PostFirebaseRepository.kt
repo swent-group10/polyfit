@@ -3,6 +3,8 @@ package com.github.se.polyfit.data.remote.firebase
 import android.graphics.Bitmap
 import android.net.Uri
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.firebase.geofire.GeoFire
 import com.firebase.geofire.GeoLocation
 import com.firebase.geofire.GeoQueryEventListener
@@ -19,24 +21,34 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.util.UUID
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
 class PostFirebaseRepository(
-    private val db: FirebaseFirestore = FirebaseFirestore.getInstance(),
-    private val pictureDb: FirebaseStorage = FirebaseStorage.getInstance(),
-    private val rtdb: FirebaseDatabase =
+    db: FirebaseFirestore = FirebaseFirestore.getInstance(),
+    rtdb: FirebaseDatabase =
         FirebaseDatabase.getInstance(
-            "https://polyfit-316e8-default-rtdb.europe-west1.firebasedatabase.app/")
+            "https://polyfit-316e8-default-rtdb.europe-west1.firebasedatabase.app/"),
+    private val pictureDb: FirebaseStorage = FirebaseStorage.getInstance()
 ) {
   private val postCollection = db.collection("posts")
   private val geoFireRef = rtdb.getReference("posts_location")
   private val geoFire = GeoFire(geoFireRef)
+
+  private val _posts: MutableLiveData<List<Post>> = MutableLiveData()
+  val posts: LiveData<List<Post>> = _posts
+
+  /**
+   * Initializes a listener that listens for changes in the database and updates the LiveData
+   * object. This is implemented this way to allow for the scope to passed in from the ViewModel.
+   *
+   * @param scope The CoroutineScope in which to launch the listener.
+   */
+  fun initializeFirebaseListener(scope: CoroutineScope) {
+    postCollection.addSnapshotListener { _, _ -> scope.launch { getAllPosts() } }
+  }
 
   suspend fun storePost(post: Post): DocumentReference? {
     try {
@@ -52,20 +64,23 @@ class PostFirebaseRepository(
     }
   }
 
-  fun getAllPosts(): Flow<List<Post>> = flow {
-    val posts = mutableListOf<Post>()
+  /** Fetches all posts from the database and updates the LiveData object with the new data. */
+  suspend fun getAllPosts(): MutableList<Post> {
+    val newPosts: MutableList<Post> = mutableListOf()
 
     try {
 
-      postCollection.get().await().map { document ->
-        Log.d("PostFirebaseRepository", "Document: ${document.data}")
-        Post.deserialize(document.data)?.let { posts.add(it) }
-      }
+      postCollection
+          .get()
+          .await()
+          .map { document -> Post.deserialize(document.data)?.let { newPosts.add(it) } }
+          .also { _posts.postValue(newPosts) }
+
+      return newPosts
     } catch (e: Exception) {
       Log.e("PostFirebaseRepository", "Failed to get posts from the database", e)
       throw Exception("Error getting posts : ${e.message}", e)
     }
-    emit(posts)
   }
 
   /**
@@ -90,8 +105,6 @@ class PostFirebaseRepository(
       completion: (List<Post>) -> Unit,
       geoFire: GeoFire = GeoFire(geoFireRef)
   ) {
-    Log.d("MapRadius", "Radius: $radiusInKm")
-    Log.d("MapCenter", "Center: $centerLatitude, $centerLongitude")
     val center = GeoLocation(centerLatitude, centerLongitude)
     val query = geoFire.queryAtLocation(center, radiusInKm)
 
@@ -130,7 +143,6 @@ class PostFirebaseRepository(
     val batchSize = 10
     val batches = keys.chunked(batchSize)
     var completedBatches = 0
-    Log.d("PostFirebaseRepository", "Keys: $keys")
 
     // Use a batch operation to fetch all posts
     batches.forEach { batch ->
@@ -139,31 +151,15 @@ class PostFirebaseRepository(
           .get()
           .addOnSuccessListener { querySnapshot ->
             CoroutineScope(Dispatchers.Default).launch {
-              Log.d("PostFirebaseRepository", "QuerySnapshot: $querySnapshot")
               val tempPosts = mutableListOf<Post>()
-              val deferredImages = mutableListOf<Deferred<Unit>>()
 
               querySnapshot.documents.forEach { document ->
-                document.data?.let {
-                  Post.deserialize(it)?.also { post ->
-                    //                                    deferredImages.add(
-                    //                                        async {
-                    //                                            post.listOfURLs =
-                    //
-                    // fetchImageReferencesForPost(document.id)
-                    //                                        })
-                    Log.d("PostFirebaseRepository", "Post: $post")
-                    tempPosts.add(post)
-                  }
-                }
+                document.data?.let { Post.deserialize(it)?.also { post -> tempPosts.add(post) } }
               }
 
               synchronized(posts) {
-                Log.d("PostFirebaseRepositorySynch", "TempPosts: $tempPosts")
                 posts.addAll(tempPosts)
-                for (post in posts) {
-                  Log.d("PostFirebase", "download uri : ${post.imageDownloadURL}")
-                }
+
                 completedBatches++
                 if (completedBatches == batches.size) {
                   completion(posts)

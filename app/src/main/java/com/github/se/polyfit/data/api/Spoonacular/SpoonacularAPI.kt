@@ -6,6 +6,7 @@ import com.github.se.polyfit.BuildConfig
 import com.github.se.polyfit.data.api.APIResponse
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
+import com.github.se.polyfit.model.recipe.Recipe
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -24,6 +25,7 @@ class SpoonacularApiCaller {
   private val RECIPE_NUTRITION_ENDPOINT = "recipes/%d/nutritionWidget.json"
   private var ingredientsParam = ""
   private val ingredientSeparator = "%2C"
+  private val RECIPE_STEPS_ENDPOINT = "recipes/%d/analyzedInstructions?stepBreakdown=true"
 
   private val RECIPE_FROM_INGREDIENTS
     get() =
@@ -31,11 +33,6 @@ class SpoonacularApiCaller {
 
   fun setBaseUrl(baseUrl: String) {
     API_URL = baseUrl
-  }
-
-  fun imageAnalysis(filePath: String): ImageAnalysisResponseAPI {
-    val file = File(filePath)
-    return imageAnalysis(file)
   }
 
   /**
@@ -85,7 +82,7 @@ class SpoonacularApiCaller {
    * @param recipeId The ID of the recipe
    * @return The response from the API
    */
-  fun getRecipeNutrition(recipeId: Int): RecipeNutritionResponseAPI {
+  fun getRecipeNutrition(recipeId: Long): RecipeNutritionResponseAPI {
     val request =
         Request.Builder()
             .url(API_URL + RECIPE_NUTRITION_ENDPOINT.format(recipeId))
@@ -118,7 +115,7 @@ class SpoonacularApiCaller {
    */
   fun getMealsFromImage(imageBitmap: Bitmap): Meal {
     // need to convert to File
-    var file = File.createTempFile("image", ".jpg")
+    val file = File.createTempFile("image", ".jpg")
     imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, FileOutputStream(file))
     // Gets Api response
 
@@ -128,7 +125,7 @@ class SpoonacularApiCaller {
       val apiResponse = imageAnalysis(file)
       if (apiResponse.status == APIResponse.SUCCESS) {
         // chooses from a bunch of recipes
-        val recipeInformation = getRecipeNutrition(apiResponse.recipes.first())
+        val recipeInformation = getRecipeNutrition(apiResponse.recipes.first().toLong())
 
         if (recipeInformation.status == APIResponse.SUCCESS) {
           val newMeal =
@@ -167,6 +164,80 @@ class SpoonacularApiCaller {
     } catch (e: Exception) {
       Log.e("SpoonacularApiCaller", "Error getting recipe from ingredients", e)
       RecipeFromIngredientsResponseAPI.faillure()
+    }
+  }
+
+  /**
+   * Get the steps for a recipe given the spoonacular recipe ID.
+   *
+   * @param recipeId The ID of the recipe
+   * @return The response from the API
+   * @throws Exception if the response is not successful or an error occurs
+   */
+  fun getRecipeSteps(recipeId: Long): RecipeInstruction {
+    val request =
+        Request.Builder()
+            .url(API_URL + RECIPE_STEPS_ENDPOINT.format(recipeId))
+            .get()
+            .addHeader("X-RapidAPI-Key", BuildConfig.X_RapidAPI_Key)
+            .addHeader("X-RapidAPI-Host", BuildConfig.X_RapidAPI_Host)
+            .build()
+
+    try {
+      val response = client.newCall(request).execute()
+      if (!response.isSuccessful) {
+        Log.e("SpoonacularApiCaller", "Error getting recipe steps: ${response.code}")
+        throw Exception("Error getting recipe steps: ${response.code}")
+      }
+
+      val responseBody = response.body?.string() ?: ""
+      val jsonArray = JSONArray(responseBody)
+
+      // Check if the response contains any instructions
+      if (jsonArray.length() == 0) {
+        Log.e("SpoonacularApiCaller", "No instructions found for recipe: $recipeId")
+        throw Exception("No instructions found for recipe: $recipeId")
+      }
+
+      return RecipeInstruction.fromJson(jsonArray.getJSONObject(0).toString())
+    } catch (e: Exception) {
+      Log.e("SpoonacularApiCaller", "Error getting recipe steps", e)
+      // avoids crashing the app
+      return RecipeInstruction.failure()
+    }
+  }
+
+  /**
+   * Get a list of recipes from a list of ingredients. This also takes care of calling other
+   * endPoints from the api to make sure the recipe is complete. For now to avoid calling the api
+   * too much, we will return a default recipe and calling the other endpoints to complete the
+   * recipe.
+   *
+   * @param ingredients The list of ingredients
+   * @return The list of recipes
+   * @throws Exception if the response is not successful or an error occurs
+   */
+  fun getCompleteRecipesFromIngredients(ingredients: List<String>): List<Recipe> {
+    //        val recipesResponse = recipeByIngredients(ingredients)
+    return try {
+
+      // done to avoid making a bunch of API calls, will need to remove later
+      val recipesResponse =
+          RecipeFromIngredientsResponseAPI(APIResponse.SUCCESS, listOf(Recipe.default()))
+      recipesResponse.recipes.forEach { recipe ->
+        val recipeInfo = getRecipeSteps(recipe.id)
+
+        // Add the steps to the recipe
+        recipe.recipeInformation.instructions = recipeInfo.steps.map { it.step }
+
+        // Add information about the ingredients, removing duplicates
+        val recipeIngredients = recipeInfo.steps.flatMap { it.ingredients ?: emptyList() }
+        recipe.recipeInformation.ingredients = recipeIngredients.distinctBy { it.name }
+      }
+      return recipesResponse.recipes
+    } catch (e: Exception) {
+      Log.e("SpoonacularApiCaller", "Error getting recipe from ingredients", e)
+      emptyList()
     }
   }
 }

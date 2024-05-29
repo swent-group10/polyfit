@@ -10,7 +10,7 @@ data class Recipe(
     val usedIngredients: Long,
     val missingIngredients: Long,
     val likes: Long,
-    val recipeInformation: RecipeInformation,
+    var recipeInformation: RecipeInformation,
     var firebaseId: String = ""
 ) {
 

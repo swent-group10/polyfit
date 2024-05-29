@@ -61,4 +61,11 @@ class MeasurementUnitTest {
   fun `illegal arguments throw exception`() {
     assertEquals(MeasurementUnit.fromString("INVALID"), MeasurementUnit.OTHER)
   }
+
+  @Test
+  fun `unitConversion converts grams to tablespoons`() {
+    val result = MeasurementUnit.unitConversion(MeasurementUnit.G, MeasurementUnit.TABLESPOONS, 1.0)
+    // because 1 is the default value of conversion is not hardcoded or possible
+    assertEquals(1.0, result, 0.001)
+  }
 }

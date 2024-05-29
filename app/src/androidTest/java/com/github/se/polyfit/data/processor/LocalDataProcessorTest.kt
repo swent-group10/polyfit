@@ -21,7 +21,7 @@ import org.junit.Test
 class LocalDataProcessorTest {
   private val mockMealDao: MealDao = mockk(relaxed = true)
   private val user = User.testUser()
-  val localDataProcessor = LocalDataProcessor(mockMealDao, user)
+  private val localDataProcessor = LocalDataProcessor(mockMealDao, user)
   private val mealList = createSampleMeals()
 
   @get:Rule val instantTaskExecutorRule = InstantTaskExecutorRule()
@@ -34,6 +34,14 @@ class LocalDataProcessorTest {
     assertEquals(200.0, result[MealOccasion.LUNCH])
     assertEquals(300.0, result[MealOccasion.DINNER])
     assertEquals(400.0, result[MealOccasion.SNACK])
+  }
+
+  @Test
+  fun calculateCaloriesSinceFailure() {
+    every { mockMealDao.getMealsCreatedOnOrAfterDate(LocalDate.now(), user.id) } throws
+        Exception("Error")
+    val result = localDataProcessor.calculateCaloriesSince(LocalDate.now())
+    assertEquals(0, result.size)
   }
 
   @Test
@@ -58,6 +66,20 @@ class LocalDataProcessorTest {
     val result = localDataProcessor.getCaloriesPerMealOccasionToday()
     assertEquals(300.0, result[MealOccasion.BREAKFAST])
     assertEquals(700.0, result[MealOccasion.LUNCH])
+  }
+
+  @Test
+  fun getCaloriesPerMealOccasionTodayLiveDataException() = runTest {
+    every { mockMealDao.getMealsCreatedOnDateLiveData(any(), any()) } throws Exception("Error")
+    val result = localDataProcessor.getCaloriesPerMealOccasionTodayLiveData()
+    assertEquals(0, result.value?.size)
+  }
+
+  @Test
+  fun getWeightSinceException() = runTest {
+    every { mockMealDao.getMealsCreatedOnOrAfterDate(any(), any()) } throws Exception("Error")
+    val result = localDataProcessor.getWeightSince(LocalDate.now())
+    assertEquals(0, result.size)
   }
 
   @Test
