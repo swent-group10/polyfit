@@ -1,16 +1,11 @@
 package com.github.se.polyfit.viewmodel.post
 
+import androidx.lifecycle.MutableLiveData
 import com.github.se.polyfit.data.remote.firebase.PostFirebaseRepository
-import com.github.se.polyfit.model.meal.Meal
-import com.github.se.polyfit.model.post.Location
 import com.github.se.polyfit.model.post.Post
-import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import java.time.LocalDate
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -29,26 +24,18 @@ class ViewPostViewModelTest {
 
   @Test
   fun getAllPost_returnsCorrectly() = runTest {
-    // Arrange
-    val posts = listOf(Post("1", "Title", Location.default(), Meal.default(), LocalDate.now()))
-    coEvery { postFirebaseRepository.getAllPosts() } returns flowOf(posts)
-
     // Act
     viewModel.getAllPost()
-    delay(1000) // Allow time for the coroutine to complete
 
     // Assert
-    coVerify { postFirebaseRepository.getAllPosts() }
-    assertEquals(false, viewModel.isFetching.value)
+    coVerify { postFirebaseRepository.posts }
   }
 
   @Test
   fun returnsEmptyListWhenNoPostsAvailable() = runTest {
-    every { postFirebaseRepository.getAllPosts() } returns flowOf(emptyList())
+    every { postFirebaseRepository.posts } returns MutableLiveData(emptyList())
+    val result = viewModel.getAllPost()
 
-    viewModel.getAllPost()
-
-    val result = viewModel.posts.value
-    assertEquals(emptyList<Post>(), result)
+    assertEquals(emptyList<Post>(), result.value)
   }
 }
