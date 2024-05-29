@@ -19,12 +19,18 @@ import androidx.compose.ui.platform.testTag
 import com.github.se.polyfit.ui.theme.PrimaryPurple
 import com.github.se.polyfit.ui.utils.titleCase
 
-// TODO - Replace other Simple TopBars with this, used it in AdditionalMealInfoScreen.kt
+/**
+ * A simple top bar with a back button and a title.
+ *
+ * @param title The title of the top bar.
+ * @param navigateBack The action to perform when the back button is clicked.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SimpleTopBar(title: String, navigateBack: () -> Unit) {
   var goBackClicked by remember { mutableStateOf(false) }
 
+  // Delay the goBackClicked state change to prevent multiple back navigation.
   LaunchedEffect(key1 = goBackClicked) {
     if (goBackClicked) {
       kotlinx.coroutines.delay(1000)
