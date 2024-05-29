@@ -1,5 +1,6 @@
-package com.github.se.polyfit.data.api
+package com.github.se.polyfit.data.api.Spoonacular
 
+import com.github.se.polyfit.data.api.APIResponse
 import com.github.se.polyfit.model.recipe.Recipe
 import com.github.se.polyfit.model.recipe.RecipeInformation
 import java.net.URL
