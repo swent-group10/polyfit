@@ -29,13 +29,14 @@ class PostLocationModel(private val context: Context) {
       Log.i("PostLocationModel", "Getting current location")
       val location: Location? = query.getCurrentLocation(locationRequest, null).await()
       Log.i("PostLocationModel", "Location: $location")
-
-      locationToSet =
-          ourLocation(
-              longitude = location!!.longitude,
-              latitude = location.latitude,
-              altitude = location.altitude,
-              name = "")
+        if (location != null) {
+            locationToSet =
+                ourLocation(
+                    longitude = location.longitude,
+                    latitude = location.latitude,
+                    altitude = location.altitude,
+                    name = "")
+        }
     } catch (e: SecurityException) {
       Toast.makeText(context, "Location permissions are missing", Toast.LENGTH_SHORT).show()
     }
