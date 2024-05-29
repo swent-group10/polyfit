@@ -37,6 +37,7 @@ fun RecipeCard(
     onBookmarkClick: (Recipe) -> Unit = {},
     onBookmarkRemove: (Recipe) -> Unit = {},
     showTitle: Boolean = true,
+    showBookmark: Boolean = true
 ) {
 
   Card(
@@ -62,8 +63,11 @@ fun RecipeCard(
           }
           LikeButton(recipe.likes, modifier = Modifier.align(Alignment.TopEnd))
 
-          BookmarkButton(
-              recipe, onBookmarkClick, onBookmarkRemove, Modifier.align(Alignment.BottomEnd))
+          if (showBookmark) {
+
+            BookmarkButton(
+                recipe, onBookmarkClick, onBookmarkRemove, Modifier.align(Alignment.BottomEnd))
+          }
         }
       }
 }

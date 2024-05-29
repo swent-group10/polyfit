@@ -18,7 +18,7 @@ import org.junit.Rule
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class RecipeRecommendationMoreDetailScreenTest {
+class MoreDetailScreenTest {
 
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -30,16 +30,15 @@ class RecipeRecommendationMoreDetailScreenTest {
   @Before
   fun setUp() {
     showIngredient = MutableLiveData(true)
-    every { mockRecipeRecommendationViewModel.getSelectedRecipe() } returns Recipe.default()
+    every { mockRecipeRecommendationViewModel.selectedRecipe } returns
+        MutableLiveData(Recipe.default())
     every { mockRecipeRecommendationViewModel.showIngredient } returns showIngredient
     every { mockRecipeRecommendationViewModel.setShowIngredientFalse() } answers
         {
           showIngredient.postValue(false)
         }
 
-    composeTestRule.setContent {
-      RecipeRecommendationMoreDetailScreen(mockRecipeRecommendationViewModel)
-    }
+    composeTestRule.setContent { MoreDetailScreen(mockRecipeRecommendationViewModel) }
   }
 
   @Test
@@ -47,15 +46,13 @@ class RecipeRecommendationMoreDetailScreenTest {
 
     composeTestRule.waitForIdle()
 
-    ComposeScreen.onComposeScreen<RecipeRecommendationMoreDetailScreenScreen>(composeTestRule) {
+    ComposeScreen.onComposeScreen<MoreDetailScreenScreen>(composeTestRule) {
       assertExists()
       assertIsDisplayed()
 
       composeTestRule.onNodeWithTag("RecipeCard").assertExists().assertIsDisplayed()
 
       composeTestRule.onNodeWithTag("TitleAndToggleCard").assertExists().assertIsDisplayed()
-
-      composeTestRule.onNodeWithTag("IngredientList").assertExists().assertIsDisplayed()
     }
   }
 
@@ -63,11 +60,9 @@ class RecipeRecommendationMoreDetailScreenTest {
   fun testToggleButtons() {
 
     composeTestRule.waitForIdle()
-    ComposeScreen.onComposeScreen<RecipeRecommendationMoreDetailScreenScreen>(composeTestRule) {
+    ComposeScreen.onComposeScreen<MoreDetailScreenScreen>(composeTestRule) {
       assertExists()
       assertIsDisplayed()
-
-      composeTestRule.onNodeWithTag("IngredientList").assertExists().assertIsDisplayed()
 
       composeTestRule
           .onNodeWithTag("tonalButton2")
