@@ -1,9 +1,7 @@
 package com.github.se.polyfit.model.recipe
 
 import android.util.Log
-import com.github.se.polyfit.model.ingredient.Ingredient
-import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
-import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
+import com.github.se.polyfit.data.api.Ingredient
 import io.mockk.every
 import io.mockk.mockkStatic
 import junit.framework.TestCase.assertEquals
@@ -12,6 +10,16 @@ import kotlin.test.assertFailsWith
 import org.junit.Before
 
 class RecipeInformationTest {
+  private val recipeInformation =
+      RecipeInformation(
+          true,
+          false,
+          true,
+          false,
+          listOf(
+              Ingredient(1, "beef tenderloin", "beef tenderloin", "beef_tenderloin.jpg"),
+              Ingredient(2, "onion", "onion", "onion.jpg")),
+          listOf("instructions"))
 
   @Before
   fun setup() {
@@ -22,29 +30,7 @@ class RecipeInformationTest {
 
   @Test
   fun deserializeReturnsCorrectRecipeInformationValidData() {
-    val data =
-        mapOf(
-            "vegetarian" to true,
-            "vegan" to false,
-            "glutenFree" to true,
-            "dairyFree" to false,
-            "listIngredients" to
-                listOf<Map<String, Any>>(
-                    mapOf(
-                        "name" to "ingredient1",
-                        "id" to 1.toLong(),
-                        "amount" to 1.0,
-                        "unit" to MeasurementUnit.TEASPOONS.name,
-                        "nutritionalInformation" to
-                            NutritionalInformation(mutableListOf()).serialize()),
-                    mapOf(
-                        "name" to "ingredient2",
-                        "id" to 2.toLong(),
-                        "amount" to 2.0,
-                        "unit" to MeasurementUnit.TEASPOONS.name,
-                        "nutritionalInformation" to
-                            NutritionalInformation(mutableListOf()).serialize())),
-            "instructions" to "instructions")
+    val data = recipeInformation.serialize()
 
     val result = RecipeInformation.deserialize(data)
 
@@ -53,7 +39,7 @@ class RecipeInformationTest {
     assertEquals(true, result.glutenFree)
     assertEquals(false, result.dairyFree)
     assertEquals(2, result.ingredients.size)
-    assertEquals("instructions", result.instructions)
+    assertEquals(listOf("instructions"), result.instructions)
   }
 
   @Test
@@ -65,12 +51,6 @@ class RecipeInformationTest {
 
   @Test
   fun serializeReturnsCorrectDataRecipeInformation() {
-    val ingredients =
-        listOf(
-            Ingredient("ingredient1", 1, 1.0, MeasurementUnit.TEASPOONS),
-            Ingredient("ingredient2", 2, 2.0, MeasurementUnit.TEASPOONS))
-    val recipeInformation = RecipeInformation(true, false, true, false, ingredients, "instructions")
-
     val result = RecipeInformation.serialize(recipeInformation)
 
     assertEquals(true, result["vegetarian"])
@@ -78,7 +58,7 @@ class RecipeInformationTest {
     assertEquals(true, result["glutenFree"])
     assertEquals(false, result["dairyFree"])
     assertEquals(2, (result["listIngredients"] as List<*>).size)
-    assertEquals("instructions", result["instructions"])
+    assertEquals(listOf("instructions"), result["instructions"])
   }
 
   @Test

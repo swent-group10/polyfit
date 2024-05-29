@@ -10,6 +10,39 @@ import kotlin.test.assertFailsWith
 import org.junit.Before
 
 class RecipeTest {
+
+  private val validData =
+      mapOf(
+          "id" to 1L,
+          "title" to "Recipe Title",
+          "imageURL" to URL("http://example.com"),
+          "usedIngredients" to 5L,
+          "missingIngredients" to 2L,
+          "likes" to 100L,
+          "recipeInformation" to
+              RecipeInformation(
+                      vegetarian = true,
+                      vegan = false,
+                      glutenFree = true,
+                      dairyFree = false,
+                      ingredients = emptyList(),
+                      instructions = listOf("instructions"))
+                  .serialize())
+
+  private val invalidData = mapOf<String, Any>("invalidKey" to "invalidValue")
+
+  private val recipeInformation =
+      RecipeInformation(
+          vegetarian = true,
+          vegan = false,
+          glutenFree = true,
+          dairyFree = false,
+          ingredients = emptyList(),
+          instructions = listOf("instructions"))
+
+  private val recipe =
+      Recipe(1L, "Recipe Title", URL("http://example.com"), 5L, 2L, 100L, recipeInformation)
+
   @Before
   fun setup() {
     mockkStatic(Log::class)
@@ -19,19 +52,7 @@ class RecipeTest {
 
   @Test
   fun deserializeReturnsCorrectRecipeForValidData() {
-    val data =
-        mapOf(
-            "id" to 1L,
-            "title" to "Recipe Title",
-            "imageURL" to URL("http://example.com"),
-            "usedIngredients" to 5L,
-            "missingIngredients" to 2L,
-            "likes" to 100L,
-            "recipeInformation" to
-                RecipeInformation(true, false, true, false, emptyList(), "instructions")
-                    .serialize())
-
-    val result = Recipe.deserialize(data)
+    val result = Recipe.deserialize(validData)
 
     assertEquals(1L, result.id)
     assertEquals("Recipe Title", result.title)
@@ -39,22 +60,16 @@ class RecipeTest {
     assertEquals(5L, result.usedIngredients)
     assertEquals(2L, result.missingIngredients)
     assertEquals(100L, result.likes)
-    assertEquals("instructions", result.recipeInformation.instructions)
+    assertEquals(listOf("instructions"), result.recipeInformation.instructions)
   }
 
   @Test
   fun deserializeThrowsIllegalArgumentExceptionForInvalidData() {
-    val data = mapOf<String, Any>("invalidKey" to "invalidValue")
-
-    assertFailsWith<IllegalArgumentException> { Recipe.deserialize(data) }
+    assertFailsWith<IllegalArgumentException> { Recipe.deserialize(invalidData) }
   }
 
   @Test
   fun serializeReturnsCorrectDataForRecipe() {
-    val recipeInformation = RecipeInformation(true, false, true, false, emptyList(), "instructions")
-    val recipe =
-        Recipe(1L, "Recipe Title", URL("http://example.com"), 5L, 2L, 100L, recipeInformation)
-
     val result = Recipe.serialize(recipe)
 
     assertEquals(1L, result["id"])
@@ -63,14 +78,16 @@ class RecipeTest {
     assertEquals(5L, result["usedIngredients"])
     assertEquals(2L, result["missingIngredients"])
     assertEquals(100L, result["likes"])
-    assertEquals("instructions", (result["recipeInformation"] as Map<String, Any>)["instructions"])
+    assertEquals(
+        listOf("instructions"), (result["recipeInformation"] as Map<String, Any>)["instructions"])
   }
 
   @Test
-  fun desializeAndDeserializeDefaultMeal() {
+  fun serializeAndDeserializeDefaultMeal() {
     val recipe = Recipe.default()
     val serialized = Recipe.serialize(recipe)
     val deserialized = Recipe.deserialize(serialized)
+
     assertEquals(recipe, deserialized)
   }
 }
