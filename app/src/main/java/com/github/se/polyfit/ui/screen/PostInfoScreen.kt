@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -28,7 +29,6 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.github.se.polyfit.R
-import com.github.se.polyfit.model.post.Post
 import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.components.button.PrimaryButton
 import com.github.se.polyfit.ui.components.postinfo.PostCard
@@ -43,9 +43,7 @@ fun PostInfoScreen(
 ) {
   GenericScreen(
       navController = navHostController,
-      content = { it ->
-        PostInfoScreenContent(viewPostViewModel = viewPostViewModel, padding = it)
-      },
+      content = { PostInfoScreenContent(viewPostViewModel = viewPostViewModel, padding = it) },
       modifier = Modifier.testTag("PostInfoScreen"),
       floatingButton = {
         PrimaryButton(
@@ -59,12 +57,11 @@ fun PostInfoScreen(
 
 @Composable
 fun PostInfoScreenContent(
-    posts: List<Post> = listOf(),
     index: Int = 0,
     padding: PaddingValues = PaddingValues(),
     viewPostViewModel: ViewPostViewModel = hiltViewModel(),
 ) {
-  val posts by viewPostViewModel.posts.collectAsState(posts)
+  val posts = viewPostViewModel.getAllPost().observeAsState(initial = listOf())
   val isFetching by viewPostViewModel.isFetching.collectAsState()
 
   Scaffold(modifier = Modifier.padding(padding)) {
@@ -74,7 +71,7 @@ fun PostInfoScreenContent(
       }
       return@Scaffold
     }
-    if (posts.isEmpty()) {
+    if (posts.value.isEmpty()) {
       NoPost()
       return@Scaffold
     }
@@ -82,7 +79,7 @@ fun PostInfoScreenContent(
     LazyColumn(
         state = rememberLazyListState(index),
     ) {
-      items(posts) { post -> PostCard(post = post) }
+      items(posts.value) { post -> PostCard(post = post) }
     }
   }
 }
