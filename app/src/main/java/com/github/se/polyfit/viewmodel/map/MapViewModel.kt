@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.github.se.polyfit.data.remote.firebase.PostFirebaseRepository
 import com.github.se.polyfit.model.post.Location
 import com.github.se.polyfit.model.post.Post
@@ -11,6 +12,7 @@ import com.github.se.polyfit.model.post.PostLocationModel
 import com.google.android.gms.location.CurrentLocationRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 
 @HiltViewModel
@@ -31,15 +33,16 @@ constructor(
   val posts: LiveData<List<Post>> = _posts
 
   init {
-    setRadius(0.0) // default radius can be change later for a better default value
+    setRadius(1.0) // default radius can be change later for a better default value
   }
 
   fun listenToPosts() {
+    Log.d("MapViewModel", "listenToPosts: ")
+    Log.d("MapViewModel", "listenToPosts: ${location.value}")
 
-    assert(_location.value != null)
     repository.queryNearbyPosts(
-        centerLatitude = _location.value!!.latitude,
-        centerLongitude = _location.value!!.longitude,
+        centerLatitude = location.value!!.latitude,
+        centerLongitude = location.value!!.longitude,
         radiusInKm = radius.value!!,
         completion = { posts ->
           Log.d("MapViewModel", "listenToPosts: $posts")
@@ -63,11 +66,20 @@ constructor(
     Log.i("Map", "setLocation: $location")
   }
 
+  fun getLocation(): Location {
+
+    Log.i("Map", "getLocation: $location")
+    return location.value!!
+  }
+
   fun getAllPost(): Flow<List<Post>> {
     return repository.getAllPosts()
   }
 
-  suspend fun getCurrentLocation(): Location {
-    return positionModel.getCurrentLocation(CurrentLocationRequest.Builder().build())
+  fun getCurrentLocation(): Deferred<Location> {
+    return viewModelScope.async(Dispatchers.Default) {
+      val locationToSet = positionModel.getCurrentLocation(CurrentLocationRequest.Builder().build())
+      locationToSet
+    }
   }
 }
