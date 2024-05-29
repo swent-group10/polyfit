@@ -6,6 +6,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -18,10 +19,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.se.polyfit.ui.theme.PrimaryPurple
 
+/**
+ * Primary button with rounded corners and primary purple color by default
+ *
+ * @param modifier Modifier
+ * @param onClick () -> Unit
+ * @param text String
+ * @param fontSize Int
+ * @param isEnabled Boolean
+ * @param color Color
+ * @param buttonShape RoundedCornerShape
+ * @param icon @Composable (() -> Unit)?
+ */
 @Composable
 fun PrimaryButton(
-    onClick: () -> Unit = {},
     modifier: Modifier = Modifier.fillMaxWidth(0.5f),
+    onClick: () -> Unit = {},
     text: String = "",
     fontSize: Int = 20,
     isEnabled: Boolean = true,
@@ -29,16 +42,22 @@ fun PrimaryButton(
     buttonShape: RoundedCornerShape = RoundedCornerShape(50.dp),
     icon: @Composable (() -> Unit)? = null
 ) {
-  var pressed by remember { mutableStateOf(false) }
+  var disabled by remember { mutableStateOf(false) }
+
+  // Prevent Spam Clicking by enforcing that users wait 1 second after clicks
+  LaunchedEffect(key1 = disabled) {
+    if (disabled) {
+      kotlinx.coroutines.delay(1000)
+      disabled = false
+    }
+  }
 
   Button(
       onClick = {
-        if (!pressed) {
-          pressed = true
-          onClick()
-        }
+        disabled = true
+        onClick()
       },
-      enabled = isEnabled,
+      enabled = isEnabled && !disabled,
       modifier = modifier.testTag("PrimaryButton"),
       shape = buttonShape,
       colors = ButtonDefaults.buttonColors(containerColor = color)) {
