@@ -1,5 +1,6 @@
 package com.github.se.polyfit.data.api
 
+import com.github.se.polyfit.data.api.Spoonacular.RecipeFromIngredientsResponseAPI
 import java.net.URL
 import kotlin.test.Test
 import org.json.JSONArray

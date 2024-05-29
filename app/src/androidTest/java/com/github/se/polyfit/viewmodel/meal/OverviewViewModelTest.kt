@@ -5,7 +5,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.util.Log
 import androidx.test.core.app.ApplicationProvider
-import com.github.se.polyfit.data.api.SpoonacularApiCaller
+import com.github.se.polyfit.data.api.Spoonacular.SpoonacularApiCaller
 import com.github.se.polyfit.data.local.dao.MealDao
 import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.model.ingredient.Ingredient

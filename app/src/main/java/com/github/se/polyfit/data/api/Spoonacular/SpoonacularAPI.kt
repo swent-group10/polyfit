@@ -1,8 +1,10 @@
-package com.github.se.polyfit.data.api
+package com.github.se.polyfit.data.api.Spoonacular
 
 import android.graphics.Bitmap
 import android.util.Log
 import com.github.se.polyfit.BuildConfig
+import com.github.se.polyfit.data.api.APIResponse
+import com.github.se.polyfit.data.api.RecipeInstruction
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.model.recipe.Recipe

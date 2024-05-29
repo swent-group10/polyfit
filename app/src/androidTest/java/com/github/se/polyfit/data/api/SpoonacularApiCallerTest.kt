@@ -5,6 +5,9 @@ import android.util.Log
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import com.github.se.polyfit.data.api.Spoonacular.ImageAnalysisResponseAPI
+import com.github.se.polyfit.data.api.Spoonacular.RecipeNutritionResponseAPI
+import com.github.se.polyfit.data.api.Spoonacular.SpoonacularApiCaller
 import com.github.se.polyfit.data.mockData.jsonImageAnalysis
 import com.github.se.polyfit.data.mockData.jsonRecipeNutrition
 import com.github.se.polyfit.data.mockData.recipeFromIngredientsReponse
