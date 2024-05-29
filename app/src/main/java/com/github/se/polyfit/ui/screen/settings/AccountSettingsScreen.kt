@@ -1,5 +1,6 @@
 package com.github.se.polyfit.ui.screen.settings
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -113,10 +114,17 @@ private fun AccountSettings(
           keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
           singleLine = true,
           onValueChange = {
-            val update = it.toLongOrNull()
+            val update =
+                it.toLongOrNull()?.let { value ->
+                  if (value !in Long.MIN_VALUE..Long.MAX_VALUE) null else value
+                }
+
+            Log.d("AccountSettings", "updateHeight: $update")
+
             height =
                 when {
-                  update == null || update <= 0 -> ""
+                  update == null -> height
+                  update <= 0 -> ""
                   else -> update.toString()
                 }
             accountSettingsViewModel.updateHeight(
@@ -135,13 +143,22 @@ private fun AccountSettings(
           keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
           singleLine = true,
           onValueChange = {
-            val update = it.toDoubleOrNull()
+
+            // The .toDoubleOrNull() cause cause for some reason the value is not a number
+            // it can be equal to infinity
+
+            val update =
+                it.toDoubleOrNull()?.let { value ->
+                  if (value !in Double.MIN_VALUE..Double.MAX_VALUE) null else value
+                }
+
             weight =
                 when {
                   update.isNotNull() && update!! <= 0 -> ""
                   update.isNotNull() -> update.toString()
                   else -> weight
                 }
+
             accountSettingsViewModel.updateWeight(
                 when {
                   update.isNotNull() && update!! > 0 -> update
@@ -161,7 +178,8 @@ private fun AccountSettings(
             val update = it.toLongOrNull()
             calorieGoal =
                 when {
-                  update == null || update <= 0 -> ""
+                  update == null -> calorieGoal
+                  update <= 0 -> ""
                   else -> update.toString()
                 }
             accountSettingsViewModel.updateCalorieGoal(update ?: 0)
