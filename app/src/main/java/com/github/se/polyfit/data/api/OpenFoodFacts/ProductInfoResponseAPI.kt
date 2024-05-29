@@ -1,5 +1,6 @@
-package com.github.se.polyfit.data.api
+package com.github.se.polyfit.data.api.OpenFoodFacts
 
+import com.github.se.polyfit.data.api.APIResponse
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
@@ -10,9 +11,9 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 class ProductResponseAPI(val productResponse: ProductResponse?, val status: APIResponse) {
   companion object {
     val moshi: Moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
+    val adapter = moshi.adapter(ProductResponse::class.java).lenient()
 
     fun fromJson(jsonString: String): ProductResponse {
-      val adapter = moshi.adapter(ProductResponse::class.java).lenient()
       return adapter.fromJson(jsonString) ?: throw IllegalArgumentException("Invalid JSON data")
     }
   }

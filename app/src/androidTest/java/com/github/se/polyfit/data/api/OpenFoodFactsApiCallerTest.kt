@@ -2,6 +2,10 @@ package com.github.se.polyfit.data.api
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.se.polyfit.data.api.OpenFoodFacts.Nutriments
+import com.github.se.polyfit.data.api.OpenFoodFacts.OpenFoodFactsApi
+import com.github.se.polyfit.data.api.OpenFoodFacts.Product
+import com.github.se.polyfit.data.api.OpenFoodFacts.ProductResponse
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
@@ -30,6 +34,17 @@ class OpenFoodFactsApiCallerTest {
           return when (request.path) {
             "/$nutellaCode?fields=product_name,nutriments,quantity" ->
                 MockResponse().setResponseCode(200).setBody(nutellaResult.toString())
+            else -> MockResponse().setResponseCode(402).setBody("Not Found")
+          }
+        }
+      }
+
+  private val emptyResultDispatcher =
+      object : Dispatcher() {
+        override fun dispatch(request: RecordedRequest): MockResponse {
+          return when (request.path) {
+            "/$nutellaCode?fields=product_name,nutriments,quantity" ->
+                MockResponse().setResponseCode(200).setBody("")
             else -> MockResponse().setResponseCode(402).setBody("Not Found")
           }
         }
@@ -128,6 +143,24 @@ class OpenFoodFactsApiCallerTest {
     assert(response.productResponse!!.product.nutriments == _nutriments)
 
     assert(response.productResponse!!.product.nutriments.getNutrientList() == nutritionalInfo)
+  }
+
+  @Test
+  fun apiReturnsEmpty() {
+    mockWebSever.dispatcher = emptyResultDispatcher
+    val response = foodFactsApi.getFoodFacts(nutellaCode)
+    assert(response!!.status == APIResponse.FAILURE)
+    assert(response.productResponse == null)
+    assert(response.productResponse?.product?.product_name == null)
+    assert(response.productResponse?.product?.quantity == null)
+    assert(response.productResponse?.product?.nutriments == null)
+
+    val p_nutriments = response.productResponse?.product?.nutriments
+
+    assert(p_nutriments?.fat == null)
+    assert(p_nutriments?.carbohydrates == null)
+    assert(p_nutriments?.sugars_value == null)
+    assert(p_nutriments?.proteins == null)
   }
 }
 

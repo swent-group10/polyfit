@@ -1,6 +1,7 @@
-package com.github.se.polyfit.data.api
+package com.github.se.polyfit.data.api.OpenFoodFacts
 
 import android.util.Log
+import com.github.se.polyfit.data.api.APIResponse
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import java.io.IOException
@@ -28,11 +29,11 @@ class OpenFoodFactsApi {
       } else {
         response.body?.string()?.let {
           ProductResponseAPI(ProductResponseAPI.fromJson(it), APIResponse.SUCCESS)
-        }
+        } ?: ProductResponseAPI(null, APIResponse.FAILURE)
       }
     } catch (e: IOException) {
       Log.e(TAG, e.stackTraceToString())
-      throw IOException(e)
+      ProductResponseAPI(null, APIResponse.FAILURE)
     }
   }
 
@@ -55,7 +56,7 @@ class OpenFoodFactsApi {
       }
     } catch (e: IOException) {
       Log.e(TAG, "Unable to create Ingredient from information")
-      throw IOException(e)
+      Ingredient.default()
     }
 
     return ingredient
