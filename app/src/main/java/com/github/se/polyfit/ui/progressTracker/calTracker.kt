@@ -25,11 +25,12 @@ fun CalTracker(
     strokeWidth: Float = 8f
 ) {
   var progressValue = progress
-  if (progress <= 0f) {
+  if (progress <= 0f || progressValue.isNaN()) {
     progressValue = 0f
   } else if (progress > 1f) {
     progressValue = 1f
   }
+
   Box(
       contentAlignment = Alignment.Center,
       modifier = Modifier.fillMaxSize().testTag(OverviewTags.overviewGoal)) {

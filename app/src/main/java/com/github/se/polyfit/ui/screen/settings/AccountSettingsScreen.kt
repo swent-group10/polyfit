@@ -46,8 +46,7 @@ fun AccountSettingsScreen(
   val canSave =
       !user.givenName.isNullOrEmpty() &&
           !user.familyName.isNullOrEmpty() &&
-          !user.displayName.isNullOrEmpty() &&
-          user.calorieGoal > 0
+          !user.displayName.isNullOrEmpty()
 
   Scaffold(
       topBar = { SimpleTopBar(getString(context, R.string.accountSettings), goBack) },
