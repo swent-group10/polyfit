@@ -8,15 +8,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -32,7 +27,7 @@ import com.github.se.polyfit.ui.components.button.GradientButton
 import com.github.se.polyfit.ui.components.button.PrimaryButton
 import com.github.se.polyfit.ui.components.dialog.AddIngredientDialog
 import com.github.se.polyfit.ui.components.ingredients.IngredientList
-import com.github.se.polyfit.ui.theme.PrimaryPurple
+import com.github.se.polyfit.ui.components.scaffold.SimpleTopBar
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
 
 @Composable
@@ -50,7 +45,7 @@ fun IngredientScreen(
   }
 
   Scaffold(
-      topBar = { TopBar(::goBackAndReset) },
+      topBar = { SimpleTopBar(title = "Ingredients", navigateBack = ::goBackAndReset) },
       bottomBar = {
         BottomBar(
             onClickAddIngred = { showAddIngredDialog.value = true },
@@ -106,38 +101,6 @@ private fun BottomBar(onClickAddIngred: () -> Unit, navigateForward: () -> Unit,
               modifier = Modifier.width(200.dp).testTag("DoneButton"))
         }
   }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun TopBar(navigateBack: () -> Unit) {
-  var wasClicked by remember { mutableStateOf(false) }
-  TopAppBar(
-      title = {
-        Text(
-            "Ingredients",
-            modifier = Modifier.testTag("IngredientTitle"),
-            color = MaterialTheme.colorScheme.secondary,
-            fontSize = MaterialTheme.typography.headlineMedium.fontSize)
-      },
-      navigationIcon = {
-        IconButton(
-            onClick = {
-              if (!wasClicked) {
-                navigateBack()
-                wasClicked = true
-              }
-            },
-            content = {
-              Icon(
-                  imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                  contentDescription = "Back",
-                  modifier = Modifier.testTag("BackButton"),
-                  tint = PrimaryPurple)
-            },
-            modifier = Modifier.testTag("BackButton"))
-      },
-      modifier = Modifier.testTag("TopBar"))
 }
 
 // @Composable
