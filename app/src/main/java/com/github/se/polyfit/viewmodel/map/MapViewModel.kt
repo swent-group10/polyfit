@@ -11,7 +11,6 @@ import com.github.se.polyfit.model.post.PostLocationModel
 import com.google.android.gms.location.CurrentLocationRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.flow.Flow
 
 @HiltViewModel
 class MapViewModel
@@ -61,10 +60,6 @@ constructor(
   fun setLocation(location: Location) {
     _location.value = location
     Log.i("Map", "setLocation: $location")
-  }
-
-  fun getAllPost(): Flow<List<Post>> {
-    return repository.getAllPosts()
   }
 
   suspend fun getCurrentLocation(): Location {

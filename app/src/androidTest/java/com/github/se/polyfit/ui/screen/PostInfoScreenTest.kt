@@ -4,7 +4,6 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.navigation.NavHostController
-import com.github.se.polyfit.model.post.Post
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.viewmodel.post.ViewPostViewModel
 import io.github.kakaocup.compose.node.element.ComposeScreen
@@ -24,7 +23,6 @@ class PostInfoScreenTest {
 
   @Before
   fun setup() {
-    every { mockPostViewModel.posts } returns MutableStateFlow(listOf(Post.default()))
     every { mockPostViewModel.isFetching } returns MutableStateFlow(true)
 
     composeTestRule.setContent {
