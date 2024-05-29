@@ -7,6 +7,8 @@ import com.github.se.polyfit.data.api.SpoonacularApiCaller
 import com.github.se.polyfit.model.recipe.Recipe
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @HiltViewModel
 class RecipeRecommendationViewModel
@@ -15,6 +17,9 @@ constructor(private val spoonacularApiCaller: SpoonacularApiCaller) : ViewModel(
   private var _showIngredient = MutableLiveData<Boolean>()
 
   val showIngredient: LiveData<Boolean> = _showIngredient
+
+  private val _selectedRecipe: MutableLiveData<Recipe> = MutableLiveData<Recipe>()
+  val selectedRecipe: LiveData<Recipe> = _selectedRecipe
 
   init {
     _showIngredient.value = true
@@ -27,7 +32,9 @@ constructor(private val spoonacularApiCaller: SpoonacularApiCaller) : ViewModel(
     // spoonacularApiCaller.recipeByIngredients(ingredients) }
     //    return recipesResponse.recipes
 
-    return listOf(Recipe.default())
+    return withContext(Dispatchers.IO) {
+      spoonacularApiCaller.getCompleteRecipesFromIngredients(ingredients)
+    }
   }
 
   // A mock for now while waiting to the QR code scanner implementation
@@ -35,12 +42,8 @@ constructor(private val spoonacularApiCaller: SpoonacularApiCaller) : ViewModel(
     return listOf("apple", "banana")
   }
 
-  fun getSelectedRecipe(): Recipe {
-    return Recipe.default()
-  }
-
-  fun setRecipe(recipe: Recipe) {
-    // TODO
+  fun onSelectedRecipe(recipe: Recipe) {
+    _selectedRecipe.value = recipe
   }
 
   fun setShowIngredientFalse() {

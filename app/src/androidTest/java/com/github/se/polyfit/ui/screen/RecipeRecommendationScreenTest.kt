@@ -8,7 +8,7 @@ import androidx.navigation.NavHostController
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.model.recipe.Recipe
 import com.github.se.polyfit.ui.components.button.LikeButtonScreen
-import com.github.se.polyfit.ui.screen.recipeRec.RecipeRecommendationScreen
+import com.github.se.polyfit.ui.screen.recipeRec.RecommendationScreen
 import com.github.se.polyfit.viewmodel.recipe.RecipeRecommendationViewModel
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.mockk.coEvery
@@ -37,13 +37,31 @@ class RecipeRecommendationScreenTest {
     coEvery { mockkRecommendationViewModel.recipeFromIngredients(any()) } returns recipeList
 
     composeTestRule.setContent {
-      RecipeRecommendationScreen(mockkNavigation, mockkRecommendationViewModel, {})
+      RecommendationScreen(mockkNavigation, mockkRecommendationViewModel, {})
     }
     composeTestRule.waitForIdle()
 
     ComposeScreen.onComposeScreen<LikeButtonScreen>(composeTestRule) {
       composeTestRule.onNodeWithText("Recommended Recipes").assertIsDisplayed()
       composeTestRule.onNodeWithTag("RecipeList").assertExists().assertIsDisplayed()
+    }
+  }
+
+  @Test
+  fun testLoadingAnimation() {
+    val mockkNavigation = mockk<NavHostController>(relaxed = true)
+
+    val mockkRecommendationViewModel = mockk<RecipeRecommendationViewModel>()
+
+    coEvery { mockkRecommendationViewModel.recipeFromIngredients(any()) } returns emptyList()
+    coEvery { mockkRecommendationViewModel.ingredientList() } returns listOf("apple", "banana")
+
+    composeTestRule.setContent {
+      RecommendationScreen(mockkNavigation, mockkRecommendationViewModel, {})
+    }
+
+    ComposeScreen.onComposeScreen<RecipeRecommendationScreen>(composeTestRule) {
+      composeTestRule.onNodeWithTag("Loader").assertIsDisplayed()
     }
   }
 }

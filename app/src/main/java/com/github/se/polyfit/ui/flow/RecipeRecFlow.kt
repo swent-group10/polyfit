@@ -7,8 +7,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.navigation.Route
-import com.github.se.polyfit.ui.screen.recipeRec.RecipeRecommendationMoreDetailScreen
-import com.github.se.polyfit.ui.screen.recipeRec.RecipeRecommendationScreen
+import com.github.se.polyfit.ui.screen.recipeRec.MoreDetailScreen
+import com.github.se.polyfit.ui.screen.recipeRec.RecommendationScreen
 import com.github.se.polyfit.viewmodel.recipe.RecipeRecommendationViewModel
 
 @Composable
@@ -21,14 +21,15 @@ fun RecipeRecFlow(
 
   NavHost(navController = navigation, startDestination = Route.RecipeRecommendation) {
     composable(Route.RecipeRecommendation) {
-      RecipeRecommendationScreen(
+      RecommendationScreen(
           navigation,
           recipeRecommendationViewModel,
           navAction::navigateToRecipeRecommendationMore,
       )
     }
     composable(Route.RecipeRecommendationMore) {
-      RecipeRecommendationMoreDetailScreen(
+      MoreDetailScreen(
+          recipeRecommendationViewModel,
           navigateBack = navAction::goBack,
       )
     }

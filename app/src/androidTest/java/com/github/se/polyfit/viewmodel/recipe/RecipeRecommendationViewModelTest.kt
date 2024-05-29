@@ -30,12 +30,14 @@ class RecipeRecommendationViewModelTest {
     val ingredients = listOf("apple", "banana")
     val expectedRecipes = listOf(Recipe.default())
 
-    coEvery { spoonacularApiCaller.recipeByIngredients(ingredients) } returns
+    coEvery { spoonacularApiCaller.recipeByIngredients(any()) } returns
         RecipeFromIngredientsResponseAPI(APIResponse.SUCCESS, expectedRecipes)
+    coEvery { spoonacularApiCaller.getCompleteRecipesFromIngredients(any()) } returns
+        listOf(Recipe.default())
 
     val actualRecipes = viewModel.recipeFromIngredients(listOf("apple", "banana"))
 
-    assertEquals(expectedRecipes, actualRecipes)
+    assertEquals(listOf(Recipe.default()), actualRecipes)
   }
 
   @Test
@@ -48,7 +50,7 @@ class RecipeRecommendationViewModelTest {
 
     val actualRecipes = viewModel.recipeFromIngredients(ingredients)
 
-    assertEquals(Recipe.default(), actualRecipes.first())
+    assertEquals(listOf<Recipe>(), actualRecipes)
   }
 
   @Test
