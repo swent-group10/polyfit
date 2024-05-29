@@ -43,7 +43,7 @@ class PostFirebaseRepositoryTest {
   @Before
   fun setUp() {
     every { mockDb.collection("posts") } returns mockCollectionRef
-    postFirebaseRepository = PostFirebaseRepository(mockDb, mockPictureDb)
+    postFirebaseRepository = PostFirebaseRepository(mockDb, pictureDb = mockPictureDb)
   }
 
   @Test
@@ -71,7 +71,7 @@ class PostFirebaseRepositoryTest {
   fun getAllPostsReturnsCorrectPosts() = runTest {
     // Arrange
     val post = Post("1", "Title", Location.default(), Meal.default(), LocalDate.now())
-    val localPostFirebaseRepository = PostFirebaseRepository(mockDb, mockPictureDb)
+    val localPostFirebaseRepository = PostFirebaseRepository(mockDb, pictureDb = mockPictureDb)
 
     val mockQuerySnapshot: QuerySnapshot = mockk()
     val mockDocumentSnapshot: QueryDocumentSnapshot = mockk()
