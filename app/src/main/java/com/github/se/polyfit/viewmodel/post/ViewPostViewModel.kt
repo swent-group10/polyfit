@@ -1,9 +1,7 @@
 package com.github.se.polyfit.viewmodel.post
 
 import androidx.lifecycle.LiveData
-
 import androidx.lifecycle.MutableLiveData
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.se.polyfit.data.remote.firebase.PostFirebaseRepository
@@ -58,6 +56,5 @@ constructor(
         _isFetching.value = false
       }
     }
-
   }
 }

@@ -17,7 +17,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 
-
 @HiltViewModel
 class MapViewModel
 @Inject
@@ -69,7 +68,6 @@ constructor(
     Log.i("Map", "setLocation: $location")
   }
 
-
   fun getLocation(): Location {
 
     Log.i("Map", "getLocation: $location")
@@ -85,6 +83,5 @@ constructor(
       val locationToSet = positionModel.getCurrentLocation(CurrentLocationRequest.Builder().build())
       locationToSet
     }
-
   }
 }

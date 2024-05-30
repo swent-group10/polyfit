@@ -1,7 +1,5 @@
 package com.github.se.polyfit.viewmodel.post
 
-
-
 /*
 import androidx.lifecycle.MutableLiveData
 import com.github.se.polyfit.data.remote.firebase.PostFirebaseRepository
