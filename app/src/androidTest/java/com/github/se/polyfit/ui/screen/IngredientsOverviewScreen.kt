@@ -11,7 +11,6 @@ class IngredientsOverviewScreen(semanticsProvider: SemanticsNodeInteractionsProv
 
   val topBar: KNode = child { hasTestTag("TopBar") }
   val bottomBar: KNode = child { hasTestTag("GenerateBox") }
-  val floatingActionButton: KNode = child { hasTestTag("FloatingButton") }
   val listProducts: KNode = child { hasTestTag("ListProductColumn") }
 }
 

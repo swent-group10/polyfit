@@ -6,18 +6,18 @@ import io.mockk.*
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkAll
+import java.lang.Thread.sleep
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
-import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestRule
-import java.lang.Thread.sleep
 
 class BarCodeCodeViewModelTest {
 
@@ -139,7 +139,6 @@ class BarCodeCodeViewModelTest {
     viewModel.addId("12345678")
     assertEquals(listOf("12345678"), viewModel.listId.value)
   }
-
 
   @Test
   fun `check is scanned is true when id is valid and not in list`() {

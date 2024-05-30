@@ -71,16 +71,19 @@ fun CameraXScreen(
     brush = if (isScanned == true) acceptedBrush else neutralBrush
   }
 
-  Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
-    Card(
-        modifier =
-            Modifier.fillMaxWidth(0.9f)
-                .height(120.dp)
-                .absoluteOffset(0.dp, padding.calculateTopPadding()),
-        border = BorderStroke(8.dp, brush)) {
-          AndroidView({ previewView }, modifier = Modifier.testTag("AndroidView").fillMaxSize())
-        }
-  }
+  Box(
+      modifier = Modifier.fillMaxSize().testTag("BoxCamera"),
+      contentAlignment = Alignment.TopCenter) {
+        Card(
+            modifier =
+                Modifier.fillMaxWidth(0.9f)
+                    .height(120.dp)
+                    .absoluteOffset(0.dp, padding.calculateTopPadding())
+                    .testTag("CardCamera"),
+            border = BorderStroke(8.dp, brush)) {
+              AndroidView({ previewView }, modifier = Modifier.testTag("AndroidView").fillMaxSize())
+            }
+      }
 
   // If there is no camera we display nothing
   val pm: PackageManager = context.getPackageManager()
