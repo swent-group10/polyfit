@@ -3,7 +3,6 @@ package com.github.se.polyfit.ui.screen.settings
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.ui.navigation.Navigation
@@ -127,8 +126,33 @@ class AccountSettingsTest {
     }
 
     ComposeScreen.onComposeScreen<AccountSettingsScreen>(composeTestRule) {
-      composeTestRule.onNodeWithTag("Height")
-      composeTestRule.onNodeWithTag("Height").performTextInput("100000")
+      height {
+        performTextClearance()
+        performClick()
+        performTextInput("1000")
+        assertTextContains("1000")
+        performTextInput("10000000000000000000000000000000000")
+        assertTextContains("1000")
+      }
+      composeTestRule.onNodeWithTag("Infinity").assertDoesNotExist()
+
+      weight {
+        performTextClearance()
+        performClick()
+        performTextInput("1000")
+        assertTextContains("1000")
+        performTextInput("10000000000000000000000000000000000")
+        assertTextContains("1000")
+      }
+
+      calorieGoal {
+        performTextClearance()
+        performClick()
+        performTextInput("1000")
+        assertTextContains("1000")
+        performTextInput("10000000000000000000000000000000000")
+        assertTextContains("1000")
+      }
     }
   }
 
