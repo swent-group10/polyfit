@@ -11,7 +11,7 @@ import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.github.se.polyfit.data.api.SpoonacularApiCaller
+import com.github.se.polyfit.data.api.Spoonacular.SpoonacularApiCaller
 import com.github.se.polyfit.data.local.dao.MealDao
 import com.github.se.polyfit.data.processor.LocalDataProcessor
 import com.github.se.polyfit.model.data.User

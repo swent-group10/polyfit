@@ -119,6 +119,11 @@ android {
 
 
     dependencies {
+        //Moshi
+        implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
+        implementation("com.squareup.moshi:moshi:1.15.1")
+
+
         // AndroidX
         implementation("androidx.core:core:1.13.1")
         implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
@@ -172,6 +177,7 @@ android {
         kaptTest("com.google.dagger:hilt-compiler:2.51")
         kaptAndroidTest("com.google.dagger:hilt-compiler:2.51")
         kapt("androidx.hilt:hilt-compiler:1.2.0")
+        kapt("com.squareup.moshi:moshi-kotlin-codegen:1.15.1")
 
         // Android Test
         androidTestImplementation("com.squareup.okhttp3:okhttp:4.12.0")
