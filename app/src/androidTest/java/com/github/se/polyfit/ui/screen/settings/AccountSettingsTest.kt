@@ -3,6 +3,7 @@ package com.github.se.polyfit.ui.screen.settings
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.ui.navigation.Navigation
@@ -113,6 +114,21 @@ class AccountSettingsTest {
         composeTestRule.onNodeWithTag("ChangeDateButton").assertTextContains("01")
         composeTestRule.onNodeWithTag("ChangeDateButton").assertTextContains("01")
       }
+    }
+  }
+
+  @Test
+  fun testLargeValues() {
+    setup(filledUser)
+    ComposeScreen.onComposeScreen<AccountSettingsScreen>(composeTestRule) {
+      height { assertTextContains("180") }
+      weight { assertTextContains("80.0") }
+      calorieGoal { assertTextContains("2000") }
+    }
+
+    ComposeScreen.onComposeScreen<AccountSettingsScreen>(composeTestRule) {
+      composeTestRule.onNodeWithTag("Height")
+      composeTestRule.onNodeWithTag("Height").performTextInput("100000")
     }
   }
 

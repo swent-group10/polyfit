@@ -84,7 +84,11 @@ private fun AccountSettings(
           value = user.displayName ?: "",
           placeholder = { Text(getString(context, R.string.accountSettingsDisplayName)) },
           label = { Text(getString(context, R.string.accountSettingsDisplayName)) },
-          onValueChange = accountSettingsViewModel::updateDisplayName,
+          onValueChange = { newUsername ->
+            if (newUsername.length <= 20) {
+              accountSettingsViewModel.updateDisplayName(newUsername)
+            }
+          },
           singleLine = true,
           modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).testTag("DisplayName"))
     }
@@ -114,17 +118,16 @@ private fun AccountSettings(
           keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
           singleLine = true,
           onValueChange = {
-            val update =
-                it.toLongOrNull()?.let { value ->
-                  if (value !in Long.MIN_VALUE..Long.MAX_VALUE) null else value
-                }
+            var update = it.toLongOrNull()
 
-            Log.d("AccountSettings", "updateHeight: $update")
+            // If there is a Long overflow, the use the previous value
+            if (update == null && it.toBigDecimalOrNull() != null) {
+              update = height.toLongOrNull()
+            }
 
             height =
                 when {
-                  update == null -> height
-                  update <= 0 -> ""
+                  update == null || update <= 0 -> ""
                   else -> update.toString()
                 }
             accountSettingsViewModel.updateHeight(
@@ -143,25 +146,24 @@ private fun AccountSettings(
           keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
           singleLine = true,
           onValueChange = {
+            var update = it.toLongOrNull()
 
-            // The .toDoubleOrNull() cause cause for some reason the value is not a number
-            // it can be equal to infinity
+            // If there is a Double overflow, the use the previous value
+            Log.d("AccountSettings", "update: $update")
+            Log.d("AccountSettings", "updateBig: ${it.toBigDecimalOrNull()}")
 
-            val update =
-                it.toDoubleOrNull()?.let { value ->
-                  if (value !in Double.MIN_VALUE..Double.MAX_VALUE) null else value
-                }
+            if (update == null && it.toBigDecimalOrNull() != null) {
+              update = weight.toLongOrNull()
+            }
 
             weight =
                 when {
-                  update.isNotNull() && update!! <= 0 -> ""
-                  update.isNotNull() -> update.toString()
-                  else -> weight
+                  update == null || update!! <= 0 -> ""
+                  else -> update.toString()
                 }
-
             accountSettingsViewModel.updateWeight(
                 when {
-                  update.isNotNull() && update!! > 0 -> update
+                  update.isNotNull() && update!! > 0 -> update!!.toDouble()
                   else -> null
                 })
           },
@@ -175,12 +177,16 @@ private fun AccountSettings(
           keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
           singleLine = true,
           onValueChange = {
-            val update = it.toLongOrNull()
+            var update = it.toLongOrNull()
+
+            if (update == null && it.toBigDecimalOrNull() != null) {
+              update = calorieGoal.toLongOrNull()
+            }
+
             calorieGoal =
                 when {
-                  update == null -> calorieGoal
-                  update <= 0 -> ""
-                  else -> update.toString()
+                  update.isNotNull() -> update.toString()
+                  else -> ""
                 }
             accountSettingsViewModel.updateCalorieGoal(update ?: 0)
           },
