@@ -83,7 +83,11 @@ private fun AccountSettings(
           value = user.displayName ?: "",
           placeholder = { Text(getString(context, R.string.accountSettingsDisplayName)) },
           label = { Text(getString(context, R.string.accountSettingsDisplayName)) },
-          onValueChange = accountSettingsViewModel::updateDisplayName,
+          onValueChange = { newUsername ->
+            if (newUsername.length <= 20) {
+              accountSettingsViewModel.updateDisplayName(newUsername)
+            }
+          },
           singleLine = true,
           modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).testTag("DisplayName"))
     }

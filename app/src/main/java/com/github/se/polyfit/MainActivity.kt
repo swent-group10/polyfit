@@ -38,6 +38,7 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
 
   @Inject lateinit var user: User
+
   @Inject lateinit var userFirebaseRepository: UserFirebaseRepository
 
   public override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,6 +65,7 @@ class MainActivity : ComponentActivity() {
         authentication.setCallbackOnSign { navigation.navigateToHome() }
 
         val startDestination = if (authentication.isAuthenticated()) Route.Home else Route.Register
+
         NavHost(navController = navController, startDestination = startDestination) {
           composable(Route.Map) {
             GenericScreen(

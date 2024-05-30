@@ -2,8 +2,8 @@ package com.github.se.polyfit.viewmodel.recipe
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.github.se.polyfit.data.api.APIResponse
-import com.github.se.polyfit.data.api.RecipeFromIngredientsResponseAPI
-import com.github.se.polyfit.data.api.SpoonacularApiCaller
+import com.github.se.polyfit.data.api.Spoonacular.RecipeFromIngredientsResponseAPI
+import com.github.se.polyfit.data.api.Spoonacular.SpoonacularApiCaller
 import com.github.se.polyfit.model.recipe.Recipe
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -30,12 +30,14 @@ class RecipeRecommendationViewModelTest {
     val ingredients = listOf("apple", "banana")
     val expectedRecipes = listOf(Recipe.default())
 
-    coEvery { spoonacularApiCaller.recipeByIngredients(ingredients) } returns
+    coEvery { spoonacularApiCaller.recipeByIngredients(any()) } returns
         RecipeFromIngredientsResponseAPI(APIResponse.SUCCESS, expectedRecipes)
+    coEvery { spoonacularApiCaller.getCompleteRecipesFromIngredients(any()) } returns
+        listOf(Recipe.default())
 
     val actualRecipes = viewModel.recipeFromIngredients(listOf("apple", "banana"))
 
-    assertEquals(expectedRecipes, actualRecipes)
+    assertEquals(listOf(Recipe.default()), actualRecipes)
   }
 
   @Test
@@ -48,7 +50,7 @@ class RecipeRecommendationViewModelTest {
 
     val actualRecipes = viewModel.recipeFromIngredients(ingredients)
 
-    assertEquals(Recipe.default(), actualRecipes.first())
+    assertEquals(listOf<Recipe>(), actualRecipes)
   }
 
   @Test

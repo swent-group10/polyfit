@@ -119,6 +119,11 @@ android {
 
 
     dependencies {
+        //Moshi
+        implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
+        implementation("com.squareup.moshi:moshi:1.15.1")
+
+
         // AndroidX
         implementation("androidx.core:core:1.13.1")
         implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
@@ -160,7 +165,7 @@ android {
         implementation("com.google.code.gson:gson:2.10.1")
         implementation("com.squareup.okhttp3:okhttp:4.12.0")
         implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
-        implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
+        implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.0")
         implementation("io.coil-kt:coil:2.6.0")
         implementation("io.coil-kt:coil-compose:2.6.0")
 
@@ -172,6 +177,7 @@ android {
         kaptTest("com.google.dagger:hilt-compiler:2.51")
         kaptAndroidTest("com.google.dagger:hilt-compiler:2.51")
         kapt("androidx.hilt:hilt-compiler:1.2.0")
+        kapt("com.squareup.moshi:moshi-kotlin-codegen:1.15.1")
 
         // Android Test
         androidTestImplementation("com.squareup.okhttp3:okhttp:4.12.0")
@@ -217,7 +223,7 @@ android {
 
         // Mockito
         androidTestImplementation("org.mockito:mockito-core:5.11.0")
-        androidTestImplementation ("org.mockito.kotlin:mockito-kotlin:5.3.1")
+        androidTestImplementation("org.mockito.kotlin:mockito-kotlin:5.3.1")
 
         testImplementation("io.mockk:mockk:1.13.10")
         testImplementation("org.mockito:mockito-core:5.11.0")
@@ -231,6 +237,10 @@ android {
         implementation("com.google.android.gms:play-services-maps:18.2.0")
         implementation("androidx.appcompat:appcompat:1.6.1")
         implementation("com.google.maps.android:maps-compose:4.3.3")
+
+        // Json (Moshi)
+        implementation("com.squareup.moshi:moshi:1.15.1")
+        implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
 
         //Ycharts
         implementation("co.yml:ycharts:2.1.0")
@@ -276,6 +286,8 @@ tasks.register("jacocoTestReport", JacocoReport::class) {
         "**/Manifest*.*",
         "**/*Test*.*",
         "android/**/*.*",
+        "**/androidTest/**", // Exclude androidTest folder
+        "**/test/**" // Exclude test folder
     )
     val debugTree = fileTree("${project.buildDir}/tmp/kotlin-classes/debug") {
         exclude(fileFilter)
