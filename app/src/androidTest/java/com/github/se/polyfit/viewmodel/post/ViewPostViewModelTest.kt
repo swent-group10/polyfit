@@ -1,6 +1,20 @@
 package com.github.se.polyfit.viewmodel.post
 
+
+
 /*
+import androidx.lifecycle.MutableLiveData
+import com.github.se.polyfit.data.remote.firebase.PostFirebaseRepository
+import com.github.se.polyfit.model.post.Post
+import io.mockk.coVerify
+import io.mockk.every
+import io.mockk.mockk
+import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
+import org.junit.Before
+import org.junit.Test
+
+
 class ViewPostViewModelTest {
 
   @get:Rule
@@ -37,21 +51,21 @@ class ViewPostViewModelTest {
 
   /* @Test
   fun getAllPost_returnsCorrectly() = runTest {
-    // Arrange
-    val posts = listOf(Post("1", "Title", Location.default(), Meal.default(), LocalDate.now()))
-    coEvery { postFirebaseRepository.getAllPosts() } returns flowOf(posts)
-
     // Act
+
     viewModel.getNearbyPosts()
     delay(1000) // Allow time for the coroutine to complete
+=======
+    viewModel.getAllPost()
+
 
     // Assert
-    coVerify { postFirebaseRepository.getAllPosts() }
-    assertEquals(false, viewModel.isFetching.value)
+    coVerify { postFirebaseRepository.posts }
   }
 
   @Test
   fun returnsEmptyListWhenNoPostsAvailable() = runTest {
+
     every { postFirebaseRepository.getAllPosts() } returns flowOf(emptyList())
 
     viewModel.getNearbyPosts()
@@ -98,6 +112,12 @@ class ViewPostViewModelTest {
     // Verify that the repository methods are called
     coVerify { postLocalRepository.getCurrentLocation(any()) }
     coVerify { postFirebaseRepository.queryNearbyPosts(46.5181, 6.5659, 1.0, any()) }
+
+    every { postFirebaseRepository.posts } returns MutableLiveData(emptyList())
+    val result = viewModel.getAllPost()
+
+    assertEquals(emptyList<Post>(), result.value)
+
   }
 }
 */

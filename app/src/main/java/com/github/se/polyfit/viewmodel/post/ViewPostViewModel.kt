@@ -1,7 +1,9 @@
 package com.github.se.polyfit.viewmodel.post
 
 import androidx.lifecycle.LiveData
+
 import androidx.lifecycle.MutableLiveData
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.se.polyfit.data.remote.firebase.PostFirebaseRepository
@@ -12,11 +14,8 @@ import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.Priority
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @HiltViewModel
 class ViewPostViewModel
@@ -26,7 +25,6 @@ constructor(
     private val postLocalRepository: PostLocationModel
 ) : ViewModel() {
   private val _posts: MutableStateFlow<List<Post>> = MutableStateFlow(mutableListOf())
-  val posts: StateFlow<List<Post>> = _posts
 
   private val _isFetching: MutableStateFlow<Boolean> = MutableStateFlow(false)
   val isFetching: StateFlow<Boolean> = _isFetching
@@ -35,6 +33,7 @@ constructor(
   val location: LiveData<Location> = _location
 
   init {
+
     viewModelScope.launch {
       _location.value =
           postLocalRepository.getCurrentLocation(
@@ -59,5 +58,6 @@ constructor(
         _isFetching.value = false
       }
     }
+
   }
 }

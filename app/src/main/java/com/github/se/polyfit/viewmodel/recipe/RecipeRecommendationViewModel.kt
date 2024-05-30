@@ -3,7 +3,7 @@ package com.github.se.polyfit.viewmodel.recipe
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.github.se.polyfit.data.api.SpoonacularApiCaller
+import com.github.se.polyfit.data.api.Spoonacular.SpoonacularApiCaller
 import com.github.se.polyfit.model.recipe.Recipe
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

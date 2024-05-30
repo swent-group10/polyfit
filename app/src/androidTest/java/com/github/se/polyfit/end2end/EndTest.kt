@@ -18,7 +18,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import com.github.se.polyfit.R
-import com.github.se.polyfit.data.api.SpoonacularApiCaller
+import com.github.se.polyfit.data.api.Spoonacular.SpoonacularApiCaller
 import com.github.se.polyfit.data.local.dao.MealDao
 import com.github.se.polyfit.data.processor.LocalDataProcessor
 import com.github.se.polyfit.model.data.User
