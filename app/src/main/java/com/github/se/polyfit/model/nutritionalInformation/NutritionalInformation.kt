@@ -2,6 +2,11 @@ package com.github.se.polyfit.model.nutritionalInformation
 
 import android.util.Log
 
+/**
+ * Represents the nutritional information of a food item.
+ *
+ * @param nutrientsList The list of nutrients in the food item.
+ */
 class NutritionalInformation(nutrientsList: MutableList<Nutrient> = mutableListOf()) {
   val nutrients: MutableList<Nutrient> = mutableListOf()
 
@@ -99,6 +104,13 @@ class NutritionalInformation(nutrientsList: MutableList<Nutrient> = mutableListO
       return nutritionalInformation.nutrients.map { Nutrient.serialize(it) }
     }
 
+    /**
+     * Deserializes a list of maps to a NutritionalInformation object.
+     *
+     * @param data The list of maps to deserialize.
+     * @return The NutritionalInformation object.
+     * @throws IllegalArgumentException if cannot deserialize the list of maps.
+     */
     fun deserialize(data: List<Map<String, Any>>): NutritionalInformation {
       val nutritionalInformation = NutritionalInformation()
       data.forEach {
