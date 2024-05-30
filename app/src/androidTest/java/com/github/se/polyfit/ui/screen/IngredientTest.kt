@@ -104,6 +104,8 @@ class IngredientTest : TestCase() {
         performClick()
       }
 
+      composeTestRule.onNodeWithTag("GoBack", useUnmergedTree = true).assertExists().performClick()
+
       verify { mockNav.goBack() }
       confirmVerified(mockNav)
     }

@@ -3,6 +3,7 @@ package com.github.se.polyfit.ui.flow
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -54,7 +55,7 @@ class AddMealFlowTest {
   }
 
   @Test
-  fun ingredientScreenIsShown() {
+  fun ingredientScreenGoesBackAfterConfirm() {
     ComposeScreen.onComposeScreen<IngredientsTopBar>(composeTestRule) {
       ingredientTitle {
         assertIsDisplayed()
@@ -68,8 +69,35 @@ class AddMealFlowTest {
         performClick()
       }
 
+      composeTestRule.onNodeWithTag("GoBack").assertExists().performClick()
+
       ingredientTitle { assertDoesNotExist() }
       backButton { assertDoesNotExist() }
+    }
+
+    ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
+      ingredientButton { assertDoesNotExist() }
+    }
+  }
+
+  @Test
+  fun ingredientScreenStaysIfDenied() {
+    ComposeScreen.onComposeScreen<IngredientsTopBar>(composeTestRule) {
+      ingredientTitle {
+        assertIsDisplayed()
+        assertTextEquals("Ingredients")
+      }
+
+      backButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+        assertContentDescriptionEquals("Back")
+        performClick()
+      }
+
+      composeTestRule.onNodeWithTag("DenyButton").assertExists().performClick()
+
+      ingredientTitle { assertExists() }
     }
 
     ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {

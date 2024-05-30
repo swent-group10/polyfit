@@ -9,7 +9,7 @@ class IngredientsTopBar(semanticsProvider: SemanticsNodeInteractionsProvider) :
         semanticsProvider = semanticsProvider, viewBuilderAction = { hasTestTag("TopBar") }) {
 
   // Top Bar
-  val ingredientTitle: KNode = child { hasTestTag("IngredientTitle") }
+  val ingredientTitle: KNode = child { hasTestTag("Ingredients Title") }
   val backButton: KNode = child { hasTestTag("BackButton") }
 }
 
