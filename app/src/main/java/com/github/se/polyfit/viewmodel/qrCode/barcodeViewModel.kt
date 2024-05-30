@@ -8,14 +8,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 // We need to scan multiple times the same value to be sure it's not a mistake
 const val REQUIRED_SCAN_COUNT = 3
@@ -23,6 +23,8 @@ const val REQUIRED_SCAN_COUNT = 3
 // A barcode is between 6 and 13 characters
 const val MIN_BARCODE_LENGTH = 6
 const val MAX_BARCODE_LENGTH = 13
+
+const val TIME_COLOR_BORDER_MILLIS = 2000L
 
 @HiltViewModel
 class BarCodeCodeViewModel @Inject constructor() : ViewModel() {
@@ -62,14 +64,13 @@ class BarCodeCodeViewModel @Inject constructor() : ViewModel() {
     Log.v("QrCodeViewModel", "new list: ${_listId.value}")
 
     CoroutineScope(Dispatchers.IO).launch {
-      delay(2000L) // Wait for 2 seconds
+      delay(TIME_COLOR_BORDER_MILLIS)
       withContext(Dispatchers.Main) {
-        if (lastScanTime + 2000 < System.currentTimeMillis()) {
-          _isScanned.value = false // Change isScanned to false
+        if (lastScanTime + TIME_COLOR_BORDER_MILLIS < System.currentTimeMillis()) {
+          _isScanned.value = false
         }
       }
     }
-
   }
 }
 

@@ -11,7 +11,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.se.polyfit.R
@@ -19,7 +18,6 @@ import com.github.se.polyfit.ui.components.IngredientsOverview.BottomBarIngredie
 import com.github.se.polyfit.ui.components.IngredientsOverview.ListProducts
 import com.github.se.polyfit.ui.components.button.FloatingActionButtonIngredients
 import com.github.se.polyfit.ui.components.scaffold.SimpleTopBar
-import com.github.se.polyfit.ui.theme.PolyfitTheme
 import com.github.se.polyfit.viewmodel.qrCode.BarCodeCodeViewModel
 
 // TODO THIS CLASS IS TEMPORARY, REMOVE IT WHEN DOING THE VIEWMODEL
