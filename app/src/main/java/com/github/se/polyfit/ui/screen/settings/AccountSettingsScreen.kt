@@ -1,6 +1,5 @@
 package com.github.se.polyfit.ui.screen.settings
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -118,12 +117,7 @@ private fun AccountSettings(
           keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
           singleLine = true,
           onValueChange = {
-            var update = it.toLongOrNull()
-
-            // If there is a Long overflow, the use the previous value
-            if (update == null && it.toBigDecimalOrNull() != null) {
-              update = height.toLongOrNull()
-            }
+            val update = checkNotInfinity(it, height)
 
             height =
                 when {
@@ -146,15 +140,7 @@ private fun AccountSettings(
           keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
           singleLine = true,
           onValueChange = {
-            var update = it.toLongOrNull()
-
-            // If there is a Double overflow, the use the previous value
-            Log.d("AccountSettings", "update: $update")
-            Log.d("AccountSettings", "updateBig: ${it.toBigDecimalOrNull()}")
-
-            if (update == null && it.toBigDecimalOrNull() != null) {
-              update = weight.toLongOrNull()
-            }
+            val update = checkNotInfinity(it, weight)
 
             weight =
                 when {
@@ -177,11 +163,7 @@ private fun AccountSettings(
           keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
           singleLine = true,
           onValueChange = {
-            var update = it.toLongOrNull()
-
-            if (update == null && it.toBigDecimalOrNull() != null) {
-              update = calorieGoal.toLongOrNull()
-            }
+            val update = checkNotInfinity(it, calorieGoal)
 
             calorieGoal =
                 when {
@@ -205,6 +187,23 @@ private fun AccountSettings(
 
     // TODO: Add interface to set dietary preferences
   }
+}
+
+/**
+ * Check if the input is a valid number and not infinity
+ *
+ * @param it The input string (should be a Long value)
+ * @param calorieGoal The calorie goal (String value)
+ * @return The Long value of the input string or the calorie goal if the input is not a valid number
+ */
+private fun checkNotInfinity(it: String, calorieGoal: String): Long? {
+  var update = it.toLongOrNull()
+
+  if (update == null && it.toBigDecimalOrNull() != null) {
+    update = calorieGoal.toLongOrNull()
+  }
+
+  return update
 }
 
 @Composable
