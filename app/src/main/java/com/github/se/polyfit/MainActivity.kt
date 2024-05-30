@@ -70,9 +70,7 @@ class MainActivity : ComponentActivity() {
           composable(Route.Map) {
             GenericScreen(
                 navController = navController,
-                content = { paddingValues ->
-                  MapScreen(paddingValues)
-                })
+                content = { paddingValues -> MapScreen(paddingValues) })
           }
           composable(Route.OverviewScan) {
             IngredientsOverview(navigation::goBack, {}, {}, emptyList())

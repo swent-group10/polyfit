@@ -2,7 +2,6 @@ package com.github.se.polyfit.ui.screen
 
 // import the colors PrimaryPink
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -34,6 +33,7 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.Circle
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.GoogleMapComposable
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
@@ -51,36 +51,36 @@ val EPFL_LONGITUDE = 6.5659
 fun MapScreen(paddingValues: PaddingValues, mapViewModel: MapViewModel = hiltViewModel()) {
 
   val posts = remember { mutableStateOf(listOf<Post>()) }
+
   val currentLocation = remember { mutableStateOf(Location.default()) }
 
   var selectedPost by remember { mutableStateOf<Post?>(null) }
 
   var isCircleShown by remember { mutableStateOf(false) }
+
   var mainLaunchedIsFinished by remember { mutableStateOf(false) }
 
   val cameraPositionState = rememberCameraPositionState {
     position = CameraPosition.fromLatLngZoom(LatLng(EPFL_LATITUDE, EPFL_LONGITUDE), 15f)
   }
+
   var sliderPosition by remember { mutableFloatStateOf((MIN_SIZE_RAYON + MAX_SIZE_RAYON) / 2) }
 
-  /* LaunchedEffect(currentLocation) {
-    mutex.withLock {
-      currentLocation.value = mapViewModel.getCurrentLocation()
-      mapViewModel.setLocation(currentLocation.value)
-    }
-
-    mapViewModel.listenToPosts()
-    mapViewModel.posts.observeForever { posts.value = it }
-  } */
-
+  /**
+   * Effect to be launched when the mapViewModel changes. Initializes the current location and sets
+   * up the map and post listeners.
+   *
+   * This effect fetches the current location asynchronously, sets the location in the mapViewModel,
+   * and begins listening to posts. It also updates the camera position of the map and observes
+   * posts to update the state.
+   *
+   * @param mapViewModel The ViewModel that handles map-related data and operations.
+   */
   LaunchedEffect(key1 = mapViewModel) {
     currentLocation.value = mapViewModel.getCurrentLocation().await()
     mapViewModel.setLocation(currentLocation.value)
 
-    Log.i("MapScreen", "in MapScreen Location after setting: ${currentLocation.value}")
-
     mapViewModel.listenToPosts()
-
     mapViewModel.posts.observeForever { posts.value = it }
 
     cameraPositionState.position =
@@ -88,20 +88,16 @@ fun MapScreen(paddingValues: PaddingValues, mapViewModel: MapViewModel = hiltVie
             LatLng(currentLocation.value.latitude, currentLocation.value.longitude), 15f)
 
     mainLaunchedIsFinished = true
-
-    Log.i("MapScreen", "Camera position set to: ${cameraPositionState.position}")
   }
-  /*LaunchedEffect(key1 =sliderPosition) {
-    if (mainLaunchedIsFinished) {
-      isCircleShown = true
-      mapViewModel.setRadius(sliderPosition.toDouble() / 1000)
-      mapViewModel.listenToPosts()
-      mapViewModel.posts.observeForever { posts.value = it }
-      delay(3000)
-      isCircleShown = false
-    }
-  }*/
 
+  /**
+   * Handles changes in the slider position. Updates the slider position and adjusts the map's
+   * search radius accordingly. If the main process has finished, it sets the new radius and
+   * triggers an update to listen for posts.
+   *
+   * @param scope The CoroutineScope in which to launch the coroutine.
+   * @param newPosition The new position of the slider.
+   */
   fun onSliderChanged(scope: CoroutineScope, newPosition: Float) {
     sliderPosition = newPosition
 
@@ -110,12 +106,14 @@ fun MapScreen(paddingValues: PaddingValues, mapViewModel: MapViewModel = hiltVie
 
         mapViewModel.setRadius(newPosition.toDouble() / 1000)
         mapViewModel.listenToPosts()
-
-
       }
     }
   }
 
+  /**
+   * List of markers to display on the map. Maps each post to a PostMarker object containing the
+   * post and its marker state.
+   */
   val listMarker =
       remember(posts.value) {
         posts.value.map { post ->
@@ -132,44 +130,23 @@ fun MapScreen(paddingValues: PaddingValues, mapViewModel: MapViewModel = hiltVie
             cameraPositionState = cameraPositionState,
             properties = MapProperties(isMyLocationEnabled = true),
             onMapClick = { selectedPost = null }) {
-              Circle(
-                  center = LatLng(currentLocation.value.latitude, currentLocation.value.longitude),
-                  radius =
-                      (sliderPosition).toDouble() + 10, // Make the shadow circle slightly larger
-                  strokeColor =
-                      Color.Black.copy(alpha = 0.2f) // Use a semi-transparent color for the shadow
-                  ,
-                  visible = isCircleShown)
-              Circle(
-                  center = LatLng(currentLocation.value.latitude, currentLocation.value.longitude),
-                  radius = (sliderPosition).toDouble(),
+              val latLng = LatLng(currentLocation.value.latitude, currentLocation.value.longitude)
+              val doubleSliderPosition = sliderPosition.toDouble()
+              CircleOnMap(
+                  center = latLng,
+                  radius = doubleSliderPosition,
                   strokeColor = PrimaryPurple,
                   visible = isCircleShown)
-              listMarker.forEach { postMarker ->
-                Marker(
-                    state = postMarker.markerState,
-                    title = "Post",
-                    contentDescription = postMarker.post.description,
-                    icon =
-                        BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET),
-                    onClick = {
-                      selectedPost = postMarker.post
-                      true
-                    })
-              }
+              CircleOnMap(
+                  center = latLng,
+                  radius = doubleSliderPosition + 10,
+                  strokeColor = Color.Black.copy(alpha = 0.2f),
+                  visible = isCircleShown)
+
+              Marker(listMarker) { post -> selectedPost = post }
             }
-        Row(modifier = Modifier.padding(end = 64.dp)) {
-          val scope = rememberCoroutineScope()
-          Slider(
-              value = sliderPosition,
-              onValueChange = {
-                onSliderChanged(scope, it)
-                isCircleShown = true
-              },
-              valueRange = MIN_SIZE_RAYON..MAX_SIZE_RAYON,
-              modifier = Modifier.align(Alignment.CenterVertically).widthIn(10.dp, 200.dp),
-              onValueChangeFinished = { isCircleShown = false })
-        }
+
+        SliderView(sliderPosition, ::onSliderChanged) { isCircleShown = it }
 
         selectedPost?.let { post ->
           Box(modifier = Modifier.fillMaxWidth().padding(16.dp).align(Alignment.BottomCenter)) {
@@ -177,6 +154,72 @@ fun MapScreen(paddingValues: PaddingValues, mapViewModel: MapViewModel = hiltVie
           }
         }
       }
+}
+
+@Composable
+@GoogleMapComposable
+fun CircleOnMap(center: LatLng, radius: Double, strokeColor: Color, visible: Boolean) {
+
+  Circle(center = center, radius = radius, strokeColor = strokeColor, visible = visible)
+}
+
+/**
+ * Composable function to display a list of markers on a Google Map. Each marker represents a post
+ * and can be clicked to select the post.
+ *
+ * This function iterates over the list of PostMarker objects, creating a Marker for each post. When
+ * a marker is clicked, it sets the selected post.
+ *
+ * @param listMarker The list of PostMarker objects to be displayed on the map.
+ * @param selectedPost A lambda function that sets the selected post when a marker is clicked.
+ */
+@Composable
+@GoogleMapComposable
+fun Marker(listMarker: List<PostMarker>, selectedPost: (Post) -> Unit) {
+  listMarker.forEach { postMarker ->
+    Marker(
+        state = postMarker.markerState,
+        title = "Post",
+        contentDescription = postMarker.post.description,
+        icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET),
+        onClick = {
+          selectedPost(postMarker.post)
+          true
+        })
+  }
+}
+
+/**
+ * Composable function to display a slider for adjusting a value. The slider is used to change the
+ * radius of the map search area.
+ *
+ * This function creates a row containing a slider. The slider's value changes are handled
+ * asynchronously with a coroutine scope. When the value changes, it updates the slider position and
+ * shows or hides a circle on the map.
+ *
+ * @param sliderPosition The current position of the slider.
+ * @param onSliderChanged A lambda function to handle changes in the slider value, accepting a
+ *   coroutine scope and the new slider position.
+ * @param isCircleShown A lambda function to control the visibility of the circle on the map.
+ */
+@Composable
+fun SliderView(
+    sliderPosition: Float,
+    onSliderChanged: (CoroutineScope, Float) -> Unit,
+    isCircleShown: (Boolean) -> Unit
+) {
+  val scope = rememberCoroutineScope()
+  Row(modifier = Modifier.padding(end = 64.dp)) {
+    Slider(
+        value = sliderPosition,
+        onValueChange = {
+          onSliderChanged(scope, it)
+          isCircleShown(true)
+        },
+        valueRange = MIN_SIZE_RAYON..MAX_SIZE_RAYON,
+        modifier = Modifier.align(Alignment.CenterVertically).widthIn(10.dp, 200.dp),
+        onValueChangeFinished = { isCircleShown(false) })
+  }
 }
 
 data class PostMarker(val post: Post, val markerState: MarkerState)

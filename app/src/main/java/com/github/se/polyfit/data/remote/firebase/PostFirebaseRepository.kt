@@ -84,6 +84,7 @@ class PostFirebaseRepository(
    *   posts.
    */
   var previousNearbyKeys: List<String> = emptyList()
+
   fun queryNearbyPosts(
       centerLatitude: Double,
       centerLongitude: Double,
@@ -138,7 +139,7 @@ class PostFirebaseRepository(
     var completedBatches = 0
     Log.d("PostFirebaseRepository", "Keys: $keys")
 
-    if(keys.isEmpty()) {
+    if (keys.isEmpty()) {
       completion(posts)
       return
     }

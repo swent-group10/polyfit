@@ -40,10 +40,10 @@ constructor(
           postLocalRepository.getCurrentLocation(
               CurrentLocationRequest.Builder().setPriority(Priority.PRIORITY_HIGH_ACCURACY).build())
     }
-    getAllPost()
+    getNearbyPosts()
   }
 
-  fun getAllPost() {
+  fun getNearbyPosts() {
     location.observeForever {
       viewModelScope.launch {
         _isFetching.value = true
