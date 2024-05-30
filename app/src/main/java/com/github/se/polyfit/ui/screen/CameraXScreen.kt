@@ -8,19 +8,29 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.tooling.preview.Preview as Preview1
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
@@ -29,9 +39,11 @@ import com.github.se.polyfit.ml.ImageAnalyserBarCode
 import com.github.se.polyfit.viewmodel.qrCode.BarCodeCodeViewModel
 import com.github.se.polyfit.viewmodel.qrCode.getCameraProvider
 
-@Preview1
 @Composable
-fun CameraXScreen(barCodeCodeViewModel: BarCodeCodeViewModel = hiltViewModel()) {
+fun CameraXScreen(
+        barCodeCodeViewModel: BarCodeCodeViewModel = hiltViewModel(),
+        padding: PaddingValues
+) {
 
   val context = LocalContext.current
   val lifecycleOwner = LocalLifecycleOwner.current
@@ -50,11 +62,32 @@ fun CameraXScreen(barCodeCodeViewModel: BarCodeCodeViewModel = hiltViewModel()) 
 
   imageAnalysis.setAnalyzer(ContextCompat.getMainExecutor(context), imageAnalyserBarCode)
 
-  Box(
-      modifier = Modifier.fillMaxWidth().height(30.dp).testTag("BoxCamera"),
-      contentAlignment = Alignment.Center) {
-        AndroidView({ previewView }, modifier = Modifier.testTag("AndroidView").fillMaxSize(0.9f))
-      }
+
+  val isScanned by barCodeCodeViewModel.isScanned.observeAsState()
+
+  val neutralColor = MaterialTheme.colorScheme.scrim
+  val acceptColor = Color.Green
+
+  var color by remember { mutableStateOf(neutralColor) }
+
+  LaunchedEffect(isScanned) {
+    Log.v("CameraXScreen", "isScanned: ${barCodeCodeViewModel.isScanned.value}")
+    color = if (barCodeCodeViewModel.isScanned.value == true) acceptColor else neutralColor
+  }
+
+  Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
+    Card(modifier = Modifier
+            .fillMaxWidth(0.9f)
+            .height(120.dp)
+            .absoluteOffset(0.dp, padding.calculateTopPadding()),
+         border = BorderStroke(8.dp, color)) {
+      AndroidView({ previewView }, modifier = Modifier
+              .testTag("AndroidView")
+              .fillMaxSize())
+    }
+  }
+
+
 
   // If there is no camera we display nothing
   val pm: PackageManager = context.getPackageManager()

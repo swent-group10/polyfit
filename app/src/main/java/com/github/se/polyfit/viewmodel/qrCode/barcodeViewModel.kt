@@ -8,6 +8,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -22,14 +27,19 @@ const val MAX_BARCODE_LENGTH = 13
 @HiltViewModel
 class BarCodeCodeViewModel @Inject constructor() : ViewModel() {
   private val _listId = MutableLiveData<List<String>>(emptyList())
+  val _isScanned = MutableLiveData(false)
+  private var lastScanTime = System.currentTimeMillis()
 
   val listId: LiveData<List<String>> = _listId
+  val isScanned: LiveData<Boolean> = _isScanned
 
   // We need to scan multiple times the same value to be sure it's not a mistake
   private var previousScan: String? = null
   private var count = 0
 
   fun addId(id: String?) {
+    Log.v("QrCodeViewModel", "addId: $id , ${System.currentTimeMillis() - lastScanTime}")
+
     if (id.isNullOrEmpty() || _listId.value!!.contains(id)) return
     if (id.length !in MIN_BARCODE_LENGTH..MAX_BARCODE_LENGTH) return
 
@@ -47,7 +57,19 @@ class BarCodeCodeViewModel @Inject constructor() : ViewModel() {
     val list = _listId.value?.toMutableList() ?: mutableListOf()
     list.add(0, id)
     _listId.value = list
+    lastScanTime = System.currentTimeMillis()
+    _isScanned.value = true
     Log.v("QrCodeViewModel", "new list: ${_listId.value}")
+
+    CoroutineScope(Dispatchers.IO).launch {
+      delay(2000L) // Wait for 2 seconds
+      withContext(Dispatchers.Main) {
+        if (lastScanTime + 2000 < System.currentTimeMillis()) {
+          _isScanned.value = false // Change isScanned to false
+        }
+      }
+    }
+
   }
 }
 
