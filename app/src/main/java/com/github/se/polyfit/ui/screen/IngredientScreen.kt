@@ -56,10 +56,6 @@ fun IngredientScreen(
   val enabled = mealViewModel.meal.collectAsState().value.ingredients.isNotEmpty()
   var showCancelDialog by remember { mutableStateOf(false) }
 
-  fun goBackAndReset() {
-    navigateBack()
-  }
-
   Scaffold(
       topBar = { SimpleTopBar(title = "Ingredients", navigateBack = { showCancelDialog = true }) },
       bottomBar = {
@@ -76,7 +72,7 @@ fun IngredientScreen(
         }
       }
   if (showCancelDialog)
-      CancelAddMealDialog(closeDialog = { showCancelDialog = false }, ::goBackAndReset)
+      CancelAddMealDialog(closeDialog = { showCancelDialog = false }, navigateBack)
 }
 
 @Composable
