@@ -6,12 +6,18 @@ import io.mockk.*
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkAll
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestRule
+import java.lang.Thread.sleep
 
 class BarCodeCodeViewModelTest {
 
@@ -19,17 +25,22 @@ class BarCodeCodeViewModelTest {
 
   private val viewModel = BarCodeCodeViewModel()
 
+  @OptIn(ExperimentalCoroutinesApi::class)
   @BeforeTest
   fun setup() {
     mockkStatic(Log::class)
     every { Log.v(any(), any()) } returns 0
     every { Log.i(any(), any()) } returns 0
     every { Log.e(any(), any()) } returns 0
+    val testDispatcher = TestCoroutineDispatcher()
+    Dispatchers.setMain(testDispatcher)
   }
 
+  @OptIn(ExperimentalCoroutinesApi::class)
   @AfterTest
   fun teardown() {
     unmockkAll()
+    Dispatchers.resetMain() // reset the main dispatcher to the original main dispatcher
   }
 
   @Test
@@ -127,5 +138,38 @@ class BarCodeCodeViewModelTest {
     viewModel.addId(null)
     viewModel.addId("12345678")
     assertEquals(listOf("12345678"), viewModel.listId.value)
+  }
+
+
+  @Test
+  fun `check is scanned is true when id is valid and not in list`() {
+    assertEquals(false, viewModel.isScanned.value)
+    for (i in 1..REQUIRED_SCAN_COUNT) {
+      viewModel.addId("123456")
+    }
+    assertEquals(true, viewModel.isScanned.value)
+
+    sleep(2500)
+    assertEquals(false, viewModel.isScanned.value)
+  }
+
+  @Test
+  fun `check 2 items`() {
+    assertEquals(false, viewModel.isScanned.value)
+    for (i in 1..REQUIRED_SCAN_COUNT) {
+      viewModel.addId("123456")
+    }
+    assertEquals(true, viewModel.isScanned.value)
+
+    sleep(1000)
+
+    for (i in 1..REQUIRED_SCAN_COUNT) {
+      viewModel.addId("5678901")
+    }
+
+    sleep(1500)
+    assertEquals(true, viewModel.isScanned.value)
+    sleep(1000)
+    assertEquals(false, viewModel.isScanned.value)
   }
 }
