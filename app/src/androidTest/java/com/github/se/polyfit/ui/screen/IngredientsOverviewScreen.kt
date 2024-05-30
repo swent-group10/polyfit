@@ -30,14 +30,6 @@ class IngredientsOverviewBottomBarIngredient(semanticsProvider: SemanticsNodeInt
   val generateButton: KNode = child { hasTestTag("GenerateButton") }
 }
 
-class FloatingActionButtonIngredientsScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
-    ComposeScreen<FloatingActionButtonIngredientsScreen>(
-        semanticsProvider = semanticsProvider,
-        viewBuilderAction = { hasTestTag("FloatingButton") }) {
-
-  val icon: KNode = child { hasTestTag("AddIcon") }
-}
-
 class ListProductsScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
     ComposeScreen<ListProductsScreen>(
         semanticsProvider = semanticsProvider,

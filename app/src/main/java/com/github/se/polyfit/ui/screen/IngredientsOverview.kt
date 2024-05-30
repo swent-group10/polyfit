@@ -16,7 +16,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.se.polyfit.R
 import com.github.se.polyfit.ui.components.IngredientsOverview.BottomBarIngredient
 import com.github.se.polyfit.ui.components.IngredientsOverview.ListProducts
-import com.github.se.polyfit.ui.components.button.FloatingActionButtonIngredients
 import com.github.se.polyfit.ui.components.scaffold.SimpleTopBar
 import com.github.se.polyfit.viewmodel.qrCode.BarCodeCodeViewModel
 
@@ -47,7 +46,6 @@ private fun PreviewIngredientsOverview() {
 fun IngredientsOverview(
     navigateBack: () -> Unit,
     navigateForward: () -> Unit,
-    onClickFloatingButton: () -> Unit,
     listProducts: List<IngredientsTMP>,
     barCodeCodeViewModel: BarCodeCodeViewModel = hiltViewModel()
 ) {
@@ -66,7 +64,6 @@ fun IngredientsOverview(
   Scaffold(
       topBar = { SimpleTopBar(title = context.getString(R.string.Product)) { navigateBack() } },
       bottomBar = { BottomBarIngredient(navigateForward = navigateForward) },
-      floatingActionButton = { FloatingActionButtonIngredients(onClickFloatingButton) },
       containerColor = MaterialTheme.colorScheme.background,
       modifier = Modifier.testTag("IngredientsOverviewScaffold")) {
         CameraXScreen(barCodeCodeViewModel, it)
