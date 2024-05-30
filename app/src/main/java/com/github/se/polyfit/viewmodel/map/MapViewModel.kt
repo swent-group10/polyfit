@@ -74,10 +74,6 @@ constructor(
     return location.value!!
   }
 
-  fun getAllPost(): Flow<List<Post>> {
-    return repository.getAllPosts()
-  }
-
   fun getCurrentLocation(): Deferred<Location> {
     return viewModelScope.async(Dispatchers.Default) {
       val locationToSet = positionModel.getCurrentLocation(CurrentLocationRequest.Builder().build())

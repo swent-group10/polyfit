@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -18,7 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -61,7 +59,7 @@ fun PostInfoScreenContent(
     padding: PaddingValues = PaddingValues(),
     viewPostViewModel: ViewPostViewModel = hiltViewModel(),
 ) {
-  val posts = viewPostViewModel.getAllPost().observeAsState(initial = listOf())
+
   val isFetching by viewPostViewModel.isFetching.collectAsState()
 
   Scaffold(modifier = Modifier.padding(padding)) {
@@ -71,7 +69,7 @@ fun PostInfoScreenContent(
       }
       return@Scaffold
     }
-    if (posts.value.isEmpty()) {
+    if (viewPostViewModel.posts.collectAsState().value.isEmpty()) {
       NoPost()
       return@Scaffold
     }
@@ -79,13 +77,13 @@ fun PostInfoScreenContent(
     LazyColumn(
         state = rememberLazyListState(index),
     ) {
-      items(posts.value) { post -> PostCard(post = post) }
+      viewPostViewModel.posts.value.forEach { post -> item { PostCard(post = post) } }
     }
   }
 }
 
 @Composable
-private fun NoPost() {
+fun NoPost() {
   Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
     Text(
         text = ContextCompat.getString(LocalContext.current, R.string.noPostAvailable),

@@ -12,8 +12,11 @@ import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.Priority
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @HiltViewModel
 class ViewPostViewModel
@@ -23,6 +26,7 @@ constructor(
     private val postLocalRepository: PostLocationModel
 ) : ViewModel() {
   private val _posts: MutableStateFlow<List<Post>> = MutableStateFlow(mutableListOf())
+  val posts: StateFlow<List<Post>> = _posts
 
   private val _isFetching: MutableStateFlow<Boolean> = MutableStateFlow(false)
   val isFetching: StateFlow<Boolean> = _isFetching
@@ -49,7 +53,7 @@ constructor(
           postFirebaseRepository.queryNearbyPosts(
               centerLatitude = it.latitude,
               centerLongitude = it.longitude,
-              radiusInKm = 1.0,
+              radiusInKm = 5.0,
               completion = { posts -> _posts.value = posts })
         } // FYI: UI updates only on Main Thread
 
@@ -57,4 +61,6 @@ constructor(
       }
     }
   }
+
+
 }
