@@ -12,7 +12,9 @@ import com.github.se.polyfit.model.post.PostLocationModel
 import com.google.android.gms.location.CurrentLocationRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 
 @HiltViewModel
