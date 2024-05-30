@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -20,16 +21,30 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.github.se.polyfit.R
+import com.github.se.polyfit.ui.components.GradientBox
 import com.github.se.polyfit.ui.components.button.GradientButton
 import com.github.se.polyfit.ui.components.button.PrimaryButton
 import com.github.se.polyfit.ui.components.dialog.AddIngredientDialog
 import com.github.se.polyfit.ui.components.ingredients.IngredientList
 import com.github.se.polyfit.ui.components.scaffold.SimpleTopBar
+import com.github.se.polyfit.ui.theme.PrimaryPink
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
 
+/**
+ * IngredientScreen is the screen where the user can add ingredients to the meal. The user can add
+ * ingredients by clicking the add button and then entering the name and amount. The user can also
+ * remove ingredients by clicking the remove button.
+ *
+ * @param mealViewModel The view model for the meal
+ * @param navigateBack The function to navigate back
+ * @param navigateForward The function to navigate forward
+ */
 @Composable
 fun IngredientScreen(
     mealViewModel: MealViewModel = hiltViewModel(),
@@ -39,13 +54,14 @@ fun IngredientScreen(
 
   val showAddIngredDialog = remember { mutableStateOf(false) }
   val enabled = mealViewModel.meal.collectAsState().value.ingredients.isNotEmpty()
+  var showCancelDialog by remember { mutableStateOf(false) }
 
   fun goBackAndReset() {
     navigateBack()
   }
 
   Scaffold(
-      topBar = { SimpleTopBar(title = "Ingredients", navigateBack = ::goBackAndReset) },
+      topBar = { SimpleTopBar(title = "Ingredients", navigateBack = { showCancelDialog = true }) },
       bottomBar = {
         BottomBar(
             onClickAddIngred = { showAddIngredDialog.value = true },
@@ -59,6 +75,8 @@ fun IngredientScreen(
               onAddIngredient = mealViewModel::addIngredient)
         }
       }
+  if (showCancelDialog)
+      CancelAddMealDialog(closeDialog = { showCancelDialog = false }, ::goBackAndReset)
 }
 
 @Composable
@@ -100,6 +118,30 @@ private fun BottomBar(onClickAddIngred: () -> Unit, navigateForward: () -> Unit,
               fontSize = 24,
               modifier = Modifier.width(200.dp).testTag("DoneButton"))
         }
+  }
+}
+
+@Composable
+private fun CancelAddMealDialog(closeDialog: () -> Unit, goBack: () -> Unit) {
+  val context = LocalContext.current
+
+  Dialog(onDismissRequest = closeDialog) {
+    GradientBox {
+      Column(
+          modifier = Modifier.fillMaxWidth().padding(16.dp),
+          horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(context.getString(R.string.confirmAddMealCancel))
+            PrimaryButton(
+                text = context.getString(R.string.confirmDiscard),
+                onClick = goBack,
+                modifier = Modifier.testTag("GoBack"))
+            PrimaryButton(
+                text = context.getString(R.string.denyRequest),
+                color = PrimaryPink,
+                onClick = closeDialog,
+                modifier = Modifier.testTag("DenyButton"))
+          }
+    }
   }
 }
 
