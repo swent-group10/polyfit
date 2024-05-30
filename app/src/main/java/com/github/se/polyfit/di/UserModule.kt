@@ -12,7 +12,7 @@ import com.github.se.polyfit.data.remote.firebase.UserFirebaseRepository
 import com.github.se.polyfit.data.repository.MealRepository
 import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.model.post.PostLocationModel
-import com.github.se.polyfit.ui.viewModel.GraphViewModel
+import com.github.se.polyfit.viewmodel.graph.GraphViewModel
 import com.github.se.polyfit.viewmodel.qrCode.BarCodeCodeViewModel
 import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
