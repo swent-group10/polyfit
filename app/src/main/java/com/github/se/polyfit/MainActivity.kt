@@ -76,7 +76,7 @@ class MainActivity : ComponentActivity() {
           }
           composable(Route.OverviewScan) {
             IngredientsOverview(
-                navigation::goBack, navigation::navigateToRecipeRecommendationFlow, {}, emptyList())
+                navigation::goBack, navigation::navigateToRecipeRecommendationFlow, emptyList())
           }
           composable(Route.Graph) { FullGraphScreen(goBack = navigation::goBack) }
           composable(Route.Home) {

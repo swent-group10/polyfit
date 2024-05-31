@@ -19,7 +19,6 @@ import com.github.se.polyfit.R
 import com.github.se.polyfit.data.local.ingredientscanned.IngredientsScanned
 import com.github.se.polyfit.ui.components.IngredientsOverview.BottomBarIngredient
 import com.github.se.polyfit.ui.components.IngredientsOverview.ListProducts
-import com.github.se.polyfit.ui.components.button.FloatingActionButtonIngredients
 import com.github.se.polyfit.ui.components.scaffold.SimpleTopBar
 import com.github.se.polyfit.viewmodel.qrCode.BarCodeCodeViewModel
 
@@ -40,7 +39,6 @@ private fun PreviewIngredientsOverview() {
 fun IngredientsOverview(
     navigateBack: () -> Unit,
     navigateForward: () -> Unit,
-    onClickFloatingButton: () -> Unit,
     listProducts: List<IngredientsScanned>,
     barCodeCodeViewModel: BarCodeCodeViewModel = hiltViewModel()
 ) {
@@ -60,10 +58,9 @@ fun IngredientsOverview(
               navigateForward()
             })
       },
-      floatingActionButton = { FloatingActionButtonIngredients(onClickFloatingButton) },
       containerColor = MaterialTheme.colorScheme.background,
       modifier = Modifier.testTag("IngredientsOverviewScaffold")) {
-        CameraXScreen(barCodeCodeViewModel)
+        CameraXScreen(barCodeCodeViewModel, it)
 
         ListProducts(
             listIngredients = listIngredients,
