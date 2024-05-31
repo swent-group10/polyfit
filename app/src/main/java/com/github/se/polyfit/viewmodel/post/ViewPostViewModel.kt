@@ -46,14 +46,15 @@ constructor(
           postLocalRepository.getCurrentLocation(
               CurrentLocationRequest.Builder().setPriority(Priority.PRIORITY_HIGH_ACCURACY).build())
     }
-    _location.observeForever { getNearbyPosts(it) }
+    _location.observeForever { getNearbyPosts() }
   }
 
-  fun getNearbyPosts(location: Location) {
+  fun getNearbyPosts() {
+      if (location.value == null) return
     viewModelScope.launch(Dispatchers.Main) {
       postFirebaseRepository.queryNearbyPosts(
-          centerLatitude = location.latitude,
-          centerLongitude = location.longitude,
+          centerLatitude = location.value!!.latitude,
+          centerLongitude = location.value!!.longitude,
           radiusInKm = 2.0,
           completion = { posts ->
             _isFetching.postValue(false)

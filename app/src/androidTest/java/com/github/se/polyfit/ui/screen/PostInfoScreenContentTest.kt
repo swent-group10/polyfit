@@ -3,6 +3,7 @@ package com.github.se.polyfit.ui.screen
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.lifecycle.MutableLiveData
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
@@ -30,7 +31,7 @@ class PostInfoScreenContentTest {
   @Before
   fun setup() {
     viewPostViewModel = mockk<ViewPostViewModel>(relaxed = true)
-    every { viewPostViewModel.isFetching } returns MutableStateFlow(false)
+    every { viewPostViewModel.isFetching } returns MutableLiveData(false)
   }
 
   @Test

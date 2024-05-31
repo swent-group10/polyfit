@@ -3,6 +3,7 @@ package com.github.se.polyfit.ui.screen
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavHostController
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.viewmodel.post.ViewPostViewModel
@@ -23,7 +24,7 @@ class PostInfoScreenTest {
 
   @Before
   fun setup() {
-    every { mockPostViewModel.isFetching } returns MutableStateFlow(true)
+    every { mockPostViewModel.isFetching } returns MutableLiveData(true)
 
     composeTestRule.setContent {
       PostInfoScreen(
