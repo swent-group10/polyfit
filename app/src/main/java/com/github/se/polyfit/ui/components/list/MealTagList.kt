@@ -22,8 +22,18 @@ import com.github.se.polyfit.model.meal.MealTag
 import com.github.se.polyfit.ui.theme.PurpleGrey40
 import com.github.se.polyfit.ui.theme.SecondaryGrey
 
+// Arbitrary limit on the number of tags that can be added to a meal
 const val MAX_TAGS = 5
 
+/**
+ * A list of meal tags that can be added to a meal
+ *
+ * @param mealTags the list of meal tags to display
+ * @param addNewTag a function to add a new tag
+ * @param editTag a function to edit a tag
+ * @param modifier the modifier for the list
+ * @param displayOnly whether the list is for display only
+ */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun MealTagList(
@@ -34,19 +44,24 @@ fun MealTagList(
     displayOnly: Boolean = false,
 ) {
 
+  // When a tag is clicked, the user can edit the tag aslong as the list is not for display only
+  // We prefer to remove .clickable instead of disabling it so that that outer clickable modifier
+  // can still work
+  fun tagModifier(tag: MealTag): Modifier {
+    return if (!displayOnly) Modifier.clickable { editTag(tag) } else Modifier
+  }
+
   FlowRow(
       horizontalArrangement = Arrangement.Start,
       verticalArrangement = Arrangement.Top,
       modifier = modifier.testTag("MealTagList")) {
         val shape = RoundedCornerShape(2.dp)
-
         for (tag in mealTags) {
           Surface(
               color = tag.tagColor.color,
               contentColor = PurpleGrey40,
               shape = shape,
-              modifier =
-                  Modifier.padding(2.dp).clickable(onClick = { editTag(tag) }).testTag("MealTag"),
+              modifier = tagModifier(tag).padding(2.dp).testTag("MealTag"),
           ) {
             Text(
                 text = tag.tagName,
