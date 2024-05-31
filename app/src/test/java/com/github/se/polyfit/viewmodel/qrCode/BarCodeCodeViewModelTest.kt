@@ -23,7 +23,7 @@ class BarCodeCodeViewModelTest {
 
   @get:Rule var rule: TestRule = InstantTaskExecutorRule()
 
-  private val viewModel = BarCodeCodeViewModel()
+  private val viewModel = BarCodeCodeViewModel(mockk(relaxed = true), mockk(relaxed = true))
 
   @OptIn(ExperimentalCoroutinesApi::class)
   @BeforeTest
