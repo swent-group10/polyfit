@@ -86,6 +86,7 @@ class IngredientTest : TestCase() {
           Ingredient("White Asparagus", 10, 10.0, MeasurementUnit.G),
           Ingredient("Corn", 4, 4.0, MeasurementUnit.G),
           Ingredient("Foie Gras", 100, 100.0, MeasurementUnit.G),
+          Ingredient("Asperge", 27, 1.0, MeasurementUnit.OTHER),
       )
 
   @Test
@@ -219,11 +220,11 @@ class IngredientTest : TestCase() {
 
       ingredientButton {
         assertIsDisplayed()
-        assertTextContains("Olive Oil 5.0ML")
+        assertTextContains("Olive Oil 5 ml")
         assertHasClickAction()
       }
 
-      composeTestRule.onAllNodesWithTag("Ingredient").assertCountEquals(5)
+      composeTestRule.onAllNodesWithTag("Ingredient").assertCountEquals(6)
     }
   }
 
@@ -234,7 +235,7 @@ class IngredientTest : TestCase() {
     ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
       ingredientButton {
         assertIsDisplayed()
-        assertTextContains("Olive Oil 5.0ML")
+        assertTextContains("Olive Oil 5 ml")
         assertHasClickAction()
         performClick()
       }
@@ -251,7 +252,7 @@ class IngredientTest : TestCase() {
 
       ingredientButton {
         assertIsDisplayed()
-        assertTextContains("Olive Oil 5.0ML")
+        assertTextContains("Olive Oil 5 ml")
       }
     }
   }
@@ -263,7 +264,7 @@ class IngredientTest : TestCase() {
     ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
       ingredientButton {
         assertIsDisplayed()
-        assertTextContains("Olive Oil 5.0ML")
+        assertTextContains("Olive Oil 5 ml")
         assertHasClickAction()
         performClick()
       }
@@ -276,7 +277,7 @@ class IngredientTest : TestCase() {
 
       composeTestRule.onNodeWithTag("DeleteIngredientButton").assertIsDisplayed().performClick()
 
-      composeTestRule.onAllNodesWithTag("Ingredient").assertCountEquals(4)
+      composeTestRule.onAllNodesWithTag("Ingredient").assertCountEquals(5)
     }
   }
 
