@@ -31,6 +31,7 @@ import com.github.se.polyfit.ui.theme.PrimaryPurple
 import com.github.se.polyfit.ui.theme.SecondaryGrey
 import com.github.se.polyfit.ui.utils.removeLeadingZerosAndNonDigits
 
+private const val MAX_NUTRITION_AMOUNT = 200_000
 @Composable
 fun IngredientNutritionEditFields(
     modifier: Modifier = Modifier,
@@ -41,7 +42,7 @@ fun IngredientNutritionEditFields(
   LazyColumn(modifier = modifier.testTag("NutritionInfoContainer")) {
     itemsIndexed(nutritionFields) { index, nutrient ->
       var text by remember {
-        mutableStateOf(if (nutrient.amount > 0.0) nutrient.amount.toString() else "")
+        mutableStateOf(if (0 < nutrient.amount && nutrient.amount <= MAX_NUTRITION_AMOUNT) nutrient.amount.toString() else "")
       }
       Row(
           verticalAlignment = Alignment.CenterVertically,
@@ -65,7 +66,7 @@ fun IngredientNutritionEditFields(
                   val update = it.toDoubleOrNull()
                   text =
                       when {
-                        update.isNotNull() && update!! <= 0 -> ""
+                        update.isNotNull() && !(0 < update!! && update < MAX_NUTRITION_AMOUNT)-> ""
                         update.isNotNull() -> update.toString()
                         else -> text
                       }
