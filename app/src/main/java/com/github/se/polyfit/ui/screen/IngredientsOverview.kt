@@ -19,21 +19,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.se.polyfit.R
 import com.github.se.polyfit.data.api.OpenFoodFacts.OpenFoodFactsApi
+import com.github.se.polyfit.data.local.ingredientscanned.IngredientsScanned
 import com.github.se.polyfit.ui.components.IngredientsOverview.BottomBarIngredient
 import com.github.se.polyfit.ui.components.IngredientsOverview.ListProducts
 import com.github.se.polyfit.ui.components.button.FloatingActionButtonIngredients
 import com.github.se.polyfit.ui.components.scaffold.SimpleTopBar
 import com.github.se.polyfit.viewmodel.qrCode.BarCodeCodeViewModel
-
-// TODO THIS CLASS IS TEMPORARY, REMOVE IT WHEN DOING THE VIEWMODEL
-data class IngredientsTMP(
-    val name: String,
-    val servingSize: Double,
-    val calories: Double,
-    val carbs: Double,
-    val fat: Double,
-    val protein: Double
-)
 
 /*val i1 = IngredientsTMP("Apple", 100, 52, 14, 0, 0)
 
@@ -50,11 +41,11 @@ private fun PreviewIngredientsOverview() {
 
 @Composable
 fun IngredientsOverview(
-    navigateBack: () -> Unit,
-    navigateForward: () -> Unit,
-    onClickFloatingButton: () -> Unit,
-    listProducts: List<IngredientsTMP>,
-    barCodeCodeViewModel: BarCodeCodeViewModel = hiltViewModel()
+        navigateBack: () -> Unit,
+        navigateForward: () -> Unit,
+        onClickFloatingButton: () -> Unit,
+        listProducts: List<IngredientsScanned>,
+        barCodeCodeViewModel: BarCodeCodeViewModel = hiltViewModel()
 ) {
   val context = LocalContext.current
 
@@ -63,9 +54,8 @@ fun IngredientsOverview(
 
   Log.i("IngredientsOverview", "listProducts Before: $listProducts")
   // TODO REMOVE
-  var listIngredients by remember { mutableStateOf(emptyList<IngredientsTMP>()) }
+  var listIngredients by remember { mutableStateOf(emptyList<IngredientsScanned>()) }
   LaunchedEffect(true) {
-    barCodeCodeViewModel.getIngredients()
     barCodeCodeViewModel.listIngredients.observeForever { listIngredients = it }
   }
   Log.i("IngredientsOverview", "listProducts After: $listProducts")

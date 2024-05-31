@@ -17,6 +17,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
 import com.github.se.polyfit.data.api.OpenFoodFacts.OpenFoodFactsApi
 import com.github.se.polyfit.data.api.Spoonacular.SpoonacularApiCaller
+import com.github.se.polyfit.data.local.ingredientscanned.IngredientsScanned
 import com.github.se.polyfit.data.processor.LocalDataProcessor
 import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.model.ingredient.Ingredient
@@ -50,11 +51,11 @@ class IngredientsOverviewTest {
   val grantPermissionRule: GrantPermissionRule =
       GrantPermissionRule.grant(android.Manifest.permission.CAMERA)
 
-  val i1 = IngredientsTMP("Apple", 100.0, 52.0, 14.0, 0.0, 0.0)
-  val i2 = IngredientsTMP("Banana", 100.0, 89.0, 23.0, 0.0, 1.0)
-  val i3 = IngredientsTMP("Carrot", 100.0, 41.0, 10.0, 0.0, 1.0)
-  val i4 = IngredientsTMP("Date", 100.0, 282.0, 75.0, 0.0, 2.0)
-  val i5 = IngredientsTMP("Eggplant", 100.0, 25.0, 6.0, 0.0, 1.0)
+  val i1 = IngredientsScanned("Apple", 100.0, 52.0, 14.0, 0.0, 0.0)
+  val i2 = IngredientsScanned("Banana", 100.0, 89.0, 23.0, 0.0, 1.0)
+  val i3 = IngredientsScanned("Carrot", 100.0, 41.0, 10.0, 0.0, 1.0)
+  val i4 = IngredientsScanned("Date", 100.0, 282.0, 75.0, 0.0, 2.0)
+  val i5 = IngredientsScanned("Eggplant", 100.0, 25.0, 6.0, 0.0, 1.0)
 
   val l1 = listOf(i1)
   val l2 = listOf(i1, i2, i3, i4, i5)
@@ -333,7 +334,7 @@ class IngredientsOverviewTest {
           RecipeRecommendationViewModel(SpoonacularApiCaller()), foodFactsApi = foodFactsApi)
   private val context = mockk<Context>(relaxed = true)
   private val nutellaCode: String = "3017624010701"
-  private val nutellaTMP = IngredientsTMP("Nutella", 0.0, 0.0, 57.5, 230.0, 134.2)
+  private val nutellaTMP = IngredientsScanned("Nutella", 0.0, 0.0, 57.5, 230.0, 134.2)
 
   fun setup() {
 

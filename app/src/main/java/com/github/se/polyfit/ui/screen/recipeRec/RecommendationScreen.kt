@@ -27,7 +27,7 @@ import com.github.se.polyfit.R
 import com.github.se.polyfit.model.recipe.Recipe
 import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.components.recipe.RecipeCard
-import com.github.se.polyfit.ui.screen.IngredientsTMP
+import com.github.se.polyfit.data.local.ingredientscanned.IngredientsScanned
 import com.github.se.polyfit.viewmodel.qrCode.BarCodeCodeViewModel
 import com.github.se.polyfit.viewmodel.recipe.RecipeRecommendationViewModel
 
@@ -57,9 +57,8 @@ fun RecipeDisplay(
   val context = LocalContext.current
 
   val recipes = remember { mutableStateOf(listOf<Recipe>()) }
-  var ingredientList by remember { mutableStateOf(listOf<IngredientsTMP>()) }
+  var ingredientList by remember { mutableStateOf(listOf<IngredientsScanned>()) }
   LaunchedEffect(Unit) {
-    barcodeViewModel.getIngredients()
     barcodeViewModel.listIngredients.observeForever { ingredientList = it }
     recipes.value = recipesRec.recipeFromIngredients(ingredientList.map { it.name })
   }
