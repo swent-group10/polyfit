@@ -67,7 +67,8 @@
     <string name="MoreDetailRecipe">More Detail</string>
     <string name="Ingredients">Ingredients</string>
     <string name="Recipe">Recipe</string>
-
+    <string name="confirmAddMealCancel">Are you sure you want to go back? All progress will be lost.</string>
+    <string name="confirmDiscard">Discard Changes</string>
     <string name="confirmSignout">Are you sure you want to sign out?</string>
     <string name="signout">Sign Out</string>
     <string name="FeatureNotYetImplemented">Feature not yet implemented</string>

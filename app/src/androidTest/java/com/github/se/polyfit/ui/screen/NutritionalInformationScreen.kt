@@ -8,7 +8,7 @@ class NutritionalInformationTopBar(semanticsProvider: SemanticsNodeInteractionsP
     ComposeScreen<NutritionalInformationTopBar>(
         semanticsProvider = semanticsProvider, viewBuilderAction = { hasTestTag("TopBar") }) {
 
-  val title: KNode = child { hasTestTag("Title") }
+  val title: KNode = child { hasTestTag("Nutrition Facts Title") }
   val backButton: KNode = child { hasTestTag("BackButton") }
 }
 

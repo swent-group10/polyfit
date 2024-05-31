@@ -8,21 +8,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,6 +21,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.github.se.polyfit.ui.components.button.PrimaryButton
 import com.github.se.polyfit.ui.components.nutrition.NutritionalInformation
+import com.github.se.polyfit.ui.components.scaffold.SimpleTopBar
 import com.github.se.polyfit.ui.theme.PrimaryPink
 import com.github.se.polyfit.ui.theme.PrimaryPurple
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
@@ -45,7 +36,7 @@ fun NutritionScreen(
   val isComplete by mealViewModel.isComplete.collectAsState()
 
   Scaffold(
-      topBar = { TopBar(navigateBack = navigateBack) },
+      topBar = { SimpleTopBar(title = "Nutrition Facts", navigateBack = navigateBack) },
       bottomBar = {
         BottomBar(
             setMeal = mealViewModel::setMeal,
@@ -55,38 +46,6 @@ fun NutritionScreen(
       }) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) { NutritionalInformation(mealViewModel) }
       }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun TopBar(navigateBack: () -> Unit) {
-  var goBackCliked by remember { mutableStateOf(false) }
-  TopAppBar(
-      title = {
-        Text(
-            "Nutrition Facts",
-            modifier = Modifier.testTag("Title"),
-            color = MaterialTheme.colorScheme.secondary,
-            style = MaterialTheme.typography.headlineMedium)
-      },
-      navigationIcon = {
-        IconButton(
-            onClick = {
-              if (!goBackCliked) {
-                goBackCliked = true
-                navigateBack()
-              }
-            },
-            content = {
-              Icon(
-                  imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                  contentDescription = "Back",
-                  modifier = Modifier.testTag("BackButton"),
-                  tint = PrimaryPurple)
-            },
-            modifier = Modifier.testTag("BackButton"))
-      },
-      modifier = Modifier.testTag("TopBar"))
 }
 
 @Composable
