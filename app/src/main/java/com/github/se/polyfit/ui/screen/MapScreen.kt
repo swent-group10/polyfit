@@ -50,7 +50,7 @@ const val MIN_SIZE_RAYON = 100f
 const val MAX_SIZE_RAYON = 2000f
 const val EPFL_LATITUDE = 46.5181
 const val EPFL_LONGITUDE = 6.5659
-const val THREE_SECONDS = 3000L
+const val DELAY_CIRCLE_DISAPPEAR = 3000L
 
 @OptIn(FlowPreview::class)
 @Composable
@@ -84,7 +84,7 @@ fun MapScreen(paddingValues: PaddingValues, mapViewModel: MapViewModel = hiltVie
    *
    * @param mapViewModel The ViewModel that handles map-related data and operations.
    */
-  LaunchedEffect(key1 = mapViewModel) {
+  LaunchedEffect(Unit) {
     currentLocation.value = mapViewModel.getCurrentLocation().await()
     mapViewModel.setLocation(currentLocation.value)
 
@@ -114,7 +114,7 @@ fun MapScreen(paddingValues: PaddingValues, mapViewModel: MapViewModel = hiltVie
 
           mapViewModel.setRadius(sliderPositionInMeters.toDouble() / 1000)
           mapViewModel.listenToPosts()
-          delay(THREE_SECONDS)
+          delay(DELAY_CIRCLE_DISAPPEAR) //  a comment saying that the delay is needed for creating an animation.
           isCircleShown = false
         }
       }
@@ -174,7 +174,6 @@ fun MapScreen(paddingValues: PaddingValues, mapViewModel: MapViewModel = hiltVie
 @Composable
 @GoogleMapComposable
 fun CircleOnMap(center: LatLng, radius: Double, strokeColor: Color, visible: Boolean) {
-
   Circle(center = center, radius = radius, strokeColor = strokeColor, visible = visible)
 }
 

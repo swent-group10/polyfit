@@ -143,7 +143,6 @@ class PostFirebaseRepository(
 
           override fun onGeoQueryReady() {
 
-            previousNearbyKeys = nearbyKeys
             PostFirebaseRepository().fetchPostsAndImages(nearbyKeys, completion = completion)
           }
 
@@ -161,29 +160,31 @@ class PostFirebaseRepository(
    * @param postCollection The Firestore collection to fetch the posts from.
    * @param completion The callback function to call once the posts have been fetched.
    */
-  private var previousNearbyKeys: List<String> = emptyList()
-  private var previousListOfPosts: List<Post> = emptyList()
 
+
+  private var previousListOfPosts: List<Post> = emptyList()
+  private var previousNearbyKeys: List<String> = emptyList()
   fun fetchPostsAndImages(
       keys: List<String>,
       postCollection: CollectionReference = this.postCollection,
       completion: (List<Post>) -> Unit
   ) {
+
     val posts = mutableListOf<Post>()
     val batchSize = 10
     val batches = keys.chunked(batchSize)
     var completedBatches = 0
+    
 
     if (keys.isEmpty()) {
       completion(posts)
       return
     }
     if (keys == previousNearbyKeys) {
-      Log.d("GeoQuery", "same keys, returning early")
       completion(previousListOfPosts)
       return
     }
-
+    previousNearbyKeys = keys.toList()
     // Use a batch operation to fetch all posts
     batches.forEach { batch ->
       postCollection

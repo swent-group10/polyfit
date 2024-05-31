@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -60,12 +61,11 @@ fun PostInfoScreenContent(
     padding: PaddingValues = PaddingValues(),
     viewPostViewModel: ViewPostViewModel = hiltViewModel(),
 ) {
+  val isFetching = viewPostViewModel.isFetching.observeAsState()
+  val posts = viewPostViewModel.posts.collectAsState(initial = emptyList()).value
 
   Scaffold(modifier = Modifier.padding(padding)) {
-    val isFetching = viewPostViewModel.isFetching.value
-    val posts = viewPostViewModel.posts.collectAsState(initial = emptyList()).value
-    if (isFetching == true) {
-      Log.d("PostInfoScreenContent", "Fetching")
+    if (isFetching.value == true) {
       Box(modifier = Modifier.fillMaxSize().padding(it), contentAlignment = Alignment.Center) {
         CircularProgressIndicator(modifier = Modifier.padding(16.dp).testTag("LoadingPost"))
       }
