@@ -23,7 +23,7 @@
     <string name="datevalue">%1$s</string>
     <string name="noPostAvailable">"Unfortunately there is no post\navailable around you"</string>
     <string name="description">"Description"</string>
-    <string name="nutrient">"Nutrient"</string>
+    <string name="nutrient">"Nutrients"</string>
     <string name="no_recorded_meals">"No recorded meals"</string>
     <string name="locationPermissionRequestTitle">"Location Permission Request"</string>
     <string name="locationPermissionRequestMessage">"Your post will be visible to others around you. Allow Polyfit to access your location?"</string>
@@ -61,6 +61,7 @@
     <string name="accountSettingsLastName">Last Name</string>
     <string name="accountSettingsFirstName">First Name</string>
     <string name="accountSettingsDisplayName">Display Name</string>
+    <string name="MealOccasion">Meal Occasion</string>
     <string name="noMealsFound">No recorded meals</string>
     <string name="addMealButton">Add a Meal</string>
     <string name="ErrorPicture">Error fetching the picture</string>
