@@ -114,8 +114,8 @@ object HiltProvides {
   @Provides
   @Singleton
   fun provideMapViewModel(
-          postFirebaseRepository: PostFirebaseRepository,
-          positionModel: PostLocationModel
+      postFirebaseRepository: PostFirebaseRepository,
+      positionModel: PostLocationModel
   ): MapViewModel {
     return MapViewModel(postFirebaseRepository, positionModel)
   }

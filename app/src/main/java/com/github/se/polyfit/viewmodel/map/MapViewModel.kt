@@ -1,6 +1,5 @@
 package com.github.se.polyfit.viewmodel.map
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -68,18 +67,18 @@ constructor(
     setNearPost(radiusToSetKm, location.value, _posts.value)
   }
 
-  private fun setNearPost(radiusToSetKm: Double?, location: Location?, post: List<Post>?) {
-    if (location == null || radiusToSetKm == null || post == null) return
+  private fun setNearPost(radiusKm: Double?, location: Location?, post: List<Post>?) {
+    if (location == null || radiusKm == null || post == null) return
 
     val nearPostValue =
         post.filter {
-          val distanceMeter =
+          val distanceKm =
               measure(
                   it.location.latitude,
                   it.location.longitude,
                   location.latitude,
                   location.longitude)
-          distanceMeter <= radiusToSetKm * 1000
+          distanceKm <= radiusKm
         }
     _nearPost.postValue(nearPostValue)
   }
@@ -107,7 +106,7 @@ private fun measure(
     lat2: Double,
     lon2: Double
 ): Double { // generally used geo measurement function
-  val r = 6378.137
+  val r = 6_378.137
   // Radius of earth in KM
   val dLat = lat2 * Math.PI / 180 - lat1 * Math.PI / 180
   val dLon = lon2 * Math.PI / 180 - lon1 * Math.PI / 180
@@ -116,6 +115,5 @@ private fun measure(
           cos(lat1 * Math.PI / 180) * cos(lat2 * Math.PI / 180) * sin(dLon / 2) * sin(dLon / 2)
   val c = 2 * atan2(sqrt(a), sqrt(1 - a))
   val d = r * c
-  return d * 1000
-  // meters
+  return d
 }
