@@ -179,7 +179,6 @@ class PostFirebaseRepository(
       return
     }
     if (keys == previousNearbyKeys) {
-      Log.d("GeoQuery", "same keys, returning early")
       completion(previousListOfPosts)
       return
     }
