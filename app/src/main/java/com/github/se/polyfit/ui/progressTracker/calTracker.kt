@@ -24,13 +24,13 @@ fun CalTracker(
     color: Color = Color.Black,
     strokeWidth: Float = 8f
 ) {
-  require(progress >= 0f)
   var progressValue = progress
-
-  // avoid any potential overflow
-  if (progress > 1f) {
+  if (progress <= 0f || progressValue.isNaN()) {
+    progressValue = 0f
+  } else if (progress > 1f) {
     progressValue = 1f
   }
+
   Box(
       contentAlignment = Alignment.Center,
       modifier = Modifier.fillMaxSize().testTag(OverviewTags.overviewGoal)) {

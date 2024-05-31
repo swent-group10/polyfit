@@ -83,7 +83,11 @@ private fun AccountSettings(
           value = user.displayName ?: "",
           placeholder = { Text(getString(context, R.string.accountSettingsDisplayName)) },
           label = { Text(getString(context, R.string.accountSettingsDisplayName)) },
-          onValueChange = accountSettingsViewModel::updateDisplayName,
+          onValueChange = { newUsername ->
+            if (newUsername.length <= 20) {
+              accountSettingsViewModel.updateDisplayName(newUsername)
+            }
+          },
           singleLine = true,
           modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).testTag("DisplayName"))
     }
@@ -113,7 +117,8 @@ private fun AccountSettings(
           keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
           singleLine = true,
           onValueChange = {
-            val update = it.toLongOrNull()
+            val update = checkNotInfinity(it, height)
+
             height =
                 when {
                   update == null || update <= 0 -> ""
@@ -135,16 +140,16 @@ private fun AccountSettings(
           keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
           singleLine = true,
           onValueChange = {
-            val update = it.toDoubleOrNull()
+            val update = checkNotInfinity(it, weight)
+
             weight =
                 when {
-                  update.isNotNull() && update!! <= 0 -> ""
-                  update.isNotNull() -> update.toString()
-                  else -> weight
+                  update == null || update!! <= 0 -> ""
+                  else -> update.toString()
                 }
             accountSettingsViewModel.updateWeight(
                 when {
-                  update.isNotNull() && update!! > 0 -> update
+                  update.isNotNull() && update!! > 0 -> update!!.toDouble()
                   else -> null
                 })
           },
@@ -158,11 +163,12 @@ private fun AccountSettings(
           keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
           singleLine = true,
           onValueChange = {
-            val update = it.toLongOrNull()
+            val update = checkNotInfinity(it, calorieGoal)
+
             calorieGoal =
                 when {
-                  update == null || update <= 0 -> ""
-                  else -> update.toString()
+                  update.isNotNull() -> update.toString()
+                  else -> ""
                 }
             accountSettingsViewModel.updateCalorieGoal(update ?: 0)
           },
@@ -181,6 +187,23 @@ private fun AccountSettings(
 
     // TODO: Add interface to set dietary preferences
   }
+}
+
+/**
+ * Check if the input is a valid number and not infinity
+ *
+ * @param it The input string (should be a Long value)
+ * @param calorieGoal The calorie goal (String value)
+ * @return The Long value of the input string or the calorie goal if the input is not a valid number
+ */
+private fun checkNotInfinity(it: String, calorieGoal: String): Long? {
+  var update = it.toLongOrNull()
+
+  if (update == null && it.toBigDecimalOrNull() != null) {
+    update = calorieGoal.toLongOrNull()
+  }
+
+  return update
 }
 
 @Composable

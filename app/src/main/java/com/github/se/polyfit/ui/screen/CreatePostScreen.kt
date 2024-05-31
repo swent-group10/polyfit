@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.HorizontalDivider
@@ -32,7 +34,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -49,6 +53,15 @@ import com.github.se.polyfit.ui.theme.SecondaryGrey
 import com.github.se.polyfit.viewmodel.post.CreatePostViewModel
 import com.google.android.gms.location.CurrentLocationRequest
 
+/**
+ * CreatePostScreen is the screen where the user can create a new post. The user can select a meal,
+ * add a picture, and write a description.
+ *
+ * @param navigateBack: Function to navigate back to the previous screen.
+ * @param navigateForward: Function to navigate forward to the next screen.
+ * @param navigateToAddMeal: Function to navigate to the AddMealScreen.
+ * @param postViewModel: ViewModel for the CreatePostScreen.
+ */
 @Composable
 fun CreatePostScreen(
     navigateBack: () -> Unit = {},
@@ -105,6 +118,13 @@ fun CreatePostScreen(
       }
 }
 
+/**
+ * CreateMeal is a composable function that displays a message to the user if there are no meals
+ * found in the database. The user can then navigate to the AddMealScreen to add a new meal.
+ *
+ * @param navigateToAddMeal: Function to navigate to the AddMealScreen.
+ * @param modifier: Modifier to apply to the Column.
+ */
 @Composable
 private fun CreateMeal(navigateToAddMeal: () -> Unit, modifier: Modifier = Modifier) {
   val context = LocalContext.current
@@ -126,10 +146,17 @@ private fun CreateMeal(navigateToAddMeal: () -> Unit, modifier: Modifier = Modif
       }
 }
 
+/**
+ * PostDescription is a composable function that displays a TextField for the user to write a
+ * description for the post.
+ *
+ * @param setPostDescription: Function to set the description of the post.
+ */
 @Composable
 private fun PostDescription(setPostDescription: (String) -> Unit) {
   val context = LocalContext.current
   var descriptionText by remember { mutableStateOf("") }
+  val keyboardController = LocalSoftwareKeyboardController.current
 
   TextField(
       value = descriptionText,
@@ -156,9 +183,17 @@ private fun PostDescription(setPostDescription: (String) -> Unit) {
               unfocusedIndicatorColor = Color.Transparent,
               cursorColor = PrimaryPurple,
           ),
-  )
+      // Set the keyboard options to Done so that the keyboard can be hidden when the user is done
+      keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+      keyboardActions = KeyboardActions(onDone = { keyboardController?.hide() }))
 }
 
+/**
+ * BottomBar is a composable function that displays a button at the bottom of the screen.
+ *
+ * @param onButtonPressed: Function to execute when the button is pressed.
+ * @param postComplete: Boolean to determine if the post is complete.
+ */
 @Composable
 private fun BottomBar(onButtonPressed: () -> Unit, postComplete: Boolean) {
   val context = LocalContext.current

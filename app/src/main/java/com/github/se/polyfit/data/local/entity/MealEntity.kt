@@ -10,6 +10,7 @@ import com.github.se.polyfit.model.meal.MealTag
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import java.time.LocalDate
 
+/** Represents a meal in the database. */
 @Entity(tableName = "MealTable")
 data class MealEntity(
     @PrimaryKey val id: String,

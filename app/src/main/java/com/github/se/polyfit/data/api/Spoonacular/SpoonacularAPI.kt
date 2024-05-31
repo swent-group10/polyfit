@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.util.Log
 import com.github.se.polyfit.BuildConfig
 import com.github.se.polyfit.data.api.APIResponse
-import com.github.se.polyfit.data.api.RecipeInstruction
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.model.recipe.Recipe
@@ -19,6 +18,10 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import org.json.JSONArray
 import org.json.JSONObject
 
+/**
+ * Class that encapsulates the calls to the Spoonacular API. Handles all the logic for calling the
+ * API and parsing the responses.
+ */
 class SpoonacularApiCaller {
   private val client = OkHttpClient()
   private var API_URL = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/"
@@ -146,6 +149,12 @@ class SpoonacularApiCaller {
     return meal
   }
 
+  /**
+   * Get a list of recipes from a list of ingredients strings.
+   *
+   * @param ingredients The list of ingredients
+   * @return The response from the API
+   */
   fun recipeByIngredients(ingredients: List<String>): RecipeFromIngredientsResponseAPI {
     ingredientsParam = ingredients.joinToString(ingredientSeparator)
     val request =
@@ -164,7 +173,7 @@ class SpoonacularApiCaller {
       RecipeFromIngredientsResponseAPI.fromJsonObject(jsonObject)
     } catch (e: Exception) {
       Log.e("SpoonacularApiCaller", "Error getting recipe from ingredients", e)
-      RecipeFromIngredientsResponseAPI.faillure()
+      RecipeFromIngredientsResponseAPI.failure()
     }
   }
 

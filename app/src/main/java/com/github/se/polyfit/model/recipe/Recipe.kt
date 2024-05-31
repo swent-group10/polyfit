@@ -3,6 +3,18 @@ package com.github.se.polyfit.model.recipe
 import android.util.Log
 import java.net.URL
 
+/**
+ * Represents a recipe in the application.
+ *
+ * @param id The id of the recipe.
+ * @param title The title of the recipe.
+ * @param imageUrl The URL of the image of the recipe.
+ * @param usedIngredients The number of used ingredients in the recipe.
+ * @param missingIngredients The number of missing ingredients in the recipe.
+ * @param likes The number of likes the recipe has.
+ * @param recipeInformation More information about the recipe (Second API call).
+ * @param firebaseId The id of the recipe in the firebase database.
+ */
 data class Recipe(
     val id: Long,
     val title: String,

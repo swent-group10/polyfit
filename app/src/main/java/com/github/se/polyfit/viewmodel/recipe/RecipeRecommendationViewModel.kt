@@ -11,6 +11,12 @@ import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+/**
+ * ViewModel for the RecipeRecommendation uis. It is responsible for fetching the recipes from the
+ * Spoonacular API and handling the user interaction with the recipes.
+ *
+ * @property spoonacularApiCaller SpoonacularApiCaller
+ */
 @HiltViewModel
 class RecipeRecommendationViewModel
 @Inject

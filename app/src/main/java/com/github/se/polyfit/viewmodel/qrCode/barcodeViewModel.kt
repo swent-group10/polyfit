@@ -27,6 +27,10 @@ const val REQUIRED_SCAN_COUNT = 3
 const val MIN_BARCODE_LENGTH = 6
 const val MAX_BARCODE_LENGTH = 13
 
+/**
+ * ViewModel for the barcode scanner. It is responsible for handling the barcode scanning and
+ * storing the scanned values.
+ */
 @HiltViewModel
 class BarCodeCodeViewModel
 @Inject
@@ -44,6 +48,11 @@ constructor(
   private var previousScan: String? = null
   private var count = 0
 
+  /**
+   * Function passed to the ml kit to add the id to the list
+   *
+   * @param id the id to add
+   */
   fun addId(id: String?) {
     if (id.isNullOrEmpty() || _listId.value!!.contains(id)) return
     if (id.length !in MIN_BARCODE_LENGTH..MAX_BARCODE_LENGTH) return

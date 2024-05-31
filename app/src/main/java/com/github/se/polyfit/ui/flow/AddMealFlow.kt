@@ -12,6 +12,16 @@ import com.github.se.polyfit.ui.screen.IngredientScreen
 import com.github.se.polyfit.ui.screen.NutritionScreen
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
 
+/**
+ * AddMealFlow is the flow for adding a meal. The flow consists of three screens: IngredientScreen,
+ * AdditionalMealInfoScreen, and NutritionScreen. The user can navigate between the screens by
+ * clicking the next button.
+ *
+ * @param goBack The function to navigate back to where the flow was started
+ * @param goForward The function to go to the desired screen after the flow is completed
+ * @param mealId The id of the meal to edit
+ * @param mealViewModel The view model for the meal
+ */
 @Composable
 fun AddMealFlow(
     goBack: () -> Unit,
@@ -27,7 +37,7 @@ fun AddMealFlow(
     composable(Route.Ingredients) {
       IngredientScreen(
           mealViewModel = mealViewModel,
-          navigateBack = { goBack() },
+          navigateBack = goBack,
           navigateForward = navigation::navigateToAdditionalMealInfo)
     }
     composable(Route.AdditionalMealInfo) {

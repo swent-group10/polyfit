@@ -51,8 +51,8 @@ import com.github.se.polyfit.ui.components.dialog.PictureDialog
 import com.github.se.polyfit.ui.components.lineChartData
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.utils.OverviewTags
-import com.github.se.polyfit.ui.viewModel.DisplayScreen
-import com.github.se.polyfit.ui.viewModel.GraphViewModel
+import com.github.se.polyfit.viewmodel.graph.DisplayScreen
+import com.github.se.polyfit.viewmodel.graph.GraphViewModel
 import com.github.se.polyfit.viewmodel.meal.OverviewViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking

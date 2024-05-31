@@ -8,17 +8,31 @@ import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import org.json.JSONObject
 
+/**
+ * Data class that represents the response from a recipe given the Spoonacular recipe ID.
+ *
+ * @property status The status of the API call
+ * @property nutrients The nutrients of the recipe
+ * @property ingredients The ingredients of the recipe
+ */
 data class RecipeNutritionResponseAPI(
     val status: APIResponse,
     val nutrients: List<Nutrient>,
     val ingredients: List<Ingredient>
 ) {
   companion object {
+
+    /** Create a failure response. */
     private fun failure(): RecipeNutritionResponseAPI {
       return RecipeNutritionResponseAPI(
           status = APIResponse.FAILURE, nutrients = emptyList(), ingredients = emptyList())
     }
 
+    /**
+     * Parse a JSON object into a RecipeNutritionResponseAPI object.
+     *
+     * @param jsonObject The JSON object to parse
+     */
     fun fromJsonObject(jsonObject: JSONObject): RecipeNutritionResponseAPI {
       try {
         val nutrientsJsonObject = jsonObject.optJSONArray("nutrients") ?: return failure()

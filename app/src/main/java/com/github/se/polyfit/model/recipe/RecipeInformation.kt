@@ -1,7 +1,7 @@
 package com.github.se.polyfit.model.recipe
 
 import android.util.Log
-import com.github.se.polyfit.data.api.Ingredient
+import com.github.se.polyfit.data.api.Spoonacular.Ingredient
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 

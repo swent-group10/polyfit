@@ -3,6 +3,7 @@ package com.github.se.polyfit.model.nutritionalInformation
 import android.util.Log
 import kotlin.math.round
 
+/** Represents a unit of measurement for nutritional information. */
 enum class MeasurementUnit {
   G,
   MG,
