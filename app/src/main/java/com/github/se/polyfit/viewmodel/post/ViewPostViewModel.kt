@@ -53,7 +53,8 @@ constructor(
           postFirebaseRepository.queryNearbyPosts(
               centerLatitude = it.latitude,
               centerLongitude = it.longitude,
-              radiusInKm = 5.0,
+              radiusInKm = 2.0,
+              fetchingForPostView = true,
               completion = { posts -> _posts.value = posts })
         } // FYI: UI updates only on Main Thread
 
@@ -61,6 +62,4 @@ constructor(
       }
     }
   }
-
-
 }

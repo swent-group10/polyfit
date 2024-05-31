@@ -59,7 +59,7 @@ fun PostInfoScreenContent(
     padding: PaddingValues = PaddingValues(),
     viewPostViewModel: ViewPostViewModel = hiltViewModel(),
 ) {
-
+  val posts = viewPostViewModel.posts.collectAsState(initial = emptyList())
   val isFetching by viewPostViewModel.isFetching.collectAsState()
 
   Scaffold(modifier = Modifier.padding(padding)) {
@@ -69,7 +69,7 @@ fun PostInfoScreenContent(
       }
       return@Scaffold
     }
-    if (viewPostViewModel.posts.collectAsState().value.isEmpty()) {
+    if (posts.value.isEmpty()) {
       NoPost()
       return@Scaffold
     }

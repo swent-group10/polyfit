@@ -105,6 +105,7 @@ class PostFirebaseRepository(
       centerLongitude: Double,
       radiusInKm: Double,
       completion: (List<Post>) -> Unit,
+      fetchingForPostView: Boolean = false,
       geoFire: GeoFire = GeoFire(geoFireRef)
   ) {
     val center = GeoLocation(centerLatitude, centerLongitude)
@@ -127,7 +128,9 @@ class PostFirebaseRepository(
           }
 
           override fun onGeoQueryReady() {
-            if (nearbyKeys == previousNearbyKeys && nearbyKeys.isNotEmpty()) {
+            if (nearbyKeys == previousNearbyKeys &&
+                nearbyKeys.isNotEmpty() &&
+                !fetchingForPostView) {
               Log.d("GeoQuery", "same keys, returning early")
               return
             }

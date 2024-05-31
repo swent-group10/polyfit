@@ -39,7 +39,11 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 // Size in meters of the rayon of the circle to see other posts
 val MIN_SIZE_RAYON = 100f
@@ -47,6 +51,7 @@ val MAX_SIZE_RAYON = 2000f
 val EPFL_LATITUDE = 46.5181
 val EPFL_LONGITUDE = 6.5659
 
+@OptIn(FlowPreview::class)
 @Composable
 fun MapScreen(paddingValues: PaddingValues, mapViewModel: MapViewModel = hiltViewModel()) {
 
@@ -98,14 +103,17 @@ fun MapScreen(paddingValues: PaddingValues, mapViewModel: MapViewModel = hiltVie
    * @param scope The CoroutineScope in which to launch the coroutine.
    * @param newPosition The new position of the slider.
    */
-  fun onSliderChanged(scope: CoroutineScope, newPosition: Float) {
-    sliderPosition = newPosition
-
+  val mutex = Mutex()
+  fun onSliderChanged(scope: CoroutineScope) {
     scope.launch {
-      if (mainLaunchedIsFinished) {
+      mutex.withLock {
+        if (mainLaunchedIsFinished) {
 
-        mapViewModel.setRadius(newPosition.toDouble() / 1000)
-        mapViewModel.listenToPosts()
+          mapViewModel.setRadius(sliderPosition.toDouble() / 1000)
+          mapViewModel.listenToPosts()
+          delay(3000)
+          isCircleShown = false
+        }
       }
     }
   }
@@ -146,7 +154,11 @@ fun MapScreen(paddingValues: PaddingValues, mapViewModel: MapViewModel = hiltVie
               Marker(listMarker) { post -> selectedPost = post }
             }
 
-        SliderView(sliderPosition, ::onSliderChanged) { isCircleShown = it }
+        SliderView(
+            sliderPosition = sliderPosition,
+            onSliderChanged = ::onSliderChanged,
+            updateSliderPosition = { sliderPosition = it },
+            isCircleShown = { isCircleShown = it })
 
         selectedPost?.let { post ->
           Box(modifier = Modifier.fillMaxWidth().padding(16.dp).align(Alignment.BottomCenter)) {
@@ -205,7 +217,8 @@ fun Marker(listMarker: List<PostMarker>, selectedPost: (Post) -> Unit) {
 @Composable
 fun SliderView(
     sliderPosition: Float,
-    onSliderChanged: (CoroutineScope, Float) -> Unit,
+    onSliderChanged: (CoroutineScope) -> Unit,
+    updateSliderPosition: (Float) -> Unit,
     isCircleShown: (Boolean) -> Unit
 ) {
   val scope = rememberCoroutineScope()
@@ -213,12 +226,12 @@ fun SliderView(
     Slider(
         value = sliderPosition,
         onValueChange = {
-          onSliderChanged(scope, it)
           isCircleShown(true)
+          updateSliderPosition(it)
         },
         valueRange = MIN_SIZE_RAYON..MAX_SIZE_RAYON,
         modifier = Modifier.align(Alignment.CenterVertically).widthIn(10.dp, 200.dp),
-        onValueChangeFinished = { isCircleShown(false) })
+        onValueChangeFinished = { onSliderChanged(scope) })
   }
 }
 

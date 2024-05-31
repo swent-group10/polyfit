@@ -15,7 +15,6 @@ import javax.inject.Inject
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.Flow
 
 @HiltViewModel
 class MapViewModel
@@ -31,7 +30,7 @@ constructor(
   private val _radius = MutableLiveData<Double>()
   val radius: LiveData<Double> = _radius
 
-  private var _posts = MutableLiveData<List<Post>>()
+  var _posts = MutableLiveData<List<Post>>()
   val posts: LiveData<List<Post>> = _posts
 
   init {
@@ -49,6 +48,7 @@ constructor(
         completion = { posts ->
           Log.d("MapViewModel", "listenToPosts: $posts")
           Log.d("MapViewModel", "listenToPosts: ${posts.size}")
+
           _posts.postValue(posts)
         })
   }
