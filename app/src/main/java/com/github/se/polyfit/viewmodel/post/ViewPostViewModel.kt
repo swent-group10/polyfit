@@ -43,29 +43,27 @@ constructor(
   init {
 
     viewModelScope.launch {
+      _isFetching.postValue(true)
       _location.value =
           postLocalRepository.getCurrentLocation(
               CurrentLocationRequest.Builder().setPriority(Priority.PRIORITY_HIGH_ACCURACY).build())
     }
-    getNearbyPosts()
+    _location.observeForever { getNearbyPosts(it) }
   }
 
-  fun getNearbyPosts() {
-    _isFetching.postValue(true)
+  fun getNearbyPosts(location: Location) {
 
-    location.observeForever {
-      viewModelScope.launch {
-        withContext(Dispatchers.Main) {
-          postFirebaseRepository.queryNearbyPosts(
-              centerLatitude = it.latitude,
-              centerLongitude = it.longitude,
-              radiusInKm = 2.0,
-              completion = { posts ->
-                _isFetching.postValue(false)
-                _posts.value = posts
-              })
-        } // FYI: UI updates only on Main Thread
-      }
+    viewModelScope.launch {
+      withContext(Dispatchers.Main) {
+        postFirebaseRepository.queryNearbyPosts(
+            centerLatitude = location.latitude,
+            centerLongitude = location.longitude,
+            radiusInKm = 2.0,
+            completion = { posts ->
+              _isFetching.postValue(false)
+              _posts.value = posts
+            })
+      } // FYI: UI updates only on Main Thread
     }
   }
 }
