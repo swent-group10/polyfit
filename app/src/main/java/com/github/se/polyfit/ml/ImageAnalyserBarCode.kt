@@ -10,6 +10,14 @@ import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 
+/**
+ * ImageAnalyserBarCode is an ImageAnalysis.Analyzer that uses the ML Kit Vision API to detect
+ * barcodes in images. When a barcode is detected, the addMeal function is called with the barcode
+ * value.
+ *
+ * @param addMeal Function to call when a barcode is detected. The function should take a single
+ *   String parameter, which is the barcode value.
+ */
 class ImageAnalyserBarCode(val addMeal: (id: String?) -> Unit) : ImageAnalysis.Analyzer {
 
   private val options =

@@ -37,10 +37,12 @@ constructor(
   val post: UnmodifiablePost
     get() = _post
 
+  /** Set the image (bitmap) to be stored in the post. */
   fun setBitMap(newBitmap: Bitmap?) {
     bitmap = newBitmap
   }
 
+  /** Get the image (bitmap) to be stored in the post. */
   fun getBitMap(): Bitmap? {
     return bitmap?.copy(bitmap!!.config, false)
   }
@@ -101,6 +103,11 @@ constructor(
     return _post.getProtein()?.amount ?: 0.0
   }
 
+  /**
+   * Store the post set on the firebase database.
+   *
+   * @throws Exception if the post could not be stored in the database
+   */
   fun setPost() {
     viewModelScope.launch {
       try {

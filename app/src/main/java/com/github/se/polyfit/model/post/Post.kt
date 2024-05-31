@@ -8,6 +8,7 @@ import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.google.firebase.storage.StorageReference
 import java.time.LocalDate
 
+/** Represents a post in the application. Made to be immutable to avoid any changes to the post. */
 interface UnmodifiablePost {
   val userId: String
   val description: String
@@ -16,6 +17,18 @@ interface UnmodifiablePost {
   val createdAt: LocalDate
 }
 
+/**
+ * Represents a post in the application. Made to be mutable to allow changes to the post.
+ *
+ * @param userId The id of the user who created the post.
+ * @param description The description of the post.
+ * @param location The location of the post.
+ * @param meal The meal of the post.
+ * @param createdAt The date the post was created.
+ * @param listOfImages The list of images in the post.
+ * @param listOfURLs The list of URLs of the images in the post.
+ * @param imageDownloadURL The URL of the image in the post (on the firebase Storage).
+ */
 data class Post(
     override var userId: String,
     override var description: String,
@@ -71,6 +84,13 @@ data class Post(
       }
     }
 
+    /**
+     * Deserializes a map to a Post object.
+     *
+     * @param data The map to deserialize.
+     * @return The Post object.
+     * @throws IllegalArgumentException if cannot deserialize the map.
+     */
     fun deserialize(data: Map<String, Any?>): Post? {
       return try {
         val userId = data["userId"] as String
