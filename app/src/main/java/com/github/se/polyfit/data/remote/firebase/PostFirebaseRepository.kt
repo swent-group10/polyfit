@@ -160,10 +160,9 @@ class PostFirebaseRepository(
    * @param postCollection The Firestore collection to fetch the posts from.
    * @param completion The callback function to call once the posts have been fetched.
    */
-
-
   private var previousListOfPosts: List<Post> = emptyList()
   private var previousNearbyKeys: List<String> = emptyList()
+
   fun fetchPostsAndImages(
       keys: List<String>,
       postCollection: CollectionReference = this.postCollection,
@@ -174,7 +173,6 @@ class PostFirebaseRepository(
     val batchSize = 10
     val batches = keys.chunked(batchSize)
     var completedBatches = 0
-    
 
     if (keys.isEmpty()) {
       completion(posts)

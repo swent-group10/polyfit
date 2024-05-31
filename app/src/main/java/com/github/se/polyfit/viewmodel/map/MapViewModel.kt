@@ -1,6 +1,5 @@
 package com.github.se.polyfit.viewmodel.map
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -37,21 +36,14 @@ constructor(
     setRadius(1.0) // default radius can be change later for a better default value
   }
 
+  /** fetch the posts from the repository */
   fun listenToPosts() {
-    Log.d("MapViewModel", "listenToPosts: ")
-    Log.d("MapViewModel", "listenToPosts: ${location.value}")
-
     if (_location.value == null) return
     repository.queryNearbyPosts(
         centerLatitude = location.value!!.latitude,
         centerLongitude = location.value!!.longitude,
         radiusInKm = radius.value!!,
-        completion = { posts ->
-          Log.d("MapViewModel", "listenToPosts: $posts")
-          Log.d("MapViewModel", "listenToPosts: ${posts.size}")
-
-          _posts.postValue(posts)
-        })
+        completion = { posts -> _posts.postValue(posts) })
   }
 
   fun setRadius(radius: Double) {
@@ -66,12 +58,9 @@ constructor(
 
   fun setLocation(location: Location) {
     _location.value = location
-    Log.i("Map", "setLocation: $location")
   }
 
   fun getLocation(): Location {
-
-    Log.i("Map", "getLocation: $location")
     return location.value!!
   }
 

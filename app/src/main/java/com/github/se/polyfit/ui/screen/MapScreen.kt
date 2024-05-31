@@ -114,7 +114,9 @@ fun MapScreen(paddingValues: PaddingValues, mapViewModel: MapViewModel = hiltVie
 
           mapViewModel.setRadius(sliderPositionInMeters.toDouble() / 1000)
           mapViewModel.listenToPosts()
-          delay(DELAY_CIRCLE_DISAPPEAR) //  a comment saying that the delay is needed for creating an animation.
+          delay(
+              DELAY_CIRCLE_DISAPPEAR) //  a comment saying that the delay is needed for creating an
+          // animation.
           isCircleShown = false
         }
       }
