@@ -35,7 +35,7 @@ constructor(
 
   fun listenToPosts() {
 
-    assert(_location.value != null)
+    if (_location.value == null) return
     repository.queryNearbyPosts(
         centerLatitude = _location.value!!.latitude,
         centerLongitude = _location.value!!.longitude,

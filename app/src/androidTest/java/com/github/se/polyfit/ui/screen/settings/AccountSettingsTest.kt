@@ -117,6 +117,46 @@ class AccountSettingsTest {
   }
 
   @Test
+  fun testLargeValues() {
+    setup(filledUser)
+    ComposeScreen.onComposeScreen<AccountSettingsScreen>(composeTestRule) {
+      height { assertTextContains("180") }
+      weight { assertTextContains("80.0") }
+      calorieGoal { assertTextContains("2000") }
+    }
+
+    ComposeScreen.onComposeScreen<AccountSettingsScreen>(composeTestRule) {
+      height {
+        performTextClearance()
+        performClick()
+        performTextInput("1000")
+        assertTextContains("1000")
+        performTextInput("10000000000000000000000000000000000")
+        assertTextContains("1000")
+      }
+      composeTestRule.onNodeWithTag("Infinity").assertDoesNotExist()
+
+      weight {
+        performTextClearance()
+        performClick()
+        performTextInput("1000")
+        assertTextContains("1000")
+        performTextInput("10000000000000000000000000000000000")
+        assertTextContains("1000")
+      }
+
+      calorieGoal {
+        performTextClearance()
+        performClick()
+        performTextInput("1000")
+        assertTextContains("1000")
+        performTextInput("10000000000000000000000000000000000")
+        assertTextContains("1000")
+      }
+    }
+  }
+
+  @Test
   fun savingMakesCallToViewModel() {
     setup()
 

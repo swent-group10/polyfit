@@ -23,9 +23,12 @@ const val REQUIRED_SCAN_COUNT = 3
 // A barcode is between 6 and 13 characters
 const val MIN_BARCODE_LENGTH = 6
 const val MAX_BARCODE_LENGTH = 13
-
 const val TIME_COLOR_BORDER_MILLIS = 2000L
 
+/**
+ * ViewModel for the barcode scanner. It is responsible for handling the barcode scanning and
+ * storing the scanned values.
+ */
 @HiltViewModel
 class BarCodeCodeViewModel @Inject constructor() : ViewModel() {
   private val _listId = MutableLiveData<List<String>>(emptyList())
@@ -39,6 +42,11 @@ class BarCodeCodeViewModel @Inject constructor() : ViewModel() {
   private var previousScan: String? = null
   private var count = 0
 
+  /**
+   * Function passed to the ml kit to add the id to the list
+   *
+   * @param id the id to add
+   */
   fun addId(id: String?) {
     Log.v("QrCodeViewModel", "addId: $id , ${System.currentTimeMillis() - lastScanTime}")
 

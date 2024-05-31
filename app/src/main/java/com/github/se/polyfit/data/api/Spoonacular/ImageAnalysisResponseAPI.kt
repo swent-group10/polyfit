@@ -7,6 +7,14 @@ import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import org.json.JSONException
 import org.json.JSONObject
 
+/**
+ * Data class that represents the response from the image analysis API.
+ *
+ * @property status The status of the API call
+ * @property nutrition The nutritional information of the image
+ * @property category The category of the image
+ * @property recipes The Spoonacular Ids that match the image
+ */
 data class ImageAnalysisResponseAPI(
     val status: APIResponse,
     val nutrition: List<Nutrient>,
@@ -14,6 +22,8 @@ data class ImageAnalysisResponseAPI(
     val recipes: List<Int>
 ) {
   companion object {
+
+    /** Create a failure response. */
     private fun failure(): ImageAnalysisResponseAPI {
       return ImageAnalysisResponseAPI(
           status = APIResponse.FAILURE,
@@ -22,6 +32,11 @@ data class ImageAnalysisResponseAPI(
           recipes = emptyList())
     }
 
+    /**
+     * Parse a JSON object into an ImageAnalysisResponseAPI object.
+     *
+     * @param jsonObject The JSON object to parse
+     */
     fun fromJsonObject(jsonObject: JSONObject): ImageAnalysisResponseAPI {
       return try {
         val nutritionObject = jsonObject.optJSONObject("nutrition") ?: return failure()

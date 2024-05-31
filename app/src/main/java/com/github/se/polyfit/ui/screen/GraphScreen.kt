@@ -38,10 +38,10 @@ import com.github.se.polyfit.ui.components.button.SortingArrows
 import com.github.se.polyfit.ui.components.lineChartData
 import com.github.se.polyfit.ui.components.scaffold.SimpleTopBar
 import com.github.se.polyfit.ui.utils.GraphData
-import com.github.se.polyfit.ui.viewModel.DisplayScreen
-import com.github.se.polyfit.ui.viewModel.GraphViewModel
-import com.github.se.polyfit.ui.viewModel.SortDirection
-import com.github.se.polyfit.ui.viewModel.SortPoints
+import com.github.se.polyfit.viewmodel.graph.DisplayScreen
+import com.github.se.polyfit.viewmodel.graph.GraphViewModel
+import com.github.se.polyfit.viewmodel.graph.SortDirection
+import com.github.se.polyfit.viewmodel.graph.SortPoints
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -96,7 +96,7 @@ fun FullGraphScreen(
                       placeholder = { Text(text = "Search") },
                       shape = MaterialTheme.shapes.large)
                 }
-                Row() {
+                Row {
                   SortingArrows(
                       modifier =
                           Modifier.align(Alignment.CenterVertically)

@@ -173,6 +173,29 @@ class MealTagSelectorTest : TestCase() {
   }
 
   @Test
+  fun addTagLimitsTo50() {
+    setContent()
+    ComposeScreen.onComposeScreen<MealTagSelectorScreen>(composeTestRule) {
+      addTag { performClick() }
+
+      labelInput {
+        performTextInput("A".repeat(50))
+        performTextInput("A")
+        assertTextEquals("A".repeat(50))
+      }
+
+      colorButton { performClick() }
+
+      saveButton { performClick() }
+
+      mealTagItem {
+        assertIsDisplayed()
+        assertTextEquals("A".repeat(50))
+      }
+    }
+  }
+
+  @Test
   fun editTag() {
     val mealTags = mutableListOf(MealTag("Dairy Free", MealTagColor.BLUE))
     setContent(mealTags)
