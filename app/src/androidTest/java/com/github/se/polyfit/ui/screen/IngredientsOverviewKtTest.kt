@@ -386,7 +386,6 @@ class IngredientsOverviewTest {
     for (i in 1..REQUIRED_SCAN_COUNT) {
       barCodeCodeViewModel.addId(nutellaCode)
     }
-    barCodeCodeViewModel.getIngredients()
 
     // Adding a delay to allow asynchronous operations to complete
     delay(2000)
