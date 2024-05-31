@@ -3,7 +3,9 @@ package com.github.se.polyfit.model.nutritionalInformation
 import android.util.Log
 
 /**
- * Represents the nutritional information of a food item.
+ * Represents the nutritional information of a food item. It is represented by a list of [Nutrient]
+ * that each contain information about the type of nutrient and the amount of that nutrient in the
+ * food item.
  *
  * @param nutrientsList The list of nutrients in the food item.
  */

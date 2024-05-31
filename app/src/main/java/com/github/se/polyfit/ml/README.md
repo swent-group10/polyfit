@@ -1,8 +1,8 @@
 # Package: `com.github.se.polyfit.ml`
 
 This package is responsible for managing the Machine Learning (ML) aspects of the application. It
-contains classes that interact with ML models, process data, and provide predictions based on the
-models.
+contains a class that interact with barcode detecting ML models to extract barcode information from
+images.
 
 ## Key Components
 

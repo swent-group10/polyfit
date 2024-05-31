@@ -12,7 +12,7 @@ import java.net.URL
  * @param usedIngredients The number of used ingredients in the recipe.
  * @param missingIngredients The number of missing ingredients in the recipe.
  * @param likes The number of likes the recipe has.
- * @param recipeInformation More infroamtion about the recipe (Second API call).
+ * @param recipeInformation More information about the recipe (Second API call).
  * @param firebaseId The id of the recipe in the firebase database.
  */
 data class Recipe(
