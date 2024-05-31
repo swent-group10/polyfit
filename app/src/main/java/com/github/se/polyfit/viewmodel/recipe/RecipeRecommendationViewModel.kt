@@ -25,7 +25,7 @@ constructor(private val spoonacularApiCaller: SpoonacularApiCaller) : ViewModel(
   private val _ingredientList = MutableLiveData<List<String>>()
 
   init {
-    _showIngredient.value = true
+    _showIngredient.postValue(true)
   }
 
   fun setIngredientList(ingredientList: List<IngredientsTMP>) {

@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.github.se.polyfit.data.api.OpenFoodFacts.OpenFoodFactsApi
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.ui.screen.IngredientsTMP
@@ -16,7 +17,8 @@ import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 // We need to scan multiple times the same value to be sure it's not a mistake
 const val REQUIRED_SCAN_COUNT = 3
@@ -28,9 +30,10 @@ const val MAX_BARCODE_LENGTH = 13
 @HiltViewModel
 class BarCodeCodeViewModel
 @Inject
-constructor(private val recipeRecommendationViewModel: RecipeRecommendationViewModel) :
-    ViewModel() {
-  private val foodFactsApi = OpenFoodFactsApi()
+constructor(
+    private val recipeRecommendationViewModel: RecipeRecommendationViewModel,
+    private val foodFactsApi: OpenFoodFactsApi
+) : ViewModel() {
   private val _listId = MutableLiveData<List<String>>(emptyList())
 
   val listId: LiveData<List<String>> = _listId
@@ -58,31 +61,32 @@ constructor(private val recipeRecommendationViewModel: RecipeRecommendationViewM
 
     val list = _listId.value?.toMutableList() ?: mutableListOf()
     list.add(0, id)
-    _listId.value = list
+    _listId.postValue(list)
     Log.v("QrCodeViewModel", "new list: ${_listId.value}")
   }
 
   fun getIngredients() {
-    val list = _listIngredients.value?.toMutableList() ?: mutableListOf()
-    // cannot run network calls on the main thread
-    listId.observeForever { ids ->
-      for (code in ids) {
-        var ingredient: Ingredient = Ingredient.default()
-
-        // Not ideal
-        runBlocking(Dispatchers.IO) { ingredient = foodFactsApi.getIngredient(code) }
-
-        val nutriments = ingredient.nutritionalInformation.nutrients
-        list +=
-            IngredientsTMP(
-                ingredient.name,
-                ingredient.amount,
-                0.0,
-                nutriments.first { it.nutrientType == "carbohydrates" }.amount,
-                nutriments.first { it.nutrientType == "fat" }.amount,
-                nutriments.first { it.nutrientType == "protein" }.amount)
+    viewModelScope.launch {
+      withContext(Dispatchers.Main) {
+        listId.observeForever { ids ->
+          viewModelScope.launch(Dispatchers.IO) {
+            val list = _listIngredients.value?.toMutableList() ?: mutableListOf()
+            for (code in ids) {
+              val ingredient: Ingredient = foodFactsApi.getIngredient(code)
+              val nutriments = ingredient.nutritionalInformation.nutrients
+              list +=
+                  IngredientsTMP(
+                      ingredient.name,
+                      ingredient.amount,
+                      0.0,
+                      nutriments.first { it.nutrientType == "carbohydrates" }.amount,
+                      nutriments.first { it.nutrientType == "fat" }.amount,
+                      nutriments.first { it.nutrientType == "protein" }.amount)
+            }
+            _listIngredients.postValue(list)
+          }
+        }
       }
-      _listIngredients.postValue(list)
     }
   }
 
