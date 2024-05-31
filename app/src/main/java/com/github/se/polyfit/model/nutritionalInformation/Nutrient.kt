@@ -3,10 +3,14 @@ package com.github.se.polyfit.model.nutritionalInformation
 import android.util.Log
 import com.github.se.polyfit.ui.utils.titleCase
 
+/**
+ * Represents a nutrient in a food item.
+ *
+ * @param nutrientType The type of nutrient.
+ * @param amount The amount of the nutrient.
+ * @param unit The unit of measurement for the nutrient.
+ */
 data class Nutrient(val nutrientType: String, val amount: Double, val unit: MeasurementUnit) {
-
-  // setters
-
   override fun toString(): String {
     return "$nutrientType :  $amount $unit"
   }
@@ -65,6 +69,13 @@ data class Nutrient(val nutrientType: String, val amount: Double, val unit: Meas
       return map
     }
 
+    /**
+     * Deserializes a map to a Nutrient object.
+     *
+     * @param data The map to deserialize.
+     * @return The Nutrient object.
+     * @throws IllegalArgumentException if cannot deserialize the map.
+     */
     fun deserialize(data: Map<String, Any>): Nutrient {
       return try {
         val nutrientType = data["nutrientType"] as String

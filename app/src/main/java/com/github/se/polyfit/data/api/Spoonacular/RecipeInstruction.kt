@@ -1,4 +1,4 @@
-package com.github.se.polyfit.data.api
+package com.github.se.polyfit.data.api.Spoonacular
 
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi

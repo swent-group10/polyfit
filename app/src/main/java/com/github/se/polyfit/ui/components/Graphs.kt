@@ -15,7 +15,7 @@ import co.yml.charts.ui.linechart.model.LinePlotData
 import co.yml.charts.ui.linechart.model.LineStyle
 import co.yml.charts.ui.linechart.model.LineType
 import co.yml.charts.ui.linechart.model.ShadowUnderLine
-import com.github.se.polyfit.ui.viewModel.DisplayScreen
+import com.github.se.polyfit.viewmodel.graph.DisplayScreen
 import java.time.LocalDate
 import kotlin.math.ceil
 import kotlin.math.floor

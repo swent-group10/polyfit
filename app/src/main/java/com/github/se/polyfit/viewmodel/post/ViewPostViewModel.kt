@@ -18,6 +18,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+/**
+ * ViewModel for the post view. It is responsible for fetching the posts from the Firebase and
+ * handling the user interaction with the posts. It is responsible for keeping the list up to date
+ *
+ * @property postFirebaseRepository PostFirebaseRepository
+ */
 @HiltViewModel
 class ViewPostViewModel
 @Inject

@@ -26,6 +26,15 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
+/**
+ * Repository class for handling all Firebase operations related to posts. This class is responsible
+ * for storing, fetching, and querying posts in the Firestore database. It also handles the
+ * uploading and fetching of images from Firebase Storage.
+ *
+ * @param db The Firestore database instance to use for storing and fetching posts.
+ * @param rtdb The Realtime Database instance to use for storing and fetching geolocation data.
+ * @param pictureDb The Firebase Storage instance to use for storing and fetching images.
+ */
 class PostFirebaseRepository(
     db: FirebaseFirestore = FirebaseFirestore.getInstance(),
     rtdb: FirebaseDatabase =
@@ -50,6 +59,14 @@ class PostFirebaseRepository(
     postCollection.addSnapshotListener { _, _ -> scope.launch { getAllPosts() } }
   }
 
+  /**
+   * Stores a post in the Firestore database. The post is serialized into a Map object and stored in
+   * the database. The post's location is also stored in the Realtime Database for geolocation
+   * queries.
+   *
+   * @param post The post to store in the database.
+   * @return The DocumentReference of the stored post.
+   */
   suspend fun storePost(post: Post): DocumentReference? {
     try {
       val documentRef = postCollection.add(post.serialize()).await()
@@ -136,6 +153,14 @@ class PostFirebaseRepository(
         })
   }
 
+  /**
+   * Fetches posts and images from Firestore based on a list of post keys. This function is used to
+   * fetch posts that are within a certain radius of a given location.
+   *
+   * @param keys The list of post keys to fetch from Firestore.
+   * @param postCollection The Firestore collection to fetch the posts from.
+   * @param completion The callback function to call once the posts have been fetched.
+   */
   var previousNearbyKeys: List<String> = emptyList()
   private var previousListOfPosts: List<Post> = emptyList()
 
@@ -189,6 +214,13 @@ class PostFirebaseRepository(
     }
   }
 
+  /**
+   * Fetches the image references for a given post key from Firebase Storage. This function is used
+   * to fetch images for a specific post.
+   *
+   * @param postKey The key of the post to fetch images for.
+   * @return A list of StorageReferences to the images for the post.
+   */
   suspend fun fetchImageReferencesForPost(postKey: String): List<StorageReference> {
     return withContext(Dispatchers.Default) {
       val storageRef = pictureDb.getReference("posts/$postKey")
@@ -197,6 +229,13 @@ class PostFirebaseRepository(
     }
   }
 
+  /**
+   * Fetches an image from Firebase Storage based on then StorageReference. This function is used to
+   * fetch images for a specific post.
+   *
+   * @param storageRef The StorageReference to the image to fetch.
+   * @return The Bitmap image fetched from Firebase Storage.
+   */
   suspend fun uploadImage(
       image: Bitmap,
   ): Uri? {

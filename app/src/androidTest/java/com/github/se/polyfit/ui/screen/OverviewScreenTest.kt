@@ -46,8 +46,8 @@ import com.github.se.polyfit.ui.flow.AddMealFlow
 import com.github.se.polyfit.ui.navigation.Route
 import com.github.se.polyfit.ui.utils.GraphData
 import com.github.se.polyfit.ui.utils.OverviewTags
-import com.github.se.polyfit.ui.viewModel.DisplayScreen
-import com.github.se.polyfit.ui.viewModel.GraphViewModel
+import com.github.se.polyfit.viewmodel.graph.DisplayScreen
+import com.github.se.polyfit.viewmodel.graph.GraphViewModel
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
 import com.github.se.polyfit.viewmodel.meal.OverviewViewModel
 import com.github.se.polyfit.viewmodel.post.CreatePostViewModel

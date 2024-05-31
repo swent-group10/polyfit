@@ -4,6 +4,7 @@ import android.net.Uri
 import android.util.Log
 import java.time.LocalDate
 
+/** Represents a user in the application. */
 data class User(
     var id: String = "",
     var displayName: String? = null,
@@ -84,6 +85,12 @@ data class User(
   }
 
   companion object {
+    /**
+     * Serializes the user object into a map.
+     *
+     * @param user The user object to serialize.
+     * @return A map containing the serialized user object.
+     */
     fun serialize(user: User): Map<String, Any?> {
       // To serialize/store, they must have atleast id, email, and names.
       val result =
@@ -107,6 +114,13 @@ data class User(
       return result
     }
 
+    /**
+     * Deserializes a map to a User object.
+     *
+     * @param map The map to deserialize.
+     * @return The User object.
+     * @throws IllegalArgumentException if cannot deserialize the map.
+     */
     fun deserialize(map: Map<String, Any?>): User {
       return try {
         User(
