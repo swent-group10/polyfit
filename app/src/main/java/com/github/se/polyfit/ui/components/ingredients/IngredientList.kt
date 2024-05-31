@@ -144,7 +144,7 @@ private fun IngredientButton(ingredient: Ingredient, mealViewModel: MealViewMode
         onCollapseIngredient = { isExpanded = false })
   } else {
     GradientButton(
-        text = ingredient.displayInformation(),
+        text = ingredient.amountFormatted(),
         onClick = {
           Log.v("Expand Ingredients", "Clicked")
           isExpanded = true
