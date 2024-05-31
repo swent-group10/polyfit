@@ -134,7 +134,6 @@ class IngredientsOverviewTest {
     }
   }
 
-
   @Test
   fun displayListProducts() {
     composeTestRule.setContent { ListProducts(l1, Modifier) }

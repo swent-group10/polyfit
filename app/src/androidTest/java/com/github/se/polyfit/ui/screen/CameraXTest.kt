@@ -24,7 +24,7 @@ class CameraXTest {
       CameraXScreen(
           BarCodeCodeViewModel(
               RecipeRecommendationViewModel(SpoonacularApiCaller()), OpenFoodFactsApi()),
-              padding = PaddingValues(0.dp))
+          padding = PaddingValues(0.dp))
     }
 
     ComposeScreen.onComposeScreen<CameraXScreenTest>(composeTestRule) {
