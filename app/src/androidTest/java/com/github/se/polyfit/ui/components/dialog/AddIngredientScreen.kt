@@ -15,17 +15,6 @@ class AddIngredientPopupBox(semanticsProvider: SemanticsNodeInteractionsProvider
       addIngredientDialog.child { hasTestTag("AddIngredientContentContainer") }
 }
 
-class AddIngredientSearchBar(semanticsProvider: SemanticsNodeInteractionsProvider) :
-    ComposeScreen<AddIngredientSearchBar>(
-        semanticsProvider = semanticsProvider,
-        viewBuilderAction = { hasTestTag("AddIngredientContentContainer") }) {
-
-  private val searchIngredientBar: KNode = child { hasTestTag("SearchIngredientBar") }
-  val searchResultContainer: KNode =
-      searchIngredientBar.child { hasTestTag("IngredientSearchScrollableList") }
-  val singleSearchResult: KNode = searchResultContainer.child { hasClickAction() }
-}
-
 class AddIngredientEditNutritionInfo(semanticsProvider: SemanticsNodeInteractionsProvider) :
     ComposeScreen<AddIngredientEditNutritionInfo>(
         semanticsProvider = semanticsProvider,
@@ -44,4 +33,5 @@ class AddIngredientButton(semanticsProvider: SemanticsNodeInteractionsProvider) 
         viewBuilderAction = { hasTestTag("AddIngredientContentContainer") }) {
 
   val addIngredientButton: KNode = child { hasTestTag("PrimaryButton") }
+  val ingredientTitle: KNode = child { hasTestTag("EnterIngredientName") }
 }
