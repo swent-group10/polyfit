@@ -144,10 +144,10 @@ private fun IngredientButton(ingredient: Ingredient, mealViewModel: MealViewMode
         onIngredientRemove = { mealViewModel.removeIngredient(ingredient) },
         onCollapseIngredient = { isExpanded = false })
   } else {
-    val text =
-        if (ingredient.unit != MeasurementUnit.OTHER)
-            "${ingredient.name} ${ingredient.amount}${ingredient.unit}"
-        else "${ingredient.name} ${ingredient.amount}"
+
+    var text = "${ingredient.name} ${ingredient.amount}"
+    if (ingredient.unit != MeasurementUnit.OTHER) text += ingredient.unit
+
     GradientButton(
         text = text,
         onClick = {
