@@ -31,6 +31,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
+import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.ui.components.GradientBox
 import com.github.se.polyfit.ui.components.button.GradientButton
 import com.github.se.polyfit.ui.theme.DeleteIconRed
@@ -143,8 +144,12 @@ private fun IngredientButton(ingredient: Ingredient, mealViewModel: MealViewMode
         onIngredientRemove = { mealViewModel.removeIngredient(ingredient) },
         onCollapseIngredient = { isExpanded = false })
   } else {
+    val text =
+        if (ingredient.unit != MeasurementUnit.OTHER)
+            "${ingredient.name} ${ingredient.amount}${ingredient.unit}"
+        else "${ingredient.name} ${ingredient.amount}"
     GradientButton(
-        text = "${ingredient.name} ${ingredient.amount} ${ingredient.unit}",
+        text = text,
         onClick = {
           Log.v("Expand Ingredients", "Clicked")
           isExpanded = true
