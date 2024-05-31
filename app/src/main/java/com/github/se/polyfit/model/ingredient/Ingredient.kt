@@ -28,8 +28,17 @@ data class Ingredient(
     return Ingredient(name, id, amount, unit, nutritionalInformation.deepCopy())
   }
 
+  private fun isInteger(d: Double): Boolean {
+    return (d == d.toInt().toDouble())
+  }
+
   fun amountFormatted(): String {
-    return amount.toString() + " " + unit.toString().lowercase(Locale.ROOT)
+    Log.d("Ingredient", "displayInformation: $name, amount: $amount, unit: $unit")
+    val amount = if (isInteger(amount)) amount.toInt() else amount
+    return when (unit) {
+      MeasurementUnit.OTHER -> "$amount $name"
+      else -> "$name $amount ${unit.toString().lowercase(Locale.ROOT)}"
+    }
   }
 
   companion object {
