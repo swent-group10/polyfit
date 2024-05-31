@@ -24,10 +24,10 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.github.se.polyfit.R
+import com.github.se.polyfit.data.local.ingredientscanned.IngredientsScanned
 import com.github.se.polyfit.model.recipe.Recipe
 import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.components.recipe.RecipeCard
-import com.github.se.polyfit.data.local.ingredientscanned.IngredientsScanned
 import com.github.se.polyfit.viewmodel.qrCode.BarCodeCodeViewModel
 import com.github.se.polyfit.viewmodel.recipe.RecipeRecommendationViewModel
 

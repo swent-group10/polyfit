@@ -9,8 +9,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.se.polyfit.data.api.OpenFoodFacts.OpenFoodFactsApi
-import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.data.local.ingredientscanned.IngredientsScanned
+import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.viewmodel.recipe.RecipeRecommendationViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -81,22 +81,20 @@ constructor(
       val nutriments = ingredient.nutritionalInformation.nutrients
       try {
         list +=
-                IngredientsScanned(
-                        ingredient.name,
-                        ingredient.amount,
-                        0.0,
-                        nutriments.first { it.nutrientType == "carbohydrates" }.amount,
-                        nutriments.first { it.nutrientType == "fat" }.amount,
-                        nutriments.first { it.nutrientType == "protein" }.amount)
+            IngredientsScanned(
+                ingredient.name,
+                ingredient.amount,
+                0.0,
+                nutriments.first { it.nutrientType == "carbohydrates" }.amount,
+                nutriments.first { it.nutrientType == "fat" }.amount,
+                nutriments.first { it.nutrientType == "protein" }.amount)
 
         _listIngredients.postValue(list)
       } catch (e: Exception) {
-        Log.e("QrCodeViewModel", "Error in getting ingredient, surely not a food id: $e")
+        Log.w("QrCodeViewModel", "Error in getting ingredient, surely not a food id: $e")
       }
     }
   }
-
-
 
   fun setIngredients() {
     if (_listIngredients.value.isNullOrEmpty()) return
