@@ -31,6 +31,7 @@ class MealRepository(
    *
    * @param meal the meal to store
    * @return the DocumentReference of the stored meal returns null if not connected to internet
+   * @throws Exception if an error occurs while storing the meal
    */
   suspend fun storeMeal(meal: Meal): DocumentReference? {
     Log.d("MealRepository", "Storing meal: $meal")
@@ -68,6 +69,12 @@ class MealRepository(
     return withContext(this.dispatcher) { mealDao.getMealsCreatedOnDate(date, user.id) }
   }
 
+  /**
+   * Deletes a meal from the firebase and the local database. Makes sure both database are in sync
+   *
+   * @param id the id of the meal to delete
+   * @throws Exception if an error occurs while deleting the meal
+   */
   suspend fun deleteMeal(id: String) {
     if (checkConnectivity.checkConnection()) {
       if (isDataOutdated) {
@@ -106,6 +113,11 @@ class MealRepository(
     }
   }
 
+  /**
+   * Checks if the device is connected to the internet. If not, the data is assumed to be outdated.
+   *
+   * @return true if the data is outdated and updated, false otherwise
+   */
   class ConnectivityChecker(private val context: Context) {
     fun checkConnection(): Boolean {
       val connectivityManager =

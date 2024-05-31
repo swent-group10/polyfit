@@ -12,8 +12,10 @@ import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import java.time.LocalDate
 import javax.inject.Inject
 
+/** Represents the total calories consumed on a specific date. Used for UI purposes. */
 data class DailyCalorieSummary(val date: LocalDate, val totalCalories: Double)
 
+/** Represents the total weight consumed on a specific date. Used for UI purposes. */
 data class DailyWeightSummary(val date: LocalDate, val totalWeight: Nutrient)
 
 /**

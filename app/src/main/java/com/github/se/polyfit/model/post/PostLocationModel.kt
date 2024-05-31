@@ -13,12 +13,24 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.tasks.await
 
+/**
+ * PostLocationModel is a model class that is responsible for getting the current location of the
+ * user.
+ *
+ * @param context The context of the application.
+ */
 class PostLocationModel(private val context: Context) {
 
   suspend fun getCurrentLocation(locationRequest: CurrentLocationRequest): ourLocation {
     return checkLocationPermissions(locationRequest)
   }
 
+  /**
+   * Get the current location of the user.
+   *
+   * @param locationRequest The location request to get the current location.
+   * @param query The query to get the current location.
+   */
   suspend fun currentLocation(
       locationRequest: CurrentLocationRequest,
       query: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
@@ -44,6 +56,12 @@ class PostLocationModel(private val context: Context) {
     return locationToSet
   }
 
+  /**
+   * Check if the location permissions are granted. If they are, get the current location of the
+   * user.
+   *
+   * @param locationRequest The location request to get the current location.
+   */
   suspend fun checkLocationPermissions(locationRequest: CurrentLocationRequest): ourLocation {
 
     if (ActivityCompat.checkSelfPermission(

@@ -12,7 +12,8 @@ import java.util.Locale
  *
  * @property name is unique for each meal
  * @property id is the unique id given in API response
- * @property nutritionalInformation
+ * @property nutritionalInformation is the nutritional information of the ingredient
+ * @property imageUri is the uri of the image of the ingredient (Spoonacular API)
  */
 data class Ingredient(
     val name: String, // name is now a val
@@ -52,6 +53,13 @@ data class Ingredient(
           ingredient.nutritionalInformation)
     }
 
+    /**
+     * Deserializes a map into an Ingredient object.
+     *
+     * @param data The map to deserialize.
+     * @return The deserialized Ingredient object.
+     * @throws IllegalArgumentException If the map cannot be deserialized into an Ingredient object.
+     */
     fun deserialize(data: Map<String, Any>): Ingredient {
       return try {
         val name = data["name"] as String
