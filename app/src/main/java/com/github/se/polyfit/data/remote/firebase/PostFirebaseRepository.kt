@@ -98,14 +98,11 @@ class PostFirebaseRepository(
    * @param radiusInKm The radius around the center point in kilometers within which to search for
    *   posts.
    */
-  var previousNearbyKeys: List<String> = emptyList()
-
   fun queryNearbyPosts(
       centerLatitude: Double,
       centerLongitude: Double,
       radiusInKm: Double,
       completion: (List<Post>) -> Unit,
-      fetchingForPostView: Boolean = false,
       geoFire: GeoFire = GeoFire(geoFireRef)
   ) {
     val center = GeoLocation(centerLatitude, centerLongitude)
@@ -128,12 +125,7 @@ class PostFirebaseRepository(
           }
 
           override fun onGeoQueryReady() {
-            if (nearbyKeys == previousNearbyKeys &&
-                nearbyKeys.isNotEmpty() &&
-                !fetchingForPostView) {
-              Log.d("GeoQuery", "same keys, returning early")
-              return
-            }
+
             previousNearbyKeys = nearbyKeys
             PostFirebaseRepository().fetchPostsAndImages(nearbyKeys, completion = completion)
           }
@@ -143,6 +135,9 @@ class PostFirebaseRepository(
           }
         })
   }
+
+  var previousNearbyKeys: List<String> = emptyList()
+  private var previousListOfPosts: List<Post> = emptyList()
 
   fun fetchPostsAndImages(
       keys: List<String>,
@@ -157,6 +152,10 @@ class PostFirebaseRepository(
     if (keys.isEmpty()) {
       completion(posts)
       return
+    }
+    if (keys == previousNearbyKeys && keys.isNotEmpty()) {
+      Log.d("GeoQuery", "same keys, returning early")
+      completion(previousListOfPosts)
     }
 
     // Use a batch operation to fetch all posts
@@ -177,6 +176,7 @@ class PostFirebaseRepository(
 
                 completedBatches++
                 if (completedBatches == batches.size) {
+                  previousListOfPosts = posts
                   completion(posts)
                 }
               }

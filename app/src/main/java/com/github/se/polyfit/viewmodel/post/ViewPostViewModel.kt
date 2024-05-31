@@ -54,7 +54,6 @@ constructor(
               centerLatitude = it.latitude,
               centerLongitude = it.longitude,
               radiusInKm = 2.0,
-              fetchingForPostView = true,
               completion = { posts -> _posts.value = posts })
         } // FYI: UI updates only on Main Thread
 
