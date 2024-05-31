@@ -39,6 +39,14 @@ import com.github.se.polyfit.ui.theme.PrimaryPurple
 import com.github.se.polyfit.ui.theme.PurpleGrey40
 import com.github.se.polyfit.ui.theme.SecondaryGrey
 
+/**
+ * Dialog for adding or editing a meal tag.
+ *
+ * @param tag The tag to edit. If null, a new tag will be created.
+ * @param closeDialog Callback to close the dialog.
+ * @param addMealTag Callback to add a new meal tag.
+ * @param removeMealTag Callback to remove a meal tag.
+ */
 @Composable
 fun MealTagDialog(
     tag: MealTag?,
@@ -82,6 +90,13 @@ fun MealTagDialog(
   }
 }
 
+/**
+ * Save button for the dialog.
+ *
+ * @param name The name of the tag.
+ * @param color The color of the tag.
+ * @param onSave Callback to save the tag.
+ */
 @Composable
 private fun SaveTag(
     name: String,
@@ -97,6 +112,13 @@ private fun SaveTag(
   }
 }
 
+/**
+ * Color picker for the dialog.
+ *
+ * @param allColors All available colors.
+ * @param color The selected color.
+ * @param onColorSelected Callback when a color is selected.
+ */
 @Composable
 private fun EditColor(
     allColors: List<MealTagColor>,
@@ -116,6 +138,15 @@ private fun EditColor(
       modifier = Modifier.testTag("ColorTable"))
 }
 
+// Arbitrary limit to prevent long tag names in the DB
+const val MAX_TAG_NAME_LENGTH = 50
+
+/**
+ * Edit text field for the tag name.
+ *
+ * @param name The current name of the tag.
+ * @param onNameChange Callback when the name changes.
+ */
 @Composable
 private fun EditLabel(name: String, onNameChange: (String) -> Unit) {
   Text(
@@ -125,7 +156,7 @@ private fun EditLabel(name: String, onNameChange: (String) -> Unit) {
       modifier = Modifier.testTag("Label"))
   TextField(
       value = name,
-      onValueChange = { onNameChange(it) },
+      onValueChange = { if (it.length <= MAX_TAG_NAME_LENGTH) onNameChange(it) },
       placeholder = { Text("Enter a label") },
       modifier = Modifier.testTag("LabelInput"),
       singleLine = true,
@@ -142,6 +173,13 @@ private fun EditLabel(name: String, onNameChange: (String) -> Unit) {
           ))
 }
 
+/**
+ * Title for the dialog.
+ *
+ * @param tag The tag to edit.
+ * @param removeMealTag Callback to remove a meal tag.
+ * @param closeDialog Callback to close the dialog.
+ */
 @Composable
 private fun Title(tag: MealTag?, removeMealTag: (MealTag) -> Unit, closeDialog: () -> Unit) {
   val title = "Add a Tag".takeIf { tag == null } ?: "Edit Tag"
