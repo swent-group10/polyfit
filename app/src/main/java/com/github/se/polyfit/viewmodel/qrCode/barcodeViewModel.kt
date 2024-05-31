@@ -8,11 +8,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.github.se.polyfit.data.api.OpenFoodFacts.OpenFoodFactsApi
+import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.ui.screen.IngredientsTMP
+import com.github.se.polyfit.viewmodel.recipe.RecipeRecommendationViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 
 // We need to scan multiple times the same value to be sure it's not a mistake
 const val REQUIRED_SCAN_COUNT = 3
@@ -22,7 +26,10 @@ const val MIN_BARCODE_LENGTH = 6
 const val MAX_BARCODE_LENGTH = 13
 
 @HiltViewModel
-class BarCodeCodeViewModel @Inject constructor() : ViewModel() {
+class BarCodeCodeViewModel
+@Inject
+constructor(private val recipeRecommendationViewModel: RecipeRecommendationViewModel) :
+    ViewModel() {
   private val foodFactsApi = OpenFoodFactsApi()
   private val _listId = MutableLiveData<List<String>>(emptyList())
 
@@ -57,9 +64,14 @@ class BarCodeCodeViewModel @Inject constructor() : ViewModel() {
 
   fun getIngredients() {
     val list = _listIngredients.value?.toMutableList() ?: mutableListOf()
+    // cannot run network calls on the main thread
     listId.observeForever { ids ->
       for (code in ids) {
-        val ingredient = foodFactsApi.getIngredient(code)
+        var ingredient: Ingredient = Ingredient.default()
+
+        // Not ideal
+        runBlocking(Dispatchers.IO) { ingredient = foodFactsApi.getIngredient(code) }
+
         val nutriments = ingredient.nutritionalInformation.nutrients
         list +=
             IngredientsTMP(
@@ -72,6 +84,11 @@ class BarCodeCodeViewModel @Inject constructor() : ViewModel() {
       }
       _listIngredients.postValue(list)
     }
+  }
+
+  fun setIngredients() {
+    if (_listIngredients.value.isNullOrEmpty()) return
+    recipeRecommendationViewModel.setIngredientList(listIngredients.value!!)
   }
 }
 

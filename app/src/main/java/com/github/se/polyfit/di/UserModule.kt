@@ -14,6 +14,7 @@ import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.model.post.PostLocationModel
 import com.github.se.polyfit.ui.viewModel.GraphViewModel
 import com.github.se.polyfit.viewmodel.qrCode.BarCodeCodeViewModel
+import com.github.se.polyfit.viewmodel.recipe.RecipeRecommendationViewModel
 import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
 import dagger.Provides
@@ -106,7 +107,17 @@ object UserModule {
 
   @Provides
   @Singleton
-  fun providesBarCodeCodeViewModel(): BarCodeCodeViewModel {
-    return BarCodeCodeViewModel()
+  fun providesBarCodeCodeViewModel(
+      recipeRecommendationViewModel: RecipeRecommendationViewModel
+  ): BarCodeCodeViewModel {
+    return BarCodeCodeViewModel(recipeRecommendationViewModel)
+  }
+
+  @Provides
+  @Singleton
+  fun providesRecipeRecommendationViewModel(
+      spoonacularApiCaller: SpoonacularApiCaller
+  ): RecipeRecommendationViewModel {
+    return RecipeRecommendationViewModel(spoonacularApiCaller)
   }
 }

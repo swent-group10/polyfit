@@ -36,8 +36,8 @@ fun RecommendationScreen(
     navController: NavHostController,
     recipeRecViewModel: RecipeRecommendationViewModel = hiltViewModel(),
     navigateToRecipeRecommendationMore: () -> Unit = {},
+    barcodeViewModel: BarCodeCodeViewModel = hiltViewModel()
 ) {
-  val barcodeViewModel = BarCodeCodeViewModel()
   GenericScreen(
       navController = navController,
       content = { paddingValues ->

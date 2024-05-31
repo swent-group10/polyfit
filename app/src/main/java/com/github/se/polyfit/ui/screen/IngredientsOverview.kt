@@ -72,7 +72,13 @@ fun IngredientsOverview(
 
   Scaffold(
       topBar = { SimpleTopBar(title = context.getString(R.string.Product)) { navigateBack() } },
-      bottomBar = { BottomBarIngredient(navigateForward = navigateForward) },
+      bottomBar = {
+        BottomBarIngredient(
+            navigateForward = {
+              barCodeCodeViewModel.setIngredients()
+              navigateForward()
+            })
+      },
       floatingActionButton = { FloatingActionButtonIngredients(onClickFloatingButton) },
       containerColor = MaterialTheme.colorScheme.background,
       modifier = Modifier.testTag("IngredientsOverviewScaffold")) {
