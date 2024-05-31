@@ -89,9 +89,7 @@ fun MapScreen(paddingValues: PaddingValues, mapViewModel: MapViewModel = hiltVie
     mapViewModel.setLocation(currentLocation.value)
 
     mapViewModel.listenToPosts()
-    mapViewModel.nearPost.observeForever {
-      it?.let { posts.value = it }
-    }
+    mapViewModel.nearPost.observeForever { it?.let { posts.value = it } }
 
     cameraPositionState.position =
         CameraPosition.fromLatLngZoom(
