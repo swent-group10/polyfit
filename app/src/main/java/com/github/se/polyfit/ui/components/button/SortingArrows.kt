@@ -8,7 +8,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.github.se.polyfit.ui.viewModel.SortDirection
+import com.github.se.polyfit.viewmodel.graph.SortDirection
 
 @Composable
 fun SortingArrows(modifier: Modifier = Modifier, onClick: () -> Unit, direction: SortDirection) {

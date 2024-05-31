@@ -8,11 +8,19 @@ import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
+/** Data class that represents the response from the OpenFoodFacts API. */
 class ProductResponseAPI(val productResponse: ProductResponse?, val status: APIResponse) {
   companion object {
     val moshi: Moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
     val adapter = moshi.adapter(ProductResponse::class.java).lenient()
 
+    /**
+     * Parse a JSON string into a ProductResponseAPI object.
+     *
+     * @param jsonString The JSON string to parse
+     * @return The ProductResponseAPI object
+     * @throws IllegalArgumentException If the JSON data is invalid
+     */
     fun fromJson(jsonString: String): ProductResponse {
       return adapter.fromJson(jsonString) ?: throw IllegalArgumentException("Invalid JSON data")
     }

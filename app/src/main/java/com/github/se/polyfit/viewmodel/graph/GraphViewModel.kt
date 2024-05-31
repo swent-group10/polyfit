@@ -1,4 +1,4 @@
-package com.github.se.polyfit.ui.viewModel
+package com.github.se.polyfit.viewmodel.graph
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData

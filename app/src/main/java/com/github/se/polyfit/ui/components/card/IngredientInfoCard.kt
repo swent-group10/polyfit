@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.github.se.polyfit.R
-import com.github.se.polyfit.data.api.Ingredient
+import com.github.se.polyfit.data.api.Spoonacular.Ingredient
 
 @Composable
 fun IngredientInfoCard(ingredient: Ingredient) {

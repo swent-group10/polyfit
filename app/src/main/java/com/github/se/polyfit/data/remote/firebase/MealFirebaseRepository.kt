@@ -7,6 +7,12 @@ import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 
+/**
+ * Repository for storing and fetching meals from the Firebase Firestore database
+ *
+ * @param userId the id of the user whose meals are being stored/fetched
+ * @param db the Firestore database instance to use
+ */
 class MealFirebaseRepository(
     userId: String,
     db: FirebaseFirestore = FirebaseFirestore.getInstance()

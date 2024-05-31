@@ -2,6 +2,7 @@ package com.github.se.polyfit.model.meal
 
 import java.util.Locale
 
+/** Represents the occasion for a meal. At what time of the day the meal is eaten. */
 enum class MealOccasion {
   BREAKFAST,
   LUNCH,
