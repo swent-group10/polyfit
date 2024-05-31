@@ -9,6 +9,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.model.recipe.Recipe
 import com.github.se.polyfit.ui.components.button.LikeButtonScreen
 import com.github.se.polyfit.ui.screen.recipeRec.RecommendationScreen
+import com.github.se.polyfit.viewmodel.qrCode.BarCodeCodeViewModel
 import com.github.se.polyfit.viewmodel.recipe.RecipeRecommendationViewModel
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.mockk.coEvery
@@ -24,6 +25,8 @@ class RecipeRecommendationScreenTest {
 
   @get:Rule val mockkRule = MockKRule(this)
 
+  private val barcodeViewModel: BarCodeCodeViewModel = mockk<BarCodeCodeViewModel>(relaxed = true)
+
   @Test
   fun testEverythingIsDisplayed() {
     val mockkNavigation = mockk<NavHostController>(relaxed = true)
@@ -37,7 +40,7 @@ class RecipeRecommendationScreenTest {
     coEvery { mockkRecommendationViewModel.recipeFromIngredients(any()) } returns recipeList
 
     composeTestRule.setContent {
-      RecommendationScreen(mockkNavigation, mockkRecommendationViewModel, {})
+      RecommendationScreen(mockkNavigation, mockkRecommendationViewModel, {}, barcodeViewModel)
     }
     composeTestRule.waitForIdle()
 
@@ -57,7 +60,7 @@ class RecipeRecommendationScreenTest {
     coEvery { mockkRecommendationViewModel.ingredientList() } returns listOf("apple", "banana")
 
     composeTestRule.setContent {
-      RecommendationScreen(mockkNavigation, mockkRecommendationViewModel, {})
+      RecommendationScreen(mockkNavigation, mockkRecommendationViewModel, {}, barcodeViewModel)
     }
 
     ComposeScreen.onComposeScreen<RecipeRecommendationScreen>(composeTestRule) {
