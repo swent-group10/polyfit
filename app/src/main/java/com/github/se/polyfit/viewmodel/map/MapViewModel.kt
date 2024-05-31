@@ -45,10 +45,8 @@ constructor(
     setRadius(1.0) // default radius can be change later for a better default value
   }
 
+  /** fetch the posts from the repository */
   fun listenToPosts() {
-    Log.d("MapViewModel", "listenToPosts1: ")
-    Log.d("MapViewModel", "listenToPosts2: ${location.value}")
-
     if (_location.value == null) return
     repository.queryNearbyPosts(
         centerLatitude = location.value!!.latitude,

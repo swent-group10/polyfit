@@ -16,7 +16,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 /**
  * ViewModel for the post view. It is responsible for fetching the posts from the Firebase and
@@ -41,7 +40,6 @@ constructor(
   val location: LiveData<Location> = _location
 
   init {
-
     viewModelScope.launch {
       _isFetching.postValue(true)
       _location.value =
@@ -52,18 +50,15 @@ constructor(
   }
 
   fun getNearbyPosts(location: Location) {
-
-    viewModelScope.launch {
-      withContext(Dispatchers.Main) {
-        postFirebaseRepository.queryNearbyPosts(
-            centerLatitude = location.latitude,
-            centerLongitude = location.longitude,
-            radiusInKm = 2.0,
-            completion = { posts ->
-              _isFetching.postValue(false)
-              _posts.value = posts
-            })
-      } // FYI: UI updates only on Main Thread
-    }
+    viewModelScope.launch(Dispatchers.Main) {
+      postFirebaseRepository.queryNearbyPosts(
+          centerLatitude = location.latitude,
+          centerLongitude = location.longitude,
+          radiusInKm = 2.0,
+          completion = { posts ->
+            _isFetching.postValue(false)
+            _posts.value = posts
+          })
+    } // FYI: UI updates only on Main Thread
   }
 }
