@@ -72,7 +72,7 @@ fun ListProducts(listIngredients: List<IngredientsTMP>, modifier: Modifier) {
 }
 
 @Composable
-private fun TextIngredient(value: Int, text: String, unit: String, modifier: Modifier) {
+private fun TextIngredient(value: Double, text: String, unit: String, modifier: Modifier) {
   Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = modifier.fillMaxWidth()) {
     Text(
         text = text,

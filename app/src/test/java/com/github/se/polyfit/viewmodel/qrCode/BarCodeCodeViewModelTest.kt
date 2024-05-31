@@ -2,13 +2,19 @@ package com.github.se.polyfit.viewmodel.qrCode
 
 import android.util.Log
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.github.se.polyfit.data.api.OpenFoodFacts.OpenFoodFactsApi
+import com.github.se.polyfit.model.ingredient.Ingredient
+import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
+import com.github.se.polyfit.model.nutritionalInformation.Nutrient
+import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
+import com.github.se.polyfit.ui.screen.IngredientsTMP
 import io.mockk.*
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkAll
 import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
 import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestRule
@@ -18,10 +24,25 @@ class BarCodeCodeViewModelTest {
   @get:Rule var rule: TestRule = InstantTaskExecutorRule()
 
   private val viewModel = BarCodeCodeViewModel()
+  private val nutellaCode: String = "3017624010701"
+  private val nutellaTMP = IngredientsTMP("Nutella", 0.0, 0.0, 57.5, 230.0, 134.2)
 
-  @BeforeTest
+  @Before
   fun setup() {
     mockkStatic(Log::class)
+    val foodFactsApi = mockk<OpenFoodFactsApi>(relaxed = true)
+    every { foodFactsApi.getIngredient(nutellaCode) } returns
+        Ingredient(
+            "Nutella",
+            0,
+            0.0,
+            MeasurementUnit.G,
+            NutritionalInformation(
+                mutableListOf(
+                    Nutrient("fat", 230.0, MeasurementUnit.G),
+                    Nutrient("carbohydrates", 57.5, MeasurementUnit.G),
+                    Nutrient("sugar", 56.3, MeasurementUnit.G),
+                    Nutrient("protein", 134.2, MeasurementUnit.G))))
     every { Log.v(any(), any()) } returns 0
     every { Log.i(any(), any()) } returns 0
     every { Log.e(any(), any()) } returns 0

@@ -39,11 +39,11 @@ class IngredientsOverviewTest {
   val grantPermissionRule: GrantPermissionRule =
       GrantPermissionRule.grant(android.Manifest.permission.CAMERA)
 
-  val i1 = IngredientsTMP("Apple", 100, 52, 14, 0, 0)
-  val i2 = IngredientsTMP("Banana", 100, 89, 23, 0, 1)
-  val i3 = IngredientsTMP("Carrot", 100, 41, 10, 0, 1)
-  val i4 = IngredientsTMP("Date", 100, 282, 75, 0, 2)
-  val i5 = IngredientsTMP("Eggplant", 100, 25, 6, 0, 1)
+  val i1 = IngredientsTMP("Apple", 100.0, 52.0, 14.0, 0.0, 0.0)
+  val i2 = IngredientsTMP("Banana", 100.0, 89.0, 23.0, 0.0, 1.0)
+  val i3 = IngredientsTMP("Carrot", 100.0, 41.0, 10.0, 0.0, 1.0)
+  val i4 = IngredientsTMP("Date", 100.0, 282.0, 75.0, 0.0, 2.0)
+  val i5 = IngredientsTMP("Eggplant", 100.0, 25.0, 6.0, 0.0, 1.0)
 
   val l1 = listOf(i1)
   val l2 = listOf(i1, i2, i3, i4, i5)
