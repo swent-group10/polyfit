@@ -7,7 +7,19 @@ import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import java.time.LocalDate
 import java.util.UUID
 
-// modeled after the log meal api
+/**
+ * Represents a meal. Automatically updates the nutritional information when any property changes.
+ * It is modeled after the Spoonacular API structure for a recipe.
+ *
+ * @property occasion The occasion for the meal.
+ * @property name The name of the meal.
+ * @property id The unique ID of the meal.
+ * @property userId The ID of the user who created the meal.
+ * @property mealTemp The temperature of the meal.
+ * @property ingredients The ingredients in the meal.
+ * @property createdAt The date the meal was created.
+ * @property tags The tags associated with the meal.
+ */
 data class Meal(
     var occasion: MealOccasion,
     var name: String,
@@ -142,6 +154,13 @@ data class Meal(
       }
     }
 
+    /**
+     * Deserializes a map into a Meal object.
+     *
+     * @param data The map to deserialize.
+     * @return The deserialized Meal object.
+     * @throws IllegalArgumentException If the map cannot be deserialized into a Meal object.
+     */
     fun deserialize(data: Map<String, Any>): Meal {
       return try {
         val id = data["id"] as String
