@@ -40,18 +40,18 @@ fun PostInfoScreen(
     navHostController: NavHostController,
     viewPostViewModel: ViewPostViewModel = hiltViewModel(),
 ) {
-    GenericScreen(
-        navController = navHostController,
-        content = { PostInfoScreenContent(viewPostViewModel = viewPostViewModel, padding = it) },
-        modifier = Modifier.testTag("PostInfoScreen"),
-        floatingButton = {
-            PrimaryButton(
-                text = "",
-                icon = { Icon(Icons.Default.Create, contentDescription = "Create a Post") },
-                onClick = navigation::navigateToCreatePost,
-                buttonShape = RoundedCornerShape(100),
-                modifier = Modifier.padding(top = 8.dp).testTag("CreateAPost"))
-        })
+  GenericScreen(
+      navController = navHostController,
+      content = { PostInfoScreenContent(viewPostViewModel = viewPostViewModel, padding = it) },
+      modifier = Modifier.testTag("PostInfoScreen"),
+      floatingButton = {
+        PrimaryButton(
+            text = "",
+            icon = { Icon(Icons.Default.Create, contentDescription = "Create a Post") },
+            onClick = navigation::navigateToCreatePost,
+            buttonShape = RoundedCornerShape(100),
+            modifier = Modifier.padding(top = 8.dp).testTag("CreateAPost"))
+      })
 }
 
 @Composable
@@ -60,36 +60,36 @@ fun PostInfoScreenContent(
     padding: PaddingValues = PaddingValues(),
     viewPostViewModel: ViewPostViewModel = hiltViewModel(),
 ) {
-    val isFetching = viewPostViewModel.isFetching.observeAsState()
-    val posts = viewPostViewModel.posts.collectAsState(initial = emptyList()).value
+  val isFetching = viewPostViewModel.isFetching.observeAsState()
+  val posts = viewPostViewModel.posts.collectAsState(initial = emptyList()).value
 
-    Scaffold(modifier = Modifier.padding(padding)) {
-        if (isFetching.value == true) {
-            Box(modifier = Modifier.fillMaxSize().padding(it), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(modifier = Modifier.padding(16.dp).testTag("LoadingPost"))
-            }
-            return@Scaffold
-        }
-        if (posts.isEmpty()) {
-            NoPost()
-            return@Scaffold
-        }
-
-        LazyColumn(
-            state = rememberLazyListState(index),
-        ) {
-            posts.forEach { post -> item { PostCard(post = post) } }
-        }
+  Scaffold(modifier = Modifier.padding(padding)) {
+    if (isFetching.value == true) {
+      Box(modifier = Modifier.fillMaxSize().padding(it), contentAlignment = Alignment.Center) {
+        CircularProgressIndicator(modifier = Modifier.padding(16.dp).testTag("LoadingPost"))
+      }
+      return@Scaffold
     }
+    if (posts.isEmpty()) {
+      NoPost()
+      return@Scaffold
+    }
+
+    LazyColumn(
+        state = rememberLazyListState(index),
+    ) {
+      posts.forEach { post -> item { PostCard(post = post) } }
+    }
+  }
 }
 
 @Composable
 fun NoPost() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(
-            text = ContextCompat.getString(LocalContext.current, R.string.noPostAvailable),
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.testTag("NoPostText"))
-    }
+  Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Text(
+        text = ContextCompat.getString(LocalContext.current, R.string.noPostAvailable),
+        textAlign = TextAlign.Center,
+        style = MaterialTheme.typography.bodyLarge,
+        modifier = Modifier.testTag("NoPostText"))
+  }
 }

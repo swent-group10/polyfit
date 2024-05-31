@@ -27,8 +27,8 @@ import kotlinx.coroutines.launch
 class ViewPostViewModel
 @Inject
 constructor(
-  private val postFirebaseRepository: PostFirebaseRepository,
-  private val postLocalRepository: PostLocationModel
+    private val postFirebaseRepository: PostFirebaseRepository,
+    private val postLocalRepository: PostLocationModel
 ) : ViewModel() {
   private val _posts: MutableStateFlow<List<Post>> = MutableStateFlow(mutableListOf())
   val posts: StateFlow<List<Post>> = _posts
@@ -43,8 +43,8 @@ constructor(
     viewModelScope.launch {
       _isFetching.postValue(true)
       _location.value =
-        postLocalRepository.getCurrentLocation(
-          CurrentLocationRequest.Builder().setPriority(Priority.PRIORITY_HIGH_ACCURACY).build())
+          postLocalRepository.getCurrentLocation(
+              CurrentLocationRequest.Builder().setPriority(Priority.PRIORITY_HIGH_ACCURACY).build())
     }
     _location.observeForever { getNearbyPosts() }
   }
@@ -53,13 +53,13 @@ constructor(
     if (location.value == null) return
     viewModelScope.launch(Dispatchers.Main) {
       postFirebaseRepository.queryNearbyPosts(
-        centerLatitude = location.value!!.latitude,
-        centerLongitude = location.value!!.longitude,
-        radiusInKm = 2.0,
-        completion = { posts ->
-          _isFetching.postValue(false)
-          _posts.value = posts
-        })
+          centerLatitude = location.value!!.latitude,
+          centerLongitude = location.value!!.longitude,
+          radiusInKm = 2.0,
+          completion = { posts ->
+            _isFetching.postValue(false)
+            _posts.value = posts
+          })
     } // FYI: UI updates only on Main Thread
   }
 }
