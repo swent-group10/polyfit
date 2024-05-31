@@ -34,8 +34,8 @@ constructor(
   private val _posts: MutableStateFlow<List<Post>> = MutableStateFlow(mutableListOf())
   val posts: StateFlow<List<Post>> = _posts
 
-  private val _isFetching: MutableStateFlow<Boolean> = MutableStateFlow(false)
-  val isFetching: StateFlow<Boolean> = _isFetching
+  private val _isFetching: MutableLiveData<Boolean> = MutableLiveData(false)
+  val isFetching: LiveData<Boolean> = _isFetching
 
   private val _location = MutableLiveData<Location>()
   val location: LiveData<Location> = _location
@@ -51,19 +51,20 @@ constructor(
   }
 
   fun getNearbyPosts() {
+    _isFetching.postValue(true)
+
     location.observeForever {
       viewModelScope.launch {
-        _isFetching.value = true
-
         withContext(Dispatchers.Main) {
           postFirebaseRepository.queryNearbyPosts(
               centerLatitude = it.latitude,
               centerLongitude = it.longitude,
               radiusInKm = 2.0,
-              completion = { posts -> _posts.value = posts })
+              completion = { posts ->
+                _isFetching.postValue(false)
+                _posts.value = posts
+              })
         } // FYI: UI updates only on Main Thread
-
-        _isFetching.value = false
       }
     }
   }

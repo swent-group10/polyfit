@@ -46,10 +46,11 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 // Size in meters of the rayon of the circle to see other posts
-val MIN_SIZE_RAYON = 100f
-val MAX_SIZE_RAYON = 2000f
-val EPFL_LATITUDE = 46.5181
-val EPFL_LONGITUDE = 6.5659
+const val MIN_SIZE_RAYON = 100f
+const val MAX_SIZE_RAYON = 2000f
+const val EPFL_LATITUDE = 46.5181
+const val EPFL_LONGITUDE = 6.5659
+const val THREE_SECONDS = 3000L
 
 @OptIn(FlowPreview::class)
 @Composable
@@ -69,7 +70,9 @@ fun MapScreen(paddingValues: PaddingValues, mapViewModel: MapViewModel = hiltVie
     position = CameraPosition.fromLatLngZoom(LatLng(EPFL_LATITUDE, EPFL_LONGITUDE), 15f)
   }
 
-  var sliderPosition by remember { mutableFloatStateOf((MIN_SIZE_RAYON + MAX_SIZE_RAYON) / 2) }
+  var sliderPositionInMeters by remember {
+    mutableFloatStateOf((MIN_SIZE_RAYON + MAX_SIZE_RAYON) / 2)
+  }
 
   /**
    * Effect to be launched when the mapViewModel changes. Initializes the current location and sets
@@ -109,9 +112,9 @@ fun MapScreen(paddingValues: PaddingValues, mapViewModel: MapViewModel = hiltVie
       mutex.withLock {
         if (mainLaunchedIsFinished) {
 
-          mapViewModel.setRadius(sliderPosition.toDouble() / 1000)
+          mapViewModel.setRadius(sliderPositionInMeters.toDouble() / 1000)
           mapViewModel.listenToPosts()
-          delay(3000)
+          delay(THREE_SECONDS)
           isCircleShown = false
         }
       }
@@ -139,7 +142,7 @@ fun MapScreen(paddingValues: PaddingValues, mapViewModel: MapViewModel = hiltVie
             properties = MapProperties(isMyLocationEnabled = true),
             onMapClick = { selectedPost = null }) {
               val latLng = LatLng(currentLocation.value.latitude, currentLocation.value.longitude)
-              val doubleSliderPosition = sliderPosition.toDouble()
+              val doubleSliderPosition = sliderPositionInMeters.toDouble()
               CircleOnMap(
                   center = latLng,
                   radius = doubleSliderPosition,
@@ -155,9 +158,9 @@ fun MapScreen(paddingValues: PaddingValues, mapViewModel: MapViewModel = hiltVie
             }
 
         SliderView(
-            sliderPosition = sliderPosition,
+            sliderPosition = sliderPositionInMeters,
             onSliderChanged = ::onSliderChanged,
-            updateSliderPosition = { sliderPosition = it },
+            updateSliderPosition = { sliderPositionInMeters = it },
             isCircleShown = { isCircleShown = it })
 
         selectedPost?.let { post ->
@@ -191,7 +194,6 @@ fun Marker(listMarker: List<PostMarker>, selectedPost: (Post) -> Unit) {
   listMarker.forEach { postMarker ->
     Marker(
         state = postMarker.markerState,
-        title = "Post",
         contentDescription = postMarker.post.description,
         icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET),
         onClick = {

@@ -161,7 +161,7 @@ class PostFirebaseRepository(
    * @param postCollection The Firestore collection to fetch the posts from.
    * @param completion The callback function to call once the posts have been fetched.
    */
-  var previousNearbyKeys: List<String> = emptyList()
+  private var previousNearbyKeys: List<String> = emptyList()
   private var previousListOfPosts: List<Post> = emptyList()
 
   fun fetchPostsAndImages(
@@ -178,9 +178,10 @@ class PostFirebaseRepository(
       completion(posts)
       return
     }
-    if (keys == previousNearbyKeys && keys.isNotEmpty()) {
+    if (keys == previousNearbyKeys) {
       Log.d("GeoQuery", "same keys, returning early")
       completion(previousListOfPosts)
+      return
     }
 
     // Use a batch operation to fetch all posts
