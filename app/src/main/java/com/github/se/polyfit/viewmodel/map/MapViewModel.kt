@@ -41,6 +41,7 @@ constructor(
     Log.d("MapViewModel", "listenToPosts: ")
     Log.d("MapViewModel", "listenToPosts: ${location.value}")
 
+    if (_location.value == null) return
     repository.queryNearbyPosts(
         centerLatitude = location.value!!.latitude,
         centerLongitude = location.value!!.longitude,
