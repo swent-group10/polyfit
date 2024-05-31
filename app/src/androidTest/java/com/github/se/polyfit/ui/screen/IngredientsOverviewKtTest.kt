@@ -65,7 +65,7 @@ class IngredientsOverviewTest {
   @Ignore("Not a test but useful to show the tree")
   @Test
   fun displays_tree() {
-    composeTestRule.setContent { IngredientsOverview({}, {}, {}, l1) }
+    composeTestRule.setContent { IngredientsOverview({}, {}, l1) }
     Log.i("abc", "printAllNode  ${composeTestRule.onRoot(useUnmergedTree = true).printToString()}")
   }
 
@@ -73,7 +73,6 @@ class IngredientsOverviewTest {
   fun displays_ingredients_overview() {
     composeTestRule.setContent {
       IngredientsOverview(
-          {},
           {},
           {},
           l1,
@@ -86,8 +85,6 @@ class IngredientsOverviewTest {
 
       bottomBar { assertExists() }
 
-      floatingActionButton { assertExists() }
-
       listProducts { assertExists() }
     }
   }
@@ -96,7 +93,6 @@ class IngredientsOverviewTest {
   fun displays_top() {
     composeTestRule.setContent {
       IngredientsOverview(
-          {},
           {},
           {},
           l1,
@@ -125,7 +121,6 @@ class IngredientsOverviewTest {
       IngredientsOverview(
           {},
           {},
-          {},
           l1,
           BarCodeCodeViewModel(
               RecipeRecommendationViewModel(SpoonacularApiCaller()), OpenFoodFactsApi()))
@@ -136,24 +131,6 @@ class IngredientsOverviewTest {
         assertIsDisplayed()
         assertHasClickAction()
       }
-    }
-  }
-
-  @Test
-  fun displays_floating_action_button() {
-    composeTestRule.setContent {
-      IngredientsOverview(
-          {},
-          {},
-          {},
-          l1,
-          BarCodeCodeViewModel(
-              RecipeRecommendationViewModel(SpoonacularApiCaller()), OpenFoodFactsApi()))
-    }
-
-    ComposeScreen.onComposeScreen<FloatingActionButtonIngredientsScreen>(composeTestRule) {
-      assertExists()
-      assertIsDisplayed()
     }
   }
 
@@ -244,12 +221,10 @@ class IngredientsOverviewTest {
   fun navigates_back_when_top_bar_is_clicked() {
     val navigateBack: () -> Unit = mockk(relaxed = true)
     val navigateForward: () -> Unit = mockk(relaxed = true)
-    val onClickFloatingButton: () -> Unit = mockk(relaxed = true)
     composeTestRule.setContent {
       IngredientsOverview(
           navigateBack,
           navigateForward,
-          onClickFloatingButton,
           l1,
           BarCodeCodeViewModel(
               RecipeRecommendationViewModel(SpoonacularApiCaller()), OpenFoodFactsApi()))
@@ -266,7 +241,6 @@ class IngredientsOverviewTest {
 
     verify(exactly = 1) { navigateBack() }
     verify(exactly = 0) { navigateForward() }
-    verify(exactly = 0) { onClickFloatingButton() }
   }
 
   @Test
@@ -278,7 +252,6 @@ class IngredientsOverviewTest {
       IngredientsOverview(
           navigateBack,
           navigateForward,
-          onClickFloatingButton,
           l1,
           BarCodeCodeViewModel(
               RecipeRecommendationViewModel(SpoonacularApiCaller()), OpenFoodFactsApi()))
@@ -296,34 +269,6 @@ class IngredientsOverviewTest {
     verify(exactly = 0) { navigateBack() }
     verify(exactly = 1) { navigateForward() }
     verify(exactly = 0) { onClickFloatingButton() }
-  }
-
-  @Test
-  fun perfom_click_floating_button() {
-    val navigateBack: () -> Unit = mockk(relaxed = true)
-    val navigateForward: () -> Unit = mockk(relaxed = true)
-    val onClickFloatingButton: () -> Unit = mockk(relaxed = true)
-    composeTestRule.setContent {
-      IngredientsOverview(
-          navigateBack,
-          navigateForward,
-          onClickFloatingButton,
-          l1,
-          BarCodeCodeViewModel(
-              RecipeRecommendationViewModel(SpoonacularApiCaller()), OpenFoodFactsApi()))
-    }
-
-    ComposeScreen.onComposeScreen<IngredientsOverviewScreen>(composeTestRule) {
-      floatingActionButton {
-        assertExists()
-        assertIsDisplayed()
-        assertHasClickAction()
-        performClick()
-      }
-    }
-    verify(exactly = 0) { navigateBack() }
-    verify(exactly = 0) { navigateForward() }
-    verify(exactly = 1) { onClickFloatingButton() }
   }
 
   private val mockkGoBack: () -> Unit = mockk(relaxed = true)
@@ -374,7 +319,7 @@ class IngredientsOverviewTest {
               })
         }
         composable(Route.OverviewScan) {
-          IngredientsOverview(mockkGoBack, mockkGoForward, {}, emptyList(), barCodeCodeViewModel)
+          IngredientsOverview(mockkGoBack, mockkGoForward, emptyList(), barCodeCodeViewModel)
         }
       }
     }
@@ -397,7 +342,7 @@ class IngredientsOverviewTest {
   fun showTree() {
 
     composeTestRule.setContent {
-      IngredientsOverview(mockkGoBack, mockkGoForward, {}, emptyList(), barCodeCodeViewModel)
+      IngredientsOverview(mockkGoBack, mockkGoForward, emptyList(), barCodeCodeViewModel)
     }
 
     Log.i("abc", "printAllNode  ${composeTestRule.onRoot(useUnmergedTree = true).printToString()}")

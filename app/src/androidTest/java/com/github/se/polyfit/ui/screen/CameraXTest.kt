@@ -1,6 +1,8 @@
 package com.github.se.polyfit.ui.screen
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.data.api.OpenFoodFacts.OpenFoodFactsApi
 import com.github.se.polyfit.data.api.Spoonacular.SpoonacularApiCaller
@@ -21,10 +23,11 @@ class CameraXTest {
     composeTestRule.setContent {
       CameraXScreen(
           BarCodeCodeViewModel(
-              RecipeRecommendationViewModel(SpoonacularApiCaller()), OpenFoodFactsApi()))
+              RecipeRecommendationViewModel(SpoonacularApiCaller()), OpenFoodFactsApi()),
+          padding = PaddingValues(0.dp))
     }
 
-    ComposeScreen.onComposeScreen<CameraXScreen>(composeTestRule) {
+    ComposeScreen.onComposeScreen<CameraXScreenTest>(composeTestRule) {
       AndroidView {
         assertExists()
         assertIsDisplayed()
