@@ -15,18 +15,30 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
+import com.github.se.polyfit.data.api.OpenFoodFacts.OpenFoodFactsApi
+import com.github.se.polyfit.data.api.Spoonacular.SpoonacularApiCaller
+import com.github.se.polyfit.data.local.ingredientscanned.IngredientsScanned
 import com.github.se.polyfit.data.processor.LocalDataProcessor
 import com.github.se.polyfit.model.data.User
+import com.github.se.polyfit.model.ingredient.Ingredient
+import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
+import com.github.se.polyfit.model.nutritionalInformation.Nutrient
+import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.components.IngredientsOverview.ListProducts
 import com.github.se.polyfit.ui.navigation.Route
 import com.github.se.polyfit.ui.utils.OverviewTags
 import com.github.se.polyfit.viewmodel.meal.OverviewViewModel
 import com.github.se.polyfit.viewmodel.qrCode.BarCodeCodeViewModel
+import com.github.se.polyfit.viewmodel.qrCode.REQUIRED_SCAN_COUNT
+import com.github.se.polyfit.viewmodel.recipe.RecipeRecommendationViewModel
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotlin.test.assertEquals
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
@@ -39,11 +51,11 @@ class IngredientsOverviewTest {
   val grantPermissionRule: GrantPermissionRule =
       GrantPermissionRule.grant(android.Manifest.permission.CAMERA)
 
-  val i1 = IngredientsTMP("Apple", 100, 52, 14, 0, 0)
-  val i2 = IngredientsTMP("Banana", 100, 89, 23, 0, 1)
-  val i3 = IngredientsTMP("Carrot", 100, 41, 10, 0, 1)
-  val i4 = IngredientsTMP("Date", 100, 282, 75, 0, 2)
-  val i5 = IngredientsTMP("Eggplant", 100, 25, 6, 0, 1)
+  val i1 = IngredientsScanned("Apple", 100.0, 52.0, 14.0, 0.0, 0.0)
+  val i2 = IngredientsScanned("Banana", 100.0, 89.0, 23.0, 0.0, 1.0)
+  val i3 = IngredientsScanned("Carrot", 100.0, 41.0, 10.0, 0.0, 1.0)
+  val i4 = IngredientsScanned("Date", 100.0, 282.0, 75.0, 0.0, 2.0)
+  val i5 = IngredientsScanned("Eggplant", 100.0, 25.0, 6.0, 0.0, 1.0)
 
   val l1 = listOf(i1)
   val l2 = listOf(i1, i2, i3, i4, i5)
@@ -59,7 +71,15 @@ class IngredientsOverviewTest {
 
   @Test
   fun displays_ingredients_overview() {
-    composeTestRule.setContent { IngredientsOverview({}, {}, {}, l1, BarCodeCodeViewModel()) }
+    composeTestRule.setContent {
+      IngredientsOverview(
+          {},
+          {},
+          {},
+          l1,
+          BarCodeCodeViewModel(
+              RecipeRecommendationViewModel(SpoonacularApiCaller()), OpenFoodFactsApi()))
+    }
 
     ComposeScreen.onComposeScreen<IngredientsOverviewScreen>(composeTestRule) {
       topBar { assertExists() }
@@ -74,7 +94,15 @@ class IngredientsOverviewTest {
 
   @Test
   fun displays_top() {
-    composeTestRule.setContent { IngredientsOverview({}, {}, {}, l1, BarCodeCodeViewModel()) }
+    composeTestRule.setContent {
+      IngredientsOverview(
+          {},
+          {},
+          {},
+          l1,
+          BarCodeCodeViewModel(
+              RecipeRecommendationViewModel(SpoonacularApiCaller()), OpenFoodFactsApi()))
+    }
 
     ComposeScreen.onComposeScreen<IngredientsOverviewTopBar>(composeTestRule) {
       assertExists()
@@ -93,7 +121,15 @@ class IngredientsOverviewTest {
 
   @Test
   fun displays_bottom() {
-    composeTestRule.setContent { IngredientsOverview({}, {}, {}, l1, BarCodeCodeViewModel()) }
+    composeTestRule.setContent {
+      IngredientsOverview(
+          {},
+          {},
+          {},
+          l1,
+          BarCodeCodeViewModel(
+              RecipeRecommendationViewModel(SpoonacularApiCaller()), OpenFoodFactsApi()))
+    }
 
     ComposeScreen.onComposeScreen<IngredientsOverviewBottomBarIngredient>(composeTestRule) {
       generateButton {
@@ -105,7 +141,15 @@ class IngredientsOverviewTest {
 
   @Test
   fun displays_floating_action_button() {
-    composeTestRule.setContent { IngredientsOverview({}, {}, {}, l1, BarCodeCodeViewModel()) }
+    composeTestRule.setContent {
+      IngredientsOverview(
+          {},
+          {},
+          {},
+          l1,
+          BarCodeCodeViewModel(
+              RecipeRecommendationViewModel(SpoonacularApiCaller()), OpenFoodFactsApi()))
+    }
 
     ComposeScreen.onComposeScreen<FloatingActionButtonIngredientsScreen>(composeTestRule) {
       assertExists()
@@ -203,7 +247,12 @@ class IngredientsOverviewTest {
     val onClickFloatingButton: () -> Unit = mockk(relaxed = true)
     composeTestRule.setContent {
       IngredientsOverview(
-          navigateBack, navigateForward, onClickFloatingButton, l1, BarCodeCodeViewModel())
+          navigateBack,
+          navigateForward,
+          onClickFloatingButton,
+          l1,
+          BarCodeCodeViewModel(
+              RecipeRecommendationViewModel(SpoonacularApiCaller()), OpenFoodFactsApi()))
     }
 
     ComposeScreen.onComposeScreen<IngredientsOverviewTopBar>(composeTestRule) {
@@ -227,7 +276,12 @@ class IngredientsOverviewTest {
     val onClickFloatingButton: () -> Unit = mockk(relaxed = true)
     composeTestRule.setContent {
       IngredientsOverview(
-          navigateBack, navigateForward, onClickFloatingButton, l1, BarCodeCodeViewModel())
+          navigateBack,
+          navigateForward,
+          onClickFloatingButton,
+          l1,
+          BarCodeCodeViewModel(
+              RecipeRecommendationViewModel(SpoonacularApiCaller()), OpenFoodFactsApi()))
     }
 
     ComposeScreen.onComposeScreen<IngredientsOverviewBottomBarIngredient>(composeTestRule) {
@@ -251,7 +305,12 @@ class IngredientsOverviewTest {
     val onClickFloatingButton: () -> Unit = mockk(relaxed = true)
     composeTestRule.setContent {
       IngredientsOverview(
-          navigateBack, navigateForward, onClickFloatingButton, l1, BarCodeCodeViewModel())
+          navigateBack,
+          navigateForward,
+          onClickFloatingButton,
+          l1,
+          BarCodeCodeViewModel(
+              RecipeRecommendationViewModel(SpoonacularApiCaller()), OpenFoodFactsApi()))
     }
 
     ComposeScreen.onComposeScreen<IngredientsOverviewScreen>(composeTestRule) {
@@ -269,13 +328,31 @@ class IngredientsOverviewTest {
 
   private val mockkGoBack: () -> Unit = mockk(relaxed = true)
   private val mockkGoForward: () -> Unit = mockk(relaxed = true)
-  private val barCodeCodeViewModel = BarCodeCodeViewModel()
+  private val foodFactsApi: OpenFoodFactsApi = mockk<OpenFoodFactsApi>(relaxed = true)
+  private val barCodeCodeViewModel =
+      BarCodeCodeViewModel(
+          RecipeRecommendationViewModel(SpoonacularApiCaller()), foodFactsApi = foodFactsApi)
   private val context = mockk<Context>(relaxed = true)
+  private val nutellaCode: String = "3017624010701"
+  private val nutellaTMP = IngredientsScanned("Nutella", 0.0, 0.0, 57.5, 230.0, 134.2)
 
   fun setup() {
 
     every { ActivityCompat.checkSelfPermission(context, any()) } returns
         PackageManager.PERMISSION_GRANTED
+
+    every { foodFactsApi.getIngredient(any()) } returns
+        Ingredient(
+            "Nutella",
+            0,
+            0.0,
+            MeasurementUnit.G,
+            NutritionalInformation(
+                mutableListOf(
+                    Nutrient("fat", 230.0, MeasurementUnit.G),
+                    Nutrient("carbohydrates", 57.5, MeasurementUnit.G),
+                    Nutrient("sugar", 56.3, MeasurementUnit.G),
+                    Nutrient("protein", 134.2, MeasurementUnit.G))))
 
     System.setProperty("isTestEnvironment", "true")
     val mockkDataProcessor: LocalDataProcessor = mockk(relaxed = true)
@@ -301,6 +378,19 @@ class IngredientsOverviewTest {
         }
       }
     }
+  }
+
+  @Test
+  fun getIngredientTMP() = runBlocking {
+    setup()
+    for (i in 1..REQUIRED_SCAN_COUNT) {
+      barCodeCodeViewModel.addId(nutellaCode)
+    }
+
+    // Adding a delay to allow asynchronous operations to complete
+    delay(2000)
+
+    assertEquals(listOf(nutellaTMP), barCodeCodeViewModel.listIngredients.value)
   }
 
   @Test

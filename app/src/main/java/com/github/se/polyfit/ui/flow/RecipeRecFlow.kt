@@ -9,11 +9,13 @@ import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.navigation.Route
 import com.github.se.polyfit.ui.screen.recipeRec.MoreDetailScreen
 import com.github.se.polyfit.ui.screen.recipeRec.RecommendationScreen
+import com.github.se.polyfit.viewmodel.qrCode.BarCodeCodeViewModel
 import com.github.se.polyfit.viewmodel.recipe.RecipeRecommendationViewModel
 
 @Composable
 fun RecipeRecFlow(
     recipeRecommendationViewModel: RecipeRecommendationViewModel = hiltViewModel(),
+    barcodeViewModel: BarCodeCodeViewModel = hiltViewModel<BarCodeCodeViewModel>()
 ) {
   val navigation = rememberNavController()
 

@@ -10,8 +10,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -22,9 +24,11 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.github.se.polyfit.R
+import com.github.se.polyfit.data.local.ingredientscanned.IngredientsScanned
 import com.github.se.polyfit.model.recipe.Recipe
 import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.components.recipe.RecipeCard
+import com.github.se.polyfit.viewmodel.qrCode.BarCodeCodeViewModel
 import com.github.se.polyfit.viewmodel.recipe.RecipeRecommendationViewModel
 
 @Composable
@@ -32,11 +36,13 @@ fun RecommendationScreen(
     navController: NavHostController,
     recipeRecViewModel: RecipeRecommendationViewModel = hiltViewModel(),
     navigateToRecipeRecommendationMore: () -> Unit = {},
+    barcodeViewModel: BarCodeCodeViewModel = hiltViewModel()
 ) {
   GenericScreen(
       navController = navController,
       content = { paddingValues ->
-        RecipeDisplay(recipeRecViewModel, paddingValues, navigateToRecipeRecommendationMore)
+        RecipeDisplay(
+            recipeRecViewModel, barcodeViewModel, paddingValues, navigateToRecipeRecommendationMore)
       },
       modifier = Modifier.testTag("RecipeDisplay"))
 }
@@ -44,14 +50,17 @@ fun RecommendationScreen(
 @Composable
 fun RecipeDisplay(
     recipesRec: RecipeRecommendationViewModel,
+    barcodeViewModel: BarCodeCodeViewModel,
     paddingValues: PaddingValues,
     navigateToRecipeRecommendationMore: () -> Unit
 ) {
   val context = LocalContext.current
 
   val recipes = remember { mutableStateOf(listOf<Recipe>()) }
+  var ingredientList by remember { mutableStateOf(listOf<IngredientsScanned>()) }
   LaunchedEffect(Unit) {
-    recipes.value = recipesRec.recipeFromIngredients(recipesRec.ingredientList())
+    barcodeViewModel.listIngredients.observeForever { ingredientList = it }
+    recipes.value = recipesRec.recipeFromIngredients(ingredientList.map { it.name })
   }
 
   LazyColumn(
