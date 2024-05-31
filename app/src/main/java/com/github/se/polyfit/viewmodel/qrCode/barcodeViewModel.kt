@@ -78,9 +78,9 @@ constructor(
 
     val list = _listId.value?.toMutableList() ?: mutableListOf()
     list.add(0, id)
-    _listId.value = list
+    _listId.postValue(list)
     lastScanTime = System.currentTimeMillis()
-    _isScanned.value = true
+    _isScanned.postValue(true)
     getIngredients(id)
     Log.v("QrCodeViewModel", "new list: ${_listId.value}")
 
@@ -88,7 +88,7 @@ constructor(
       delay(TIME_COLOR_BORDER_MILLIS)
       withContext(Dispatchers.Main) {
         if (lastScanTime + TIME_COLOR_BORDER_MILLIS < System.currentTimeMillis()) {
-          _isScanned.value = false
+          _isScanned.postValue(false)
         }
       }
     }
