@@ -11,7 +11,6 @@ class IngredientsOverviewScreen(semanticsProvider: SemanticsNodeInteractionsProv
 
   val topBar: KNode = child { hasTestTag("TopBar") }
   val bottomBar: KNode = child { hasTestTag("GenerateBox") }
-  val floatingActionButton: KNode = child { hasTestTag("FloatingButton") }
   val listProducts: KNode = child { hasTestTag("ListProductColumn") }
 }
 
@@ -28,14 +27,6 @@ class IngredientsOverviewBottomBarIngredient(semanticsProvider: SemanticsNodeInt
         semanticsProvider = semanticsProvider, viewBuilderAction = { hasTestTag("GenerateBox") }) {
 
   val generateButton: KNode = child { hasTestTag("GenerateButton") }
-}
-
-class FloatingActionButtonIngredientsScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
-    ComposeScreen<FloatingActionButtonIngredientsScreen>(
-        semanticsProvider = semanticsProvider,
-        viewBuilderAction = { hasTestTag("FloatingButton") }) {
-
-  val icon: KNode = child { hasTestTag("AddIcon") }
 }
 
 class ListProductsScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :

@@ -2,6 +2,7 @@ package com.github.se.polyfit.di
 
 import android.content.Context
 import androidx.room.Room
+import com.github.se.polyfit.data.api.OpenFoodFacts.OpenFoodFactsApi
 import com.github.se.polyfit.data.api.Spoonacular.SpoonacularApiCaller
 import com.github.se.polyfit.data.local.dao.MealDao
 import com.github.se.polyfit.data.local.database.MealDatabase
@@ -15,6 +16,7 @@ import com.github.se.polyfit.model.post.PostLocationModel
 import com.github.se.polyfit.viewmodel.graph.GraphViewModel
 import com.github.se.polyfit.viewmodel.map.MapViewModel
 import com.github.se.polyfit.viewmodel.qrCode.BarCodeCodeViewModel
+import com.github.se.polyfit.viewmodel.recipe.RecipeRecommendationViewModel
 import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
 import dagger.Provides
@@ -107,8 +109,25 @@ object HiltProvides {
 
   @Provides
   @Singleton
-  fun providesBarCodeCodeViewModel(): BarCodeCodeViewModel {
-    return BarCodeCodeViewModel()
+  fun providesBarCodeCodeViewModel(
+      recipeRecommendationViewModel: RecipeRecommendationViewModel,
+      foodFactsApi: OpenFoodFactsApi
+  ): BarCodeCodeViewModel {
+    return BarCodeCodeViewModel(recipeRecommendationViewModel, foodFactsApi)
+  }
+
+  @Provides
+  @Singleton
+  fun provideFoodFactsApi(): OpenFoodFactsApi {
+    return OpenFoodFactsApi()
+  }
+
+  @Provides
+  @Singleton
+  fun providesRecipeRecommendationViewModel(
+      spoonacularApiCaller: SpoonacularApiCaller
+  ): RecipeRecommendationViewModel {
+    return RecipeRecommendationViewModel(spoonacularApiCaller)
   }
 
   @Provides

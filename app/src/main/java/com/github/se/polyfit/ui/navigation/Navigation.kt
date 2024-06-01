@@ -35,6 +35,10 @@ class Navigation(private val navHostController: NavHostController) {
     navigateTo(Route.RecipeRecommendationMore)
   }
 
+  fun navigateToRecipeRecommendationFlow() {
+    navigateTo(Route.RecipeRecFlow)
+  }
+
   fun navigateToEditMeal(mealDatabaseId: String) {
     navigateTo(Route.EditMeal + "/$mealDatabaseId")
   }

@@ -214,7 +214,7 @@ android {
         testImplementation("org.robolectric:robolectric:4.8")
         testImplementation("android.arch.persistence.room:testing:1.1.1")
         implementation("androidx.navigation:navigation-testing:2.7.7")
-
+        testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test-jvm:1.8.0")
 
         // Debug
         debugImplementation("androidx.compose.ui:ui-tooling")

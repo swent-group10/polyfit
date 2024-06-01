@@ -19,11 +19,11 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.github.se.polyfit.R
-import com.github.se.polyfit.ui.screen.IngredientsTMP
+import com.github.se.polyfit.data.local.ingredientscanned.IngredientsScanned
 import com.github.se.polyfit.ui.theme.getGradient
 
 @Composable
-fun ListProducts(listIngredients: List<IngredientsTMP>, modifier: Modifier) {
+fun ListProducts(listIngredients: List<IngredientsScanned>, modifier: Modifier) {
   val gradient = getGradient(active = true)
   val context = LocalContext.current
 
@@ -72,7 +72,7 @@ fun ListProducts(listIngredients: List<IngredientsTMP>, modifier: Modifier) {
 }
 
 @Composable
-private fun TextIngredient(value: Int, text: String, unit: String, modifier: Modifier) {
+private fun TextIngredient(value: Double, text: String, unit: String, modifier: Modifier) {
   Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = modifier.fillMaxWidth()) {
     Text(
         text = text,

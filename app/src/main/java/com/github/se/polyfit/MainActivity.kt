@@ -73,7 +73,8 @@ class MainActivity : ComponentActivity() {
                 content = { paddingValues -> MapScreen(paddingValues) })
           }
           composable(Route.OverviewScan) {
-            IngredientsOverview(navigation::goBack, {}, {}, emptyList())
+            IngredientsOverview(
+                navigation::goBack, navigation::navigateToRecipeRecommendationFlow, emptyList())
           }
           composable(Route.Graph) { FullGraphScreen(goBack = navigation::goBack) }
           composable(Route.Home) {

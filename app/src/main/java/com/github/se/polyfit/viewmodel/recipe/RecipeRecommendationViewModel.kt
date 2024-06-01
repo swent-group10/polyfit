@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.github.se.polyfit.data.api.Spoonacular.SpoonacularApiCaller
+import com.github.se.polyfit.data.local.ingredientscanned.IngredientsScanned
 import com.github.se.polyfit.model.recipe.Recipe
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -27,8 +28,14 @@ constructor(private val spoonacularApiCaller: SpoonacularApiCaller) : ViewModel(
   private val _selectedRecipe: MutableLiveData<Recipe> = MutableLiveData<Recipe>()
   val selectedRecipe: LiveData<Recipe> = _selectedRecipe
 
+  private val _ingredientList = MutableLiveData<List<String>>()
+
   init {
-    _showIngredient.value = true
+    _showIngredient.postValue(true)
+  }
+
+  fun setIngredientList(ingredientList: List<IngredientsScanned>) {
+    _ingredientList.value = ingredientList.map { it.name }
   }
 
   suspend fun recipeFromIngredients(ingredients: List<String>): List<Recipe> {
