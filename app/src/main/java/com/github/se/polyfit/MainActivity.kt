@@ -70,9 +70,7 @@ class MainActivity : ComponentActivity() {
           composable(Route.Map) {
             GenericScreen(
                 navController = navController,
-                content = { paddingValues ->
-                  MapScreen(paddingValues, { navController.navigate(Route.PostInfo) })
-                })
+                content = { paddingValues -> MapScreen(paddingValues) })
           }
           composable(Route.OverviewScan) {
             IngredientsOverview(
