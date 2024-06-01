@@ -31,7 +31,6 @@ class ViewPostViewModelTest {
 
   @Before
   fun setup() {
-    // MockKAnnotations.init(this, relaxed = true)
     postFirebaseRepository = mockk(relaxed = true)
 
     postLocationModel = mockk(relaxed = true)
