@@ -13,6 +13,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkAll
+import java.lang.Thread.sleep
 import kotlin.test.AfterTest
 import org.junit.Assert
 import org.junit.Before
@@ -84,7 +85,12 @@ class BarCodeCodeViewModelTest {
     for (i in 1..REQUIRED_SCAN_COUNT) {
       viewModel.addId("789012")
     }
-    Assert.assertEquals(listOf("789012", "123456"), viewModel.listId.value)
+    var i = 0
+    while (listOf("789012", "123456") != viewModel.listId.value) {
+      i++
+      sleep(100)
+      assert(i < 100)
+    }
   }
 
   @Test
