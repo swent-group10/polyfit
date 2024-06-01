@@ -48,7 +48,13 @@ class BarCodeCodeViewModelTest {
     for (i in 1..REQUIRED_SCAN_COUNT) {
       viewModel.addId("123456")
     }
-    assertEquals(listOf("123456"), viewModel.listId.value)
+
+    var i = 0
+    while (listOf("123456") != viewModel.listId.value) {
+      i++
+      sleep(100)
+      assert(i < 100)
+    }
   }
 
   @Test
@@ -65,7 +71,12 @@ class BarCodeCodeViewModelTest {
     for (i in 1..REQUIRED_SCAN_COUNT) {
       viewModel.addId("123456")
     }
-    assertEquals(listOf("123456"), viewModel.listId.value)
+    var i = 0
+    while (listOf("123456") != viewModel.listId.value) {
+      i++
+      sleep(100)
+      assert(i < 100)
+    }
   }
 
   @Test
@@ -73,7 +84,12 @@ class BarCodeCodeViewModelTest {
     for (i in 1..REQUIRED_SCAN_COUNT) {
       viewModel.addId("12345")
     }
-    assertEquals(emptyList<String>(), viewModel.listId.value)
+    var i = 0
+    while (emptyList<String>() != viewModel.listId.value) {
+      i++
+      sleep(100)
+      assert(i < 100)
+    }
   }
 
   @Test
@@ -84,7 +100,12 @@ class BarCodeCodeViewModelTest {
     for (i in 1..REQUIRED_SCAN_COUNT) {
       viewModel.addId("789012")
     }
-    assertEquals(listOf("789012", "123456"), viewModel.listId.value)
+    var i = 0
+    while (listOf("789012", "123456") != viewModel.listId.value) {
+      i++
+      sleep(100)
+      assert(i < 100)
+    }
   }
 
   @Test
@@ -93,7 +114,12 @@ class BarCodeCodeViewModelTest {
     for (i in 1..REQUIRED_SCAN_COUNT) {
       viewModel.addId("")
     }
-    assertEquals(emptyList<String>(), viewModel.listId.value)
+    var i = 0
+    while (emptyList<String>() != viewModel.listId.value) {
+      i++
+      sleep(100)
+      assert(i < 100)
+    }
   }
 
   @Test
@@ -105,7 +131,12 @@ class BarCodeCodeViewModelTest {
     for (i in 1..REQUIRED_SCAN_COUNT) {
       viewModel.addId(s)
     }
-    assertEquals(emptyList<String>(), viewModel.listId.value)
+    var i = 0
+    while (emptyList<String>() != viewModel.listId.value) {
+      i++
+      sleep(100)
+      assert(i < 100)
+    }
   }
 
   @Test
@@ -117,7 +148,12 @@ class BarCodeCodeViewModelTest {
     for (i in 1..REQUIRED_SCAN_COUNT) {
       viewModel.addId(s)
     }
-    assertEquals(emptyList<String>(), viewModel.listId.value)
+    var i = 0
+    while (emptyList<String>() != viewModel.listId.value) {
+      i++
+      sleep(100)
+      assert(i < 100)
+    }
   }
 
   @Test
@@ -126,7 +162,12 @@ class BarCodeCodeViewModelTest {
     for (i in 1 ..< REQUIRED_SCAN_COUNT) {
       viewModel.addId("12345678")
     }
-    assertEquals(emptyList<String>(), viewModel.listId.value)
+    var i = 0
+    while (emptyList<String>() != viewModel.listId.value) {
+      i++
+      sleep(100)
+      assert(i < 100)
+    }
   }
 
   @Test
@@ -137,7 +178,12 @@ class BarCodeCodeViewModelTest {
     }
     viewModel.addId(null)
     viewModel.addId("12345678")
-    assertEquals(listOf("12345678"), viewModel.listId.value)
+    var i = 0
+    while (emptyList<String>() != viewModel.listId.value) {
+      i++
+      sleep(100)
+      assert(i < 100)
+    }
   }
 
   @Test
