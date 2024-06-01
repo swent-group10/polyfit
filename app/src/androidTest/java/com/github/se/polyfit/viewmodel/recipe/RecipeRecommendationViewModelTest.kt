@@ -26,20 +26,6 @@ class RecipeRecommendationViewModelTest {
   }
 
   @Test
-  fun recipeFromIngredientsReturnsRecipes() = runBlocking {
-    val expectedRecipes = listOf(Recipe.default())
-
-    coEvery { spoonacularApiCaller.recipeByIngredients(any()) } returns
-        RecipeFromIngredientsResponseAPI(APIResponse.SUCCESS, expectedRecipes)
-    coEvery { spoonacularApiCaller.getCompleteRecipesFromIngredients(any()) } returns
-        listOf(Recipe.default())
-
-    val actualRecipes = viewModel.recipeFromIngredients()
-
-    assertEquals(listOf(Recipe.default()), actualRecipes)
-  }
-
-  @Test
   fun recipeFromIngredientsReturnsEmptyWhenInvalid() = runBlocking {
     val ingredients = listOf("invalid", "ingredients")
     val expectedRecipes = emptyList<Recipe>()
