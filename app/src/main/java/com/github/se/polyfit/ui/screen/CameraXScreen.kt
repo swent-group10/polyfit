@@ -1,7 +1,12 @@
 package com.github.se.polyfit.ui.screen
 
+import android.content.Context
 import android.content.pm.PackageManager
 import android.hardware.Camera
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 import android.util.Log
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -31,6 +36,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.se.polyfit.ml.ImageAnalyserBarCode
 import com.github.se.polyfit.ui.theme.getGradient
@@ -61,27 +67,36 @@ fun CameraXScreen(
   imageAnalysis.setAnalyzer(ContextCompat.getMainExecutor(context), imageAnalyserBarCode)
 
   val isScanned by barCodeCodeViewModel.isScanned.observeAsState()
+  val isVibrate by barCodeCodeViewModel.vibratePhone.observeAsState()
 
   val acceptedBrush = getGradient(active = true)
   val neutralBrush = getGradient(active = false)
-
   var brush by remember { mutableStateOf(neutralBrush) }
   LaunchedEffect(isScanned) {
     Log.i("CameraXScreen", "isScanned: $isScanned")
     brush = if (isScanned == true) acceptedBrush else neutralBrush
   }
 
+  LaunchedEffect(key1 = isVibrate) {
+    if(isVibrate != null) VibratePhone(context)
+  }
+
   Box(
-      modifier = Modifier.fillMaxSize().testTag("BoxCamera"),
+      modifier = Modifier
+              .fillMaxSize()
+              .testTag("BoxCamera"),
       contentAlignment = Alignment.TopCenter) {
         Card(
             modifier =
-                Modifier.fillMaxWidth(0.9f)
+            Modifier
+                    .fillMaxWidth(0.9f)
                     .height(120.dp)
                     .absoluteOffset(0.dp, padding.calculateTopPadding())
                     .testTag("CardCamera"),
             border = BorderStroke(8.dp, brush)) {
-              AndroidView({ previewView }, modifier = Modifier.testTag("AndroidView").fillMaxSize())
+              AndroidView({ previewView }, modifier = Modifier
+                      .testTag("AndroidView")
+                      .fillMaxSize())
             }
       }
 
@@ -94,6 +109,7 @@ fun CameraXScreen(
     return
   }
 
+
   LaunchedEffect(Unit) {
     val cameraProvider = context.getCameraProvider()
     cameraProvider.unbindAll()
@@ -101,4 +117,11 @@ fun CameraXScreen(
         lifecycleOwner, cameraxSelector, preview, imageCapture, imageAnalysis)
     preview.setSurfaceProvider(previewView.surfaceProvider)
   }
+}
+
+fun VibratePhone(context: Context) {
+  val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+
+  val effect = VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE)
+  vibrator.vibrate(effect)
 }

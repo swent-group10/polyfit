@@ -11,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import com.github.se.polyfit.data.api.OpenFoodFacts.OpenFoodFactsApi
 import com.github.se.polyfit.data.local.ingredientscanned.IngredientsScanned
 import com.github.se.polyfit.model.ingredient.Ingredient
+import com.github.se.polyfit.ui.screen.VibratePhone
 import com.github.se.polyfit.viewmodel.recipe.RecipeRecommendationViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -42,11 +43,14 @@ constructor(
     private val foodFactsApi: OpenFoodFactsApi
 ) : ViewModel() {
   private val _listId = MutableLiveData<List<String>>(emptyList())
-  val _isScanned = MutableLiveData(false)
-  private var lastScanTime = System.currentTimeMillis()
+  private val _isScanned = MutableLiveData(false)
+  private var _vibratePhone = MutableLiveData<Boolean>(null)
+  private var lastScanTime = 0L
+
 
   val listId: LiveData<List<String>> = _listId
   val isScanned: LiveData<Boolean> = _isScanned
+  val vibratePhone: LiveData<Boolean> = _vibratePhone
   private val _listIngredients = MutableLiveData<List<IngredientsScanned>>(emptyList())
   val listIngredients: LiveData<List<IngredientsScanned>> = _listIngredients
 
@@ -76,6 +80,9 @@ constructor(
       return
     }
 
+    // Trigger the vibration by changing the value of the live data
+    _vibratePhone.postValue(! (_vibratePhone.value?: false))
+
     val list = _listId.value?.toMutableList() ?: mutableListOf()
     list.add(0, id)
     _listId.postValue(list)
@@ -92,6 +99,12 @@ constructor(
         }
       }
     }
+  }
+
+  fun removeId(id: String) {
+    val list = _listId.value?.toMutableList() ?: mutableListOf()
+    list.remove(id)
+    _listId.postValue(list)
   }
 
   fun getIngredients(id: String) {
@@ -111,6 +124,7 @@ constructor(
 
         _listIngredients.postValue(list)
       } catch (e: Exception) {
+        removeId(id)
         Log.w("QrCodeViewModel", "Error in getting ingredient, surely not a food id: $e")
       }
     }
