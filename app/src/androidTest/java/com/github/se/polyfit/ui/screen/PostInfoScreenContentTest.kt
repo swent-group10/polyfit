@@ -13,7 +13,9 @@ import com.github.se.polyfit.model.post.Post
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
 import com.github.se.polyfit.viewmodel.post.ViewPostViewModel
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.runs
 import java.time.LocalDate
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Before
@@ -29,14 +31,15 @@ class PostInfoScreenContentTest {
   @Before
   fun setup() {
     viewPostViewModel = mockk<ViewPostViewModel>(relaxed = true)
-    every { viewPostViewModel.isFetching } returns MutableStateFlow(false)
+    every { viewPostViewModel.isFetching } returns MutableLiveData(false)
   }
 
   @Test
   fun PostInfoScreen_displays_post_information() {
     val mealViewModel = mockk<MealViewModel>(relaxed = true)
     val post = Post.default()
-    every { viewPostViewModel.getAllPost() } returns MutableLiveData(listOf(post))
+    every { viewPostViewModel.posts } returns MutableStateFlow(listOf(post))
+    every { viewPostViewModel.getNearbyPosts() } just runs
     post.meal.addIngredient(
         Ingredient(
             "ingredient1",
