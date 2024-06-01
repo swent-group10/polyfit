@@ -78,15 +78,13 @@ constructor(
       return
     }
 
-    // Trigger the vibration by changing the value of the live data
-    _vibratePhone.postValue(!(_vibratePhone.value ?: false))
-
     val list = _listId.value?.toMutableList() ?: mutableListOf()
     list.add(0, id)
     _listId.postValue(list)
     lastScanTime = System.currentTimeMillis()
     _isScanned.postValue(true)
     getIngredients(id)
+    _vibratePhone.postValue(!(_vibratePhone.value ?: false))
     Log.v("QrCodeViewModel", "new list: ${_listId.value}")
 
     CoroutineScope(Dispatchers.IO).launch {
