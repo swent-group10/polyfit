@@ -11,7 +11,6 @@ import androidx.lifecycle.viewModelScope
 import com.github.se.polyfit.data.api.OpenFoodFacts.OpenFoodFactsApi
 import com.github.se.polyfit.data.local.ingredientscanned.IngredientsScanned
 import com.github.se.polyfit.model.ingredient.Ingredient
-import com.github.se.polyfit.ui.screen.VibratePhone
 import com.github.se.polyfit.viewmodel.recipe.RecipeRecommendationViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -47,7 +46,6 @@ constructor(
   private var _vibratePhone = MutableLiveData<Boolean>(null)
   private var lastScanTime = 0L
 
-
   val listId: LiveData<List<String>> = _listId
   val isScanned: LiveData<Boolean> = _isScanned
   val vibratePhone: LiveData<Boolean> = _vibratePhone
@@ -81,7 +79,7 @@ constructor(
     }
 
     // Trigger the vibration by changing the value of the live data
-    _vibratePhone.postValue(! (_vibratePhone.value?: false))
+    _vibratePhone.postValue(!(_vibratePhone.value ?: false))
 
     val list = _listId.value?.toMutableList() ?: mutableListOf()
     list.add(0, id)

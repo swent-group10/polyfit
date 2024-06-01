@@ -3,10 +3,8 @@ package com.github.se.polyfit.ui.screen
 import android.content.Context
 import android.content.pm.PackageManager
 import android.hardware.Camera
-import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.os.VibratorManager
 import android.util.Log
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -77,26 +75,19 @@ fun CameraXScreen(
     brush = if (isScanned == true) acceptedBrush else neutralBrush
   }
 
-  LaunchedEffect(key1 = isVibrate) {
-    if(isVibrate != null) VibratePhone(context)
-  }
+  LaunchedEffect(key1 = isVibrate) { if (isVibrate != null) VibratePhone(context) }
 
   Box(
-      modifier = Modifier
-              .fillMaxSize()
-              .testTag("BoxCamera"),
+      modifier = Modifier.fillMaxSize().testTag("BoxCamera"),
       contentAlignment = Alignment.TopCenter) {
         Card(
             modifier =
-            Modifier
-                    .fillMaxWidth(0.9f)
+                Modifier.fillMaxWidth(0.9f)
                     .height(120.dp)
                     .absoluteOffset(0.dp, padding.calculateTopPadding())
                     .testTag("CardCamera"),
             border = BorderStroke(8.dp, brush)) {
-              AndroidView({ previewView }, modifier = Modifier
-                      .testTag("AndroidView")
-                      .fillMaxSize())
+              AndroidView({ previewView }, modifier = Modifier.testTag("AndroidView").fillMaxSize())
             }
       }
 
@@ -108,7 +99,6 @@ fun CameraXScreen(
     Log.e("CameraXScreen", "No camera found")
     return
   }
-
 
   LaunchedEffect(Unit) {
     val cameraProvider = context.getCameraProvider()
