@@ -1,7 +1,10 @@
 package com.github.se.polyfit.ui.screen
 
+import android.content.Context
 import android.content.pm.PackageManager
 import android.hardware.Camera
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.util.Log
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -31,6 +34,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.se.polyfit.ml.ImageAnalyserBarCode
 import com.github.se.polyfit.ui.theme.getGradient
@@ -61,15 +65,17 @@ fun CameraXScreen(
   imageAnalysis.setAnalyzer(ContextCompat.getMainExecutor(context), imageAnalyserBarCode)
 
   val isScanned by barCodeCodeViewModel.isScanned.observeAsState()
+  val isVibrate by barCodeCodeViewModel.vibratePhone.observeAsState()
 
   val acceptedBrush = getGradient(active = true)
   val neutralBrush = getGradient(active = false)
-
   var brush by remember { mutableStateOf(neutralBrush) }
   LaunchedEffect(isScanned) {
     Log.i("CameraXScreen", "isScanned: $isScanned")
     brush = if (isScanned == true) acceptedBrush else neutralBrush
   }
+
+  LaunchedEffect(key1 = isVibrate) { if (isVibrate != null) VibratePhone(context) }
 
   Box(
       modifier = Modifier.fillMaxSize().testTag("BoxCamera"),
@@ -101,4 +107,11 @@ fun CameraXScreen(
         lifecycleOwner, cameraxSelector, preview, imageCapture, imageAnalysis)
     preview.setSurfaceProvider(previewView.surfaceProvider)
   }
+}
+
+fun VibratePhone(context: Context) {
+  val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+
+  val effect = VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE)
+  vibrator.vibrate(effect)
 }

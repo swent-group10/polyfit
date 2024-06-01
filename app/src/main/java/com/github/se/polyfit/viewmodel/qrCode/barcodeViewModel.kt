@@ -42,11 +42,13 @@ constructor(
     private val foodFactsApi: OpenFoodFactsApi
 ) : ViewModel() {
   private val _listId = MutableLiveData<List<String>>(emptyList())
-  val _isScanned = MutableLiveData(false)
-  private var lastScanTime = System.currentTimeMillis()
+  private val _isScanned = MutableLiveData(false)
+  private var _vibratePhone = MutableLiveData<Boolean>(null)
+  private var lastScanTime = 0L
 
   val listId: LiveData<List<String>> = _listId
   val isScanned: LiveData<Boolean> = _isScanned
+  val vibratePhone: LiveData<Boolean> = _vibratePhone
   private val _listIngredients = MutableLiveData<List<IngredientsScanned>>(emptyList())
   val listIngredients: LiveData<List<IngredientsScanned>> = _listIngredients
 
@@ -82,6 +84,7 @@ constructor(
     lastScanTime = System.currentTimeMillis()
     _isScanned.postValue(true)
     getIngredients(id)
+    _vibratePhone.postValue(!(_vibratePhone.value ?: false))
     Log.v("QrCodeViewModel", "new list: ${_listId.value}")
 
     CoroutineScope(Dispatchers.IO).launch {
@@ -94,23 +97,31 @@ constructor(
     }
   }
 
+  fun removeId(id: String) {
+    val list = _listId.value?.toMutableList() ?: mutableListOf()
+    list.remove(id)
+    _listId.postValue(list)
+  }
+
   fun getIngredients(id: String) {
     val list = _listIngredients.value?.toMutableList() ?: mutableListOf()
     viewModelScope.launch(Dispatchers.IO) {
       val ingredient: Ingredient = foodFactsApi.getIngredient(id)
       val nutriments = ingredient.nutritionalInformation.nutrients
       try {
-        list +=
+        list.add(
+            0,
             IngredientsScanned(
                 ingredient.name,
                 ingredient.amount,
                 0.0,
                 nutriments.first { it.nutrientType == "carbohydrates" }.amount,
                 nutriments.first { it.nutrientType == "fat" }.amount,
-                nutriments.first { it.nutrientType == "protein" }.amount)
+                nutriments.first { it.nutrientType == "protein" }.amount))
 
         _listIngredients.postValue(list)
       } catch (e: Exception) {
+        removeId(id)
         Log.w("QrCodeViewModel", "Error in getting ingredient, surely not a food id: $e")
       }
     }
