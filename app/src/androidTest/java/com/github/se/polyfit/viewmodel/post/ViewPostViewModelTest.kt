@@ -1,6 +1,5 @@
 package com.github.se.polyfit.viewmodel.post
 
-
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.github.se.polyfit.data.remote.firebase.PostFirebaseRepository
 import com.github.se.polyfit.model.post.Location
@@ -17,9 +16,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
-
 class ViewPostViewModelTest {
-
 
   @get:Rule val instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -34,7 +31,7 @@ class ViewPostViewModelTest {
 
   @Before
   fun setup() {
-    MockKAnnotations.init(this, relaxed = true)
+    // MockKAnnotations.init(this, relaxed = true)
     postFirebaseRepository = mockk(relaxed = true)
 
     postLocationModel = mockk(relaxed = true)
@@ -55,7 +52,5 @@ class ViewPostViewModelTest {
 
     assertTrue(viewModel.isFetching.value!!)
     assertEquals(expectedLocation, viewModelMockk.location.value)
-
   }
 }
-
