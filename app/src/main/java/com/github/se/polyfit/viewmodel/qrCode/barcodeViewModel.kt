@@ -111,7 +111,7 @@ constructor(
       val ingredient: Ingredient = foodFactsApi.getIngredient(id)
       val nutriments = ingredient.nutritionalInformation.nutrients
       try {
-        list +=
+        list.add(0,
             IngredientsScanned(
                 ingredient.name,
                 ingredient.amount,
@@ -119,6 +119,7 @@ constructor(
                 nutriments.first { it.nutrientType == "carbohydrates" }.amount,
                 nutriments.first { it.nutrientType == "fat" }.amount,
                 nutriments.first { it.nutrientType == "protein" }.amount)
+        )
 
         _listIngredients.postValue(list)
       } catch (e: Exception) {
