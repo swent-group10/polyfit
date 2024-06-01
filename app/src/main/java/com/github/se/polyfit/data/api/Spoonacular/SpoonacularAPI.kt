@@ -228,12 +228,11 @@ class SpoonacularApiCaller {
    * @throws Exception if the response is not successful or an error occurs
    */
   fun getCompleteRecipesFromIngredients(ingredients: List<String>): List<Recipe> {
-    //        val recipesResponse = recipeByIngredients(ingredients)
+
     return try {
 
-      // done to avoid making a bunch of API calls, will need to remove later
-      val recipesResponse =
-          RecipeFromIngredientsResponseAPI(APIResponse.SUCCESS, listOf(Recipe.default()))
+      val recipesResponse = recipeByIngredients(ingredients)
+
       recipesResponse.recipes.forEach { recipe ->
         val recipeInfo = getRecipeSteps(recipe.id)
 

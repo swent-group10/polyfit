@@ -122,7 +122,7 @@ constructor(
         _listIngredients.postValue(list)
       } catch (e: Exception) {
         removeId(id)
-        Log.w("QrCodeViewModel", "Error in getting ingredient, surely not a food id: $e")
+        Log.e("QrCodeViewModel", "Error in getting ingredient, surely not a food id: $e")
       }
     }
   }

@@ -3,7 +3,7 @@ package com.github.se.polyfit.ui.navigation
 import android.util.Log
 import androidx.navigation.NavHostController
 
-class Navigation(private val navHostController: NavHostController) {
+class Navigation(val navHostController: NavHostController) {
   fun goBack() {
     navHostController.popBackStack()
   }

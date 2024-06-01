@@ -9,30 +9,30 @@ import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.navigation.Route
 import com.github.se.polyfit.ui.screen.recipeRec.MoreDetailScreen
 import com.github.se.polyfit.ui.screen.recipeRec.RecommendationScreen
-import com.github.se.polyfit.viewmodel.qrCode.BarCodeCodeViewModel
 import com.github.se.polyfit.viewmodel.recipe.RecipeRecommendationViewModel
 
 @Composable
 fun RecipeRecFlow(
     recipeRecommendationViewModel: RecipeRecommendationViewModel = hiltViewModel(),
-    barcodeViewModel: BarCodeCodeViewModel = hiltViewModel<BarCodeCodeViewModel>()
+    navAction: Navigation
 ) {
-  val navigation = rememberNavController()
+  // Needed because of the nested navigation
+  // Will cause a crash if a different one is not used
+  val navController = rememberNavController()
+  val navigation = Navigation(navController)
 
-  val navAction = Navigation(navigation)
-
-  NavHost(navController = navigation, startDestination = Route.RecipeRecommendation) {
+  NavHost(navController = navController, startDestination = Route.RecipeRecommendation) {
     composable(Route.RecipeRecommendation) {
       RecommendationScreen(
-          navigation,
+          navAction.navHostController,
           recipeRecommendationViewModel,
-          navAction::navigateToRecipeRecommendationMore,
+          navigation::navigateToRecipeRecommendationMore,
       )
     }
     composable(Route.RecipeRecommendationMore) {
       MoreDetailScreen(
           recipeRecommendationViewModel,
-          navigateBack = navAction::goBack,
+          navigateBack = navigation::goBack,
       )
     }
   }
