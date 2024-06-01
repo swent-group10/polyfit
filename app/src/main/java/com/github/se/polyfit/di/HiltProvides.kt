@@ -14,6 +14,7 @@ import com.github.se.polyfit.data.repository.MealRepository
 import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.model.post.PostLocationModel
 import com.github.se.polyfit.viewmodel.graph.GraphViewModel
+import com.github.se.polyfit.viewmodel.map.MapViewModel
 import com.github.se.polyfit.viewmodel.recipe.RecipeRecommendationViewModel
 import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
@@ -117,5 +118,14 @@ object HiltProvides {
       spoonacularApiCaller: SpoonacularApiCaller
   ): RecipeRecommendationViewModel {
     return RecipeRecommendationViewModel(spoonacularApiCaller)
+  }
+
+  @Provides
+  @Singleton
+  fun provideMapViewModel(
+      postFirebaseRepository: PostFirebaseRepository,
+      positionModel: PostLocationModel
+  ): MapViewModel {
+    return MapViewModel(postFirebaseRepository, positionModel)
   }
 }

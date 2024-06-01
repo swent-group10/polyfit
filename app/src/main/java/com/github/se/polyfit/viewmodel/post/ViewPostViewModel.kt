@@ -50,7 +50,9 @@ constructor(
   }
 
   fun getNearbyPosts() {
+
     if (location.value == null) return
+
     viewModelScope.launch(Dispatchers.Main) {
       postFirebaseRepository.queryNearbyPosts(
           centerLatitude = location.value!!.latitude,

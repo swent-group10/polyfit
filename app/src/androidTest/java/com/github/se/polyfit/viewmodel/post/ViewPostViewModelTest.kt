@@ -22,6 +22,7 @@ class ViewPostViewModelTest {
 
   private lateinit var postFirebaseRepository: PostFirebaseRepository
   private lateinit var viewModelMockk: ViewPostViewModel
+
   private lateinit var viewModel: ViewPostViewModel
   private lateinit var postLocationModel: PostLocationModel
   val default = 0.0
@@ -31,6 +32,7 @@ class ViewPostViewModelTest {
   @Before
   fun setup() {
     postFirebaseRepository = mockk(relaxed = true)
+
     postLocationModel = mockk(relaxed = true)
     viewModel = ViewPostViewModel(postFirebaseRepository, postLocationModel)
 
