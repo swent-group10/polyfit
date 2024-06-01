@@ -127,7 +127,7 @@ class MainActivity : ComponentActivity() {
           }
 
           // the navcontroller is needed for the generic screen
-          composable(Route.RecipeRecFlow) { RecipeRecFlow() }
+          composable(Route.RecipeRecFlow) { RecipeRecFlow(navAction = navigation) }
         }
       }
     }

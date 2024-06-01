@@ -1,6 +1,5 @@
 package com.github.se.polyfit.viewmodel.recipe
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -43,25 +42,19 @@ constructor(private val spoonacularApiCaller: SpoonacularApiCaller) : ViewModel(
 
   fun setIngredientList(ingredientList: List<IngredientsScanned>) {
     _ingredientList.value = ingredientList.map { it.name }
-
-    Log.d("RecipeRecommendationViewModel", "setIngredientList: ${_ingredientList.value}")
   }
 
   suspend fun recipeFromIngredients(): List<Recipe> {
     // Primitive caching logic
+    // catch for testing
     if (!_recipes.value.isNullOrEmpty()) {
       return _recipes.value!!
     }
 
-    Log.d(
-        "RecipeRecommendationViewModel",
-        "recipeFromIngredients fetching recipe: ${_ingredientList.value}")
     val recipesResponse =
         withContext(Dispatchers.Default) {
           _isFetching.postValue(true)
-          Log.d("RecipeRecommendationViewModel", "recipeFromIngredients: runBlocking")
           if (!_ingredientList.value.isNullOrEmpty()) {
-            Log.d("RecipeRecommendationViewModel", "recipeFromIngredients: empty list")
             val listRecipe =
                 spoonacularApiCaller.getCompleteRecipesFromIngredients(_ingredientList.value!!)
             _isFetching.postValue(false)
@@ -74,7 +67,6 @@ constructor(private val spoonacularApiCaller: SpoonacularApiCaller) : ViewModel(
           }
         }
 
-    Log.d("RecipeRecommendationViewModel", "recipeFromIngredients: ${recipesResponse.size}")
     _recipes.postValue(recipesResponse)
 
     return recipesResponse
