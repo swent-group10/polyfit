@@ -333,8 +333,7 @@ class SpoonacularApiCallerTest {
 
     val response = spoonacularApiCaller.getCompleteRecipesFromIngredients(listOf("apple", "banana"))
 
-    assert(response.first().recipeInformation.ingredients.isEmpty())
-    assert(response.first().recipeInformation.instructions.isEmpty())
+    assert(response.isEmpty())
   }
 
   @After

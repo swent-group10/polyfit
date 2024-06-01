@@ -28,7 +28,13 @@ constructor(private val spoonacularApiCaller: SpoonacularApiCaller) : ViewModel(
   private val _selectedRecipe: MutableLiveData<Recipe> = MutableLiveData<Recipe>()
   val selectedRecipe: LiveData<Recipe> = _selectedRecipe
 
-  private val _ingredientList = MutableLiveData<List<String>>()
+  private val _ingredientList = MutableLiveData<List<String>>(emptyList())
+
+  private val _isFetching = MutableLiveData<Boolean>()
+  val isFetching: LiveData<Boolean> = _isFetching
+
+  private val _recipes = MutableLiveData<List<Recipe>>()
+  val recipes: LiveData<List<Recipe>> = _recipes
 
   init {
     _showIngredient.postValue(true)
@@ -38,21 +44,32 @@ constructor(private val spoonacularApiCaller: SpoonacularApiCaller) : ViewModel(
     _ingredientList.value = ingredientList.map { it.name }
   }
 
-  suspend fun recipeFromIngredients(ingredients: List<String>): List<Recipe> {
-    // Removed to avoid using the Spoonacular API unnecessarily
-    //    val recipesResponse =
-    //        withContext(Dispatchers.Default) {
-    // spoonacularApiCaller.recipeByIngredients(ingredients) }
-    //    return recipesResponse.recipes
-
-    return withContext(Dispatchers.IO) {
-      spoonacularApiCaller.getCompleteRecipesFromIngredients(ingredients)
+  suspend fun recipeFromIngredients(): List<Recipe> {
+    // Primitive caching logic
+    // catch for testing
+    if (!_recipes.value.isNullOrEmpty()) {
+      return _recipes.value!!
     }
-  }
 
-  // A mock for now while waiting to the QR code scanner implementation
-  fun ingredientList(): List<String> {
-    return listOf("apple", "banana")
+    val recipesResponse =
+        withContext(Dispatchers.Default) {
+          _isFetching.postValue(true)
+          if (!_ingredientList.value.isNullOrEmpty()) {
+            val listRecipe =
+                spoonacularApiCaller.getCompleteRecipesFromIngredients(_ingredientList.value!!)
+            _isFetching.postValue(false)
+
+            return@withContext listRecipe
+          } else {
+            _isFetching.postValue(false)
+
+            return@withContext listOf()
+          }
+        }
+
+    _recipes.postValue(recipesResponse)
+
+    return recipesResponse
   }
 
   fun onSelectedRecipe(recipe: Recipe) {
