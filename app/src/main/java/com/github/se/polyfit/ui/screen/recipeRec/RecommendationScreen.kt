@@ -1,5 +1,6 @@
 package com.github.se.polyfit.ui.screen.recipeRec
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,10 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -24,8 +22,6 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.github.se.polyfit.R
-import com.github.se.polyfit.data.local.ingredientscanned.IngredientsScanned
-import com.github.se.polyfit.model.recipe.Recipe
 import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.components.recipe.RecipeCard
 import com.github.se.polyfit.viewmodel.qrCode.BarCodeCodeViewModel
@@ -41,8 +37,7 @@ fun RecommendationScreen(
   GenericScreen(
       navController = navController,
       content = { paddingValues ->
-        RecipeDisplay(
-            recipeRecViewModel, barcodeViewModel, paddingValues, navigateToRecipeRecommendationMore)
+        RecipeDisplay(recipeRecViewModel, paddingValues, navigateToRecipeRecommendationMore)
       },
       modifier = Modifier.testTag("RecipeDisplay"))
 }
@@ -50,17 +45,18 @@ fun RecommendationScreen(
 @Composable
 fun RecipeDisplay(
     recipesRec: RecipeRecommendationViewModel,
-    barcodeViewModel: BarCodeCodeViewModel,
     paddingValues: PaddingValues,
     navigateToRecipeRecommendationMore: () -> Unit
 ) {
   val context = LocalContext.current
 
-  val recipes = remember { mutableStateOf(listOf<Recipe>()) }
-  var ingredientList by remember { mutableStateOf(listOf<IngredientsScanned>()) }
+  val recipes = recipesRec.recipes.observeAsState(initial = emptyList())
+  Log.d("RecipeDisplay", "recipes: ${recipes.value}")
+  val fetching = recipesRec.isFetching.observeAsState(initial = true)
+
   LaunchedEffect(Unit) {
-    barcodeViewModel.listIngredients.observeForever { ingredientList = it }
-    recipes.value = recipesRec.recipeFromIngredients(ingredientList.map { it.name })
+    Log.d("RecipeDisplay", "LaunchedEffect")
+    recipesRec.recipeFromIngredients()
   }
 
   LazyColumn(
@@ -73,8 +69,20 @@ fun RecipeDisplay(
               fontWeight = FontWeight.Bold,
           )
         }
-        if (recipes.value.isEmpty()) {
+        if (fetching.value) {
           item { Loader(paddingValues) }
+          return@LazyColumn
+        } else if (recipes.value.isEmpty()) {
+
+          item {
+            Box(
+                modifier = Modifier.fillMaxSize().padding(paddingValues),
+                contentAlignment = Alignment.Center) {
+                  Text(
+                      text = context.getString(R.string.noRecipesFound),
+                      fontSize = MaterialTheme.typography.bodyLarge.fontSize)
+                }
+          }
           return@LazyColumn
         }
 
