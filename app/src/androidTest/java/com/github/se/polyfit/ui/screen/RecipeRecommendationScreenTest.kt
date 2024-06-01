@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavHostController
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.model.recipe.Recipe
@@ -36,8 +37,7 @@ class RecipeRecommendationScreenTest {
     for (i in 1..10) {
       recipeList.add(Recipe.default())
     }
-    coEvery { mockkRecommendationViewModel.ingredientList() } returns listOf("apple", "banana")
-    coEvery { mockkRecommendationViewModel.recipeFromIngredients(any()) } returns recipeList
+    coEvery { mockkRecommendationViewModel.recipeFromIngredients() } returns recipeList
 
     composeTestRule.setContent {
       RecommendationScreen(mockkNavigation, mockkRecommendationViewModel, {}, barcodeViewModel)
@@ -56,9 +56,9 @@ class RecipeRecommendationScreenTest {
 
     val mockkRecommendationViewModel = mockk<RecipeRecommendationViewModel>()
 
-    coEvery { mockkRecommendationViewModel.recipeFromIngredients(any()) } returns emptyList()
-    coEvery { mockkRecommendationViewModel.ingredientList() } returns listOf("apple", "banana")
-
+    coEvery { mockkRecommendationViewModel.recipeFromIngredients() } returns emptyList()
+    coEvery { mockkRecommendationViewModel.recipes } returns MutableLiveData(listOf())
+    coEvery { mockkRecommendationViewModel.isFetching } returns MutableLiveData(true)
     composeTestRule.setContent {
       RecommendationScreen(mockkNavigation, mockkRecommendationViewModel, {}, barcodeViewModel)
     }

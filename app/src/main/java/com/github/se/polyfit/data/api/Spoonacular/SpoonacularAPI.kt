@@ -232,7 +232,6 @@ class SpoonacularApiCaller {
     return try {
 
       val recipesResponse = recipeByIngredients(ingredients)
-      Log.d("SpoonacularApiCaller", "recipesResponse: $recipesResponse")
 
       recipesResponse.recipes.forEach { recipe ->
         val recipeInfo = getRecipeSteps(recipe.id)

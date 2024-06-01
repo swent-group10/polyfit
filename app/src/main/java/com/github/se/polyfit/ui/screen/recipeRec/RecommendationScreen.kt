@@ -1,6 +1,5 @@
 package com.github.se.polyfit.ui.screen.recipeRec
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -51,13 +50,9 @@ fun RecipeDisplay(
   val context = LocalContext.current
 
   val recipes = recipesRec.recipes.observeAsState(initial = emptyList())
-  Log.d("RecipeDisplay", "recipes: ${recipes.value}")
   val fetching = recipesRec.isFetching.observeAsState(initial = true)
 
-  LaunchedEffect(Unit) {
-    Log.d("RecipeDisplay", "LaunchedEffect")
-    recipesRec.recipeFromIngredients()
-  }
+  LaunchedEffect(Unit) { recipesRec.recipeFromIngredients() }
 
   LazyColumn(
       horizontalAlignment = Alignment.CenterHorizontally,
@@ -101,6 +96,7 @@ fun RecipeDisplay(
       }
 }
 
+/** Animation displayed while waiting for the data to be fetched */
 @Composable
 fun Loader(paddingValues: PaddingValues) {
   Box(
