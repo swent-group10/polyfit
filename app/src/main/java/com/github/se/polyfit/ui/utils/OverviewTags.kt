@@ -12,6 +12,10 @@ object OverviewTags {
   const val overviewMapIcon = "OverviewMapIcon"
   const val overviewMapLabel = "OverviewMapLabel"
 
+  const val overviewPostsBtn = "OverviewPostsBtn"
+  const val overviewPostsIcon = "OverviewPostsIcon"
+  const val overviewPostsLabel = "OverviewPostsLabel"
+
   const val overviewSettingsBtn = "OverviewSettingsBtn"
   const val overviewSettingsIcon = "OverviewSettingsIcon"
   const val overviewSettingsLabel = "OverviewSettingsLabel"

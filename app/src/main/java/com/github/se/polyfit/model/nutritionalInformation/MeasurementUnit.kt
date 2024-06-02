@@ -3,6 +3,7 @@ package com.github.se.polyfit.model.nutritionalInformation
 import android.util.Log
 import kotlin.math.round
 
+/** Represents a unit of measurement for nutritional information. */
 enum class MeasurementUnit {
   G,
   MG,
@@ -26,6 +27,7 @@ enum class MeasurementUnit {
   }
 
   companion object {
+    // Conversion table for units
     private val conversionTable: Map<Pair<MeasurementUnit, MeasurementUnit>, Double> =
         mapOf(
                 Pair(G, LB) to 0.00220462,
@@ -88,13 +90,14 @@ enum class MeasurementUnit {
     fun unitConversion(from: MeasurementUnit, to: MeasurementUnit, value: Double): Double {
       if (from == UNIT || to == UNIT || from == OTHER || to == OTHER) {
         Log.e("MeasurementUnit", "Unsupported conversion from $from to $to")
-        throw IllegalArgumentException("Unsupported conversion from $from to $to")
+
+        return value
       } else if (value < 0) {
         Log.e("MeasurementUnit", "Value cannot be negative")
         throw IllegalArgumentException("Value cannot be negative")
       }
       val result = value * (conversionTable[Pair(from, to)] ?: 1.0)
-      return round(result * 100) / 100
+      return round(result)
     }
   }
 }

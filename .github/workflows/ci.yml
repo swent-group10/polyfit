@@ -104,7 +104,7 @@ jobs:
 
       - name: Decode Keystore (for signing the APK)
         run: echo "${{ secrets.KEYSTORE }}" | base64 --decode > ./app/keystore.jks
-        
+
       - name: Inject secrets for signing APK into gradle.properties
         run: |
           echo "RELEASE_STORE_PASSWORD=${{ secrets.RELEASE_STORE_PASSWORD }}" >> gradle.properties
@@ -168,41 +168,20 @@ jobs:
         # Adjust the sonar.projectKey and sonar.organization to your project's values
         # The xmlReportPaths needs to point to where your JaCoCo coverage report is generated
 
-      - name: Create empty result file
-        run: echo -n "" > grading-result.csv
 
-      - name: Install xmllint
+      - name: Fetch SonarCloud report
         run: |
-          sudo apt-get update
-          sudo apt-get install -y libxml2-utils
+          sleep 1m  # Wait for SonarCloud to process the report
+          curl "https://sonarcloud.io/api/measures/component?componentKey=swent-group10_polyfit&metricKeys=line_coverage" > sonar-report.json
 
-      # This step retrieve all useful data from the tests
       - name: Coverage results
         run: |
-          
-          # Coverage results
-          # Path to your Jacoco XML report
-          JACOCO_XML_PATH="app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
-          
-          if [ -f $JACOCO_XML_PATH ]; then
-              # Using xmllint to parse the XML, extract the line coverage attributes (missed and covered), then sum them up
-              TOTAL_MISSED_INSTRUCTIONS=$(xmllint --xpath 'sum(//report/counter[@type="INSTRUCTION"]/@missed)' $JACOCO_XML_PATH)
-              TOTAL_COVERED_INSTRUCTIONS=$(xmllint --xpath 'sum(//report/counter[@type="INSTRUCTION"]/@covered)' $JACOCO_XML_PATH)
-          
-              # Calculate the total lines and coverage percentage
-              TOTAL_INSTRUCTIONS=$((TOTAL_MISSED_INSTRUCTIONS + TOTAL_COVERED_INSTRUCTIONS))
-              COVERAGE_PERCENTAGE=$(awk "BEGIN {printf \"%.2f\", ($TOTAL_COVERED_INSTRUCTIONS/$TOTAL_INSTRUCTIONS)*100}")
-              echo "coverage,$COVERAGE_PERCENTAGE" >> grading-result.csv
-          
-              if [ 1 -eq "$(echo "$COVERAGE_PERCENTAGE >= 80.0" | bc )" ]; then
-                  points=$((points+20))
-                  echo "::notice:: Coverage : $COVERAGE_PERCENTAGE% > 80% ✅"
-              else
-                  echo "::notice:: Coverage : $COVERAGE_PERCENTAGE% < 80% ❌"
-                  exit 1
-              fi
+          COVERAGE=$(jq -r '.component.measures[] | select(.metric=="line_coverage") | .value' sonar-report.json)
+          echo "SonarCloud line coverage: $COVERAGE%"
+          if (( $(echo "$COVERAGE < 80" | bc -l) )); then
+            echo "Code coverage is less than 80%, failing the pipeline. ❌"
+            exit 1
           else
-              echo "coverage,0" >> grading-result.csv
-              echo "::notice:: Coverage report not found ❌"
-              exit 1
+            echo "Code coverage is 80% or more. 🎉"
           fi
+          

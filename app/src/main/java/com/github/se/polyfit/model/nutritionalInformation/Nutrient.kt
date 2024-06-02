@@ -3,12 +3,20 @@ package com.github.se.polyfit.model.nutritionalInformation
 import android.util.Log
 import com.github.se.polyfit.ui.utils.titleCase
 
+/**
+ * Represents a nutrient in a food item.
+ *
+ * @param nutrientType The type of nutrient.
+ * @param amount The amount of the nutrient.
+ * @param unit The unit of measurement for the nutrient.
+ */
 data class Nutrient(val nutrientType: String, val amount: Double, val unit: MeasurementUnit) {
-
-  // setters
-
   override fun toString(): String {
     return "$nutrientType :  $amount $unit"
+  }
+
+  fun toStringNoType(): String {
+    return "$amount ${unit.toString().lowercase()}"
   }
 
   fun convertToUnit(newUnit: MeasurementUnit): Nutrient {
@@ -24,21 +32,11 @@ data class Nutrient(val nutrientType: String, val amount: Double, val unit: Meas
   }
 
   fun getFormattedName(): String {
-    return if (!isVitamin()) {
-      val regex = "(?=[A-Z])".toRegex()
-      titleCase(nutrientType.split(regex).joinToString(" "))
-    } else {
-      val vitaminType = nutrientType.substringAfter("vitamin", "")
-      titleCase("vitamin $vitaminType")
-    }
+    return titleCase(nutrientType)
   }
 
   fun getFormattedAmount(): String {
     return "${amount.toInt()} ${unit.toString().lowercase()}"
-  }
-
-  private fun isVitamin(): Boolean {
-    return nutrientType.startsWith("vitamin", ignoreCase = true)
   }
 
   override fun equals(other: Any?): Boolean {
@@ -71,6 +69,13 @@ data class Nutrient(val nutrientType: String, val amount: Double, val unit: Meas
       return map
     }
 
+    /**
+     * Deserializes a map to a Nutrient object.
+     *
+     * @param data The map to deserialize.
+     * @return The Nutrient object.
+     * @throws IllegalArgumentException if cannot deserialize the map.
+     */
     fun deserialize(data: Map<String, Any>): Nutrient {
       return try {
         val nutrientType = data["nutrientType"] as String
@@ -82,6 +87,18 @@ data class Nutrient(val nutrientType: String, val amount: Double, val unit: Meas
       } catch (e: Exception) {
         Log.e("Nutrient", "Failed to deserialize Nutrient object : ${e.message}", e)
         throw IllegalArgumentException("Failed to deserialize Nutrient object ", e)
+      }
+    }
+
+    fun plus(nutrient1: Nutrient, nutrient2: Nutrient): Nutrient {
+      return if (nutrient1.nutrientType != nutrient2.nutrientType) {
+        throw IllegalArgumentException("Nutrient types do not match")
+      } else if (nutrient1.unit == nutrient2.unit) {
+        Nutrient(nutrient1.nutrientType, nutrient1.amount + nutrient2.amount, nutrient1.unit)
+      } else {
+        val convertedAmount =
+            MeasurementUnit.unitConversion(nutrient2.unit, nutrient1.unit, nutrient2.amount)
+        Nutrient(nutrient1.nutrientType, nutrient1.amount + convertedAmount, nutrient1.unit)
       }
     }
   }

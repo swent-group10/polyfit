@@ -33,7 +33,13 @@ enum class MealTagColor(val color: Color) {
     }
   }
 }
-
+/**
+ * Represents a tag that can be attached to a meal. In the future can be used to display potential
+ * allergens, dietary restrictions, etc.
+ *
+ * @param tagName The name of the tag.
+ * @param tagColor The color of the tag.
+ */
 data class MealTag(var tagName: String, var tagColor: MealTagColor) {
   override fun equals(other: Any?): Boolean {
     if (this === other) return true

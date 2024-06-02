@@ -3,9 +3,44 @@ package com.github.se.polyfit.ui.navigation
 import android.util.Log
 import androidx.navigation.NavHostController
 
-class Navigation(private val navHostController: NavHostController) {
+class Navigation(val navHostController: NavHostController) {
   fun goBack() {
     navHostController.popBackStack()
+  }
+
+  fun navigateToPostList() {
+    navigateTo(Route.PostInfo)
+  }
+
+  fun goBackTo(route: String) {
+    navHostController.popBackStack(route, inclusive = false)
+  }
+
+  fun restartToLogin() {
+    navHostController.navigate(Route.Register) {
+      popUpTo(navHostController.graph.startDestinationId) { inclusive = true }
+      launchSingleTop = true
+    }
+  }
+
+  fun navigateToBarcodeScan() {
+    navigateTo(Route.OverviewScan)
+  }
+
+  fun navigateToGraph() {
+    navigateTo(Route.Graph)
+  }
+
+  fun navigateToRecipeRecommendationMore() {
+    navigateTo(Route.RecipeRecommendationMore)
+  }
+
+  fun navigateToRecipeRecommendationFlow() {
+    navigateTo(Route.RecipeRecFlow)
+  }
+
+  fun navigateToEditMeal(mealDatabaseId: String) {
+    navigateTo(Route.EditMeal + "/$mealDatabaseId")
   }
 
   fun navigateToHome() {
@@ -16,12 +51,44 @@ class Navigation(private val navHostController: NavHostController) {
     navigateTo(Route.Nutrition)
   }
 
+  fun navigateToAddMeal(mealDatabaseId: String? = null) {
+    if (mealDatabaseId.isNullOrEmpty()) {
+      navigateTo(Route.AddMeal)
+    } else {
+      navigateTo(Route.AddMeal + "/$mealDatabaseId")
+    }
+  }
+
   fun navigateToAddMeal() {
-    navigateTo(Route.AddMeal)
+    navigateToAddMeal(null)
+  }
+
+  fun navigateToAdditionalMealInfo() {
+    navigateTo(Route.AdditionalMealInfo)
+  }
+
+  fun navigateToDailyRecap() {
+    navigateTo(Route.DailyRecap)
+  }
+
+  fun navigateToCreatePost() {
+    navigateTo(Route.CreatePost)
+  }
+
+  fun navigateToSettingsHome() {
+    navigateTo(Route.SettingsHome)
+  }
+
+  fun navigateToAccountSettings() {
+    navigateTo(Route.AccountSettings)
   }
 
   private fun navigateTo(route: String) {
     Log.i("Navigation", "Navigating to $route")
     navHostController.navigate(route)
+  }
+
+  fun navigateToPostInfo() {
+    navigateTo(Route.PostInfo)
   }
 }

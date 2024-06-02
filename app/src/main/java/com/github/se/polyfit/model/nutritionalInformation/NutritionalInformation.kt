@@ -2,22 +2,29 @@ package com.github.se.polyfit.model.nutritionalInformation
 
 import android.util.Log
 
-class NutritionalInformation {
+/**
+ * Represents the nutritional information of a food item. It is represented by a list of [Nutrient]
+ * that each contain information about the type of nutrient and the amount of that nutrient in the
+ * food item.
+ *
+ * @param nutrientsList The list of nutrients in the food item.
+ */
+class NutritionalInformation(nutrientsList: MutableList<Nutrient> = mutableListOf()) {
   val nutrients: MutableList<Nutrient> = mutableListOf()
 
-  constructor(nutrientsList: MutableList<Nutrient>) {
+  init {
     nutrients.addAll(nutrientsList.map { it.deepCopy() })
   }
 
   fun calculateTotalNutrient(nutrientType: String): Double {
-
-    val totalNutrient = nutrients.filter { it.nutrientType == nutrientType }.map { it.amount }.sum()
-
-    return totalNutrient
+    return nutrients
+        .filter { it.nutrientType.equals(nutrientType, ignoreCase = true) }
+        .map { it.amount }
+        .sum()
   }
 
   fun deepCopy(): NutritionalInformation {
-    val newNutritionalInformation = NutritionalInformation(mutableListOf())
+    val newNutritionalInformation = NutritionalInformation()
     nutrients.forEach { newNutritionalInformation.update(it.copy()) }
     return newNutritionalInformation
   }
@@ -73,7 +80,7 @@ class NutritionalInformation {
   }
 
   operator fun plus(other: NutritionalInformation): NutritionalInformation {
-    val newNutritionalInformation = NutritionalInformation(mutableListOf())
+    val newNutritionalInformation = NutritionalInformation()
 
     nutrients.forEach { newNutritionalInformation.update(it) }
     other.nutrients.forEach { newNutritionalInformation.update(it) }
@@ -82,7 +89,7 @@ class NutritionalInformation {
   }
 
   operator fun minus(other: NutritionalInformation): NutritionalInformation {
-    val newNutritionalInformation = NutritionalInformation(mutableListOf())
+    val newNutritionalInformation = NutritionalInformation()
 
     nutrients.forEach { newNutritionalInformation.update(it) }
     other.nutrients.forEach { newNutritionalInformation.update(it * -1.0) }
@@ -99,8 +106,15 @@ class NutritionalInformation {
       return nutritionalInformation.nutrients.map { Nutrient.serialize(it) }
     }
 
+    /**
+     * Deserializes a list of maps to a NutritionalInformation object.
+     *
+     * @param data The list of maps to deserialize.
+     * @return The NutritionalInformation object.
+     * @throws IllegalArgumentException if cannot deserialize the list of maps.
+     */
     fun deserialize(data: List<Map<String, Any>>): NutritionalInformation {
-      val nutritionalInformation = NutritionalInformation(mutableListOf())
+      val nutritionalInformation = NutritionalInformation()
       data.forEach {
         try {
 
