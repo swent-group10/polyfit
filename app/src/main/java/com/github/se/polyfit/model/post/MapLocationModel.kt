@@ -1,4 +1,3 @@
-/*
 package com.github.se.polyfit.model.post
 
 import android.Manifest
@@ -22,7 +21,7 @@ class MapLocationModel(val context: Context) : Activity() {
       LocationServices.getFusedLocationProviderClient(context)
 
   private val currentLocationRequest =
-          CurrentLocationRequest.Builder().setPriority(Priority.PRIORITY_HIGH_ACCURACY).build()
+      CurrentLocationRequest.Builder().setPriority(Priority.PRIORITY_HIGH_ACCURACY).build()
 
   private val locationRequestCompat: LocationRequest = LocationRequest.Builder(10000).build()
 
@@ -44,42 +43,28 @@ class MapLocationModel(val context: Context) : Activity() {
     }
   }
 
-    private fun startLocationUpdates() {
+  private fun startLocationUpdates() {
 
-           val callBack = object : LocationCallback() {
-                override fun onLocationResult(locationResult: LocationResult) {
-                    // Handle the new location
-                    val location = locationResult.lastLocation
-                    // Do something with the location, such as update the UI
-                }
-            }
-
-
-
-
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return
+    val callBack =
+        object : LocationCallback() {
+          override fun onLocationResult(locationResult: LocationResult) {
+            // Handle the new location
+            val location = locationResult.lastLocation
+            // Do something with the location, such as update the UI
+          }
         }
-        fusedLocationClient.requestLocationUpdates(
-                locationRequestCompat, callBack, Looper.getMainLooper())
 
-        locationCallback = callBack
+    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+        PackageManager.PERMISSION_GRANTED &&
+        ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) !=
+            PackageManager.PERMISSION_GRANTED) {
+      fusedLocationClient.requestLocationUpdates(
+          locationRequestCompat, callBack, Looper.getMainLooper())
 
+      locationCallback = callBack
+      return
     }
+  }
 
   private fun checkLocationPermissions(locationFunction: () -> Unit) {
     if (ActivityCompat.checkSelfPermission(
@@ -88,37 +73,9 @@ class MapLocationModel(val context: Context) : Activity() {
         ActivityCompat.checkSelfPermission(
             this.context, Manifest.permission.ACCESS_FINE_LOCATION) !=
             PackageManager.PERMISSION_GRANTED) {
-      requestLocationPermissions()
+      startLocationUpdates()
     } else {
-        locationFunction()
+      locationFunction()
     }
   }
-
-  private fun requestLocationPermissions() {
-    ActivityCompat.requestPermissions(
-        this,
-        arrayOf(
-            Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION),
-        REQUEST_LOCATION_PERMISSION)
-  }
-
-
-  override fun onResume() {
-    super.onResume()
-    if (requestingLocationUpdates) startLocationUpdates()
-  }
-
-  override fun onPause() {
-    super.onPause()
-    stopLocationUpdates()
-  }
-
-  private fun stopLocationUpdates() {
-    val callback = locationCallback ?: return
-    fusedLocationClient.removeLocationUpdates(callback)
-    requestingLocationUpdates = false
-  }
-
-
 }
-*/
