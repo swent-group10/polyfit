@@ -1,6 +1,10 @@
 package com.github.se.polyfit.ui.flow
 
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -8,6 +12,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.ui.components.selector.MealOccasionSelectorScreen
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.navigation.Route
+import com.github.se.polyfit.ui.screen.AddIngredientPopupBox
 import com.github.se.polyfit.ui.screen.AdditionalMealInfoBottomBar
 import com.github.se.polyfit.ui.screen.AdditionalMealInfoTopBar
 import com.github.se.polyfit.ui.screen.HomeScreen
@@ -39,7 +44,10 @@ class AddMealFlowTest {
         composable(Route.Home) { HomeScreen() }
         composable(Route.AddMeal) {
           AddMealFlow(
-              navigation::goBack, navigation::navigateToHome, mealId = null, MealViewModel(mockk()))
+              navigation::goBack,
+              navigation::navigateToHome,
+              mealId = null,
+              MealViewModel(mockk(), mockk()))
         }
       }
       navigation.navigateToAddMeal()
@@ -47,7 +55,7 @@ class AddMealFlowTest {
   }
 
   @Test
-  fun ingredientScreenIsShown() {
+  fun ingredientScreenGoesBackAfterConfirm() {
     ComposeScreen.onComposeScreen<IngredientsTopBar>(composeTestRule) {
       ingredientTitle {
         assertIsDisplayed()
@@ -61,6 +69,8 @@ class AddMealFlowTest {
         performClick()
       }
 
+      composeTestRule.onNodeWithTag("GoBack").assertExists().performClick()
+
       ingredientTitle { assertDoesNotExist() }
       backButton { assertDoesNotExist() }
     }
@@ -71,7 +81,40 @@ class AddMealFlowTest {
   }
 
   @Test
+  fun ingredientScreenStaysIfDenied() {
+    ComposeScreen.onComposeScreen<IngredientsTopBar>(composeTestRule) {
+      ingredientTitle {
+        assertIsDisplayed()
+        assertTextEquals("Ingredients")
+      }
+
+      backButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+        assertContentDescriptionEquals("Back")
+        performClick()
+      }
+
+      composeTestRule.onNodeWithTag("DenyButton").assertExists().performClick()
+
+      ingredientTitle { assertExists() }
+    }
+
+    ComposeScreen.onComposeScreen<IngredientsList>(composeTestRule) {
+      ingredientButton { assertDoesNotExist() }
+    }
+  }
+
+  @Test
   fun additionalMealInfoIsShown() {
+    ComposeScreen.onComposeScreen<AddIngredientPopupBox>(composeTestRule) {
+      addIngredientGradientButton { performClick() }
+      composeTestRule.onNodeWithText("Enter an Ingredient...").performTextInput("apple")
+      composeTestRule.onNodeWithTag("NutritionSizeInput Calories").performTextInput("1")
+      composeTestRule.onNodeWithTag("NutritionSizeInput Total Weight").performTextInput("1")
+      finishAddIngredientButton { performClick() }
+    }
+
     ComposeScreen.onComposeScreen<IngredientsBottomBar>(composeTestRule) {
       doneButton {
         assertIsDisplayed()
@@ -88,6 +131,14 @@ class AddMealFlowTest {
 
   @Test
   fun nutritionalInformationIsShown() {
+    ComposeScreen.onComposeScreen<AddIngredientPopupBox>(composeTestRule) {
+      addIngredientGradientButton { performClick() }
+      composeTestRule.onNodeWithText("Enter an Ingredient...").performTextInput("apple")
+      composeTestRule.onNodeWithTag("NutritionSizeInput Calories").performTextInput("1")
+      composeTestRule.onNodeWithTag("NutritionSizeInput Total Weight").performTextInput("1")
+      finishAddIngredientButton { performClick() }
+    }
+
     ComposeScreen.onComposeScreen<IngredientsBottomBar>(composeTestRule) {
       doneButton {
         assertIsDisplayed()

@@ -1,5 +1,10 @@
 package com.github.se.polyfit.ui.screen
 
+import android.app.Activity
+import android.app.Instrumentation
+import android.content.Intent
+import android.graphics.BitmapFactory
+import android.provider.MediaStore
 import android.util.Log
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.graphics.Brush
@@ -15,10 +20,14 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import co.yml.charts.axis.AxisData
 import co.yml.charts.common.model.Point
 import co.yml.charts.ui.linechart.model.GridLines
@@ -26,16 +35,20 @@ import co.yml.charts.ui.linechart.model.IntersectionPoint
 import co.yml.charts.ui.linechart.model.LineStyle
 import co.yml.charts.ui.linechart.model.LineType
 import co.yml.charts.ui.linechart.model.ShadowUnderLine
+import com.github.se.polyfit.R
 import com.github.se.polyfit.data.processor.LocalDataProcessor
 import com.github.se.polyfit.model.data.User
+import com.github.se.polyfit.model.meal.Meal
+import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.components.lineChartData
 import com.github.se.polyfit.ui.flow.AddMealFlow
 import com.github.se.polyfit.ui.navigation.Route
 import com.github.se.polyfit.ui.utils.GraphData
 import com.github.se.polyfit.ui.utils.OverviewTags
-import com.github.se.polyfit.ui.viewModel.DisplayScreen
-import com.github.se.polyfit.ui.viewModel.GraphViewModel
+import com.github.se.polyfit.viewmodel.graph.DisplayScreen
+import com.github.se.polyfit.viewmodel.graph.GraphViewModel
+import com.github.se.polyfit.viewmodel.meal.MealViewModel
 import com.github.se.polyfit.viewmodel.meal.OverviewViewModel
 import com.github.se.polyfit.viewmodel.post.CreatePostViewModel
 import com.kaspersky.components.composesupport.config.withComposeSupport
@@ -62,14 +75,34 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
   @get:Rule val composeTestRule = createComposeRule()
 
   @get:Rule val mockkRule = MockKRule(this)
+
+  private val mockkDataProcessor: LocalDataProcessor = mockk(relaxed = true)
   private val mockkOverviewModule: OverviewViewModel =
-      OverviewViewModel(mockk(), mockk(), User.testUser().apply { displayName = "It's me Mario" })
+      OverviewViewModel(
+          mockk(),
+          mockk(),
+          User.testUser().apply { displayName = "It's me Mario" },
+          mockkDataProcessor)
 
   fun setup() {
     val dataProcessor = mockk<LocalDataProcessor>(relaxed = true)
     val mockPostViewModel: CreatePostViewModel = mockk(relaxed = true)
+    val mockMealViewModel: MealViewModel = mockk(relaxed = true)
 
+    every { mockMealViewModel.meal.value } returns Meal.default()
     every { mockPostViewModel.meals.value } returns listOf()
+    every { mockkDataProcessor.getCaloriesPerMealOccasionTodayLiveData() } returns
+        MutableLiveData(
+            listOf(
+                Pair(MealOccasion.BREAKFAST, 100.0),
+                Pair(MealOccasion.LUNCH, 200.0),
+                Pair(MealOccasion.DINNER, 300.0)))
+
+    every { mockkDataProcessor.getCaloriesPerMealOccasionToday() } returns
+        mapOf(
+            MealOccasion.BREAKFAST to 100.0,
+            MealOccasion.LUNCH to 200.0,
+            MealOccasion.DINNER to 300.0)
 
     composeTestRule.setContent {
       val navController = rememberNavController()
@@ -78,16 +111,12 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
           GenericScreen(
               navController = navController,
               content = { paddingValues ->
-                OverviewScreen(
-                    paddingValues,
-                    navController,
-                    mockkOverviewModule,
-                )
+                OverviewScreen(paddingValues, navController, mockkOverviewModule)
               })
         }
 
         composable(Route.AddMeal) {
-          AddMealFlow(goBack = {}, goForward = {}, mealId = null, mockk(relaxed = true))
+          AddMealFlow(goBack = {}, goForward = {}, mealId = null, mockMealViewModel)
         }
         composable(Route.Graph) {
           FullGraphScreen(goBack = {}, viewModel = GraphViewModel(dataProcessor))
@@ -332,6 +361,12 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
         assertIsDisplayed()
         assertHasClickAction()
       }
+
+      thirdButton {
+        assertExists()
+        assertIsDisplayed()
+        assertHasClickAction()
+      }
     }
   }
 
@@ -387,6 +422,29 @@ class OverviewTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSu
         .onNodeWithTag("LineChartSpacer", useUnmergedTree = true)
         .assertExists()
         .assertIsDisplayed()
+  }
+
+  @Test
+  fun testImportButton() {
+    val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+    val bitmap = BitmapFactory.decodeResource(appContext.resources, R.drawable.google_logo)
+    val resultData = Intent()
+    resultData.putExtra("data", bitmap)
+    val result = Instrumentation.ActivityResult(Activity.RESULT_OK, resultData)
+
+    Intents.init()
+    Intents.intending(IntentMatchers.hasAction(MediaStore.ACTION_PICK_IMAGES)).respondWith(result)
+    setup()
+    ComposeScreen.onComposeScreen<CalorieCard>(composeTestRule) {
+      composeTestRule.onNodeWithTag(OverviewTags.overviewPictureBtn).performClick()
+    }
+
+    composeTestRule
+        .onNodeWithTag("1Button")
+        .assertExists()
+        .assertIsDisplayed()
+        .assertHasClickAction()
+        .performClick()
   }
 
   @OptIn(ExperimentalTestApi::class)

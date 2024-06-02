@@ -1,6 +1,10 @@
 package com.github.se.polyfit.ui.screen
 
+import android.graphics.Bitmap
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.se.polyfit.data.remote.firebase.PostFirebaseRepository
 import com.github.se.polyfit.data.repository.MealRepository
@@ -19,6 +23,7 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.verify
 import junit.framework.TestCase
 import kotlin.test.Test
 import org.junit.Rule
@@ -30,6 +35,7 @@ class CreatePostTest : TestCase() {
 
   val mockNavForward: () -> Unit = mockk()
   val mockNavBack: () -> Unit = mockk()
+  val mockNavAddMeal: () -> Unit = mockk()
   private val mockMealRepository = mockk<MealRepository>(relaxed = true)
   private val mockPostFirebaseRepository = mockk<PostFirebaseRepository>(relaxed = true)
   private val mockPostLocationModel = mockk<PostLocationModel>(relaxed = true)
@@ -40,14 +46,38 @@ class CreatePostTest : TestCase() {
     coEvery { mockMealRepository.getAllMeals() } returns meals
     every { mockNavForward() } just Runs
     every { mockNavBack() } just Runs
+    every { mockNavAddMeal() } just Runs
 
-    viewModel =
-        CreatePostViewModel(mockMealRepository, mockPostFirebaseRepository, mockPostLocationModel)
-    composeTestRule.setContent { CreatePostScreen(mockNavBack, mockNavForward, viewModel) }
+    viewModel = CreatePostViewModel(mockMealRepository, mockPostFirebaseRepository, mockk())
+    viewModel.setBitMap(Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888))
+    composeTestRule.setContent {
+      CreatePostScreen(mockNavBack, mockNavForward, mockNavAddMeal, viewModel)
+    }
   }
 
-  fun everythingIsDisplayed() {
+  @Test
+  fun addMealButtonWhenNoMeal() {
     setup()
+    ComposeScreen.onComposeScreen<CreatePostAddMeal>(composeTestRule) {
+      noMealsFound {
+        assertExists()
+        assertIsDisplayed()
+      }
+
+      addMealButton {
+        assertExists()
+        assertIsDisplayed()
+        assertHasClickAction()
+        performClick()
+      }
+    }
+    verify { mockNavAddMeal() }
+  }
+
+  @Test
+  fun everythingIsDisplayed() {
+    val meal = Meal(MealOccasion.DINNER, "eggs", "1", "testUserID", 102.2)
+    setup(listOf(meal))
     ComposeScreen.onComposeScreen<CreatePostScreen>(composeTestRule) {
       pictureSelector {
         assertExists()
@@ -90,7 +120,7 @@ class CreatePostTest : TestCase() {
 
   @Test
   fun selectingMealEnablesPostButton() {
-    val meal = Meal(MealOccasion.DINNER, "eggs", "1", 102.2)
+    val meal = Meal(MealOccasion.DINNER, "eggs", "1", "testUserID", 102.2)
     meal.addIngredient(
         Ingredient(
             "milk",
@@ -125,6 +155,16 @@ class CreatePostTest : TestCase() {
         assertExists()
         assertIsDisplayed()
         assertIsEnabled()
+
+        composeTestRule
+            .onNodeWithTag("BackButton")
+            .assertExists()
+            .assertIsDisplayed()
+            .performClick()
+            .performClick()
+
+        // count the number of times a function is called mockNavForward
+        verify(exactly = 1) { mockNavBack() }
       }
     }
   }

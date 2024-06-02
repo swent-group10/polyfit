@@ -5,7 +5,6 @@ import io.mockk.every
 import io.mockk.mockkStatic
 import junit.framework.TestCase.assertEquals
 import kotlin.test.Test
-import kotlin.test.assertFailsWith
 import org.junit.Before
 
 class MeasurementUnitTest {
@@ -64,9 +63,9 @@ class MeasurementUnitTest {
   }
 
   @Test
-  fun `test UNIT conversion`() {
-    assertFailsWith<IllegalArgumentException> {
-      MeasurementUnit.unitConversion(MeasurementUnit.UNIT, MeasurementUnit.UNIT, 1.0)
-    }
+  fun `unitConversion converts grams to tablespoons`() {
+    val result = MeasurementUnit.unitConversion(MeasurementUnit.G, MeasurementUnit.TABLESPOONS, 1.0)
+    // because 1 is the default value of conversion is not hardcoded or possible
+    assertEquals(1.0, result, 0.001)
   }
 }

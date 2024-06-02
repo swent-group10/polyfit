@@ -1,28 +1,35 @@
 package com.github.se.polyfit.ui.screen
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.ImageDecoder
-import android.graphics.ImageDecoder.createSource
-import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,28 +51,34 @@ import com.github.se.polyfit.ui.components.dialog.PictureDialog
 import com.github.se.polyfit.ui.components.lineChartData
 import com.github.se.polyfit.ui.navigation.Navigation
 import com.github.se.polyfit.ui.utils.OverviewTags
-import com.github.se.polyfit.ui.viewModel.DisplayScreen
-import com.github.se.polyfit.ui.viewModel.GraphViewModel
+import com.github.se.polyfit.viewmodel.graph.DisplayScreen
+import com.github.se.polyfit.viewmodel.graph.GraphViewModel
 import com.github.se.polyfit.viewmodel.meal.OverviewViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+
+var cameraNormal = true
 
 @Composable
 fun OverviewScreen(
     paddingValues: PaddingValues,
     navController: NavHostController,
-    overviewViewModel: OverviewViewModel = hiltViewModel()
+    overviewViewModel: OverviewViewModel = hiltViewModel(),
 ) {
-
   val context = LocalContext.current
   val navigation = Navigation(navController)
   var showPictureDialog by remember { mutableStateOf(false) }
   val isTestEnvironment = System.getProperty("isTestEnvironment") == "true"
 
   // State to hold the URI, the image and the bitmap
-  var imageUri by remember { mutableStateOf<Uri?>(null) }
   val iconExample = BitmapFactory.decodeResource(context.resources, R.drawable.picture_example)
   var imageBitmap by remember { mutableStateOf(iconExample) }
+
+  var mealSummary by remember { mutableStateOf(listOf<Pair<MealOccasion, Double>>()) }
+
+  LaunchedEffect(Unit) {
+    overviewViewModel.getCaloriesPerMealOccasionTodayLiveData().observeForever { mealSummary = it }
+  }
 
   // Launcher for starting the camera activity
   val startCamera =
@@ -76,7 +89,23 @@ fun OverviewScreen(
 
         showPictureDialog = false
         val id: String? = runBlocking(Dispatchers.IO) { overviewViewModel.storeMeal(imageBitmap) }
-        navigation.navigateToAddMeal(id)
+        navigateOrShowError(id, navigation, context)
+      }
+
+  val pickMedia =
+      rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        showPictureDialog = false
+        var id: String? = null
+        runBlocking(Dispatchers.IO) {
+          id =
+              overviewViewModel.handleSelectedImage(
+                  context,
+                  uri,
+                  overviewViewModel,
+              )
+        }
+
+        navigateOrShowError(id, navigation, context)
       }
 
   // Launcher for requesting the camera permission
@@ -87,41 +116,47 @@ fun OverviewScreen(
           // Permission is granted, you can start the camera
           val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
           try {
-            startCamera.launch(takePictureIntent)
+            if (cameraNormal) {
+              startCamera.launch(takePictureIntent)
+            } else {
+              navigation.navigateToBarcodeScan()
+            }
           } catch (e: Exception) {
             // Handle the exception if the camera intent cannot be launched
+            Log.e("OverviewScreen", "Error launching camera: $e")
           }
         } else {
           // Permission is denied. Handle the denial appropriately.
-        }
-      }
-
-  // Create a launcher to open gallery
-  val pickImageLauncher =
-      rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri?
-        ->
-        uri?.let {
-          imageUri = uri // Update the UI with the selected image URI
-
-          try {
-            val bitmap = ImageDecoder.decodeBitmap(createSource(context.contentResolver, uri))
-            imageBitmap = bitmap
-          } catch (e: Exception) {
-            Log.e(
-                "OverviewScreen",
-                "Error decoding image: $e," + " are you sure the image is a bitmap?")
-          }
+          Log.w("OverviewScreen", "Camera permission denied")
         }
       }
 
   if (showPictureDialog) {
     PictureDialog(
         onDismiss = { showPictureDialog = false },
-        onFirstButtonClick =
-            overviewViewModel.callCamera(context, startCamera, requestPermissionLauncher),
-        onSecondButtonClick = { pickImageLauncher.launch("image/*") },
-        firstButtonName = context.getString(R.string.take_picture_dialog),
-        secondButtonName = context.getString(R.string.import_picture_dialog))
+        onButtonsClick =
+            listOf(
+                {
+                  cameraNormal = true
+                  overviewViewModel.launchCamera(context, requestPermissionLauncher) {
+                    startCamera.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+                  }
+                },
+                {
+                  pickMedia.launch(
+                      PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                },
+                {
+                  cameraNormal = false
+                  overviewViewModel.launchCamera(context, requestPermissionLauncher) {
+                    navigation.navigateToBarcodeScan()
+                  }
+                }),
+        buttonsName =
+            listOf(
+                context.getString(R.string.take_picture_dialog),
+                context.getString(R.string.import_picture_dialog),
+                context.getString(R.string.scan_picture_dialog)))
   }
 
   Box(modifier = Modifier.padding(paddingValues).fillMaxWidth().testTag("OverviewScreen")) {
@@ -140,12 +175,8 @@ fun OverviewScreen(
           }
           item {
             MealTrackerCard(
-                caloriesGoal = 2200,
-                meals =
-                    listOf(
-                        Pair(MealOccasion.BREAKFAST, 300.0),
-                        Pair(MealOccasion.LUNCH, 456.0),
-                        Pair(MealOccasion.DINNER, 0.0)),
+                caloriesGoal = overviewViewModel.getCaloryGoal(),
+                meals = mealSummary,
                 onCreateMealFromPhoto = {
                   showPictureDialog = true
                   Log.d("OverviewScreen", "Photo button clicked")
@@ -164,16 +195,27 @@ fun OverviewScreen(
                         .clickable { navigation.navigateToGraph() },
             ) {
               Column(modifier = Modifier.fillMaxSize().testTag("Graph Card Column")) {
-                Text(
-                    text = "Calories Graph",
-                    style = MaterialTheme.typography.headlineLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.secondary,
-                    modifier =
-                        Modifier.padding(start = 10.dp, top = 10.dp)
-                            .weight(1f)
-                            .testTag("Graph Card Title")
-                            .clickable { navigation.navigateToGraph() })
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(5.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween) {
+                      Text(
+                          text = "Calories Graph",
+                          style = MaterialTheme.typography.headlineLarge,
+                          fontWeight = FontWeight.Bold,
+                          color = MaterialTheme.colorScheme.secondary,
+                          modifier =
+                              Modifier.padding(start = 10.dp, top = 10.dp)
+                                  .weight(1f)
+                                  .testTag("Graph Card Title")
+                                  .clickable { navigation.navigateToGraph() })
+
+                      Icon(
+                          imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                          contentDescription = "rightArrow",
+                          modifier =
+                              Modifier.align(Alignment.CenterVertically).padding(top = 10.dp))
+                    }
+                HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 2.dp)
                 Box(
                     modifier =
                         Modifier.fillMaxSize(0.85f)
@@ -196,5 +238,13 @@ fun OverviewScreen(
             }
           }
         }
+  }
+}
+
+fun navigateOrShowError(id: String?, navigation: Navigation, context: Context) {
+  if (id != null) {
+    navigation.navigateToAddMeal(id)
+  } else {
+    Toast.makeText(context, context.getString(R.string.ErrorPicture), Toast.LENGTH_SHORT).show()
   }
 }

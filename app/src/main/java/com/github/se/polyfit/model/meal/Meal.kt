@@ -7,11 +7,24 @@ import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
 import java.time.LocalDate
 import java.util.UUID
 
-// modeled after the log meal api
+/**
+ * Represents a meal. Automatically updates the nutritional information when any property changes.
+ * It is modeled after the Spoonacular API structure for a recipe.
+ *
+ * @property occasion The occasion for the meal.
+ * @property name The name of the meal.
+ * @property id The unique ID of the meal.
+ * @property userId The ID of the user who created the meal.
+ * @property mealTemp The temperature of the meal.
+ * @property ingredients The ingredients in the meal.
+ * @property createdAt The date the meal was created.
+ * @property tags The tags associated with the meal.
+ */
 data class Meal(
     var occasion: MealOccasion,
     var name: String,
     val id: String = UUID.randomUUID().toString(),
+    var userId: String = "",
     val mealTemp: Double = 20.0,
     val ingredients: MutableList<Ingredient> = mutableListOf(),
     var createdAt: LocalDate = LocalDate.now(),
@@ -27,6 +40,7 @@ data class Meal(
       occasion: MealOccasion = this.occasion,
       name: String = this.name,
       id: String = this.id,
+      userId: String = this.userId,
       mealTemp: Double = this.mealTemp,
       ingredients: MutableList<Ingredient> = this.ingredients,
       createdAt: LocalDate = this.createdAt,
@@ -39,6 +53,7 @@ data class Meal(
         occasion = occasion,
         name = name,
         id = id,
+        userId = userId,
         mealTemp = mealTemp,
         ingredients = newIngredients,
         createdAt = createdAt,
@@ -50,6 +65,7 @@ data class Meal(
     if (other !is Meal) return false
 
     if (id != other.id) return false
+    if (userId != other.userId) return false
     if (name != other.name) return false
     if (occasion != other.occasion) return false
     if (mealTemp != other.mealTemp) return false
@@ -63,6 +79,7 @@ data class Meal(
 
   override fun hashCode(): Int {
     var result = id.hashCode()
+    result = 31 * result + userId.hashCode()
     result = 31 * result + name.hashCode()
     result = 31 * result + occasion.hashCode()
     result = 31 * result + mealTemp.hashCode()
@@ -127,6 +144,7 @@ data class Meal(
     fun serialize(data: Meal): Map<String, Any> {
       return mutableMapOf<String, Any>().apply {
         this["id"] = data.id
+        this["userId"] = data.userId
         this["occasion"] = data.occasion.name
         this["name"] = data.name
         this["mealTemp"] = data.mealTemp
@@ -136,9 +154,17 @@ data class Meal(
       }
     }
 
+    /**
+     * Deserializes a map into a Meal object.
+     *
+     * @param data The map to deserialize.
+     * @return The deserialized Meal object.
+     * @throws IllegalArgumentException If the map cannot be deserialized into a Meal object.
+     */
     fun deserialize(data: Map<String, Any>): Meal {
       return try {
         val id = data["id"] as String
+        val userId = if (data.containsKey("userId")) data["userId"] as String else ""
         val occasion = data["occasion"].let { MealOccasion.valueOf(it as String) }
         val mealTemp = data["mealTemp"] as Double
         val name = data["name"] as String
@@ -151,6 +177,7 @@ data class Meal(
                 occasion = occasion,
                 name = name,
                 id = id,
+                userId = userId,
                 mealTemp = mealTemp,
                 createdAt = createdAt,
                 tags = tags)
@@ -173,6 +200,7 @@ data class Meal(
           occasion = MealOccasion.OTHER,
           name = "",
           id = UUID.randomUUID().toString(),
+          userId = "",
           mealTemp = 20.0,
           ingredients = mutableListOf(),
           createdAt = LocalDate.now(),

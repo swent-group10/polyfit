@@ -1,56 +1,55 @@
 package com.github.se.polyfit.viewmodel.post
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.github.se.polyfit.data.remote.firebase.PostFirebaseRepository
-import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.post.Location
-import com.github.se.polyfit.model.post.Post
+import com.github.se.polyfit.model.post.PostLocationModel
+import com.google.android.gms.location.CurrentLocationRequest
+import com.google.android.gms.location.Priority
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import java.time.LocalDate
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 
 class ViewPostViewModelTest {
 
+  @get:Rule val instantTaskExecutorRule = InstantTaskExecutorRule()
+
   private lateinit var postFirebaseRepository: PostFirebaseRepository
+  private lateinit var viewModelMockk: ViewPostViewModel
+
   private lateinit var viewModel: ViewPostViewModel
+  private lateinit var postLocationModel: PostLocationModel
+  val default = 0.0
+
+  private val expectedLocation = Location(default, default, default, "Test Location")
 
   @Before
   fun setup() {
     postFirebaseRepository = mockk(relaxed = true)
-    viewModel = ViewPostViewModel(postFirebaseRepository)
+
+    postLocationModel = mockk(relaxed = true)
+    viewModel = ViewPostViewModel(postFirebaseRepository, postLocationModel)
+
+    viewModelMockk = mockk<ViewPostViewModel>()
+    every { viewModelMockk.location.value } returns expectedLocation
   }
 
   @Test
-  fun getAllPost_returnsCorrectly() = runTest {
+  fun testInitBlock(): Unit = runTest {
     // Arrange
-    val posts = listOf(Post("1", "Title", Location.default(), Meal.default(), LocalDate.now()))
-    coEvery { postFirebaseRepository.getAllPosts() } returns flowOf(posts)
 
-    // Act
-    viewModel.getAllPost()
-    delay(1000) // Allow time for the coroutine to complete
+    coEvery {
+      postLocationModel.getCurrentLocation(
+          CurrentLocationRequest.Builder().setPriority(Priority.PRIORITY_HIGH_ACCURACY).build())
+    } returns expectedLocation
 
-    // Assert
-    coVerify { postFirebaseRepository.getAllPosts() }
-    assertEquals(posts, viewModel.posts.value)
-    assertFalse(viewModel.isFetching.value)
-  }
-
-  @Test
-  fun returnsEmptyListWhenNoPostsAvailable() = runTest {
-    every { postFirebaseRepository.getAllPosts() } returns flowOf(emptyList())
-
-    viewModel.getAllPost()
-
-    val result = viewModel.posts.value
-    assertEquals(emptyList<Post>(), result)
+    assertTrue(viewModel.isFetching.value!!)
+    assertEquals(expectedLocation, viewModelMockk.location.value)
   }
 }

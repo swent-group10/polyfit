@@ -18,10 +18,11 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import com.github.se.polyfit.R
-import com.github.se.polyfit.data.api.SpoonacularApiCaller
+import com.github.se.polyfit.data.api.Spoonacular.SpoonacularApiCaller
 import com.github.se.polyfit.data.local.dao.MealDao
 import com.github.se.polyfit.data.processor.LocalDataProcessor
 import com.github.se.polyfit.model.data.User
+import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.flow.AddMealFlow
@@ -34,7 +35,7 @@ import com.github.se.polyfit.ui.screen.IngredientsBottomBar
 import com.github.se.polyfit.ui.screen.OverviewScreen
 import com.github.se.polyfit.ui.screen.PictureDialogBox
 import com.github.se.polyfit.ui.utils.OverviewTags
-import com.github.se.polyfit.ui.viewModel.GraphViewModel
+import com.github.se.polyfit.viewmodel.graph.GraphViewModel
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
 import com.github.se.polyfit.viewmodel.meal.OverviewViewModel
 import com.github.se.polyfit.viewmodel.post.CreatePostViewModel
@@ -72,8 +73,9 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
 
   private val mockSpoonacularApiCaller = mockk<SpoonacularApiCaller>(relaxed = true)
   private val mockDao = mockk<MealDao>(relaxed = true)
+  private val mockDataProcessor: LocalDataProcessor = mockk(relaxed = true)
   private val overviewViewModel: OverviewViewModel =
-      OverviewViewModel(mockDao, mockSpoonacularApiCaller, User.testUser())
+      OverviewViewModel(mockDao, mockSpoonacularApiCaller, User.testUser(), mockDataProcessor)
   private val id = UUID.randomUUID().toString()
 
   @Before
@@ -81,6 +83,7 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
     mockkStatic(Log::class)
     System.setProperty("isTestEnvironment", "true")
 
+    every { mockDataProcessor.getCaloriesPerMealOccasionToday() } returns mapOf()
     every { mockSpoonacularApiCaller.getMealsFromImage(any()) } returns Meal.default()
     every { mockDao.insert(any<Meal>()) } returns id
   }
@@ -106,6 +109,7 @@ class EndTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withComposeSupport
     mealViewModel.setMealData(Meal.default())
 
     val mockMeal = Meal.default()
+    mockMeal.addIngredient(Ingredient.default())
     every { mealViewModel.meal } returns MutableStateFlow(mockMeal)
 
     composeTestRule.setContent {

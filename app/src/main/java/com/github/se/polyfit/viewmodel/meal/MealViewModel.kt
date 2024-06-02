@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.se.polyfit.data.repository.MealRepository
+import com.github.se.polyfit.model.data.User
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.meal.MealOccasion
@@ -21,7 +22,12 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class MealViewModel @Inject constructor(private val mealRepo: MealRepository) : ViewModel() {
+class MealViewModel
+@Inject
+constructor(
+    private val mealRepo: MealRepository,
+    private val user: User,
+) : ViewModel() {
   private val _meal = MutableStateFlow<Meal>(Meal.default())
   val meal: StateFlow<Meal>
     get() = _meal
@@ -59,7 +65,16 @@ class MealViewModel @Inject constructor(private val mealRepo: MealRepository) : 
       createdAt: LocalDate = _meal.value.createdAt,
       tags: MutableList<MealTag> = _meal.value.tags
   ) {
-    _meal.value = Meal(mealOccasion, name, _meal.value.id, mealTemp, ingredients, createdAt, tags)
+    _meal.value =
+        Meal(
+            mealOccasion,
+            name,
+            _meal.value.id,
+            _meal.value.userId,
+            mealTemp,
+            ingredients,
+            createdAt,
+            tags)
   }
 
   fun setMealCreatedAt(createdAt: LocalDate) {
@@ -71,6 +86,8 @@ class MealViewModel @Inject constructor(private val mealRepo: MealRepository) : 
   }
 
   fun setMeal() {
+    _meal.value.userId = user.id
+
     if (!_meal.value.isComplete()) {
       throw Exception("Meal is incomplete")
     }

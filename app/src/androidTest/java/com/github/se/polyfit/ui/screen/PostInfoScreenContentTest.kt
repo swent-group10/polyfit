@@ -3,6 +3,7 @@ package com.github.se.polyfit.ui.screen
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.lifecycle.MutableLiveData
 import com.github.se.polyfit.model.ingredient.Ingredient
 import com.github.se.polyfit.model.meal.Meal
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
@@ -12,7 +13,9 @@ import com.github.se.polyfit.model.post.Post
 import com.github.se.polyfit.viewmodel.meal.MealViewModel
 import com.github.se.polyfit.viewmodel.post.ViewPostViewModel
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.runs
 import java.time.LocalDate
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Before
@@ -28,13 +31,15 @@ class PostInfoScreenContentTest {
   @Before
   fun setup() {
     viewPostViewModel = mockk<ViewPostViewModel>(relaxed = true)
-    every { viewPostViewModel.isFetching } returns MutableStateFlow(false)
+    every { viewPostViewModel.isFetching } returns MutableLiveData(false)
   }
 
   @Test
   fun PostInfoScreen_displays_post_information() {
     val mealViewModel = mockk<MealViewModel>(relaxed = true)
     val post = Post.default()
+    every { viewPostViewModel.posts } returns MutableStateFlow(listOf(post))
+    every { viewPostViewModel.getNearbyPosts() } just runs
     post.meal.addIngredient(
         Ingredient(
             "ingredient1",
@@ -53,11 +58,8 @@ class PostInfoScreenContentTest {
 
     every { mealViewModel.meal } returns MutableStateFlow(Meal.default())
     every { mealViewModel.isComplete } returns MutableStateFlow(true)
-    every { viewPostViewModel.posts } returns MutableStateFlow(posts)
 
-    composeTestRule.setContent {
-      PostInfoScreenContent(posts, viewPostViewModel = viewPostViewModel)
-    }
+    composeTestRule.setContent { PostInfoScreenContent(viewPostViewModel = viewPostViewModel) }
 
     composeTestRule
         .onNodeWithTag("DescriptionTitle")
@@ -78,11 +80,8 @@ class PostInfoScreenContentTest {
   @Test
   fun PostInfoScreen_displays_no_post_available_when_there_are_no_posts() {
     val posts = listOf<Post>()
-    every { viewPostViewModel.posts } returns MutableStateFlow(posts)
 
-    composeTestRule.setContent {
-      PostInfoScreenContent(posts, viewPostViewModel = viewPostViewModel)
-    }
+    composeTestRule.setContent { PostInfoScreenContent(viewPostViewModel = viewPostViewModel) }
 
     composeTestRule
         .onNodeWithTag("NoPostText")

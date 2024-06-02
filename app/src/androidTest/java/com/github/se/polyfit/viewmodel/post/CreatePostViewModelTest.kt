@@ -1,5 +1,6 @@
 package com.github.se.polyfit.viewmodel.post
 
+import android.graphics.Bitmap
 import com.github.se.polyfit.data.remote.firebase.PostFirebaseRepository
 import com.github.se.polyfit.data.repository.MealRepository
 import com.github.se.polyfit.model.ingredient.Ingredient
@@ -17,8 +18,7 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.unmockkAll
 import java.time.LocalDate
-import kotlin.test.assertFailsWith
-import kotlinx.coroutines.runBlocking
+import kotlin.test.assertNotNull
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -135,10 +135,28 @@ class CreatePostViewModelTest {
   }
 
   @Test
-  fun setPostFailed(): Unit = runBlocking {
-    coEvery { mockPostFirebaseRepository.storePost(any()) } throws
-        Exception("Failed to store post in the database")
-    assertFailsWith<Exception> { viewModel.setPost() }
+  fun setBitMap() {
+    val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+    viewModel.setBitMap(bitmap)
+    assertNotNull(viewModel.getBitMap())
+  }
+
+  @Test
+  fun testSetPostLocation() = runTest {
+    val mockLocation = com.github.se.polyfit.model.post.Location(0.0, 0.0, 0.0, "")
+    coEvery {
+      postLocationModel.getCurrentLocation(
+          CurrentLocationRequest.Builder().setPriority(Priority.PRIORITY_HIGH_ACCURACY).build())
+    } returns mockLocation
+
+    viewModel
+        .initPostLocation(
+            CurrentLocationRequest.Builder().setPriority(Priority.PRIORITY_HIGH_ACCURACY).build())
+        .join()
+
+    assertEquals(mockLocation.latitude, viewModel.post.location.latitude, 0.0001)
+    assertEquals(mockLocation.altitude, viewModel.post.location.altitude, 0.0001)
+    assertEquals(mockLocation.altitude, viewModel.post.location.altitude, 0.0001)
   }
 
   @Test

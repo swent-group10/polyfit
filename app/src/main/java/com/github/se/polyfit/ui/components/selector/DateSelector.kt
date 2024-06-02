@@ -19,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,16 +34,20 @@ import java.time.format.DateTimeFormatter
 fun DateSelector(
     onConfirm: (LocalDate) -> Unit,
     modifier: Modifier = Modifier,
-    title: String = ""
+    title: String = "",
+    allowFutureDates: Boolean = true,
+    inputDate: LocalDate? = null,
+    titleStyle: TextStyle = MaterialTheme.typography.titleLarge,
 ) {
   var showDatePicker by remember { mutableStateOf(false) }
 
-  // I'm *pretty sure* this should select the right time and zone, but if test flakes this is why
-  val initialMillis = LocalDate.now(ZoneId.systemDefault()).toEpochDay() * 1000 * 60 * 60 * 24
+  val startDate = inputDate ?: LocalDate.now(ZoneId.systemDefault())
+  val initialMillis = startDate.toEpochDay() * 1000 * 60 * 60 * 24
   val datePickerState = rememberDatePickerState(initialSelectedDateMillis = initialMillis)
-
   val selectedDate =
       LocalDate.ofEpochDay(datePickerState.selectedDateMillis!! / (1000 * 60 * 60 * 24))
+  val invalidSelection =
+      !allowFutureDates && selectedDate.isAfter(LocalDate.now(ZoneId.systemDefault()))
 
   fun onConfirm() {
     onConfirm(selectedDate)
@@ -53,7 +58,7 @@ fun DateSelector(
     if (title.isNotEmpty()) {
       Text(
           text = title,
-          style = MaterialTheme.typography.titleLarge,
+          style = titleStyle,
           color = PurpleGrey40,
           modifier = Modifier.padding(16.dp, 0.dp).testTag("Title"))
     }
@@ -69,7 +74,11 @@ fun DateSelector(
           if (showDatePicker) {
             DatePickerDialog(
                 onDismissRequest = { showDatePicker = false },
-                confirmButton = { TextButton(onClick = { onConfirm() }) { Text(text = "Done") } },
+                confirmButton = {
+                  TextButton(enabled = !invalidSelection, onClick = { onConfirm() }) {
+                    Text(text = "Done")
+                  }
+                },
                 dismissButton = {
                   TextButton(onClick = { showDatePicker = false }) { Text(text = "Cancel") }
                 },

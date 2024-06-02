@@ -1,5 +1,6 @@
 package com.github.se.polyfit.ui.components.recipe
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,7 +35,9 @@ fun RecipeCard(
     recipe: Recipe,
     onCardClick: (Recipe) -> Unit = {},
     onBookmarkClick: (Recipe) -> Unit = {},
-    onBookmarkRemove: (Recipe) -> Unit = {}
+    onBookmarkRemove: (Recipe) -> Unit = {},
+    showTitle: Boolean = true,
+    showBookmark: Boolean = true
 ) {
 
   Card(
@@ -48,19 +51,23 @@ fun RecipeCard(
       elevation = CardDefaults.cardElevation(4.dp)) {
         Box(modifier = Modifier.fillMaxSize()) {
           RecipeImage(recipe, onCardClick)
-
-          Text(
-              text = recipe.title,
-              color = Color.White,
-              style = MaterialTheme.typography.titleMedium,
-              fontWeight = FontWeight.Bold,
-              modifier =
-                  Modifier.align(Alignment.BottomStart).padding(horizontal = 8.dp, vertical = 4.dp))
-
+          if (showTitle) {
+            Text(
+                text = recipe.title,
+                color = Color.White,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                modifier =
+                    Modifier.align(Alignment.BottomStart)
+                        .padding(horizontal = 8.dp, vertical = 4.dp))
+          }
           LikeButton(recipe.likes, modifier = Modifier.align(Alignment.TopEnd))
 
-          BookmarkButton(
-              recipe, onBookmarkClick, onBookmarkRemove, Modifier.align(Alignment.BottomEnd))
+          if (showBookmark) {
+
+            BookmarkButton(
+                recipe, onBookmarkClick, onBookmarkRemove, Modifier.align(Alignment.BottomEnd))
+          }
         }
       }
 }
@@ -76,5 +83,11 @@ fun RecipeImage(recipe: Recipe, onCardClick: (Recipe) -> Unit) {
       placeholder = painterResource(R.drawable.logo),
       contentDescription = stringResource(R.string.description),
       contentScale = ContentScale.Crop,
-      modifier = Modifier.fillMaxSize().clickable { onCardClick(recipe) }.testTag("RecipeImage"))
+      modifier =
+          Modifier.fillMaxSize()
+              .clickable {
+                Log.d("RecipeCard", "RecipeImage: ${recipe.title}")
+                onCardClick(recipe)
+              }
+              .testTag("RecipeImage"))
 }

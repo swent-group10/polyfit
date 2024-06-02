@@ -10,6 +10,11 @@ data class Location(
     val altitude: Double,
     val name: String
 ) {
+
+  fun serialize(): Map<String, Any> {
+    return serialize(this)
+  }
+
   companion object {
     fun default(): Location {
       return Location(0.0, 0.0, 0.0, "EPFL")
@@ -21,6 +26,15 @@ data class Location(
           data["latitude"] as Double,
           data["altitude"] as? Double ?: 0.0,
           data["name"] as? String ?: "")
+    }
+
+    fun serialize(data: Location): Map<String, Any> {
+      return mutableMapOf<String, Any>().apply {
+        this["longitude"] = data.longitude
+        this["latitude"] = data.latitude
+        this["altitude"] = data.altitude
+        this["name"] = data.name
+      }
     }
   }
 }

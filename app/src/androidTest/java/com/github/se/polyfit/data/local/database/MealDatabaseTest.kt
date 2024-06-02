@@ -1,6 +1,7 @@
 package com.github.se.polyfit.data.local.database
 
 import android.content.Context
+import android.net.Uri
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -12,6 +13,10 @@ import com.github.se.polyfit.model.meal.MealOccasion
 import com.github.se.polyfit.model.nutritionalInformation.MeasurementUnit
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.model.nutritionalInformation.NutritionalInformation
+import com.google.gson.GsonBuilder
+import com.google.gson.TypeAdapter
+import com.google.gson.stream.JsonReader
+import com.google.gson.stream.JsonWriter
 import java.time.LocalDate
 import junit.framework.TestCase.assertFalse
 import kotlin.test.assertContains
@@ -25,6 +30,8 @@ import org.junit.runner.RunWith
 class MealDatabaseTest {
   private lateinit var mealDatabase: MealDatabase
   private lateinit var mealDao: MealDao
+
+  private val gson = GsonBuilder().registerTypeAdapter(Uri::class.java, UriTypeAdapter()).create()
 
   @Before
   fun setup() {
@@ -43,6 +50,7 @@ class MealDatabaseTest {
             occasion = MealOccasion.BREAKFAST,
             name = "Oatmeal",
             id = "TestId",
+            userId = "testUserID",
             mealTemp = 20.0,
             nutritionalInformation =
                 NutritionalInformation(
@@ -59,17 +67,18 @@ class MealDatabaseTest {
             createdAt = nowTime,
             tags = mutableListOf()))
 
-    val meals = mealDao.getAll().map { it.toMeal() }
+    val meals = mealDao.getAll("testUserID").map { it.toMeal() }
 
     assert(meals.size == 1)
     assertEquals(meals.first().name, "Oatmeal")
     assertEquals(meals.first().createdAt, nowTime)
 
     val meal2 = Meal.default()
+    meal2.userId = "testUserID"
 
     mealDao.insert(meal2)
 
-    val allMeals = mealDao.getAllMeals()
+    val allMeals = mealDao.getAllMeals("testUserID")
 
     assertEquals(allMeals.size, 2)
   }
@@ -85,13 +94,14 @@ class MealDatabaseTest {
         Meal(
             name = "Oatmeal",
             occasion = MealOccasion.BREAKFAST,
+            userId = "testUserID",
             id = "TestId",
             mealTemp = 20.0,
             ingredients = ingredientList,
             createdAt = LocalDate.now())
     mealDao.insert(MealEntity.toMealEntity(meal))
 
-    val ingredients = mealDao.getAllIngredients()
+    val ingredients = mealDao.getAllIngredients("testUserID")
 
     assertEquals(ingredients.size, 2)
     assertContains(ingredients, ingredientList.first())
@@ -109,14 +119,15 @@ class MealDatabaseTest {
     mealDao.insert(meal2)
     mealDao.insert(meal3)
 
-    val meals = mealDao.getMealsCreatedOnOrAfterDate(LocalDate.now())
+    val meals = mealDao.getMealsCreatedOnOrAfterDate(LocalDate.now(), "testUserID")
 
     assert(meals.size == 2)
     assert(meals.contains(meal))
     assert(meals.contains(meal2))
     assertFalse(meals.contains(meal3))
 
-    val newMeals = mealDao.getMealsCreatedOnOrAfterDate(LocalDate.now().minusMonths(1))
+    val newMeals =
+        mealDao.getMealsCreatedOnOrAfterDate(LocalDate.now().minusMonths(1), "testUserID")
 
     assert(newMeals.contains(meal3))
   }
@@ -145,6 +156,7 @@ class MealDatabaseTest {
         name = name,
         occasion = MealOccasion.BREAKFAST,
         id = id,
+        userId = "testUserID",
         mealTemp = 20.0,
         ingredients =
             mutableListOf(
@@ -166,5 +178,15 @@ class MealDatabaseTest {
   @After
   fun closeDB() {
     mealDatabase.close()
+  }
+}
+
+class UriTypeAdapter : TypeAdapter<Uri>() {
+  override fun write(out: JsonWriter, value: Uri?) {
+    out.value(value.toString())
+  }
+
+  override fun read(input: JsonReader): Uri {
+    return Uri.parse(input.nextString())
   }
 }

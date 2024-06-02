@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -20,18 +19,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import co.yml.charts.common.extensions.isNotNull
 import com.github.se.polyfit.model.nutritionalInformation.Nutrient
 import com.github.se.polyfit.ui.theme.PrimaryPurple
 import com.github.se.polyfit.ui.theme.SecondaryGrey
 import com.github.se.polyfit.ui.utils.removeLeadingZerosAndNonDigits
+
+private const val MAX_NUTRITION_AMOUNT = 200_000
 
 @Composable
 fun IngredientNutritionEditFields(
@@ -40,11 +40,14 @@ fun IngredientNutritionEditFields(
 ) {
 
   // TODO: add a way to enter more fields/type of nutritents
-
   LazyColumn(modifier = modifier.testTag("NutritionInfoContainer")) {
     itemsIndexed(nutritionFields) { index, nutrient ->
-      var isFocused by remember { mutableStateOf(false) }
-      var text by remember { mutableStateOf(nutrient.amount.toString()) }
+      var text by remember {
+        mutableStateOf(
+            if (0 < nutrient.amount && nutrient.amount <= MAX_NUTRITION_AMOUNT)
+                nutrient.amount.toString()
+            else "")
+      }
       Row(
           verticalAlignment = Alignment.CenterVertically,
           modifier =
@@ -59,32 +62,23 @@ fun IngredientNutritionEditFields(
                     Modifier.testTag("NutritionLabel " + nutrient.getFormattedName()).weight(1.5f))
 
             TextField(
-                keyboardOptions =
-                    KeyboardOptions(
-                        keyboardType = KeyboardType.Decimal,
-                        imeAction = ImeAction.Done,
-                    ),
-                keyboardActions =
-                    KeyboardActions(
-                        onDone = {
-                          text =
-                              formatText(index, nutritionFields, nutrient, text) { newText ->
-                                text = newText
-                              }
-                        }),
                 value = text,
-                onValueChange = { newValue -> text = newValue },
+                placeholder = { Text(text = "0.0") },
+                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                singleLine = true,
+                onValueChange = {
+                  val update = it.toDoubleOrNull()
+                  text =
+                      when {
+                        update.isNotNull() && !(0 < update!! && update < MAX_NUTRITION_AMOUNT) -> ""
+                        update.isNotNull() -> update.toString()
+                        else -> text
+                      }
+                  updateNutrient(index, nutritionFields, nutrient, text)
+                },
                 modifier =
                     Modifier.testTag("NutritionSizeInput " + nutrient.getFormattedName())
-                        .weight(0.5f)
-                        .onFocusChanged { focusState ->
-                          isFocused = focusState.isFocused
-                          handleFocusChange(isFocused, index, nutritionFields, nutrient, text) {
-                              newText ->
-                            text = newText
-                          }
-                        },
-                singleLine = true,
+                        .weight(0.5f),
                 colors =
                     TextFieldDefaults.colors(
                         focusedIndicatorColor = PrimaryPurple,
@@ -107,35 +101,17 @@ fun IngredientNutritionEditFields(
   }
 }
 
-private fun formatText(
+private fun updateNutrient(
     index: Int,
     nutritionFields: MutableList<Nutrient>,
     nutrient: Nutrient,
     text: String,
-    updateText: (String) -> Unit
-): String {
-  var newText = text
+) {
+  var newText = text.ifEmpty { "0.0" }
   try {
     newText = removeLeadingZerosAndNonDigits(newText)
     nutritionFields[index] = nutrient.copy(amount = newText.toDouble())
-    newText = newText.toDouble().toString()
   } catch (_: NumberFormatException) {
     Log.w("Catch Exception", "Text formatting gone wrong")
-  }
-
-  updateText(newText)
-  return newText
-}
-
-private fun handleFocusChange(
-    isFocused: Boolean,
-    index: Int,
-    nutritionFields: MutableList<Nutrient>,
-    nutrient: Nutrient,
-    text: String,
-    updateText: (String) -> Unit
-) {
-  if (!isFocused) { // Check if the TextField has lost focus
-    formatText(index, nutritionFields, nutrient, text, updateText)
   }
 }

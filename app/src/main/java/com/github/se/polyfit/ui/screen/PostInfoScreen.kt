@@ -1,10 +1,10 @@
 package com.github.se.polyfit.ui.screen
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -27,7 +28,6 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.github.se.polyfit.R
-import com.github.se.polyfit.model.post.Post
 import com.github.se.polyfit.ui.components.GenericScreen
 import com.github.se.polyfit.ui.components.button.PrimaryButton
 import com.github.se.polyfit.ui.components.postinfo.PostCard
@@ -42,7 +42,7 @@ fun PostInfoScreen(
 ) {
   GenericScreen(
       navController = navHostController,
-      content = { PostInfoScreenContent(viewPostViewModel = viewPostViewModel) },
+      content = { PostInfoScreenContent(viewPostViewModel = viewPostViewModel, padding = it) },
       modifier = Modifier.testTag("PostInfoScreen"),
       floatingButton = {
         PrimaryButton(
@@ -56,15 +56,15 @@ fun PostInfoScreen(
 
 @Composable
 fun PostInfoScreenContent(
-    posts: List<Post> = listOf(),
     index: Int = 0,
+    padding: PaddingValues = PaddingValues(),
     viewPostViewModel: ViewPostViewModel = hiltViewModel(),
 ) {
-  val posts by viewPostViewModel.posts.collectAsState(posts)
-  val isFetching by viewPostViewModel.isFetching.collectAsState()
+  val isFetching = viewPostViewModel.isFetching.observeAsState()
+  val posts = viewPostViewModel.posts.collectAsState(initial = emptyList()).value
 
-  Scaffold {
-    if (isFetching) {
+  Scaffold(modifier = Modifier.padding(padding)) {
+    if (isFetching.value == true) {
       Box(modifier = Modifier.fillMaxSize().padding(it), contentAlignment = Alignment.Center) {
         CircularProgressIndicator(modifier = Modifier.padding(16.dp).testTag("LoadingPost"))
       }
@@ -78,13 +78,13 @@ fun PostInfoScreenContent(
     LazyColumn(
         state = rememberLazyListState(index),
     ) {
-      items(posts) { post -> PostCard(post = post) }
+      posts.forEach { post -> item { PostCard(post = post) } }
     }
   }
 }
 
 @Composable
-private fun NoPost() {
+fun NoPost() {
   Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
     Text(
         text = ContextCompat.getString(LocalContext.current, R.string.noPostAvailable),
